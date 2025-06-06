@@ -54,6 +54,11 @@ export const router = createBrowserRouter([
         },
         handle: { title: 'Chat' },
       },
+      {
+        path: 'workspace', // Or a more suitable path
+        lazy: async () => { const { default: Component } = await import('@/pages/AgentWorkspace'); return { Component }; },
+        handle: { title: 'Agent Workspace' },
+      },
     ],
   },
   {
