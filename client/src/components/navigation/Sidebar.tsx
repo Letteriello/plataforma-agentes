@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Bot, Wrench, Upload, Settings } from 'lucide-react';
+import { LayoutDashboard, Bot, Wrench, Upload, Settings, FlaskConical, FileText } from 'lucide-react';
 
 type NavItem = {
   title: string;
@@ -16,22 +16,27 @@ const sidebarNavItems: NavItem[] = [
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
-    title: 'Agentes',
+    title: 'Agents',
     href: '/agentes',
     icon: <Bot className="h-5 w-5" />,
   },
   {
-    title: 'Ferramentas',
+    title: 'Sessions',
+    href: '/sessions',
+    icon: <FileText className="h-5 w-5" />,
+  },
+  {
+    title: 'Tools',
     href: '/ferramentas',
     icon: <Wrench className="h-5 w-5" />,
   },
   {
-    title: 'Deploy',
-    href: '/deploy',
-    icon: <Upload className="h-5 w-5" />,
+    title: 'Playground',
+    href: '/playground',
+    icon: <FlaskConical className="h-5 w-5" />,
   },
   {
-    title: 'Configurações',
+    title: 'Settings',
     href: '/configuracoes',
     icon: <Settings className="h-5 w-5" />,
   },
@@ -41,22 +46,27 @@ export function Sidebar() {
   const { pathname } = useLocation();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-white dark:bg-slate-950">
       <div className="flex h-16 items-center border-b border-border px-6">
-        <h1 className="text-xl font-bold">Nexus Platform</h1>
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">A</span>
+          </div>
+          <h1 className="text-lg font-semibold">AgentSmith</h1>
+        </div>
       </div>
       
-      <nav className="flex-1 space-y-1 p-2">
+      <nav className="flex-1 space-y-1 p-3">
         {sidebarNavItems.map((item) => (
           <NavLink
             key={item.href}
             to={item.disabled ? '#' : item.href}
             className={cn(
-              'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
-              'hover:bg-accent hover:text-accent-foreground',
+              'flex items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
+              'hover:bg-slate-100 dark:hover:bg-slate-800',
               pathname === item.href
-                ? 'bg-accent text-accent-forefont'
-                : 'text-muted-foreground',
+                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50'
+                : 'text-slate-600 dark:text-slate-400',
               item.disabled && 'cursor-not-allowed opacity-50'
             )}
           >
@@ -65,13 +75,6 @@ export function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      
-      <div className="border-t border-border p-4">
-        <div className="rounded-md bg-accent p-3 text-sm">
-          <p className="font-medium">Precisa de ajuda?</p>
-          <p className="text-muted-foreground text-xs">Consulte nossa documentação ou entre em contato com o suporte.</p>
-        </div>
-      </div>
     </div>
   );
 }

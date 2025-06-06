@@ -1,56 +1,44 @@
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, Bell, User, Settings, LogOut } from 'lucide-react';
+import { Avatar } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Bell, User, Settings, LogOut } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 
 export function Topbar() {
   const { user, logout } = useAuthStore();
 
   return (
-    <div className="flex h-full items-center justify-between px-6">
-      {/* Search Bar */}
-      <div className="relative flex-1 max-w-2xl">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Pesquisar agentes, ferramentas..."
-          className="w-full rounded-full bg-background pl-10 focus-visible:ring-1"
-        />
+    <div className="flex h-16 items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+      {/* Left section - Title */}
+      <div className="flex items-center">
+        <h2 className="text-lg font-medium text-slate-900 dark:text-white">Dashboard</h2>
+        <Badge variant="info" size="sm" className="ml-3">
+          Beta
+        </Badge>
       </div>
 
       {/* User Actions */}
-      <div className="flex items-center space-x-4">
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Bell className="h-5 w-5" />
-          <span className="sr-only">Notificações</span>
+      <div className="flex items-center gap-4">
+        <ThemeToggle />
+        
+        <Button variant="outline" size="icon" className="rounded-full border-slate-200 dark:border-slate-700">
+          <Bell className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          <span className="sr-only">Notifications</span>
         </Button>
         
-        <div className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <User className="h-4 w-4" />
-          </div>
+        <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700">
+          <Avatar className="h-8 w-8">
+            <img 
+              src={`https://api.dicebear.com/7.x/personas/svg?seed=${user?.name || 'user'}`} 
+              alt={user?.name || 'User'} 
+            />
+          </Avatar>
           <div className="hidden md:block">
-            <p className="text-sm font-medium">{user?.name || 'Usuário'}</p>
-            <p className="text-xs text-muted-foreground">{user?.role || 'Admin'}</p>
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{user?.name || 'Admin User'}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email || 'admin@example.com'}</p>
           </div>
         </div>
-        
-        <Button variant="ghost" size="icon" className="rounded-full" asChild>
-          <a href="/configuracoes">
-            <Settings className="h-5 w-5" />
-            <span className="sr-only">Configurações</span>
-          </a>
-        </Button>
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full text-destructive hover:text-destructive"
-          onClick={logout}
-        >
-          <LogOut className="h-5 w-5" />
-          <span className="sr-only">Sair</span>
-        </Button>
       </div>
     </div>
   );
