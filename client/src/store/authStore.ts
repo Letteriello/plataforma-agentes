@@ -38,9 +38,11 @@ const initialState: AuthState = {
 };
 
 // Criando o store com tipagem simplificada
+type SetState = (partial: (state: AuthState & AuthActions) => Partial<AuthState & AuthActions>, replace?: boolean) => void;
+
 const useAuthStore = create<AuthState & AuthActions>()(
   persist(
-    (set: any) => ({
+    (set: SetState) => ({
       ...initialState,
       
       login: async (email: string) => {

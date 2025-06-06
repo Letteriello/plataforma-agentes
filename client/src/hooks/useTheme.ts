@@ -1,5 +1,7 @@
 import { useContext } from 'react';
-import { theme, Theme } from '@/theme';
+import { theme } from '@/theme';
+
+type Theme = typeof theme;
 
 /**
  * Hook to access the Nexus Design System theme

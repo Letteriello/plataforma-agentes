@@ -55,9 +55,13 @@ const initialState: SessionState = {
   error: null,
 };
 
-export const useSessionStore = create<SessionStore>(
+// Definir o tipo para as ações que usam set e get
+type StoreSet = (fn: (state: SessionState) => Partial<SessionState>) => void;
+type StoreGet = () => SessionState;
+
+const useSessionStore = create<SessionStore>()(
   persist(
-    (set, get) => ({
+    (set: StoreSet, get: StoreGet) => ({
       ...initialState,
 
       createSession: async (name: string) => {
@@ -74,7 +78,7 @@ export const useSessionStore = create<SessionStore>(
             updatedAt: new Date().toISOString(),
           };
 
-          set(state => ({
+          set((state: SessionState) => ({
             sessions: [...state.sessions, newSession],
             activeSessionId: newSession.id,
             isLoading: false,
@@ -89,26 +93,27 @@ export const useSessionStore = create<SessionStore>(
       },
 
       updateSession: (id: string, updates: Partial<Omit<Session, 'id' | 'createdAt'>>) => {
-        set(state => ({
-          sessions: state.sessions.map(session => 
-            session.id === id 
-              ? { ...session, ...updates, updatedAt: new Date().toISOString() }
-              : session
+        set((state: SessionState) => ({
+          sessions: state.sessions.map((session: Session) =>
+            session.id === id ? { ...session, ...updates, updatedAt: new Date().toISOString() } : session
           ),
         }));
       },
 
       deleteSession: (id: string) => {
-        set(state => {
-          const newSessions = state.sessions.filter(session => session.id !== id);
-          const newState: Partial<SessionState> = { sessions: newSessions };
+        set((state: SessionState) => {
+          const newSessions = state.sessions.filter((session: Session) => session.id !== id);
+          let newActiveId = state.activeSessionId;
           
-          if (state.activeSessionId === id) {
-            newState.activeSessionId = newSessions[0]?.id || null;
-            newState.activeAgentId = null;
+          // Se a sessão ativa foi removida, defina como null
+          if (id === state.activeSessionId) {
+            newActiveId = newSessions.length > 0 ? newSessions[0].id : null;
           }
           
-          return newState as SessionState;
+          return {
+            sessions: newSessions,
+            activeSessionId: newActiveId,
+          };
         });
       },
 
@@ -132,8 +137,8 @@ export const useSessionStore = create<SessionStore>(
             updatedAt: new Date().toISOString(),
           };
 
-          set(state => ({
-            sessions: state.sessions.map(session => 
+          set((state: SessionState) => ({
+            sessions: state.sessions.map((session: Session) =>
               session.id === sessionId
                 ? { 
                     ...session, 
@@ -154,12 +159,12 @@ export const useSessionStore = create<SessionStore>(
       },
 
       updateAgent: (sessionId: string, agentId: string, updates: Partial<Omit<Agent, 'id' | 'createdAt'>>) => {
-        set(state => ({
-          sessions: state.sessions.map(session => 
+        set((state: SessionState) => ({
+          sessions: state.sessions.map((session: Session) =>
             session.id === sessionId
               ? {
                   ...session,
-                  agents: session.agents.map(agent =>
+                  agents: session.agents.map((agent: Agent) =>
                     agent.id === agentId
                       ? { ...agent, ...updates, updatedAt: new Date().toISOString() }
                       : agent
@@ -172,14 +177,13 @@ export const useSessionStore = create<SessionStore>(
       },
 
       deleteAgent: (sessionId: string, agentId: string) => {
-        set(state => {
-          const updatedSessions = state.sessions.map(session => {
+        set((state: SessionState) => {
+          const updatedSessions = state.sessions.map((session: Session) => {
             if (session.id === sessionId) {
-              const updatedAgents = session.agents.filter(agent => agent.id !== agentId);
+              const updatedAgents = session.agents.filter((agent: Agent) => agent.id !== agentId);
               return {
                 ...session,
                 agents: updatedAgents,
-                activeAgentId: session.activeAgentId === agentId ? null : session.activeAgentId,
                 updatedAt: new Date().toISOString(),
               };
             }
@@ -188,6 +192,7 @@ export const useSessionStore = create<SessionStore>(
 
           return {
             sessions: updatedSessions,
+            // Se o agente ativo foi removido, defina como null
             activeAgentId: state.activeAgentId === agentId ? null : state.activeAgentId,
           };
         });

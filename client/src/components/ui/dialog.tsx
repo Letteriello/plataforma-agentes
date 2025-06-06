@@ -4,8 +4,8 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Base Dialog Components
-export const Dialog = DialogPrimitive.Root;
-export const DialogTrigger = DialogPrimitive.Trigger;
+const Dialog = DialogPrimitive.Root;
+const DialogTrigger = DialogPrimitive.Trigger;
 
 interface DialogPortalProps extends React.ComponentProps<typeof DialogPrimitive.Portal> {
   children: React.ReactNode;

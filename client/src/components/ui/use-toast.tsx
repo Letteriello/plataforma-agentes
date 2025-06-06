@@ -13,7 +13,7 @@ interface Toast {
 
 interface ToastContextType {
   toasts: Toast[]
-  toast: (props: Omit<Toast, 'id'>) => string
+  toast: (props: Omit<Toast, 'id'>) => string | (() => void)
   dismiss: (id: string) => void
 }
 
