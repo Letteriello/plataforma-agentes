@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "strict": true,
+    "types": ["node", "@storybook/react", "@storybook/jest", "@storybook/addon-essentials"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["../src/**/*.stories.@(js|jsx|ts|tsx)", "../src/**/*.mdx"],
+  "exclude": ["node_modules"]
+}

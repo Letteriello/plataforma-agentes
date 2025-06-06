@@ -38,17 +38,64 @@ Utilizaremos a biblioteca **Lucide React** (`lucide-react`), que se integra perf
 
 Estes são nossos blocos de construção.
 
+#### **Componentes Básicos**
+
 - **`Button`**: Usado para todas as ações. Variações: `default` (primário), `secondary`, `destructive`, `outline`, `ghost`, `link`.
 - **`Card`**: O contêiner principal para agrupar informações, como detalhes de um agente, uma ferramenta ou uma sessão.
 - **`Input` & `Textarea`**: Para todos os campos de texto, como nome do agente, instruções e prompts.
 - **`Select`**: Para escolhas de opções definidas, como tipo de agente (LLM, Workflow), modelos de LLM, tipos de callback, etc.
-- **`Tabs`**: Para organizar seções complexas, como na tela de configuração de um agente.
-- **`Dialog`**: Para ações modais, como confirmação de exclusão, adição de uma nova ferramenta ou configuração de deploy.
 - **`Tooltip`**: Para fornecer informações adicionais em ícones e elementos interativos sem sobrecarregar a tela.
 - **`Badge`**: Essencial para indicar status (ex: "Online", "Em Treinamento", "Erro"), tipos de agentes (`LLM`, `SEQUENTIAL`) e tipos de eventos.
 - **`Avatar`**: Para dar uma identidade visual a cada agente, permitindo upload de ícones.
-- **`Table`**: Para listar recursos como sessões, artefatos ou logs de deploy.
+
+#### **Componentes de Navegação**
+
+- **`Tabs`**: Para organizar seções complexas, como na tela de configuração de um agente.
+  - Suporta navegação por teclado
+  - Animações suaves entre as abas
+  - Personalização de estilos ativo/inativo
+  - Exemplo de uso: separação de configurações em categorias lógicas
+
 - **`Separator`**: Para dividir visualmente seções de conteúdo.
+  - Orientação horizontal (padrão) e vertical
+  - Personalização de cor e espessura
+  - Uso típico: separar títulos de conteúdo, itens de menu, etc.
+
+#### **Componentes de Superfície**
+
+- **`Dialog`**: Para ações modais, como confirmação de exclusão, adição de uma nova ferramenta ou configuração de deploy.
+  - Foco acessível
+  - Fechamento ao clicar fora ou pressionar ESC
+  - Animações suaves de entrada/saída
+  - Suporte a rolagem de conteúdo longo
+  - Exemplo: confirmação de ações críticas
+
+- **`Table`**: Para listar recursos como sessões, artefatos ou logs de deploy.
+  - Ordenação clicando nos cabeçalhos
+  - Paginação integrada
+  - Seleção de linhas
+  - Responsivo (rolagem horizontal em telas pequenas)
+  - Exemplo: listagem de agentes com ações rápidas
+
+#### **Boas Práticas de Uso**
+
+1. **Consistência**
+   - Mantenha o mesmo estilo de botão para ações semelhantes
+   - Use os mesmos espaçamentos e tamanhos de fonte em todo o sistema
+
+2. **Acessibilidade**
+   - Sempre forneça textos alternativos para ícones
+   - Garanta contraste adequado de cores
+   - Suporte a navegação por teclado
+
+3. **Feedback**
+   - Forneça feedback visual para ações do usuário
+   - Use estados de carregamento para operações assíncronas
+   - Mostre mensagens de erro claras e úteis
+
+4. **Responsividade**
+   - Projete componentes que funcionem bem em diferentes tamanhos de tela
+   - Considere o uso de `Tabs` para organizar conteúdo em telas menores
 
 ---
 
@@ -107,6 +154,60 @@ Esta é a tela mais importante e complexa. Usaremos o componente `Tabs` para que
         
         - Configurações para o `MemoryService` (ex: `Select` entre "Em Memória" ou "Vertex AI RAG").
         - Visualizador do `State` inicial da sessão (se houver), provavelmente como um editor JSON.
+
+### **3. Temas e Personalização**
+
+O Nexus Design System suporta temas claro e escuro, com foco na experiência em modo escuro para uso prolongado.
+
+#### **Temas Disponíveis**
+
+- **Escuro (Padrão)**: Ideal para uso noturno ou em ambientes com pouca luz
+- **Claro**: Alternativa para ambientes muito claros
+- **Sistema**: Ajusta automaticamente com base nas preferências do sistema
+
+#### **Personalização**
+
+```tsx
+// Exemplo de personalização de tema
+:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --primary: 240 4.9% 83.9%;
+  --primary-foreground: 240 5.9% 10%;
+  // ... outras variáveis de tema
+}
+```
+
+#### **Como Adicionar um Novo Tema**
+
+1. Defina as variáveis de cores no arquivo de tema
+2. Atualize o provedor de tema para incluir a nova opção
+3. Adicione uma opção no seletor de tema da interface
+
+### **4. Testes e Acessibilidade**
+
+Todos os componentes são testados para garantir:
+
+- Compatibilidade com leitores de tela
+- Navegação por teclado
+- Contraste adequado
+- Tamanho de toque mínimo (44x44px)
+
+#### **Ferramentas Recomendadas**
+
+- **Storybook**: Para desenvolvimento e documentação de componentes
+- **Jest + Testing Library**: Para testes unitários
+- **Cypress**: Para testes de integração
+- **Axe**: Para auditoria de acessibilidade
+
+### **5. Recursos e Links Úteis**
+
+- [Documentação do shadcn/ui](https://ui.shadcn.com/)
+- [Guia de Acessibilidade](https://www.w3.org/WAI/ARIA/apg/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Radix UI](https://www.radix-ui.com/)
+
+---
 
 ### **Tela 3: Monitoramento de Sessão (O Cockpit)**
 
