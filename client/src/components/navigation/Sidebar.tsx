@@ -1,7 +1,17 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
-import { NavLink } from 'react-router-dom'; // useLocation removed as isActive is used from NavLink props
+import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Bot, Wrench, Settings, FlaskConical, FileText } from 'lucide-react'; // BarChart removed as example disabled item was commented out
+import {
+  LayoutDashboard,
+  Bot,
+  Wrench,
+  Settings,
+  FlaskConical,
+  FileText,
+  MessageCircle, // Added for Chat icon
+} from 'lucide-react';
+import { Avatar } from '@/components/ui/avatar'; // Added for User Avatar
+import { useAuthStore } from '@/store/authStore'; // Added for user data
 
 type NavItem = {
   title: string;
@@ -13,62 +23,52 @@ type NavItem = {
 // TODO: Consider moving this to a separate config file if it grows
 const sidebarNavItems: NavItem[] = [
   {
-    title: 'Dashboard',
+    title: 'Painel', // Translated
     href: '/dashboard',
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
-    title: 'Agents',
+    title: 'Agentes', // Translated (or kept as is, common in PT-BR tech)
     href: '/agentes',
     icon: <Bot className="h-5 w-5" />,
   },
   {
-    title: 'Sessions',
+    title: 'Chat', // New Item
+    href: '/chat',
+    icon: <MessageCircle className="h-5 w-5" />,
+  },
+  {
+    title: 'Sessões', // Translated
     href: '/sessions',
     icon: <FileText className="h-5 w-5" />,
   },
   {
-    title: 'Tools',
+    title: 'Ferramentas', // Translated (or kept as is)
     href: '/ferramentas',
     icon: <Wrench className="h-5 w-5" />,
   },
   {
-    title: 'Playground',
+    title: 'Experimentação', // Translated (Playground)
     href: '/playground',
     icon: <FlaskConical className="h-5 w-5" />,
-  },
-  // Example of a disabled item
-  // {
-  //   title: 'Analytics (Soon)',
-  //   href: '/analytics',
-  //   icon: <BarChart className="h-5 w-5" />,
-  //   disabled: true,
-  // },
-];
-
-const settingsNavItems: NavItem[] = [
-  {
-    title: 'Settings',
-    href: '/configuracoes',
-    icon: <Settings className="h-5 w-5" />,
   },
 ];
 
 export function Sidebar() {
-  // const { pathname } = useLocation(); // No longer needed if using NavLink's isActive prop
+  const { user } = useAuthStore(); // Get user data
 
   const renderNavLinks = (items: NavItem[]) => {
     return items.map((item) => (
       <NavLink
         key={item.href}
         to={item.disabled ? '#' : item.href}
-        className={({ isActive }) => // Updated to use isActive from NavLink
+        className={({ isActive }) =>
           cn(
-            'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors mb-1', // Added mb-1 for spacing
+            'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors mb-1',
             isActive
-              ? 'bg-primary text-primary-foreground' // Active state
-              : 'text-foreground hover:bg-zinc-800 hover:text-foreground', // Normal and hover state
-            item.disabled && 'cursor-not-allowed opacity-50' // Disabled state
+              ? 'bg-primary text-primary-foreground'
+              : 'text-foreground hover:bg-primary hover:text-foreground', // Updated hover state
+            item.disabled && 'cursor-not-allowed opacity-50'
           )
         }
       >
@@ -79,25 +79,52 @@ export function Sidebar() {
   };
 
   return (
-    // Main sidebar container: bg-card, p-4 (applied to children containers), border-r
     <div className="flex h-full w-64 flex-col bg-card border-r border-border">
       {/* Sidebar Header */}
-      <div className="flex h-16 items-center border-b border-border px-4"> {/* Changed px-6 to px-4 */}
-        <div className="flex items-center gap-2"> {/* Consider replacing with a proper Logo component */}
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center"> {/* Changed bg-blue-500 to bg-primary */}
-            <span className="text-primary-foreground font-bold text-sm">N</span> {/* Changed text-white to text-primary-foreground, A to N for Nexus */}
+      <div className="flex h-16 items-center border-b border-border px-4">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-sm">N</span>
           </div>
-          <h1 className="text-lg font-semibold text-foreground">Nexus</h1> {/* Changed AgentSmith to Nexus, ensured text-foreground */}
+          <h1 className="text-lg font-semibold text-foreground">Nexus</h1>
         </div>
       </div>
-      
+
       {/* Navigation Links Area */}
-      <nav className="flex-1 flex flex-col justify-between p-4 space-y-0"> {/* Changed p-3 to p-4, removed space-y-1, added flex-col and justify-between */}
-        <div> {/* Main navigation items */}
+      <nav className="flex-1 flex flex-col p-4">
+        {/* Main Navigation Links */}
+        <div className="space-y-1">
           {renderNavLinks(sidebarNavItems)}
         </div>
-        <div> {/* Settings and other bottom items */}
-          {renderNavLinks(settingsNavItems)}
+
+        {/* Account Section - Pushed to bottom */}
+        <div className="mt-auto">
+          <NavLink
+            to="/configuracoes"
+            className={({ isActive }) =>
+              cn(
+                'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
+                isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-foreground hover:bg-primary hover:text-foreground'
+              )
+            }
+          >
+            <Avatar className="h-8 w-8 shrink-0">
+              <img
+                src={`https://api.dicebear.com/7.x/personas/svg?seed=${user?.name || 'user'}`}
+                alt={user?.name || 'Usuário'} // Translated alt text
+                className="rounded-full"
+              />
+            </Avatar>
+            <div className="ml-3 flex-grow">
+              <p className="text-sm font-semibold">
+                {user?.name || 'Usuário Admin'} {/* Translated default name */}
+              </p>
+              <p className="text-xs text-muted-foreground">Minha Conta</p> {/* Label */} 
+            </div>
+            <Settings className="h-5 w-5 ml-3 opacity-75" />
+          </NavLink>
         </div>
       </nav>
     </div>

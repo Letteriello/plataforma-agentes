@@ -35,6 +35,25 @@ export const router = createBrowserRouter([
         lazy: async () => { const { default: Component } = await import('@/pages/Configuracoes'); return { Component }; },
         handle: { title: 'Configurações' },
       },
+      {
+        path: 'chat',
+        lazy: async () => {
+          console.log('Loading ChatPage module...');
+          try {
+            // Usando import() com caminho relativo para evitar problemas com aliases
+            const module = await import('./pages/ChatPage');
+            console.log('ChatPage module loaded successfully');
+            return { Component: module.default };
+          } catch (error) {
+            console.error('Error loading ChatPage module:', error);
+            // Retornar um componente de erro ou redirecionar para uma rota de erro
+            return {
+              Component: () => <div>Erro ao carregar a página de chat. Por favor, tente novamente mais tarde.</div>
+            };
+          }
+        },
+        handle: { title: 'Chat' },
+      },
     ],
   },
   {

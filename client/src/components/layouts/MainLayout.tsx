@@ -1,5 +1,5 @@
-import React, { useState } from 'react'; // Adicionar useState
-import { Outlet, useMatches } from 'react-router-dom';
+import { useState } from 'react'; // Adicionar useState
+import { useMatches } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { Topbar } from '@/components/navigation/Topbar';
 import {
@@ -8,9 +8,10 @@ import {
   ResizableHandle,
 } from '@/components/ui/resizable';
 import { ContextPanel } from '@/components/context/ContextPanel'; // Importar ContextPanel
-import { ContextPanelData } from '@/components/context/types'; // Importar tipo
+import type { ContextPanelData } from '@/components/context/types'; // Importar tipo
+ // Importar tipo
 import { AgentList } from '@/components/agents/AgentList'; // Nova importação
-import { AgentCardData } from '@/components/agents/types'; // Nova importação
+import type { AgentCardData } from '@/components/agents/types'; // Nova importação
 
 export function MainLayout() {
   const matches = useMatches();
@@ -74,13 +75,24 @@ export function MainLayout() {
     allMockAgents.find(agent => agent.id === selectedAgentId) || null;
 
   // Prepara os dados para o AgentList mapeando de ContextPanelData para AgentCardData
-  const agentListData: AgentCardData[] = allMockAgents.map(agent => ({
-    id: agent.id,
-    title: agent.title,
-    imageUrl: agent.imageUrl,
-    status: agent.status,
-    // shortDescription: agent.description.substring(0, 70) + '...', // Exemplo futuro
-  }));
+  const agentListData: AgentCardData[] = allMockAgents.map(agent => {
+    // Fornece valores padrão para status se não estiver definido
+    const defaultStatus = {
+      text: 'unknown' as const,
+      label: 'Status desconhecido'
+    };
+    
+    return {
+      id: agent.id,
+      title: agent.title,
+      imageUrl: agent.imageUrl,
+      status: agent.status ? {
+        text: agent.status.text || 'unknown',
+        label: agent.status.label || 'Status desconhecido'
+      } : defaultStatus,
+      // shortDescription: agent.description?.substring(0, 70) + '...', // Exemplo futuro
+    };
+  });
 
   return (
     <ResizablePanelGroup

@@ -1,39 +1,15 @@
 // client/src/components/context/ContextPanel.tsx
-import React from 'react';
-import { ContextPanelData, ContextPanelProperty } from './types';
+import type { ContextPanelData, ContextPanelProperty } from './types';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Separator } from '@/components/ui/separator'; // Pode ser útil
 
 interface ContextPanelProps {
   data: ContextPanelData | null;
   // isLoading?: boolean; 
 }
-
-// Função auxiliar para mapear status para variantes de Badge (pode ser expandida)
-// Conforme o design_system.md: accent (ciano/verde) para online/sucesso, primary (azul) para default/info
-// destructive (vermelho) para erro. Cinza (secondary) para inativo/pendente.
-const getStatusBadgeVariant = (statusText?: ContextPanelData['status']['text']): React.ComponentProps<typeof Badge>['variant'] => {
-  if (!statusText) return 'secondary';
-  switch (statusText) {
-    case 'active':
-    case 'success':
-      return 'default'; // Usar 'default' (accent/verde do Nexus) - precisa configurar no Tailwind
-    case 'inactive':
-      return 'secondary';
-    case 'pending':
-    case 'warning':
-      return 'outline'; // Ou uma variante amarela customizada
-    case 'error':
-      return 'destructive';
-    case 'info':
-    default:
-      return 'default'; // Usar 'default' (primary/azul do Nexus)
-  }
-};
-
 
 export function ContextPanel({ data }: ContextPanelProps) {
   if (!data) {
@@ -47,7 +23,7 @@ export function ContextPanel({ data }: ContextPanelProps) {
   }
 
   // Extrair dados para facilitar o uso
-  const { id, title, description, imageUrl, status, properties } = data;
+  const { title, description, imageUrl, status, properties } = data;
 
   return (
     // O Card em si já deve ter bg-card e bordas apropriadas do shadcn/ui se configurado
@@ -72,9 +48,9 @@ export function ContextPanel({ data }: ContextPanelProps) {
           {status && (
             <div className="flex items-center">
               {status.label && <span className="text-xs text-muted-foreground mr-2">{status.label}:</span>}
-              <Badge variant={getStatusBadgeVariant(status.text)} size="sm">
-                {status.text.charAt(0).toUpperCase() + status.text.slice(1)}
-              </Badge>
+              <StatusBadge status={status.text} className="text-xs px-2 py-0.5" />
+              {/* Ajustei o className para text-xs e padding menor para se assemelhar ao size="sm" do Badge anterior */}
+              {/* O StatusBadge já lida com a capitalização e ícone. */}
             </div>
           )}
         </div>

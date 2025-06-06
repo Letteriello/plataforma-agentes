@@ -9,7 +9,7 @@ import { theme } from '@/theme';
 export const getThemeValue = <T = any>(
   path: string,
   defaultValue?: T
-): T => {
+): T | undefined => {
   // Split the path into parts and traverse the theme object
   const result = path.split('.').reduce((obj, key) => {
     return obj && obj[key as keyof typeof obj];

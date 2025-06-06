@@ -1,7 +1,6 @@
 // client/src/components/agents/AgentList.tsx
-import React from 'react';
 import { AgentCard } from './AgentCard'; 
-import { AgentCardData } from './types';
+import type { AgentCardData } from './types';
 
 interface AgentListProps {
   agents: AgentCardData[]; // Array de dados dos agentes

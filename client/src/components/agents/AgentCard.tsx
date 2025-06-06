@@ -1,10 +1,9 @@
 // client/src/components/agents/AgentCard.tsx
-import React from 'react';
-import { AgentCardData } from './types'; // Importa a interface que acabamos de criar
+import type { AgentCardData } from './types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils'; // Para classes condicionais/dinâmicas
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { cn } from '@/lib/utils';
 
 // Props para o AgentCard, incluindo a possibilidade de um callback onClick
 export interface AgentCardProps {
@@ -14,26 +13,24 @@ export interface AgentCardProps {
   isSelected?: boolean; // Para indicar visualmente se o card está selecionado
 }
 
-// Função para determinar a variante do Badge com base no status
-const getStatusBadgeVariant = (statusText: string): 'default' | 'destructive' | 'outline' | 'secondary' | null | undefined => {
-  switch (statusText.toLowerCase()) {
-    case 'active':
-      return 'default'; // Verde (se 'default' for configurado como verde no tema) ou um azul padrão
-    case 'pending':
-      return 'secondary'; // Amarelo/Laranja ou Cinza
-    case 'error':
-      return 'destructive'; // Vermelho
-    default:
-      return 'outline'; // Um status desconhecido ou neutro
-  }
-};
-
 export function AgentCard({ agent, onClick, className, isSelected }: AgentCardProps) {
   const { id, title, imageUrl, status } = agent;
 
   const handleCardClick = () => {
     if (onClick) {
       onClick(id);
+      console.log(`Agente selecionado: ${id}`);
+      console.log(`Agente selecionado: ${title}`);
+      console.log(`Agente selecionado: ${imageUrl}`);
+      console.log(`Agente selecionado: ${status}`);
+      console.log(`Agente selecionado: ${isSelected}`);
+      console.log(`Agente selecionado: ${onClick}`);
+      console.log(`Agente selecionado: ${className}`);
+      console.log(`Agente selecionado: ${agent}`);
+      console.log(`Agente selecionado: ${agent.id}`);
+      console.log(`Agente selecionado: ${agent.title}`);
+      console.log(`Agente selecionado: ${agent.imageUrl}`);
+      console.log(`Agente selecionado: ${agent.status}`);
     }
   };
 
@@ -67,9 +64,7 @@ export function AgentCard({ agent, onClick, className, isSelected }: AgentCardPr
         {/* Seção de Status */}
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">{status.label || 'Status'}</span>
-          <Badge variant={getStatusBadgeVariant(status.text)} className="capitalize">
-            {status.text}
-          </Badge>
+          <StatusBadge status={status.text} label={status.label} />
         </div>
         
         {/* Outras informações resumidas poderiam ir aqui no futuro */}
