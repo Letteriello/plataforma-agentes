@@ -1,14 +1,88 @@
-# windsurf/workspacerules.toml
+# =================================================================
+# ==                  REGRAS MESTRAS - AGENTE CASCADE              ==
+# =================================================================
+# Este documento define as diretrizes e o protocolo de operação
+# para o agente de desenvolvimento assistido por IA (Cascade).
+# Siga estas regras rigorosamente para garantir a consistência,
+# qualidade e manutenibilidade da "Plataforma de Agentes".
+# =================================================================
 
-# Regra: Criar um novo componente de UI no lugar certo.
-[[rule]]
-prompt = "crie um novo componente de UI chamado (\\w+)"
-tool = "desktop-commander"
-# O $1 captura o nome do componente do seu prompt.
-args = ["touch", "./client/src/components/$1.tsx"]
+# ---
+# == Seção 1: CONSULTA DE CONHECIMENTO E FONTES DE VERDADE ==
+# ---
+# A base para qualquer ação é o conhecimento preciso.
+# Antes de gerar ou modificar código, consulte as fontes
+# de verdade do projeto.
 
-# Regra: Listar todos os nós de agentes existentes.
-[[rule]]
-prompt = "liste os componentes de nós de agentes"
-tool = "desktop-commander"
-args = ["ls", "./client/src/components/agents/nodes"]
+## Regra 1.1: Consulta sobre Google ADK e Conceitos de Agentes
+# Tópicos: Google ADK, Agent Development Kit, Agentes, Multi-Agent Systems, A2A.
+# Ação: Consultar EXCLUSIVAMENTE a documentação localizada em `docs/adk/`.
+# Objetivo: Garantir que toda a lógica de agentes esteja alinhada com a arquitetura do ADK.
+
+## Regra 1.2: Consulta sobre a Interface (React)
+# Tópicos: React, componentes, hooks, estado, props.
+# Ação: Consultar EXCLUSIVAMENTE a documentação em `docs/react/doc_react.md`.
+# Objetivo: Manter a consistência da arquitetura e padrões do frontend.
+
+## Regra 1.3: Consulta sobre Componentes Visuais (shadcn/ui)
+# Tópicos: shadcn/ui, `Button`, `Card`, `Dialog`, `Input`, etc.
+# Ação: Consultar EXCLUSIVAMENTE a documentação em `docs/shadcn/doc_shadcn.md`.
+# Objetivo: Garantir a aplicação correta e consistente dos componentes da UI.
+
+## Regra 1.4: Consulta sobre a Identidade Visual (Design System)
+# Tópicos: Design System, Nexus, cores, tipografia, layout.
+# Ação: Consultar EXCLUSIVAMENTE a documentação em `docs/ui-ux/design_system.md`.
+# Objetivo: Assegurar que toda a interface siga a identidade visual do projeto.
+
+# ---
+# == Seção 2: CICLO DE DESENVOLVIMENTO E DOCUMENTAÇÃO ==
+# ---
+# Cada ação de desenvolvimento deve ser um ciclo completo:
+# Entender -> Criar -> Documentar -> Planejar o Próximo Passo.
+
+## Regra 2.1: Revisão de Documentação Pré-Criação
+# Contexto: ANTES de criar ou modificar qualquer artefato que possua documentação associada (código, workflows, etc.).
+# Ação: Utilizar a Ferramenta `MCP Context7-mcp` para analisar a documentação existente e atualizada sobre o artefato em questão.
+# Objetivo: Evitar a criação de código desalinhado com o estado atual do projeto e suas diretrizes.
+
+## Regra 2.2: Atualização do Changelog Pós-Ação
+# Contexto: IMEDIATAMENTE APÓS concluir qualquer ação de desenvolvimento (criação, modificação, correção de bug).
+# Ação: Atualizar o arquivo de log de mudanças em `docs/docs/changelog/CHANGELOG.md`.
+# Formato da Entrada:
+#   - Use a data atual no formato YYYY-MM-DD.
+#   - Descreva a ação de forma clara e concisa.
+#   - Exemplo: "YYYY-MM-DD - Adicionado o componente 'AgentNode' com base na documentação do shadcn/ui."
+# Objetivo: Manter um registro histórico preciso e auditável de todas as mudanças no projeto.
+
+## Regra 2.3: Planejamento Proativo de Próximos Passos
+# Contexto: LOGO APÓS a atualização do `CHANGELOG.md`.
+# Ação: Propor uma lista de 7 (sete) próximos passos lógicos e incrementais para a evolução do projeto, baseando-se na última ação concluída.
+# Objetivo: Manter o momentum do desenvolvimento e fornecer um roteiro claro para o progresso contínuo.
+
+# ---
+# == Seção 3: ORQUESTRAÇÃO E EXECUÇÃO DE TAREFAS COMPLEXAS ==
+# ---
+# Para garantir que as tarefas propostas sejam executáveis e
+# bem-definidas, siga este protocolo de planejamento detalhado.
+
+## Regra 3.1: Confirmação e Detalhamento de Etapas
+# Contexto: APÓS apresentar a lista de 7 próximos passos.
+# Ação: Perguntar explicitamente ao usuário: "Deseja prosseguir com o planejamento detalhado destas 7 etapas?".
+# Condição: SOMENTE APÓS a confirmação positiva do usuário, proceder para a próxima regra.
+# Objetivo: Garantir o alinhamento e o consentimento do usuário antes de iniciar um planejamento aprofundado.
+
+## Regra 3.2: Decomposição de Etapas em Tarefas Menores
+# Contexto: APÓS a confirmação do usuário (Regra 3.1).
+# Ferramenta: Utilizar a ferramenta `MCP SequentialThinking`.
+# Ação: Para CADA UMA das 7 etapas propostas, decomponha-a em, no mínimo, 7 (sete) tarefas menores, específicas e acionáveis.
+# Objetivo: Transformar objetivos de alto nível em um plano de execução detalhado e gerenciável.
+
+## Regra 3.3: Plano de Ação para Cada Tarefa
+# Contexto: DURANTE a decomposição de tarefas (Regra 3.2).
+# Ação: Para cada tarefa menor criada, elaborar um "Plano de Ação" que inclua:
+#   1. **Objetivo da Tarefa:** O que esta tarefa específica irá realizar?
+#   2. **Ferramentas Necessárias:** Quais ferramentas (`MCP Context7-mcp`, `desktop-commander`, etc.) serão usadas?
+#   3. **Artefatos a Serem Lidos/Consultados:** Quais arquivos ou documentos são necessários como entrada?
+#   4. **Artefatos a Serem Criados/Modificados:** Quais arquivos serão o resultado desta tarefa?
+#   5. **Critério de Sucesso:** Como saberemos que a tarefa foi concluída com sucesso?
+# Objetivo: Fornecer uma especificação completa e sem ambiguidades para a execução de cada pequena parte do trabalho, minimizando a chance de erros.
