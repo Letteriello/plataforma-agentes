@@ -1,54 +1,70 @@
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge'; // Assuming Badge is styled according to Nexus DS
+import { Badge } from '@/components/ui/badge'; 
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Bell } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { AgentSelector } from '@/components/debug/AgentSelector'; // Nova importação
+import { ContextPanelData } from '@/components/context/types'; // Para o tipo Pick
 
 interface TopbarProps {
   pageTitle?: string;
+  agentsForSelector?: Pick<ContextPanelData, 'id' | 'title'>[]; // Nova prop
+  selectedAgentIdForSelector?: string | null; // Nova prop
+  onSelectAgentForSelector?: (agentId: string | null) => void; // Nova prop
 }
 
-export function Topbar({ pageTitle }: TopbarProps) {
+export function Topbar({ 
+  pageTitle, 
+  agentsForSelector, 
+  selectedAgentIdForSelector, 
+  onSelectAgentForSelector 
+}: TopbarProps) {
   const { user } = useAuthStore();
 
   return (
-    // Main Topbar container: h-16, px-6, bg-card, border-b border-border
-    <div className="flex h-16 items-center justify-between px-6 bg-card border-b border-border">
+    <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
       {/* Left section - Title */}
       <div className="flex items-center">
         <h2 className="text-lg font-medium text-foreground">{pageTitle || 'Dashboard'}</h2>
-        {/* Assuming Badge component and its variants are aligned with Nexus Design System */}
-        {/* For now, keeping variant="info" and size="sm" as they were */}
         <Badge variant="info" size="sm" className="ml-3">
           Beta
         </Badge>
       </div>
 
-      {/* User Actions */}
-      <div className="flex items-center gap-4">
+      {/* Central section - Agent Selector (if props are provided) */}
+      {agentsForSelector && selectedAgentIdForSelector !== undefined && onSelectAgentForSelector && (
+        <div className="flex-1 flex justify-center px-4">
+          <AgentSelector
+            agents={agentsForSelector}
+            selectedAgentId={selectedAgentIdForSelector}
+            onSelectAgent={onSelectAgentForSelector}
+            className="w-auto md:w-[320px] lg:w-[400px]" // Ajustar largura conforme necessário
+          />
+        </div>
+      )}
+
+      {/* Right section - User Actions */}
+      <div className="flex items-center gap-x-2 sm:gap-x-4">
         <ThemeToggle />
-        
-        {/* Notifications Button - variant="outline" should use border-border by default from shadcn/ui config */}
-        <Button variant="outline" size="icon" className="rounded-full"> 
-          <Bell className="h-4 w-4 text-muted-foreground" /> {/* Changed color to text-muted-foreground */}
+        <Button variant="outline" size="icon" className="rounded-full shrink-0">
+          <Bell className="h-4 w-4 text-muted-foreground" />
           <span className="sr-only">Notifications</span>
         </Button>
-        
-        {/* User Info Section with left border */}
-        <div className="flex items-center gap-2 pl-2 border-l border-border"> {/* Changed border color */}
-          <Avatar className="h-8 w-8">
+        <div className="flex items-center gap-2 pl-2 border-l border-border">
+          <Avatar className="h-8 w-8 shrink-0">
             <img 
               src={`https://api.dicebear.com/7.x/personas/svg?seed=${user?.name || 'user'}`} 
               alt={user?.name || 'User'} 
             />
           </Avatar>
           <div className="hidden md:block">
-            <p className="text-sm font-medium text-foreground">{user?.name || 'Admin User'}</p> {/* Changed color */}
-            <p className="text-xs text-muted-foreground">{user?.email || 'admin@example.com'}</p> {/* Changed color */}
+            <p className="text-sm font-medium text-foreground truncate max-w-[150px]">{user?.name || 'Admin User'}</p>
+            <p className="text-xs text-muted-foreground truncate max-w-[150px]">{user?.email || 'admin@example.com'}</p>
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
