@@ -1,51 +1,45 @@
-import * as React from "react";
+"use client"
 
-export interface ResizableProps extends React.HTMLAttributes<HTMLDivElement> {
-  direction?: "horizontal" | "vertical";
-  minSize?: number;
-  maxSize?: number;
-}
+import { GripVertical } from "lucide-react"
+import * as ResizablePrimitive from "react-resizable-panels"
 
-// Componente mínimo resizável, pronto para expansão futura
-export const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
-  ({ direction = "horizontal", minSize = 100, maxSize = 600, style, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        style={{
-          resize: direction === "horizontal" ? "horizontal" : "vertical",
-          overflow: "auto",
-          minWidth: direction === "horizontal" ? minSize : undefined,
-          maxWidth: direction === "horizontal" ? maxSize : undefined,
-          minHeight: direction === "vertical" ? minSize : undefined,
-          maxHeight: direction === "vertical" ? maxSize : undefined,
-          ...style,
-        }}
-        {...props}
-      />
-    );
-  }
-);
-Resizable.displayName = "Resizable";
+import { cn } from "@/lib/utils"
 
+const ResizablePanelGroup = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
+  <ResizablePrimitive.PanelGroup
+    className={cn(
+      "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
+      className
+    )}
+    {...props}
+  />
+)
 
-export const ResizablePanelGroup = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { direction?: string }>(
-  ({ children, direction, ...props }, ref) => (
-    <div ref={ref} {...props}>{children}</div>
-  )
-);
-ResizablePanelGroup.displayName = "ResizablePanelGroup";
+const ResizablePanel = ResizablePrimitive.Panel
 
-export const ResizablePanel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { defaultSize?: number, minSize?: number, maxSize?: number }>(
-  ({ children, defaultSize, minSize, maxSize, ...props }, ref) => (
-    <div ref={ref} {...props}>{children}</div>
-  )
-);
-ResizablePanel.displayName = "ResizablePanel";
+const ResizableHandle = ({
+  withHandle,
+  className,
+  ...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+  withHandle?: boolean
+}) => (
+  <ResizablePrimitive.PanelResizeHandle
+    className={cn(
+      "relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
+      className
+    )}
+    {...props}
+  >
+    {withHandle && (
+      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
+        <GripVertical className="h-2.5 w-2.5" />
+      </div>
+    )}
+  </ResizablePrimitive.PanelResizeHandle>
+)
 
-export const ResizableHandle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { withHandle?: boolean }>(
-  ({ className = "", withHandle, ...props }, ref) => (
-    <div ref={ref} className={"cursor-col-resize bg-border/50 w-[1px] "+className} {...props} />
-  )
-);
-ResizableHandle.displayName = "ResizableHandle";
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle }

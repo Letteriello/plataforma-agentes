@@ -2,17 +2,21 @@ import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Bell, User, Settings, LogOut } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 
-export function Topbar() {
-  const { user, logout } = useAuthStore();
+interface TopbarProps {
+  pageTitle?: string;
+}
+
+export function Topbar({ pageTitle }: TopbarProps) {
+  const { user } = useAuthStore();
 
   return (
     <div className="flex h-16 items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
       {/* Left section - Title */}
       <div className="flex items-center">
-        <h2 className="text-lg font-medium text-slate-900 dark:text-white">Dashboard</h2>
+        <h2 className="text-lg font-medium text-slate-900 dark:text-white">{pageTitle || 'Dashboard'}</h2>
         <Badge variant="info" size="sm" className="ml-3">
           Beta
         </Badge>

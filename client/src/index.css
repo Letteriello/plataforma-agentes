@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: optional;
+  src: url('/fonts/Inter.var.woff2') format('woff2');
+  font-named-instance: 'Regular';
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,32 +36,32 @@
     
     /* Status colors */
     --success: 142.1 76.2% 36.3%;
-    --success-foreground: 355.7 100% 100%;
+    --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 355.7 100% 100%;
+    --warning-foreground: 0 0% 100%;
     --info: 221.2 83.2% 53.3%;
-    --info-foreground: 355.7 100% 100%;
+    --info-foreground: 0 0% 100%;
   }
  
   .dark {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --card: #18181b;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: #3b82f6;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: #22d3ee;
-    --accent-foreground: 210 40% 98%;
-    --destructive: #ef4444;
-    --destructive-foreground: 210 40% 98%;
-    --border: #27272a;
-    --input: 217.2 32.6% 17.5%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 6% 10%; /* #18181b */
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
     --ring: 224.3 76.3% 48%;
     
     /* Status colors - dark mode */
@@ -61,7 +70,7 @@
     --warning: 38 92% 50%;
     --warning-foreground: 26 83.3% 14.1%;
     --info: 221.2 83.2% 53.3%;
-    --info-foreground: 224.3 76.3% 48%;
+    --info-foreground: 0 0% 100%;
   }
 }
 
@@ -69,34 +78,66 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground;
-    font-family: "Inter", sans-serif;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Typography */
+  h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+  
+  h2 {
+    @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+  }
+  
+  h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+  
+  h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+  
+  p {
+    @apply leading-7 [&:not(:first-child)]:mt-6;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/30;
   }
 }
 
-/* Estilos base para o layout da aplicação */
+/* Base layout styles */
 #root {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  @apply flex min-h-screen flex-col;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Focus styles */
+.focus-ring {
+  @apply ring-2 ring-ring ring-offset-2 ring-offset-background outline-none;
+}
+
+/* Remove focus outline for mouse users but keep for keyboard navigation */
+:focus:not(:focus-visible) {
+  @apply outline-none ring-0;
+}
+
+/* Custom selection color */
+::selection {
+  @apply bg-primary/20 text-foreground;
 }

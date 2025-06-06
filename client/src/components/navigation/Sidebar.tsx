@@ -1,6 +1,7 @@
+// src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Bot, Wrench, Upload, Settings, FlaskConical, FileText } from 'lucide-react';
+import { LayoutDashboard, Bot, Wrench, Settings, FlaskConical, FileText } from 'lucide-react';
 
 type NavItem = {
   title: string;
@@ -46,7 +47,7 @@ export function Sidebar() {
   const { pathname } = useLocation();
 
   return (
-    <div className="flex h-full flex-col bg-white dark:bg-slate-950">
+    <div className="flex h-full w-64 flex-col bg-card"> 
       <div className="flex h-16 items-center border-b border-border px-6">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">

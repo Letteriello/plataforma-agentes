@@ -12,23 +12,28 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        lazy: () => import('@/pages/Dashboard'),
+        lazy: async () => { const { default: Component } = await import('@/pages/Dashboard'); return { Component }; },
+        handle: { title: 'Dashboard' },
       },
       {
         path: 'agentes',
-        lazy: () => import('@/pages/Agentes'),
+        lazy: async () => { const { default: Component } = await import('@/pages/Agentes'); return { Component }; },
+        handle: { title: 'Agentes' },
       },
       {
         path: 'ferramentas',
-        lazy: () => import('@/pages/Ferramentas'),
+        lazy: async () => { const { default: Component } = await import('@/pages/Ferramentas'); return { Component }; },
+        handle: { title: 'Ferramentas' },
       },
       {
         path: 'deploy',
-        lazy: () => import('@/pages/Deploy'),
+        lazy: async () => { const { default: Component } = await import('@/pages/Deploy'); return { Component }; },
+        handle: { title: 'Deploy' },
       },
       {
         path: 'configuracoes',
-        lazy: () => import('@/pages/Configuracoes'),
+        lazy: async () => { const { default: Component } = await import('@/pages/Configuracoes'); return { Component }; },
+        handle: { title: 'Configurações' },
       },
     ],
   },
