@@ -1,3 +1,4 @@
+2025-06-06 - Concluído o refinamento estilístico do MainLayout, Sidebar, Topbar e placeholder do Context Panel, alinhando-os com as especificações do Nexus Design System. Componentes agora utilizam cores, tipografia e espaçamentos definidos (bg-card, bg-background, border-border, text-foreground, etc.).
 2025-06-06 - Corrigido o problema de layout dos painéis redimensionáveis (`ResizablePanelGroup`, `ResizablePanel`, `ResizableHandle`) no `MainLayout.tsx`. Instalada a dependência `react-resizable-panels` e substituído o arquivo `client/src/components/ui/resizable.tsx` pela implementação oficial do `shadcn/ui`, tornando os handles visíveis e funcionais.
 2025-06-06 - Reestruturado MainLayout.tsx para corrigir o posicionamento da Sidebar, Topbar, Context Panel e Outlet, adotando uma estrutura de 2 colunas principais com aninhamento para Context Panel e Outlet.
 2025-06-06 - Resolvido problema de inicialização do Storybook (v8.1.11) através da instalação explícita do `@storybook/cli` e da correção de conflitos de dependência com Vite. Instaladas dependências `uuid`, `@types/uuid`, `date-fns` e `@radix-ui/react-dialog` para corrigir erros de tempo de execução no `npm run dev`.
@@ -6,15 +7,9 @@
 2025-06-06 - Removidas importações (`User`, `Settings`, `LogOut`) e variável (`logout`) não utilizadas de `client/src/components/navigation/Topbar.tsx` para limpar avisos.
 2025-06-06 - Reinstalados os pacotes `@storybook/react` e `@storybook/addon-styling` na tentativa de corrigir erros de resolução de tipos.
 2025-06-06 - Removido `@storybook/react` do array `compilerOptions.types` em `client/.storybook/tsconfig.json` para permitir a descoberta automática de tipos e resolver erro persistente.
-2025-06-06 - Etapa 2.1: Criado o componente `MainLayout.tsx` em `client/src/components/layout/` com estrutura JSX básica, props para `children`, estilos Tailwind iniciais para layout de duas colunas e placeholders visuais para `Sidebar` e `Topbar`.
-2025-06-06 - Configurou os fundamentos visuais do projeto (Etapa 1): Tailwind CSS, paleta de cores Nexus, tipografia base (Inter), ícones (lucide-react), componentes shadcn/ui iniciais (Button, Card, Badge, Avatar), estilo de fundo global e utilitário cn.
-2025-06-06 - Corrigido erro crítico de build no frontend: instalação das dependências (@radix-ui/react-tooltip, class-variance-authority, clsx, lucide-react, @tailwindcss/typography) e ajuste de extensão do arquivo use-toast.tsx para suportar JSX, conforme protocolo mestre.
-2025-06-06 - Criados os componentes mínimos 'theme-provider' e 'ui/resizable' para corrigir erros de importação e alinhar com a arquitetura React + shadcn/ui do projeto.
-2025-06-06 - Implementado ToastProvider no App.tsx para resolver erro fatal "useToast must be used within a ToastProvider" e garantir funcionamento correto do sistema de notificações.
-2025-06-06 - Corrigido erro de sintaxe no Dashboard.tsx que impedia a compilação devido à duplicação da declaração do componente.
-2025-06-06 - Adaptados componentes UI (Avatar, Button e Tooltip) para remover dependências de bibliotecas Radix UI não instaladas, seguindo a estratégia de componentes próprios para máxima flexibilidade conforme documentação em docs/shadcn/doc_shadcn.md.
-2025-06-06 - Configurado o layout principal da aplicação (MainLayout, Sidebar, Topbar) com painéis redimensionáveis e títulos de página dinâmicos baseados nas rotas. Componentes de layout movidos para `client/src/components/layouts` e `client/src/components/navigation`. Criadas páginas placeholder para navegação.
-2025-06-06 - Corrigido erro de sintaxe no sessionStore.ts relacionado a parênteses extras na criação do store Zustand que impedia a compilação da aplicação.
+2025-06-06 - Etapa 2.1: Criado o componente `MainLayout.tsx` em `client/src/components/layout/` com estrutura JSX básica, props para `children`, estilos Tailwind iniciais para layout de duas colunas e placeholders visuais para `Sidebar` e 
+<conteúdo anterior truncado>
+025-06-06 - Corrigido erro de sintaxe no sessionStore.ts relacionado a parênteses extras na criação do store Zustand que impedia a compilação da aplicação.
 2025-06-06 - Implementado ThemeProvider completo com suporte a temas claro, escuro e sistema, seguindo as diretrizes do Nexus Design System documentadas em docs/ui-ux/design_system.md.
 2025-06-06 - Criado componente ThemeToggle para permitir alternância entre os modos claro e escuro, melhorando a acessibilidade e experiência do usuário.
 2025-06-06 - Redesenhado o layout principal (MainLayout) para uma interface mais moderna e limpa, com sidebar fixa e conteúdo principal responsivo.
