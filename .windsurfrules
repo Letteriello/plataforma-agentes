@@ -1,0 +1,14 @@
+# windsurf/workspacerules.toml
+
+# Regra: Criar um novo componente de UI no lugar certo.
+[[rule]]
+prompt = "crie um novo componente de UI chamado (\\w+)"
+tool = "desktop-commander"
+# O $1 captura o nome do componente do seu prompt.
+args = ["touch", "./client/src/components/$1.tsx"]
+
+# Regra: Listar todos os nós de agentes existentes.
+[[rule]]
+prompt = "liste os componentes de nós de agentes"
+tool = "desktop-commander"
+args = ["ls", "./client/src/components/agents/nodes"]
