@@ -13,7 +13,10 @@ const AgentesPage: React.FC = () => {
       <div style={{ flex: '0 0 300px', marginRight: '20px' }}>
         {/* Replace div with <Card className="h-full"> once shadcn is confirmed */}
         <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '100%', padding: '16px' }}>
-          <AgentList />
+          <AgentList
+          agents={[]}
+          title="Agentes Disponíveis"
+        />
         </div>
       </div>
 

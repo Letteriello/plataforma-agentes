@@ -1,34 +1,81 @@
 import React, { useState } from 'react';
-import { LlmAgentConfig, AgentType, AnyAgentConfig } from '@/types/agent'; // Assuming '@/' path alias
-import { LlmAgentConfig, AgentType } from '@/types/agent'; // Assuming '@/' path alias
-import AgentConfigurator from '@/components/agents/AgentConfigurator'; // Assuming '@/' path alias
+import { LlmAgentConfig, AgentType, AnyAgentConfig } from '@/types/agent';
+import AgentConfigurator from '@/components/agents/AgentConfigurator';
 import JsonPreview from './JsonPreview';
+import AgentList from './AgentList';
 
-const AgentWorkspace: React.FC = () => {
-  const initialLlmConfig: LlmAgentConfig = {
-  const initialConfig: LlmAgentConfig = {
-    id: crypto.randomUUID(),
-    name: '',
+const mockAgents: AnyAgentConfig[] = [
+  {
+    id: 'agent_1',
+    name: 'Agente de Pesquisa Web',
     type: AgentType.LLM,
-    instruction: '',
+    instruction: 'Pesquise na web',
     model: 'gpt-3.5-turbo',
     code_execution: false,
     planning_enabled: false,
-    tools: [],
+    tools: ['web_search']
+  },
+  {
+    id: 'agent_2',
+    name: 'Agente Escritor de Artigos',
+    type: AgentType.LLM,
+    instruction: 'Escreva um artigo',
+    model: 'gpt-4',
+    code_execution: true,
+    planning_enabled: true,
+    tools: ['web_search', 'image_generator']
+  },
+  {
+    id: 'agent_3',
+    name: 'Agente Tradutor',
+    type: AgentType.LLM,
+    instruction: 'Traduza o texto',
+    model: 'gpt-3.5-turbo',
+    code_execution: false,
+    planning_enabled: false,
+    tools: ['calculator']
+  }
+];
+
+const AgentWorkspace: React.FC = () => {
+  const [selectedAgent, setSelectedAgent] = useState<AnyAgentConfig | null>(null);
+  const [agentConfig, setAgentConfig] = useState<AnyAgentConfig | null>(null);
+
+  const handleAgentSelect = (agentId: string) => {
+    const selectedAgent = mockAgents.find(agent => agent.id === agentId);
+    if (selectedAgent) {
+      setSelectedAgent(selectedAgent);
+      setAgentConfig(selectedAgent);
+    }
   };
-  const [agentConfig, setAgentConfig] = useState<AnyAgentConfig>(initialLlmConfig);
-    // tools: [] // Uncomment or add if 'tools' is part of LlmAgentConfig and needed
+
+  const handleConfigChange = (newConfig: AnyAgentConfig) => {
+    setAgentConfig(newConfig);
   };
-  const [agentConfig, setAgentConfig] = useState<LlmAgentConfig>(initialConfig);
+
+  const handleSave = () => {
+    if (!selectedAgent || !agentConfig) return;
+    // TODO: Implement save logic
+  };
 
   return (
-    <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-      <div style={{ flex: 1 }}>
-        {/* <h2>Agent Workspace</h2> */}
-        <AgentConfigurator agentConfig={agentConfig} onConfigChange={setAgentConfig} />
+    <div className="flex h-full">
+      <div className="flex-1">
+        <AgentList
+          agents={mockAgents}
+          selectedAgentIds={selectedAgent ? [selectedAgent.id] : []}
+          onAgentToggle={handleAgentSelect}
+          selectable={true}
+          title="Agentes Disponíveis"
+        />
       </div>
-      <div style={{ flex: 1 }}>
-        <JsonPreview data={agentConfig} />
+      <div className="w-96 border-l">
+        {agentConfig && (
+          <AgentConfigurator
+            agentConfig={agentConfig!}
+            onConfigChange={handleConfigChange}
+          />
+        )}
       </div>
     </div>
   );

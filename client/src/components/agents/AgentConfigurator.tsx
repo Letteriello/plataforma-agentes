@@ -1,125 +1,257 @@
 import React, { useState } from 'react';
-import { LlmAgentConfig, AgentType, AnyAgentConfig, SequentialAgentConfig, ParallelAgentConfig } from '@/types/agent';
-import { LlmAgentConfig, AgentType } from '@/types/agent';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { LlmAgentConfig, AgentType, AnyAgentConfig, SequentialAgentConfig, ParallelAgentConfig, LoopAgentConfig } from '@/types/agent';
 import {
+  Input,
+  Textarea,
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import {
+  SelectContent,
+  SelectItem,
+  Switch,
   Dialog,
+  DialogTrigger,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { ToolSelector } from '@/components/agents/tools';
-import { Badge } from "@/components/ui/badge";
-import { XIcon } from 'lucide-react'; // Ou use um 'x' textual se lucide-react não estiver disponível
-import mockToolsData from '../../../data/mock-tools.json'; // Ajuste o caminho se necessário
-import { AgentDropzone } from '@/components/agents/workflow';
-import AgentList from '@/components/agents/AgentList';
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ToolSelector } from '@/components/agents/tools';
-
-// Assuming shadcn/ui components are available.
-// For now, let's use a placeholder div if Card is not found by the linter.
-// import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'; // Example import
+  Badge,
+  Button,
+  Label,
+} from '@/components/ui';
+import { XIcon } from 'lucide-react';
+import { AgentType, AnyAgentConfig, LlmAgentConfig, SequentialAgentConfig, ParallelAgentConfig, LoopAgentConfig } from '@/types/agent';
+import { mockToolsData, mockExistingAgents } from '@/data/mockData';
+import ToolSelector from './ToolSelector';
+import AgentList from './AgentList';
+import AgentDropzone from './AgentDropzone';
 
 interface AgentConfiguratorProps {
-  agentConfig: AnyAgentConfig; // Changed to AnyAgentConfig
-  onConfigChange: (newConfig: AnyAgentConfig) => void; // Changed to AnyAgentConfig
-  agentConfig: LlmAgentConfig;
-  onConfigChange: (newConfig: LlmAgentConfig) => void;
+  agentConfig: AnyAgentConfig;
+  onConfigChange: (config: AnyAgentConfig) => void;
 }
 
 const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onConfigChange }) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    onConfigChange({
-      ...agentConfig,
-      [name]: value,
-    });
+  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
+  const [isAddSubAgentModalOpen, setIsAddSubAgentModalOpen] = useState(false);
+  const [selectedAgentIdsForModal, setSelectedAgentIdsForModal] = useState<string[]>([]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    onConfigChange({ ...agentConfig, [name]: value });
   };
 
-  // Renamed from handleSelectChange to handleTypeChange for clarity
-  const handleTypeChange = (newTypeString: string) => {
-    const newType = newTypeString as AgentType;
-    const baseConfig = {
-      id: agentConfig.id, // Preserve ID
-      name: agentConfig.name, // Preserve Name
-      type: newType,
+  const handleTypeChange = (value: AgentType) => {
+    const newConfig: AnyAgentConfig = {
+      id: agentConfig.id || crypto.randomUUID(),
+      name: agentConfig.name,
+      type: value,
+      tools: agentConfig.tools || [],
+      instruction: value === AgentType.LLM ? agentConfig.instruction || '' : undefined,
+      code_execution: value === AgentType.LLM ? (agentConfig as LlmAgentConfig).code_execution || false : undefined,
+      planning_enabled: value === AgentType.LLM ? (agentConfig as LlmAgentConfig).planning_enabled || false : undefined,
+      agents: value === AgentType.Sequential ? (agentConfig as SequentialAgentConfig).agents || [] : undefined,
+      parallel_agents: value === AgentType.Parallel ? (agentConfig as ParallelAgentConfig).parallel_agents || [] : undefined,
+      loop_agent: value === AgentType.Loop ? (agentConfig as LoopAgentConfig).loop_agent || undefined : undefined
     };
+    onConfigChange(newConfig);
+  };
 
-    if (newType === AgentType.LLM) {
-      onConfigChange({
-        ...baseConfig,
-        instruction: (agentConfig as LlmAgentConfig).instruction || '', // Retain if possible, else default
-        model: (agentConfig as LlmAgentConfig).model || 'gpt-3.5-turbo', // Retain if possible, else default
-        code_execution: (agentConfig as LlmAgentConfig).code_execution || false,
-        planning_enabled: (agentConfig as LlmAgentConfig).planning_enabled || false,
-        tools: (agentConfig as LlmAgentConfig).tools || [],
-      } as LlmAgentConfig);
-    } else if (newType === AgentType.Sequential || newType === AgentType.Parallel) {
-      let newSpecificConfig: SequentialAgentConfig | ParallelAgentConfig;
-      if (newType === AgentType.Sequential) {
-        newSpecificConfig = {
-          ...baseConfig,
-          type: AgentType.Sequential,
-          agents: (agentConfig as SequentialAgentConfig).agents || [], // Retain if possible, else default
-        };
-      } else { // AgentType.Parallel
-        newSpecificConfig = {
-          ...baseConfig,
-          type: AgentType.Parallel,
-          agents: (agentConfig as ParallelAgentConfig).agents || [], // Retain if possible, else default
-        };
-      }
-      onConfigChange(newSpecificConfig);
-    } else {
-      // For other types or if no specific fields are needed initially beyond base
+  const handleSwitchChange = (checked: boolean, field: keyof LlmAgentConfig) => {
+    const newConfig = { ...agentConfig, [field]: checked } as LlmAgentConfig;
+    onConfigChange(newConfig);
+  };
+
+  const handleToolSelection = (selectedToolIds: string[]) => {
+    const newConfig = { ...agentConfig, tools: selectedToolIds } as LlmAgentConfig;
+    onConfigChange(newConfig);
+    setIsToolSelectorOpen(false);
+  };
+
+  const handleSave = () => {
+    console.log('Salvando agente:', agentConfig);
+    console.log(JSON.stringify(agentConfig, null, 2));
+  };
+
+  const handleRemoveTool = (toolIdToRemove: string) => {
+    const updatedTools = agentConfig.tools?.filter(id => id !== toolIdToRemove) || [];
+    const newConfig = { ...agentConfig, tools: updatedTools } as LlmAgentConfig;
+    onConfigChange(newConfig);
+  };
+
+  const isSaveDisabled = !agentConfig.name || agentConfig.name.trim() === '' ||
+    (agentConfig.type === AgentType.LLM && !agentConfig.instruction?.trim());
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome do Agente</Label>
+        <Input
+          id="name"
+          name="name"
+          value={agentConfig.name}
+          onChange={handleInputChange}
+          placeholder="Nome do agente"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="type">Tipo de Agente</Label>
+        <Select value={agentConfig.type} onValueChange={handleTypeChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o tipo de agente" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={AgentType.LLM}>LLM Agent</SelectItem>
+            <SelectItem value={AgentType.Sequential}>Sequential Agent</SelectItem>
+            <SelectItem value={AgentType.Parallel}>Parallel Agent</SelectItem>
+            <SelectItem value={AgentType.Loop}>Loop Agent</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {agentConfig.type === AgentType.LLM && (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="instruction">Instrução</Label>
+            <Textarea
+              id="instruction"
+              name="instruction"
+              value={agentConfig.instruction}
+              onChange={handleInputChange}
+              placeholder="Instruções para o agente"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Configurações</Label>
+            <div className="flex gap-4">
+              <div className="flex items-center">
+                <Switch
+                  id="codeExecutionSwitch"
+                  checked={(agentConfig as LlmAgentConfig).code_execution || false}
+                  onCheckedChange={(checked) => handleSwitchChange(checked, 'code_execution')}
+                />
+                <Label htmlFor="codeExecutionSwitch" className="ml-2">Execução de Código</Label>
+              </div>
+              <div className="flex items-center">
+                <Switch
+                  id="planningEnabledSwitch"
+                  checked={(agentConfig as LlmAgentConfig).planning_enabled || false}
+                  onCheckedChange={(checked) => handleSwitchChange(checked, 'planning_enabled')}
+                />
+                <Label htmlFor="planningEnabledSwitch" className="ml-2">Planejamento Habilitado</Label>
+              </div>
+            </div>
+          </div>
+
+          <Dialog open={isToolSelectorOpen} onOpenChange={setIsToolSelectorOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" onClick={() => setIsToolSelectorOpen(true)}>
+                Adicionar Ferramentas
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Selecionar Ferramentas</DialogTitle>
+              </DialogHeader>
+              <ToolSelector
+                availableTools={mockToolsData}
+                selectedTools={agentConfig.tools || []}
+                onSelectionChange={handleToolSelection}
+              />
+              <DialogFooter>
+                <Button onClick={() => setIsToolSelectorOpen(false)}>Fechar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {agentConfig.tools?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4 mb-4">
+              {agentConfig.tools?.map((toolId) => {
+                const tool = mockToolsData.find(t => t.id === toolId);
+                return (
+                  <Badge key={toolId} variant="secondary" className="flex items-center gap-1">
+                    {tool ? tool.name : toolId}
+                    <button
+                      onClick={() => handleRemoveTool(toolId)}
+                      className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      aria-label={`Remover ${tool ? tool.name : toolId}`}
+                    >
+                      <XIcon className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                    </button>
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {agentConfig.type === AgentType.Sequential && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold mb-2">Configuração do Agente Sequencial</h3>
+          <AgentDropzone subAgents={(agentConfig as SequentialAgentConfig).agents || []} />
+          <div className="mt-4">
+            <Dialog open={isAddSubAgentModalOpen} onOpenChange={setIsAddSubAgentModalOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" onClick={() => {
+                  setSelectedAgentIdsForModal([]);
+                  setIsAddSubAgentModalOpen(true);
+                }}>
+                  Adicionar Agente
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Adicionar Agente</DialogTitle>
+                </DialogHeader>
+                <AgentList
+                  selectedAgentIds={selectedAgentIdsForModal}
+                  onSelectionChange={setSelectedAgentIdsForModal}
+                />
+                <DialogFooter>
+                  <Button
+                    onClick={() => {
+                      const newConfig = {
+                        ...agentConfig,
+                        agents: [...(agentConfig as SequentialAgentConfig).agents || [], ...selectedAgentIdsForModal]
+                      } as SequentialAgentConfig;
+                      onConfigChange(newConfig);
+                      setIsAddSubAgentModalOpen(false);
+                    }}
+                    disabled={selectedAgentIdsForModal.length === 0}
+                  >
+                    Adicionar Selecionados
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsAddSubAgentModalOpen(false)}
+                  >
+                    Cancelar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSave}
+          disabled={isSaveDisabled}
+        >
+          Salvar
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default AgentConfigurator;
       onConfigChange(baseConfig);
     }
-  };
-
-  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
-    // This function is specific to LlmAgentConfig, ensure it's only called when type is LLM
-    if (agentConfig.type === AgentType.LLM) {
-      onConfigChange({
-        ...agentConfig,
-        [name]: checked,
-      } as LlmAgentConfig); // Cast to LlmAgentConfig
-    }
-  const handleSelectChange = (value: string) => {
-    onConfigChange({
-      ...agentConfig,
-      type: value as AgentType, // Cast to AgentType, ensure value is compatible
-    });
-  };
-
-  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
-    onConfigChange({
-      ...agentConfig,
-      [name]: checked,
-    });
   };
 
   const handleSave = () => {
@@ -134,107 +266,48 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
     onConfigChange({ ...agentConfig, tools: updatedTools });
   };
 
-  const isSaveDisabled = !agentConfig || !agentConfig.name || agentConfig.name.trim() === '' ||
-                         (agentConfig.type === AgentType.LLM && !(agentConfig as LlmAgentConfig).instruction?.trim());
-  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
   const [isAddSubAgentModalOpen, setIsAddSubAgentModalOpen] = useState(false);
   const [selectedAgentIdsForModal, setSelectedAgentIdsForModal] = useState<string[]>([]);
 
-  // Helper to safely access LLM specific props
-  const llmConfig = agentConfig.type === AgentType.LLM ? agentConfig as LlmAgentConfig : null;
-
-  const mockExistingAgents: AnyAgentConfig[] = [
-    { id: 'agent_1', name: 'Agente de Pesquisa Web', type: AgentType.LLM, instruction: 'Pesquise na web', model: 'gpt-3.5-turbo' },
-    { id: 'agent_2', name: 'Agente Escritor de Artigos', type: AgentType.LLM, instruction: 'Escreva um artigo', model: 'gpt-4' },
-    { id: 'agent_3', name: 'Agente Tradutor', type: AgentType.LLM, instruction: 'Traduza o texto', model: 'gpt-3.5-turbo', tools: ['calculator'] },
-  const isSaveDisabled = agentConfig.name.trim() === '' || agentConfig.instruction.trim() === '';
-  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
-
-  // Mock data for available tools - replace with actual data source later
-  const MOCK_AVAILABLE_TOOLS = [
-    { id: 'tool_1', name: 'Calculadora', description: 'Realiza cálculos matemáticos.' },
-    { id: 'tool_2', name: 'Busca na Web', description: 'Busca informações na internet.' },
-    { id: 'tool_3', name: 'Leitor de Arquivos', description: 'Lê o conteúdo de arquivos.' },
-  ];
-
   return (
-    // Replace div with <Card className="h-full">
-    <div>
-      {/* Replace div with <CardHeader> */}
-      <div>
-        {/* Replace div with <CardTitle> */}
-        <div style={{ fontWeight: 'bold', fontSize: '1.25rem', marginBottom: '1rem' }}>Agent Configuration</div>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome do Agente</Label>
+        <Input
+          id="name"
+          name="name"
+          value={agentConfig.name}
+          onChange={handleInputChange}
+          placeholder="Nome do agente"
+        />
       </div>
-      {/* Replace div with <CardContent> */}
-      <div>
-        {/* Campos Comuns */}
-        <div style={{ marginBottom: '1rem' }}>
-          <Label htmlFor="agentName">Nome do Agente</Label>
-          <Input
-            id="agentName"
-            name="name"
-            value={agentConfig.name || ''}
-            onChange={handleInputChange}
-            placeholder="Ex: Agente de Pesquisa"
-          />
-        </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <Label htmlFor="agentType">Tipo de Agente</Label>
-          <Select
-            value={agentConfig.type}
-            onValueChange={handleTypeChange} // Changed to handleTypeChange
-          >
-            <SelectTrigger id="agentType">
-              <SelectValue placeholder="Selecione o tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={AgentType.LLM}>LLM Agent</SelectItem>
-              <SelectItem value={AgentType.Sequential}>Sequential Agent</SelectItem>
-              <SelectItem value={AgentType.Parallel}>Parallel Agent</SelectItem>
-              {/* Adicione AgentType.Loop aqui se necessário */}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="type">Tipo de Agente</Label>
+        <Select value={agentConfig.type} onValueChange={handleTypeChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o tipo de agente" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={AgentType.LLM}>LLM Agent</SelectItem>
+            <SelectItem value={AgentType.Sequential}>Sequential Agent</SelectItem>
+            <SelectItem value={AgentType.Parallel}>Parallel Agent</SelectItem>
+            <SelectItem value={AgentType.Loop}>Loop Agent</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Campos Específicos do Tipo de Agente */}
-        {agentConfig.type === AgentType.LLM && llmConfig && (
-          <>
-            <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full mt-4">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Configuração Principal</AccordionTrigger>
-                <AccordionContent>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '1rem' }}>
-                    <div style={{ marginBottom: '1rem' }}>
-                      <Label htmlFor="instruction">Instrução</Label>
-                      <Textarea
-                        id="instruction"
-                        name="instruction"
-                        value={llmConfig.instruction || ''}
-                        onChange={handleInputChange}
-                        placeholder="Instrução detalhada para o agente..."
-                        rows={4}
-                      />
-                    </div>
-                    <div style={{ marginBottom: '1rem' }}>
-                      <Label htmlFor="model">Modelo</Label>
-                      <Input
-                        id="model"
-                        name="model"
-                        value={llmConfig.model || ''}
-                        onChange={handleInputChange}
-                        placeholder="Ex: gpt-4, gemini-pro"
-                      />
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger>Parâmetros Avançados</AccordionTrigger>
-                <AccordionContent>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '1rem' }}>
-                    <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Label htmlFor="codeExecutionSwitch" style={{ marginRight: '1rem' }}>Execução de Código</Label>
+      {agentConfig.type === AgentType.LLM && (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="instruction">Instrução</Label>
+            <Textarea
+              id="instruction"
+              name="instruction"
+              value={agentConfig.instruction}
+              onChange={handleInputChange}
+              placeholder="Instruções para o agente"
+            />
                       <Switch
                         id="codeExecutionSwitch"
                         checked={llmConfig.code_execution || false}
