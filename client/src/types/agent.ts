@@ -19,6 +19,8 @@ export interface LlmAgentConfig extends AgentConfig {
   type: AgentType.LLM;
   instruction: string;
   model: string;
+  code_execution?: boolean;
+  planning_enabled?: boolean;
   // Add other LLM-specific parameters here, e.g., temperature, top_p
 }
 
