@@ -18,5 +18,8 @@ export * from "./separator"
 export * from "./toaster"
 export * from "./use-toast"
 
+// Accordion components
+export * from "./accordion";
+
 // Hooks and Utilities
 export * from "@/lib/utils"

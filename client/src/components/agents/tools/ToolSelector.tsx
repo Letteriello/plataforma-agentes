@@ -6,7 +6,6 @@ import mockToolsData from '../../../data/mock-tools.json'; // Ajuste o caminho s
 // Importe aqui os componentes do shadcn/ui que serão usados no futuro
 // Ex: import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 // Ex: import { Button } from "@/components/ui/button";
-import React from 'react';
 // Importe aqui os componentes do shadcn/ui que serão usados no futuro
 // Ex: import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 // Ex: import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ interface ToolSelectorProps {
   // onOpenChange: (open: boolean) => void; // Para fechar o Dialog
 }
 
-const ToolSelector: React.FC<ToolSelectorProps> = ({
+export const ToolSelector: React.FC<ToolSelectorProps> = ({
   availableTools,
   selectedTools,
   onSelectionChange,
@@ -107,4 +106,4 @@ const ToolSelector: React.FC<ToolSelectorProps> = ({
   );
 };
 
-export default ToolSelector;
+

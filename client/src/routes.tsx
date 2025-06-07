@@ -1,10 +1,43 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import { MainLayout } from '@/components/layouts/MainLayout';
+import MainLayout from '@/components/layouts/MainLayout';
+import { lazy, Suspense } from 'react';
+
+// Lazy load components with proper error boundaries
+const withSuspense = (Component: React.ComponentType) => {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <Component />
+    </Suspense>
+  );
+};
+
+// Lazy load pages
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+import AgentesMinimoContent from '@/pages/Agentes'; // Importação direta
+// const Agentes = lazy(() => import('@/pages/Agentes')); // Comentado
+const Ferramentas = lazy(() => import('@/pages/Ferramentas'));
+const Deploy = lazy(() => import('@/pages/Deploy'));
+const Configuracoes = lazy(() => import('@/pages/Configuracoes'));
+const ChatPage = lazy(() => import('@/pages/ChatPage'));
+
+// Error boundary component
+const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+  try {
+    return <>{children}</>;
+  } catch (error) {
+    console.error('Error in route component:', error);
+    return <div>Ocorreu um erro ao carregar esta página. Por favor, tente novamente.</div>;
+  }
+};
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <MainLayout />,
+    element: (
+      <ErrorBoundary>
+        <MainLayout />
+      </ErrorBoundary>
+    ),
     children: [
       {
         index: true,
@@ -12,52 +45,40 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        lazy: async () => { const { default: Component } = await import('@/pages/Dashboard'); return { Component }; },
+        element: withSuspense(Dashboard),
         handle: { title: 'Dashboard' },
       },
       {
         path: 'agentes',
-        lazy: async () => { const { default: Component } = await import('@/pages/Agentes'); return { Component }; },
+        element: <AgentesMinimoContent />,
         handle: { title: 'Agentes' },
       },
       {
         path: 'ferramentas',
-        lazy: async () => { const { default: Component } = await import('@/pages/Ferramentas'); return { Component }; },
+        element: withSuspense(Ferramentas),
         handle: { title: 'Ferramentas' },
       },
       {
         path: 'deploy',
-        lazy: async () => { const { default: Component } = await import('@/pages/Deploy'); return { Component }; },
+        element: withSuspense(Deploy),
         handle: { title: 'Deploy' },
       },
       {
         path: 'configuracoes',
-        lazy: async () => { const { default: Component } = await import('@/pages/Configuracoes'); return { Component }; },
+        element: withSuspense(Configuracoes),
         handle: { title: 'Configurações' },
       },
       {
         path: 'chat',
-        lazy: async () => {
-          console.log('Loading ChatPage module...');
-          try {
-            // Usando import() com caminho relativo para evitar problemas com aliases
-            const module = await import('./pages/ChatPage');
-            console.log('ChatPage module loaded successfully');
-            return { Component: module.default };
-          } catch (error) {
-            console.error('Error loading ChatPage module:', error);
-            // Retornar um componente de erro ou redirecionar para uma rota de erro
-            return {
-              Component: () => <div>Erro ao carregar a página de chat. Por favor, tente novamente mais tarde.</div>
-            };
-          }
-        },
+        element: withSuspense(ChatPage),
         handle: { title: 'Chat' },
       },
       {
-        path: 'workspace', // Or a more suitable path
-        lazy: async () => { const { default: Component } = await import('@/pages/AgentWorkspace'); return { Component }; },
-        handle: { title: 'Agent Workspace' },
+        path: 'agent/:id',
+        lazy: () => import('@/pages/AgentWorkspace').then(module => ({
+          Component: () => withSuspense(module.default)
+        })),
+        handle: { title: 'Workspace do Agente' },
       },
     ],
   },
