@@ -36,8 +36,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { XIcon } from 'lucide-react';
 
-import mockToolsDataJson from '@/data/mock-tools.json'; // Corrected import
-import { mockInitialAgents as importedMockExistingAgents } from '@/data/mock-initial-agents'; // Corrected import
+import mockToolsDataJson from '@/data/mocks/mock-tools.json'; // Corrected import
+import { mockInitialAgents as importedMockExistingAgents } from '@/data/mocks/mock-initial-agents'; // Corrected import
 
 import { ToolSelector } from './tools/ToolSelector'; // Named import
 import AgentList from './AgentList';
