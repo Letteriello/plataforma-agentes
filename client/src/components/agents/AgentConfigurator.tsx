@@ -28,7 +28,27 @@ import AgentDropzone from './AgentDropzone';
 
 interface AgentConfiguratorProps {
   agentConfig: AnyAgentConfig;
+<<<<<<< HEAD
   onConfigChange: (config: AnyAgentConfig) => void;
+=======
+  onConfigChange: (newConfig: AnyAgentConfig) => void;
+  onSave?: () => Promise<void>; // Nova prop
+  isSaving?: boolean; // Nova prop
+  isCreatingNew?: boolean; // Nova prop
+}
+
+const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
+  agentConfig,
+  onConfigChange,
+  onSave,
+  isSaving,
+  isCreatingNew,
+}) => {
+  agentConfig: AnyAgentConfig; // Changed to AnyAgentConfig
+  onConfigChange: (newConfig: AnyAgentConfig) => void; // Changed to AnyAgentConfig
+  agentConfig: LlmAgentConfig;
+  onConfigChange: (newConfig: LlmAgentConfig) => void;
+>>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
 }
 
 const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onConfigChange }) => {
@@ -254,6 +274,41 @@ export default AgentConfigurator;
     }
   };
 
+<<<<<<< HEAD
+=======
+  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
+    // This function is specific to LlmAgentConfig, ensure it's only called when type is LLM
+    if (agentConfig.type === AgentType.LLM) {
+      onConfigChange({
+        ...agentConfig,
+        [name]: checked,
+      } as LlmAgentConfig); // Cast to LlmAgentConfig
+    }
+  };
+
+  // const handleSave = () => {
+  //   // Esta lógica será movida para o agentService e chamada pelo AgentWorkspace
+  //   // ou por um botão "Salvar" global na página.
+  //   // O AgentConfigurator apenas chama onConfigChange para atualizar o rascunho.
+  //   console.log('Configuração atualizada (rascunho):', agentConfig);
+  // };
+
+  // A função handleSave local foi removida, pois a lógica de salvar agora é passada via props.onSave
+  const handleSelectChange = (value: string) => {
+    onConfigChange({
+      ...agentConfig,
+      type: value as AgentType, // Cast to AgentType, ensure value is compatible
+    });
+  };
+
+  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
+    onConfigChange({
+      ...agentConfig,
+      [name]: checked,
+    });
+  };
+
+>>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
   const handleSave = () => {
     console.log('Salvando agente:', agentConfig);
     console.log(JSON.stringify(agentConfig, null, 2));
@@ -269,6 +324,64 @@ export default AgentConfigurator;
   const [isAddSubAgentModalOpen, setIsAddSubAgentModalOpen] = useState(false);
   const [selectedAgentIdsForModal, setSelectedAgentIdsForModal] = useState<string[]>([]);
 
+<<<<<<< HEAD
+=======
+  // Helper to safely access LLM specific props
+  const llmConfig = agentConfig.type === AgentType.LLM ? agentConfig as LlmAgentConfig : null;
+
+  const mockExistingAgents: AnyAgentConfig[] = [
+    { id: 'agent_1', name: 'Agente de Pesquisa Web', type: AgentType.LLM, instruction: 'Pesquise na web', model: 'gpt-3.5-turbo' },
+    { id: 'agent_2', name: 'Agente Escritor de Artigos', type: AgentType.LLM, instruction: 'Escreva um artigo', model: 'gpt-4' },
+    { id: 'agent_3', name: 'Agente Tradutor', type: AgentType.LLM, instruction: 'Traduza o texto', model: 'gpt-3.5-turbo', tools: ['calculator'] },
+    // Adicionando um agente do tipo Sequential para teste, se necessário
+    // { id: 'agent_4', name: 'Workflow de Teste Sequencial', type: AgentType.Sequential, agents: [] },
+  ];
+
+  const handleRemoveSubAgentFromWorkflow = (subAgentIdToRemove: string) => {
+    if (agentConfig.type === AgentType.Sequential || agentConfig.type === AgentType.Parallel) {
+      const currentSubAgents = (agentConfig as SequentialAgentConfig | ParallelAgentConfig).agents || [];
+      const updatedSubAgents = currentSubAgents.filter(agent => agent.id !== subAgentIdToRemove);
+      onConfigChange({ ...agentConfig, agents: updatedSubAgents });
+    }
+  };
+
+  const handleSubAgentsOrderChange = (orderedSubAgents: AnyAgentConfig[]) => {
+    if (agentConfig.type === AgentType.Sequential || agentConfig.type === AgentType.Parallel) {
+      onConfigChange({ ...agentConfig, agents: orderedSubAgents });
+    }
+  };
+
+  const handleConfirmAddSubAgents = () => {
+    if (agentConfig.type === AgentType.Sequential || agentConfig.type === AgentType.Parallel) {
+      const agentsToAdd = mockExistingAgents.filter(agent =>
+        selectedAgentIdsForModal.includes(agent.id)
+      );
+
+      const currentSubAgents = (agentConfig as SequentialAgentConfig | ParallelAgentConfig).agents || [];
+
+      const newUniqueSubAgents = agentsToAdd.filter(
+        newAgent => !currentSubAgents.some(existingAgent => existingAgent.id === newAgent.id)
+      );
+
+      if (newUniqueSubAgents.length > 0) {
+        const updatedAgentsList = [...currentSubAgents, ...newUniqueSubAgents];
+        onConfigChange({ ...agentConfig, agents: updatedAgentsList });
+      }
+    }
+    setSelectedAgentIdsForModal([]);
+    setIsAddSubAgentModalOpen(false);
+  };
+  const isSaveDisabled = agentConfig.name.trim() === '' || agentConfig.instruction.trim() === '';
+  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
+
+  // Mock data for available tools - replace with actual data source later
+  const MOCK_AVAILABLE_TOOLS = [
+    { id: 'tool_1', name: 'Calculadora', description: 'Realiza cálculos matemáticos.' },
+    { id: 'tool_2', name: 'Busca na Web', description: 'Busca informações na internet.' },
+    { id: 'tool_3', name: 'Leitor de Arquivos', description: 'Lê o conteúdo de arquivos.' },
+  ];
+
+>>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -376,6 +489,12 @@ export default AgentConfigurator;
         {agentConfig.type === AgentType.Sequential && (
           <div className="mt-4">
             <h3 className="text-xl font-semibold mb-2">Configuração do Agente Sequencial</h3>
+            <AgentDropzone
+              subAgents={(agentConfig as SequentialAgentConfig).agents || []}
+              onRemoveSubAgent={handleRemoveSubAgentFromWorkflow}
+              onSubAgentsOrderChange={handleSubAgentsOrderChange}
+              isOrderable={true} // Sequential agents are orderable
+            />
             <AgentDropzone subAgents={(agentConfig as SequentialAgentConfig).agents || []} />
             <div className="mt-4">
               <Dialog open={isAddSubAgentModalOpen} onOpenChange={setIsAddSubAgentModalOpen}>
@@ -404,6 +523,7 @@ export default AgentConfigurator;
                   />
                   <DialogFooter>
                     <Button type="button" variant="ghost" onClick={() => setIsAddSubAgentModalOpen(false)}>Cancelar</Button>
+                    <Button type="button" onClick={handleConfirmAddSubAgents}>
                     <Button type="button" onClick={() => {
                       console.log("IDs dos sub-agentes selecionados:", selectedAgentIdsForModal);
                       setIsAddSubAgentModalOpen(false);
@@ -420,6 +540,12 @@ export default AgentConfigurator;
         {agentConfig.type === AgentType.Parallel && (
           <div className="mt-4">
             <h3 className="text-xl font-semibold mb-2">Configuração do Agente Paralelo</h3>
+            <AgentDropzone
+              subAgents={(agentConfig as ParallelAgentConfig).agents || []}
+              onRemoveSubAgent={handleRemoveSubAgentFromWorkflow}
+              onSubAgentsOrderChange={handleSubAgentsOrderChange}
+              isOrderable={true} // Or false, if parallel agents order doesn't matter and D&D is not desired
+            />
             <AgentDropzone subAgents={(agentConfig as ParallelAgentConfig).agents || []} />
             <div className="mt-4">
               <Dialog open={isAddSubAgentModalOpen} onOpenChange={setIsAddSubAgentModalOpen}>
@@ -448,6 +574,7 @@ export default AgentConfigurator;
                   />
                   <DialogFooter>
                     <Button type="button" variant="ghost" onClick={() => setIsAddSubAgentModalOpen(false)}>Cancelar</Button>
+                    <Button type="button" onClick={handleConfirmAddSubAgents}>
                     <Button type="button" onClick={() => {
                       console.log("IDs dos sub-agentes selecionados:", selectedAgentIdsForModal);
                       setIsAddSubAgentModalOpen(false);
@@ -465,6 +592,14 @@ export default AgentConfigurator;
         {![AgentType.LLM, AgentType.Sequential, AgentType.Parallel].includes(agentConfig.type) && (
            <p className="mt-4">Tipo de agente não reconhecido ou configuração não disponível.</p>
         )}
+
+        <Button
+          type="button"
+          onClick={onSave}
+          disabled={isSaveDisabled || isSaving}
+          className="mt-6 w-full" // Exemplo de classes, ajuste conforme necessário
+        >
+          {isSaving ? 'Salvando...' : (isCreatingNew ? 'Criar Agente' : 'Salvar Alterações')}
         <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger>Configuração Principal</AccordionTrigger>
