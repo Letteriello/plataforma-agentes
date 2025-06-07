@@ -21,5 +21,8 @@ export * from "./use-toast"
 // Accordion components
 export * from "./accordion";
 
+// Form controls
+export * from "./checkbox"
+
 // Hooks and Utilities
 export * from "@/lib/utils"

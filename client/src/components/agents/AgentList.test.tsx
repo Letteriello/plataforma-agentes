@@ -1,11 +1,12 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import AgentList from './AgentList';
-import { useAgentStore } from '@/store/agentStore';
-import { AnyAgentConfig, AgentType } from '@/types/agent';
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
+import AgentList from './AgentList'
+import { useAgentStore } from '@/store/agentStore'
+import { AnyAgentConfig, AgentType } from '@/types/agent'
 
 // Mock o useAgentStore
-jest.mock('@/store/agentStore');
+vi.mock('@/store/agentStore')
 
 const mockAgents: AnyAgentConfig[] = [
   {
@@ -36,13 +37,11 @@ const mockAgents: AnyAgentConfig[] = [
 
 describe('AgentList Component', () => {
   beforeEach(() => {
-    // Reseta o mock antes de cada teste
-    (useAgentStore as jest.Mock).mockReturnValue({
-      agents: mockAgents,
-      // Adicione outros estados/seletores do store que AgentList possa usar, se houver
-      // Por exemplo: activeAgent: null, setActiveAgent: jest.fn(), etc.
-    });
-  });
+    // Reseta o mock antes de cada teste retornando o estado solicitado
+    vi.mocked(useAgentStore).mockImplementation((selector: any) =>
+      selector({ agents: mockAgents })
+    )
+  })
 
   test('renders all agents when searchTerm is empty', () => {
     render(<AgentList title="Meus Agentes" />);
