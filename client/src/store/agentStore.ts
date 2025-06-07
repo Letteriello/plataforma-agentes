@@ -1,7 +1,16 @@
+// src/store/agentStore.ts
 import { create } from 'zustand';
-import { AnyAgentConfig, AgentType } from '@/types/agent'; // Ajuste o caminho
-import { mockInitialAgents } from '@/data/mock-initial-agents'; // Ajuste o caminho
+import { AnyAgentConfig } from '@/types/agent';
+import { mockInitialAgents } from '@/data/mock-initial-agents';
 
+/**
+ * @interface AgentState
+ * @description Define a estrutura do estado para o gerenciamento de agentes.
+ * @property {AnyAgentConfig[]} agents - Lista de todas as configurações de agentes.
+ * @property {AnyAgentConfig | null} activeAgent - O agente atualmente selecionado para edição ou visualização.
+ * @property {boolean} isLoading - Sinalizador para operações assíncronas.
+ * @property {string | null} error - Mensagem de erro, caso ocorra.
+ */
 interface AgentState {
   agents: AnyAgentConfig[];
   activeAgent: AnyAgentConfig | null;
@@ -9,18 +18,26 @@ interface AgentState {
   error: string | null;
 }
 
+/**
+ * @interface AgentActions
+ * @description Define as ações que podem ser executadas para modificar o estado dos agentes.
+ */
 interface AgentActions {
   loadAgents: (agents: AnyAgentConfig[]) => void;
   addAgent: (agent: AnyAgentConfig) => void;
   removeAgent: (agentId: string) => void;
   updateAgent: (agent: AnyAgentConfig) => void;
-  setActiveAgent: (agent: AnyAgentConfig | string | null) => void; // Permite passar ID para buscar no store
-  _clearActiveIfMatches: (agentId: string) => void; // Ação interna auxiliar
+  setActiveAgent: (agent: AnyAgentConfig | string | null) => void;
 }
 
+/**
+ * @constant useAgentStore
+ * @description Hook customizado do Zustand para gerenciar o estado global dos agentes.
+ * Combina o estado e as ações em um único store.
+ */
 export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
   // Estado Inicial
-  agents: [], // Começa vazio, será carregado
+  agents: [],
   activeAgent: null,
   isLoading: false,
   error: null,
@@ -29,13 +46,14 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
   loadAgents: (agentsToLoad) => set({ agents: agentsToLoad }),
 
   addAgent: (agent) => {
-    // Se o agente não tiver ID, gere um (isso pode ser responsabilidade do agentService depois)
     const newAgent = agent.id ? agent : { ...agent, id: crypto.randomUUID() };
     set((state) => ({ agents: [...state.agents, newAgent] }));
   },
 
   removeAgent: (agentId) => {
-    get()._clearActiveIfMatches(agentId); // Limpa activeAgent se for o mesmo
+    if (get().activeAgent?.id === agentId) {
+      set({ activeAgent: null });
+    }
     set((state) => ({
       agents: state.agents.filter((agent) => agent.id !== agentId),
     }));
@@ -46,7 +64,6 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
       agents: state.agents.map((agent) =>
         agent.id === updatedAgent.id ? updatedAgent : agent
       ),
-      // Se o agente atualizado for o ativo, atualize o activeAgent também para ter a referência mais recente
       activeAgent: state.activeAgent?.id === updatedAgent.id ? updatedAgent : state.activeAgent,
     })),
 
@@ -60,25 +77,7 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
       set({ activeAgent: agentOrId });
     }
   },
-
-  // Ação interna para limpar activeAgent se o ID corresponder
-  // Usada por removeAgent e potencialmente por updateAgent se um agente for renomeado/desativado
-  _clearActiveIfMatches: (agentId: string) => {
-    if (get().activeAgent?.id === agentId) {
-      set({ activeAgent: null });
-    }
-  },
 }));
 
-// Carregar os agentes mock iniciais ao inicializar o store (fora do create)
-// Isso simula um carregamento inicial de dados
+// Carrega os dados mockados iniciais para popular o store na inicialização.
 useAgentStore.getState().loadAgents(mockInitialAgents);
-
-// Opcional: persistência com zustand/middleware (não incluído nesta tarefa)
-// import { persist } from 'zustand/middleware';
-// export const useAgentStore = create(
-//   persist<AgentState & AgentActions>(
-//     (set, get) => ({ ... }),
-//     { name: 'agent-storage' } // nome da chave no localStorage
-//   )
-// );

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"; // DialogTrigger não é usado pois abrimos programaticamente, DialogClose removido pois não é exportado/usado
+import { useToast } from "@/components/ui/use-toast";
 
 // TODO: Definir tipos mais robustos para o estado do agente e ferramentas
 interface AgentToolParameter {
@@ -75,6 +76,7 @@ const initialAgentState: AgentState = {
 };
 
 const Agentes: React.FC = () => {
+  const { toast } = useToast();
   const [agentState, setAgentState] = useState<AgentState>(initialAgentState);
   const [isToolDialogOpen, setIsToolDialogOpen] = useState(false);
   const [editingToolIndex, setEditingToolIndex] = useState<number | null>(null); // null para nova ferramenta, índice para editar
@@ -220,7 +222,11 @@ const Agentes: React.FC = () => {
 
     // Validação básica dentro do dialog
     if (!currentEditingTool.name.trim()) {
-      alert("O nome da ferramenta é obrigatório.");
+      toast({
+        title: "Erro de Validação",
+        description: "Por favor, preencha o nome da ferramenta.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -272,12 +278,36 @@ const Agentes: React.FC = () => {
   const handleSubmit = () => {
     // Validação básica
     const { name, model, instruction } = agentState;
-    if (!name.trim() || !model.trim() || !instruction.trim()) {
-      let missingFields = [];
-      if (!name.trim()) missingFields.push("Nome do Agente");
-      if (!model.trim()) missingFields.push("Modelo Base");
-      if (!instruction.trim()) missingFields.push("Instruções do Agente");
-      alert(`Por favor, preencha os campos obrigatórios: ${missingFields.join(', ')}.`);
+    let isValid = true;
+
+    if (!name.trim()) {
+      toast({
+        title: "Erro de Validação",
+        description: "Por favor, preencha o Nome do Agente.",
+        variant: "destructive",
+      });
+      isValid = false;
+    }
+
+    if (!model.trim()) {
+      toast({
+        title: "Erro de Validação",
+        description: "Por favor, selecione o Modelo Base.",
+        variant: "destructive",
+      });
+      isValid = false;
+    }
+
+    if (!instruction.trim()) {
+      toast({
+        title: "Erro de Validação",
+        description: "Por favor, forneça as Instruções do Agente.",
+        variant: "destructive",
+      });
+      isValid = false;
+    }
+
+    if (!isValid) {
       return;
     }
 
@@ -292,20 +322,21 @@ const Agentes: React.FC = () => {
     // Removido o div container externo, o Card agora é o elemento raiz.
     // As classes max-w-4xl e mx-auto foram removidas do Card para que ele ocupe a largura disponível.
     <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold">Configurar Agente de IA</CardTitle>
-          <CardDescription>Defina os parâmetros para o seu agente utilizando o Google ADK.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-8">
-          <Tabs defaultValue="identidade" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4">
-              <TabsTrigger value="identidade">Identidade</TabsTrigger>
-              <TabsTrigger value="instrucoes">Instruções</TabsTrigger>
-              <TabsTrigger value="geracao">Geração</TabsTrigger>
-              <TabsTrigger value="seguranca">Segurança</TabsTrigger>
-              <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
-              <TabsTrigger value="avancado">Avançado</TabsTrigger>
-            </TabsList>
+      <CardHeader>
+        <CardTitle className="text-3xl font-bold">Configurar Agente de IA</CardTitle>
+        <CardDescription>Defina os parâmetros para o seu agente utilizando o Google ADK.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        <Tabs defaultValue="identidade" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4">
+            <TabsTrigger value="identidade">Identidade</TabsTrigger>
+            <TabsTrigger value="instrucoes">Instruções</TabsTrigger>
+            <TabsTrigger value="geracao">Geração</TabsTrigger>
+            <TabsTrigger value="seguranca">Segurança</TabsTrigger>
+            <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
+            <TabsTrigger value="avancado">Avançado</TabsTrigger>
+          </TabsList>
+
 
             <TabsContent value="identidade" className="pt-4">
               {/* Identidade do Agente */}
@@ -816,7 +847,7 @@ const Agentes: React.FC = () => {
 
       {/* Dialog para Adicionar/Editar Ferramenta */}
       {isToolDialogOpen && (
-        <Dialog>
+        <Dialog open={isToolDialogOpen} onOpenChange={setIsToolDialogOpen}>
           <DialogContent>
             <DialogTitle>Adicionar/Editar Ferramenta</DialogTitle>
             <div className="space-y-4">
@@ -863,3 +894,4 @@ const Agentes: React.FC = () => {
 };
 
 export default Agentes;
+
