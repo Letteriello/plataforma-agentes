@@ -11,6 +11,9 @@ interface SubAgentCardProps {
   index: number; // Para futuras implementações de D&D e key
   onRemove?: (agentId: string) => void; // Para remover o sub-agente
   isDraggable?: boolean;
+  // onMove?: (dragIndex: number, hoverIndex: number) => void; // Para D&D
+  onRemove?: (agentId: string) => void; // Para remover o sub-agente
+  // readOnly?: boolean;
 }
 
 const SubAgentCard: React.FC<SubAgentCardProps> = ({
@@ -35,6 +38,7 @@ const SubAgentCard: React.FC<SubAgentCardProps> = ({
     zIndex: isDragging ? 100 : 'auto',
   };
 
+}) => {
   const handleRemove = () => {
     if (onRemove) {
       onRemove(agent.id);
@@ -43,6 +47,7 @@ const SubAgentCard: React.FC<SubAgentCardProps> = ({
     }
   };
 
+  // Simples mapeamento de tipo para um ícone ou cor (pode ser expandido)
   const getAgentTypeDetails = (type: AgentType) => {
     switch (type) {
       case AgentType.LLM:
@@ -51,6 +56,9 @@ const SubAgentCard: React.FC<SubAgentCardProps> = ({
         return { icon: '→', color: 'bg-green-100', label: 'Sequential' };
       case AgentType.Parallel:
         return { icon: '||', color: 'bg-yellow-100', label: 'Parallel' };
+        return { icon: '→', color: 'bg-green-100', label: 'Sequential' }; // Ícone de seta
+      case AgentType.Parallel:
+        return { icon: '||', color: 'bg-yellow-100', label: 'Parallel' }; // Ícone de paralelo
       default:
         return { icon: '⚙️', color: 'bg-gray-100', label: type };
     }
@@ -77,6 +85,11 @@ const SubAgentCard: React.FC<SubAgentCardProps> = ({
             >
               <GripVerticalIcon className="h-5 w-5 text-gray-400" />
             </button>
+    <Card className={`mb-3 shadow-md hover:shadow-lg transition-shadow duration-200 ${typeDetails.color}`}>
+      <CardHeader className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <GripVerticalIcon className="h-5 w-5 text-gray-400 cursor-grab" /> {/* Handle para D&D */}
             <div>
               <CardTitle className="text-base font-semibold">{agent.name || `Sub-Agente ${index + 1}`}</CardTitle>
               <CardDescription className="text-xs">{typeDetails.label}</CardDescription>
