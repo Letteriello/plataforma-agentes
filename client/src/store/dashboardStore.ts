@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, StateCreator } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 
 // Type-safe ID generator
@@ -36,8 +36,9 @@ interface DashboardState {
   
   // Atividades recentes
   recentActivities: Activity[];
-  
-  // Ações
+}
+
+interface DashboardActions {
   createAgent: (name: string, type: 'llm' | 'workflow' | 'tool') => void;
   updateAgentStatus: (id: string, status: AgentStatus) => void;
   addActivity: (type: Activity['type'], message: string) => void;
@@ -91,7 +92,7 @@ const MOCK_ACTIVITIES: Activity[] = [
 ];
 
 // Create the store with proper typing
-const store = (set: any, get: any) => ({
+const store: StateCreator<DashboardState & DashboardActions> = (set, get) => ({
   // Estado inicial
   agents: [...MOCK_AGENTS],
   activeAgentsCount: MOCK_AGENTS.filter(agent => agent.status === 'online').length,
@@ -162,4 +163,4 @@ const store = (set: any, get: any) => ({
 });
 
 // Create and export the store
-export const useDashboardStore = create(store);
+export const useDashboardStore = create<DashboardState & DashboardActions>(store);

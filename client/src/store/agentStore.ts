@@ -1,7 +1,7 @@
 // src/store/agentStore.ts
 import { create } from 'zustand';
 import { AnyAgentConfig } from '@/types/agent';
-import { mockInitialAgents } from '@/data/mock-initial-agents';
+import { mockInitialAgents } from '@/data/mocks/mock-initial-agents';
 
 /**
  * @interface AgentState
