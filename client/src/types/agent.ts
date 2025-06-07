@@ -19,26 +19,34 @@ export interface LlmAgentConfig extends AgentConfig {
   type: AgentType.LLM;
   instruction: string;
   model: string;
+  code_execution?: boolean;
+  planning_enabled?: boolean;
+  tools?: string[]; // <--- Adicionar esta linha
   // Add other LLM-specific parameters here, e.g., temperature, top_p
 }
 
 // Interface for Sequential Agent configuration
 export interface SequentialAgentConfig extends AgentConfig {
   type: AgentType.Sequential;
-  agents: AgentConfig[]; // List of agents to run in sequence
+  agents: AnyAgentConfig[]; // <--- Corrigido para AnyAgentConfig[]
 }
 
 // Interface for Parallel Agent configuration
 export interface ParallelAgentConfig extends AgentConfig {
   type: AgentType.Parallel;
-  agents: AgentConfig[]; // List of agents to run in parallel
+  agents: AnyAgentConfig[]; // <--- Corrigido para AnyAgentConfig[]
 }
 
 // Interface for Loop Agent configuration
 export interface LoopAgentConfig extends AgentConfig {
   type: AgentType.Loop;
-  agent: AgentConfig; // The agent to run in a loop
+  agent: AnyAgentConfig; // <--- Corrigido para AnyAgentConfig (um único agente, mas pode ser qualquer tipo)
   max_iterations?: number; // Optional maximum number of iterations
+}
+
+// Helper type for agents that contain other agents (workflows)
+export interface WorkflowAgentConfig extends AgentConfig {
+  agents: AnyAgentConfig[];
 }
 
 // Union type for any agent configuration
