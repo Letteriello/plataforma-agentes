@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { LlmAgentConfig, AgentType, AnyAgentConfig, SequentialAgentConfig, ParallelAgentConfig, LoopAgentConfig } from '@/types/agent';
-import {
+import { AgentType } from '@/types/agent';
+import { 
   Input,
   Textarea,
   Select,
@@ -8,7 +8,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-  Switch,
+  Button,
   Dialog,
   DialogTrigger,
   DialogContent,
@@ -16,26 +16,100 @@ import {
   DialogTitle,
   DialogFooter,
   Badge,
-  Button,
-  Label,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  DialogClose
 } from '@/components/ui';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { XIcon } from 'lucide-react';
-import { AgentType, AnyAgentConfig, LlmAgentConfig, SequentialAgentConfig, ParallelAgentConfig, LoopAgentConfig } from '@/types/agent';
 import { mockToolsData, mockExistingAgents } from '@/data/mockData';
-import ToolSelector from './ToolSelector';
-import AgentList from './AgentList';
-import AgentDropzone from './AgentDropzone';
+import { ToolSelector } from './tools/ToolSelector';
+import { AgentList } from './AgentList';
+import { AgentDropzone } from './workflow/AgentDropzone';
+import { deepClone } from '@/lib/utils';
+
+// Type definitions for agent configurations
+interface BaseAgentConfig {
+  id: string;
+  name: string;
+  type: AgentType;
+  tools?: string[];
+}
+
+interface LlmAgentConfig extends BaseAgentConfig {
+  instruction: string;
+  code_execution: boolean;
+  planning_enabled: boolean;
+}
+
+interface SequentialAgentConfig extends BaseAgentConfig {
+  agents: string[];
+}
+
+interface ParallelAgentConfig extends BaseAgentConfig {
+  parallel_agents: string[];
+}
+
+interface LoopAgentConfig extends BaseAgentConfig {
+  loop_agent: string;
+}
+
+// Union type for all agent configs
+export type AgentConfig = LlmAgentConfig | SequentialAgentConfig | ParallelAgentConfig | LoopAgentConfig;
 
 interface AgentConfiguratorProps {
-  agentConfig: AnyAgentConfig;
-<<<<<<< HEAD
-  onConfigChange: (config: AnyAgentConfig) => void;
-=======
-  onConfigChange: (newConfig: AnyAgentConfig) => void;
-  onSave?: () => Promise<void>; // Nova prop
-  isSaving?: boolean; // Nova prop
-  isCreatingNew?: boolean; // Nova prop
+  agentConfig: AgentConfig;
+  onConfigChange: (newConfig: AgentConfig) => void;
+  onSave?: () => Promise<void>;
+  isSaving?: boolean;
+  isCreatingNew?: boolean;
 }
+
+interface AgentConfiguratorState {
+  isToolSelectorOpen: boolean;
+  isAddSubAgentModalOpen: boolean;
+  selectedAgentIdsForModal: string[];
+}
+
+// Helper function to create new agent config
+const createNewAgentConfig = (type: AgentType): AgentConfig => {
+  const baseConfig: BaseAgentConfig = {
+    id: crypto.randomUUID(),
+    name: '',
+    type,
+    tools: []
+  };
+
+  switch (type) {
+    case AgentType.LLM:
+      return {
+        ...baseConfig,
+        instruction: '',
+        code_execution: false,
+        planning_enabled: false
+      } as LlmAgentConfig;
+    case AgentType.Sequential:
+      return {
+        ...baseConfig,
+        agents: []
+      } as SequentialAgentConfig;
+    case AgentType.Parallel:
+      return {
+        ...baseConfig,
+        parallel_agents: []
+      } as ParallelAgentConfig;
+    case AgentType.Loop:
+      return {
+        ...baseConfig,
+        loop_agent: ''
+      } as LoopAgentConfig;
+    default:
+      throw new Error(`Unknown agent type: ${type}`);
+  }
+};
 
 const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
   agentConfig,
@@ -44,48 +118,31 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
   isSaving,
   isCreatingNew,
 }) => {
-  agentConfig: AnyAgentConfig; // Changed to AnyAgentConfig
-  onConfigChange: (newConfig: AnyAgentConfig) => void; // Changed to AnyAgentConfig
-  agentConfig: LlmAgentConfig;
-  onConfigChange: (newConfig: LlmAgentConfig) => void;
->>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
-}
-
-const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onConfigChange }) => {
-  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
-  const [isAddSubAgentModalOpen, setIsAddSubAgentModalOpen] = useState(false);
-  const [selectedAgentIdsForModal, setSelectedAgentIdsForModal] = useState<string[]>([]);
+  const [state, setState] = useState<AgentConfiguratorState>({
+    isToolSelectorOpen: false,
+    isAddSubAgentModalOpen: false,
+    selectedAgentIdsForModal: []
+  });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
-    onConfigChange({ ...agentConfig, [name]: value });
+    onConfigChange({ ...agentConfig, [name]: value } as AgentConfig);
   };
 
   const handleTypeChange = (value: AgentType) => {
-    const newConfig: AnyAgentConfig = {
-      id: agentConfig.id || crypto.randomUUID(),
-      name: agentConfig.name,
-      type: value,
-      tools: agentConfig.tools || [],
-      instruction: value === AgentType.LLM ? agentConfig.instruction || '' : undefined,
-      code_execution: value === AgentType.LLM ? (agentConfig as LlmAgentConfig).code_execution || false : undefined,
-      planning_enabled: value === AgentType.LLM ? (agentConfig as LlmAgentConfig).planning_enabled || false : undefined,
-      agents: value === AgentType.Sequential ? (agentConfig as SequentialAgentConfig).agents || [] : undefined,
-      parallel_agents: value === AgentType.Parallel ? (agentConfig as ParallelAgentConfig).parallel_agents || [] : undefined,
-      loop_agent: value === AgentType.Loop ? (agentConfig as LoopAgentConfig).loop_agent || undefined : undefined
-    };
+    const newConfig = createNewAgentConfig(value);
     onConfigChange(newConfig);
   };
 
-  const handleSwitchChange = (checked: boolean, field: keyof LlmAgentConfig) => {
-    const newConfig = { ...agentConfig, [field]: checked } as LlmAgentConfig;
+  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
+    const newConfig = { ...agentConfig, [name]: checked } as AgentConfig;
     onConfigChange(newConfig);
   };
 
   const handleToolSelection = (selectedToolIds: string[]) => {
-    const newConfig = { ...agentConfig, tools: selectedToolIds } as LlmAgentConfig;
+    const newConfig = { ...agentConfig, tools: selectedToolIds } as AgentConfig;
     onConfigChange(newConfig);
-    setIsToolSelectorOpen(false);
+    setState(prev => ({ ...prev, isToolSelectorOpen: false }));
   };
 
   const handleSave = () => {
@@ -95,7 +152,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
 
   const handleRemoveTool = (toolIdToRemove: string) => {
     const updatedTools = agentConfig.tools?.filter(id => id !== toolIdToRemove) || [];
-    const newConfig = { ...agentConfig, tools: updatedTools } as LlmAgentConfig;
+    const newConfig = { ...agentConfig, tools: updatedTools } as AgentConfig;
     onConfigChange(newConfig);
   };
 
@@ -165,9 +222,9 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
             </div>
           </div>
 
-          <Dialog open={isToolSelectorOpen} onOpenChange={setIsToolSelectorOpen}>
+          <Dialog open={state.isToolSelectorOpen} onOpenChange={(open) => setState(prev => ({ ...prev, isToolSelectorOpen: open }))}>
             <DialogTrigger asChild>
-              <Button variant="outline" onClick={() => setIsToolSelectorOpen(true)}>
+              <Button variant="outline" onClick={() => setState(prev => ({ ...prev, isToolSelectorOpen: true }))}>
                 Adicionar Ferramentas
               </Button>
             </DialogTrigger>
@@ -181,7 +238,9 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
                 onSelectionChange={handleToolSelection}
               />
               <DialogFooter>
-                <Button onClick={() => setIsToolSelectorOpen(false)}>Fechar</Button>
+                <DialogClose asChild>
+                  <Button onClick={() => setState(prev => ({ ...prev, isToolSelectorOpen: false }))}>Fechar</Button>
+                </DialogClose>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -213,11 +272,10 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
           <h3 className="text-xl font-semibold mb-2">Configuração do Agente Sequencial</h3>
           <AgentDropzone subAgents={(agentConfig as SequentialAgentConfig).agents || []} />
           <div className="mt-4">
-            <Dialog open={isAddSubAgentModalOpen} onOpenChange={setIsAddSubAgentModalOpen}>
+            <Dialog open={state.isAddSubAgentModalOpen} onOpenChange={(open) => setState(prev => ({ ...prev, isAddSubAgentModalOpen: open }))}>
               <DialogTrigger asChild>
                 <Button variant="outline" onClick={() => {
-                  setSelectedAgentIdsForModal([]);
-                  setIsAddSubAgentModalOpen(true);
+                  setState(prev => ({ ...prev, selectedAgentIdsForModal: [], isAddSubAgentModalOpen: true }));
                 }}>
                   Adicionar Agente
                 </Button>
@@ -227,29 +285,31 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
                   <DialogTitle>Adicionar Agente</DialogTitle>
                 </DialogHeader>
                 <AgentList
-                  selectedAgentIds={selectedAgentIdsForModal}
-                  onSelectionChange={setSelectedAgentIdsForModal}
+                  selectedAgentIds={state.selectedAgentIdsForModal}
+                  onSelectionChange={(ids) => setState(prev => ({ ...prev, selectedAgentIdsForModal: ids }))}
                 />
                 <DialogFooter>
                   <Button
                     onClick={() => {
                       const newConfig = {
                         ...agentConfig,
-                        agents: [...(agentConfig as SequentialAgentConfig).agents || [], ...selectedAgentIdsForModal]
+                        agents: [...(agentConfig as SequentialAgentConfig).agents || [], ...state.selectedAgentIdsForModal]
                       } as SequentialAgentConfig;
                       onConfigChange(newConfig);
-                      setIsAddSubAgentModalOpen(false);
+                      setState(prev => ({ ...prev, isAddSubAgentModalOpen: false }));
                     }}
-                    disabled={selectedAgentIdsForModal.length === 0}
+                    disabled={state.selectedAgentIdsForModal.length === 0}
                   >
                     Adicionar Selecionados
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsAddSubAgentModalOpen(false)}
-                  >
-                    Cancelar
-                  </Button>
+                  <DialogClose asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => setState(prev => ({ ...prev, isAddSubAgentModalOpen: false }))}
+                    >
+                      Cancelar
+                    </Button>
+                  </DialogClose>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -270,12 +330,6 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
 };
 
 export default AgentConfigurator;
-      onConfigChange(baseConfig);
-    }
-  };
-
-<<<<<<< HEAD
-=======
   const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
     // This function is specific to LlmAgentConfig, ensure it's only called when type is LLM
     if (agentConfig.type === AgentType.LLM) {
@@ -324,8 +378,7 @@ export default AgentConfigurator;
   const [isAddSubAgentModalOpen, setIsAddSubAgentModalOpen] = useState(false);
   const [selectedAgentIdsForModal, setSelectedAgentIdsForModal] = useState<string[]>([]);
 
-<<<<<<< HEAD
-=======
+
   // Helper to safely access LLM specific props
   const llmConfig = agentConfig.type === AgentType.LLM ? agentConfig as LlmAgentConfig : null;
 
@@ -381,7 +434,6 @@ export default AgentConfigurator;
     { id: 'tool_3', name: 'Leitor de Arquivos', description: 'Lê o conteúdo de arquivos.' },
   ];
 
->>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
   return (
     <div className="space-y-4">
       <div className="space-y-2">

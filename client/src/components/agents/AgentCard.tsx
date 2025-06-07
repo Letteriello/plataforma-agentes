@@ -44,7 +44,7 @@ export function AgentCard({ agent, onClick, className, isSelected }: AgentCardPr
       )}
       onClick={handleCardClick}
       tabIndex={onClick ? 0 : -1} // Torna o card focável se for clicável
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
         if (onClick && (e.key === 'Enter' || e.key === ' ')) {
           handleCardClick();
         }

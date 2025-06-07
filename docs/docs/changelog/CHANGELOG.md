@@ -54,4 +54,9 @@
 2025-06-06 - Atualizado o Dashboard com cards modernos, estatísticas visuais e seções de agentes e atividades recentes, conforme diretrizes visuais do Nexus Design System.
 2025-06-06 - Aprimorado o componente Badge com novas variantes de status (online, offline, pending, deployed) e suporte a ícones, seguindo o padrão visual do design system.
 2025-06-06 - Updated tsconfig files (storybook, app, node) to enable composite project settings and correct build emissions. Installed missing type definitions for @types/jest and @types/testing-library__react to resolve Storybook type errors.
-2025-06-06 - Verificada a resolução de todos os erros TypeScript no projeto client após limpeza de cache e execução do comando npm run build.
+2025-06-06 - Verificada a resolução de todos os erros TypeScript no projeto client após limpeza de cache e execução do comando npm run build.2024-06-06 - Correção estrutural dos arquivos AgentConfigurator.tsx e AgentList.tsx: 
+- Removidos marcadores de conflito de merge e artefatos.
+- Corrigidos imports relativos e imports de UI (Label, Switch, Checkbox).
+- Removida duplicidade de interfaces e imports.
+- Ajustados caminhos de ToolSelector e AgentDropzone.
+- Primeira etapa de restauração da saúde dos componentes de agentes.

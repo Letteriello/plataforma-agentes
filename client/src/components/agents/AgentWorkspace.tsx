@@ -76,7 +76,13 @@ const AgentWorkspace: React.FC = () => {
       </div>
       <div style={{ flex: 1 }}>
         <JsonPreview data={currentConfig} />
-import React, { useState } from 'react';
+      </div>
+    </div>
+  );
+};
+
+export default AgentWorkspace;
+
 import { LlmAgentConfig, AgentType, AnyAgentConfig } from '@/types/agent';
 import AgentConfigurator from '@/components/agents/AgentConfigurator';
 import JsonPreview from './JsonPreview';
@@ -136,22 +142,8 @@ const AgentWorkspace: React.FC = () => {
     // TODO: Implement save logic
   };
 
-  return (
-    <div className="flex h-full">
-      <div className="flex-1">
-        <AgentList
-          agents={mockAgents}
-          selectedAgentIds={selectedAgent ? [selectedAgent.id] : []}
-          onAgentToggle={handleAgentSelect}
-          selectable={true}
-          title="Agentes Disponíveis"
-        />
-      </div>
-      <div className="w-96 border-l">
-        {agentConfig && (
-          <AgentConfigurator
-            agentConfig={agentConfig!}
-            onConfigChange={handleConfigChange}
+export default AgentWorkspace;
+
           />
         )}
       </div>
