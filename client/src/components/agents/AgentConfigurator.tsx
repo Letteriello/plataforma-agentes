@@ -355,14 +355,7 @@ export default AgentConfigurator;
     });
   };
 
-  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
-    onConfigChange({
-      ...agentConfig,
-      [name]: checked,
-    });
-  };
 
->>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
   const handleSave = () => {
     console.log('Salvando agente:', agentConfig);
     console.log(JSON.stringify(agentConfig, null, 2));

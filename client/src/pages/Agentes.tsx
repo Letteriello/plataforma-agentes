@@ -1,28 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AgentList from '@/components/agents/AgentList';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import AgentWorkspace from '@/components/agents/AgentWorkspace';
 import { useAgentStore } from '@/store/agentStore';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KnowledgeBaseManager } from "@/components/knowledge"; // Ajustado para usar o index.ts
 
 const AgentesPage: React.FC = () => {
-<<<<<<< HEAD
-  return (
-    <div style={{ display: 'flex', height: '100vh', padding: '20px', boxSizing: 'border-box' }}>
-      {/* Left Column: AgentList */}
-      <div style={{ flex: '0 0 300px', marginRight: '20px' }}>
-        {/* Replace div with <Card className="h-full"> once shadcn is confirmed */}
-        <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '100%', padding: '16px' }}>
-          <AgentList
-          agents={[]}
-          title="Agentes Disponíveis"
-        />
-        </div>
-      </div>
-=======
-  const activeAgent = useAgentStore((state) => state.activeAgent);
-  const setActiveAgent = useAgentStore((state) => state.setActiveAgent);
->>>>>>> 8c5b76e2c2e31e381e3f298a185d5a294e7a969c
+  const activeAgent = useAgentStore((state: any) => state.activeAgent);
+  const setActiveAgent = useAgentStore((state: any) => state.setActiveAgent);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Define um valor padrão para a aba e permite que ele seja controlado se necessário no futuro.
   // Para esta tarefa, defaultValue é suficiente.
@@ -38,11 +26,26 @@ const AgentesPage: React.FC = () => {
       <TabsContent value="configuracao" className="flex-grow overflow-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
           {/* Coluna da Lista de Agentes - bg-card e shadow aplicados para consistência */}
-          <div className="md:col-span-1 h-full overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-sm">
+          <div className="md:col-span-1 h-full overflow-y-auto rounded-lg border bg-card text-card-foreground shadow-sm p-4 flex flex-col gap-4">
+            <Input
+              type="text"
+              placeholder="Buscar agentes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="mb-4"
+            />
+            <Button
+              variant="primary"
+              className="w-full mb-2"
+              onClick={() => setActiveAgent(null)}
+            >
+              + Novo Agente
+            </Button>
             <AgentList
               onAgentClick={(agent) => setActiveAgent(agent)}
               activeAgentId={activeAgent?.id}
               title="Meus Agentes"
+              searchTerm={searchTerm}
             />
           </div>
           {/* Coluna do Workspace do Agente - p-0 para que o Card interno controle o padding */}

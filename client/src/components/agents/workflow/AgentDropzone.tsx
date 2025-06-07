@@ -25,13 +25,6 @@ interface AgentDropzoneProps {
   isOrderable?: boolean;
   // readOnly?: boolean;
   // parentAgentType?: AgentType.Sequential | AgentType.Parallel;
-
-interface AgentDropzoneProps {
-  subAgents: AnyAgentConfig[];
-  onRemoveSubAgent?: (agentId: string) => void; // Adicionando prop para remover
-  // onSubAgentsChange: (newSubAgents: AnyAgentConfig[]) => void; // Será usado depois
-  // readOnly?: boolean; // Para visualização vs edição
-  // parentAgentType?: AgentType.Sequential | AgentType.Parallel; // Para lógica condicional D&D
 }
 
 const AgentDropzone: React.FC<AgentDropzoneProps> = ({

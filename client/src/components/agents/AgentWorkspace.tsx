@@ -5,6 +5,7 @@ import JsonPreview from './JsonPreview';
 import { useAgentStore } from '@/store/agentStore';
 import { deepClone } from '@/lib/utils';
 import { saveAgent } from '@/api/agentService';
+import { useToast } from '@/components/ui/use-toast';
 
 const initialLlmConfig: LlmAgentConfig = {
   id: '',
@@ -12,14 +13,14 @@ const initialLlmConfig: LlmAgentConfig = {
   type: AgentType.LLM,
   instruction: '',
   model: 'gpt-3.5-turbo',
-  code_execution: false,
-  planning_enabled: false,
+  code_execution: false as boolean,
+  planning_enabled: false as boolean,
   tools: [],
 };
 
 const AgentWorkspace: React.FC = () => {
-  const activeAgentFromStore = useAgentStore((state) => state.activeAgent);
-  const setActiveAgentInStore = useAgentStore((state) => state.setActiveAgent);
+  const activeAgentFromStore = useAgentStore((state: any) => state.activeAgent);
+  const setActiveAgentInStore = useAgentStore((state: any) => state.setActiveAgent);
 
   const [currentConfig, setCurrentConfig] = useState<AnyAgentConfig>(() => {
     return activeAgentFromStore ? deepClone(activeAgentFromStore) : deepClone(initialLlmConfig);
@@ -29,34 +30,60 @@ const AgentWorkspace: React.FC = () => {
 
   useEffect(() => {
     if (activeAgentFromStore) {
-      setCurrentConfig(deepClone(activeAgentFromStore));
+      // Garante que code_execution e planning_enabled nunca sejam undefined
+      const cloned = deepClone(activeAgentFromStore);
+      if (cloned.type === AgentType.LLM) {
+        cloned.code_execution = cloned.code_execution ?? false;
+        cloned.planning_enabled = cloned.planning_enabled ?? false;
+      }
+      // Normaliza campos obrigatórios para LLM
+      if (cloned.type === AgentType.LLM) {
+        cloned.code_execution = cloned.code_execution ?? false;
+        cloned.planning_enabled = cloned.planning_enabled ?? false;
+        cloned.model = cloned.model ?? 'gpt-3.5-turbo';
+      }
+      setCurrentConfig(cloned);
       setIsCreatingNew(false);
     } else {
-      setCurrentConfig(deepClone(initialLlmConfig));
+      // Garante que code_execution e planning_enabled nunca sejam undefined
+      const cloned = deepClone(initialLlmConfig);
+      cloned.code_execution = cloned.code_execution ?? false;
+      cloned.planning_enabled = cloned.planning_enabled ?? false;
+      // Normaliza campos obrigatórios para LLM
+      if (cloned.type === AgentType.LLM) {
+        cloned.code_execution = cloned.code_execution ?? false;
+        cloned.planning_enabled = cloned.planning_enabled ?? false;
+        cloned.model = cloned.model ?? 'gpt-3.5-turbo';
+      }
+      setCurrentConfig(cloned);
       setIsCreatingNew(true);
     }
   }, [activeAgentFromStore]);
+
+  const { toast } = useToast();
 
   const handleSaveCurrentConfig = async () => {
     if (!currentConfig) return;
     setIsSaving(true);
     try {
       const savedAgent = await saveAgent(currentConfig);
-      // Se era um novo agente ou o ID estava vazio antes de salvar
       if (isCreatingNew || !currentConfig.id) {
-        setActiveAgentInStore(savedAgent); // Define o agente recém-criado (com ID) como ativo
+        setActiveAgentInStore(savedAgent);
       } else if (activeAgentFromStore?.id === savedAgent.id) {
-        // Se atualizou o agente que já estava ativo, atualiza a referência no store (embora updateAgent já faça isso)
-        // e no currentConfig local para ter a versão mais recente (embora saveAgent retorne a mesma instância)
-        setActiveAgentInStore(savedAgent); // Garante que o estado ativo é a instância retornada
+        setActiveAgentInStore(savedAgent);
       }
-      // O currentConfig será atualizado pelo useEffect se o activeAgentFromStore mudar
-      // ou podemos explicitamente setar aqui se quisermos evitar a dependência do useEffect para este caso:
-      // setCurrentConfig(deepClone(savedAgent)); // Opcional: Sincronizar imediatamente o rascunho local
-      console.log('Agente salvo com sucesso:', savedAgent);
+      toast({
+        title: 'Agente salvo com sucesso!',
+        description: `O agente "${savedAgent.name}" foi salvo.`,
+        variant: 'success',
+      });
     } catch (error) {
       console.error('Falha ao salvar o agente:', error);
-      // (Futuro: mostrar toast de erro)
+      toast({
+        title: 'Erro ao salvar agente',
+        description: 'Ocorreu um erro ao tentar salvar o agente.',
+        variant: 'destructive',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -66,9 +93,18 @@ const AgentWorkspace: React.FC = () => {
     <div style={{ display: 'flex', gap: '20px', padding: '20px', height: '100%' }}>
       <div style={{ flex: 1 }}>
         {/* <h2>Agent Workspace</h2> */}
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold">
+            {isCreatingNew ? (
+              <span className="text-primary">Novo Agente</span>
+            ) : (
+              currentConfig?.name || 'Editar Agente'
+            )}
+          </h2>
+        </div>
         <AgentConfigurator
           agentConfig={currentConfig}
-          onConfigChange={setCurrentConfig}
+          onConfigChange={(config) => setCurrentConfig(config)}
           onSave={handleSaveCurrentConfig}
           isSaving={isSaving}
           isCreatingNew={isCreatingNew}
@@ -76,76 +112,6 @@ const AgentWorkspace: React.FC = () => {
       </div>
       <div style={{ flex: 1 }}>
         <JsonPreview data={currentConfig} />
-      </div>
-    </div>
-  );
-};
-
-export default AgentWorkspace;
-
-import { LlmAgentConfig, AgentType, AnyAgentConfig } from '@/types/agent';
-import AgentConfigurator from '@/components/agents/AgentConfigurator';
-import JsonPreview from './JsonPreview';
-import AgentList from './AgentList';
-
-const mockAgents: AnyAgentConfig[] = [
-  {
-    id: 'agent_1',
-    name: 'Agente de Pesquisa Web',
-    type: AgentType.LLM,
-    instruction: 'Pesquise na web',
-    model: 'gpt-3.5-turbo',
-    code_execution: false,
-    planning_enabled: false,
-    tools: ['web_search']
-  },
-  {
-    id: 'agent_2',
-    name: 'Agente Escritor de Artigos',
-    type: AgentType.LLM,
-    instruction: 'Escreva um artigo',
-    model: 'gpt-4',
-    code_execution: true,
-    planning_enabled: true,
-    tools: ['web_search', 'image_generator']
-  },
-  {
-    id: 'agent_3',
-    name: 'Agente Tradutor',
-    type: AgentType.LLM,
-    instruction: 'Traduza o texto',
-    model: 'gpt-3.5-turbo',
-    code_execution: false,
-    planning_enabled: false,
-    tools: ['calculator']
-  }
-];
-
-const AgentWorkspace: React.FC = () => {
-  const [selectedAgent, setSelectedAgent] = useState<AnyAgentConfig | null>(null);
-  const [agentConfig, setAgentConfig] = useState<AnyAgentConfig | null>(null);
-
-  const handleAgentSelect = (agentId: string) => {
-    const selectedAgent = mockAgents.find(agent => agent.id === agentId);
-    if (selectedAgent) {
-      setSelectedAgent(selectedAgent);
-      setAgentConfig(selectedAgent);
-    }
-  };
-
-  const handleConfigChange = (newConfig: AnyAgentConfig) => {
-    setAgentConfig(newConfig);
-  };
-
-  const handleSave = () => {
-    if (!selectedAgent || !agentConfig) return;
-    // TODO: Implement save logic
-  };
-
-export default AgentWorkspace;
-
-          />
-        )}
       </div>
     </div>
   );

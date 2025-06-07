@@ -1,12 +1,14 @@
 ---
-description: Potencializa o cascade
+description: Orquestrar todos os conjuntos de regras (01 a 05) em um ciclo de # vida inteligente e autônomo. Este workflow define o processo de # pensamento do agente: Orientar -> Planejar -> Executar -> Refletir.
 ---
 
 # ===================================================================
 # WORKFLOW PRINCIPAL: FLUXO DE EXECUÇÃO AUTÔNOMA (FEA)
 #
 # OBJETIVO:
-# O
+# Orquestrar todos os conjuntos de regras (01 a 05) em um ciclo de
+# vida inteligente e autônomo. Este workflow define o processo de
+# pensamento do agente: Orientar -> Planejar -> Executar -> Refletir.
 # ===================================================================
 
 AutonomousExecutionWorkflow:

@@ -16,6 +16,7 @@ interface AgentListProps {
   title?: string;
   selectable?: boolean;
   activeAgentId?: string | null; // Nova prop
+  searchTerm?: string; // Nova prop para busca
 }
 
 const AgentList: React.FC<AgentListProps> = ({
@@ -26,9 +27,17 @@ const AgentList: React.FC<AgentListProps> = ({
   title,
   selectable = false,
   activeAgentId,
+  searchTerm = '', // Valor padrão para searchTerm
 }) => {
-  const agentsFromStore = useAgentStore((state) => state.agents);
-  const displayAgents = agentsFromProps !== undefined ? agentsFromProps : agentsFromStore;
+  const agentsFromStore = useAgentStore((state: any) => state.agents);
+  let displayAgents = agentsFromProps !== undefined ? agentsFromProps : agentsFromStore;
+
+  // Filtra os agentes com base no searchTerm
+  if (searchTerm && displayAgents) {
+    displayAgents = displayAgents.filter((agent: AnyAgentConfig) =>
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
   const currentTitle = title || (agentsFromProps ? "Selecione os Agentes" : "Meus Agentes");
   const [deletingAgentId, setDeletingAgentId] = useState<string | null>(null);
 
@@ -75,7 +84,7 @@ const AgentList: React.FC<AgentListProps> = ({
               }}
             >
               <Label className="flex-1 cursor-pointer select-none">
-                {agent.name || agent.title}
+                {agent.name || `Agente ${agent.id}`}
               </Label>
               {selectable && (
                 <Checkbox
@@ -98,52 +107,6 @@ const AgentList: React.FC<AgentListProps> = ({
                   <Trash2Icon className="w-4 h-4" />
                 </Button>
               )}
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-export default AgentList;
-              )}
-              <div className="flex-1">
-                <Label
-                  htmlFor={selectable && onAgentToggle ? `agent-select-${agent.id}` : undefined}
-                  id={`agent-label-${agent.id}`}
-                  className={`font-medium ${!selectable && onAgentClick ? 'cursor-pointer' : ''}`}
-                >
-                  {agent.name || `Agente ${agent.id.substring(0, 6)}`}
-                </Label>
-                <p className={`text-xs text-muted-foreground ${!selectable && onAgentClick ? 'cursor-pointer' : ''}`}>
-                  {agent.type}
-                </p>
-              </div>
-              {!selectable && onAgentClick && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteAgent(agent.id);
-                  }}
-                  disabled={deletingAgentId === agent.id}
-                  className="ml-auto"
-                  aria-label={`Deletar agente ${agent.name}`}
-                >
-                  {deletingAgentId === agent.id ? (
-                    <span className="animate-spin text-xs">⏳</span>
-                  ) : (
-                    <Trash2Icon className="h-4 w-4 text-red-500 hover:text-red-700" />
-                  )}
-                </Button>
-              )}
-                <Label htmlFor={selectable && onAgentToggle ? `agent-select-${agent.id}` : undefined} id={`agent-label-${agent.id}`} className="font-medium">
-                  {agent.name || `Agente ${agent.id.substring(0, 6)}`}
-                </Label>
-                <p className="text-xs text-muted-foreground">{agent.type}</p>
-              </div>
             </div>
           ))}
         </div>
