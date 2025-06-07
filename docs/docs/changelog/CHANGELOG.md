@@ -60,3 +60,10 @@
 - Removida duplicidade de interfaces e imports.
 - Ajustados caminhos de ToolSelector e AgentDropzone.
 - Primeira etapa de restauração da saúde dos componentes de agentes.
+
+### `2025-06-07`
+- **Refatoração da Lógica de Estado do AgentConfigurator**
+  - Criação do hook `useAgentConfig` centralizando a edição de `AnyAgentConfig`.
+  - Introdução do `agentConfigStore` para gerenciar o agente em edição.
+  - `AgentWorkspace` passa a orquestrar salvamentos via `agentService` e stores.
+  - Documentação atualizada com o novo fluxo e adição de testes unitários para o hook e serviço.
