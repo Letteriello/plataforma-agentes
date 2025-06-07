@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LlmAgentConfig, AgentType, AnyAgentConfig, SequentialAgentConfig, ParallelAgentConfig } from '@/types/agent';
+import { LlmAgentConfig, AgentType } from '@/types/agent';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -33,6 +34,11 @@ import { XIcon } from 'lucide-react'; // Ou use um 'x' textual se lucide-react n
 import mockToolsData from '../../../data/mock-tools.json'; // Ajuste o caminho se necessário
 import { AgentDropzone } from '@/components/agents/workflow';
 import AgentList from '@/components/agents/AgentList';
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ToolSelector } from '@/components/agents/tools';
 
 // Assuming shadcn/ui components are available.
 // For now, let's use a placeholder div if Card is not found by the linter.
@@ -41,6 +47,8 @@ import AgentList from '@/components/agents/AgentList';
 interface AgentConfiguratorProps {
   agentConfig: AnyAgentConfig; // Changed to AnyAgentConfig
   onConfigChange: (newConfig: AnyAgentConfig) => void; // Changed to AnyAgentConfig
+  agentConfig: LlmAgentConfig;
+  onConfigChange: (newConfig: LlmAgentConfig) => void;
 }
 
 const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onConfigChange }) => {
@@ -100,6 +108,18 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
         [name]: checked,
       } as LlmAgentConfig); // Cast to LlmAgentConfig
     }
+  const handleSelectChange = (value: string) => {
+    onConfigChange({
+      ...agentConfig,
+      type: value as AgentType, // Cast to AgentType, ensure value is compatible
+    });
+  };
+
+  const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
+    onConfigChange({
+      ...agentConfig,
+      [name]: checked,
+    });
   };
 
   const handleSave = () => {
@@ -127,6 +147,14 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
     { id: 'agent_1', name: 'Agente de Pesquisa Web', type: AgentType.LLM, instruction: 'Pesquise na web', model: 'gpt-3.5-turbo' },
     { id: 'agent_2', name: 'Agente Escritor de Artigos', type: AgentType.LLM, instruction: 'Escreva um artigo', model: 'gpt-4' },
     { id: 'agent_3', name: 'Agente Tradutor', type: AgentType.LLM, instruction: 'Traduza o texto', model: 'gpt-3.5-turbo', tools: ['calculator'] },
+  const isSaveDisabled = agentConfig.name.trim() === '' || agentConfig.instruction.trim() === '';
+  const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
+
+  // Mock data for available tools - replace with actual data source later
+  const MOCK_AVAILABLE_TOOLS = [
+    { id: 'tool_1', name: 'Calculadora', description: 'Realiza cálculos matemáticos.' },
+    { id: 'tool_2', name: 'Busca na Web', description: 'Busca informações na internet.' },
+    { id: 'tool_3', name: 'Leitor de Arquivos', description: 'Lê o conteúdo de arquivos.' },
   ];
 
   return (
@@ -364,6 +392,116 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({ agentConfig, onCo
         {![AgentType.LLM, AgentType.Sequential, AgentType.Parallel].includes(agentConfig.type) && (
            <p className="mt-4">Tipo de agente não reconhecido ou configuração não disponível.</p>
         )}
+        <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Configuração Principal</AccordionTrigger>
+            <AccordionContent>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '1rem' }}>
+                <div style={{ marginBottom: '1rem' }}>
+                  <Label htmlFor="agentName">Nome do Agente</Label>
+                  <Input
+                    id="agentName"
+                    name="name"
+                    value={agentConfig.name}
+                    onChange={handleInputChange}
+                    placeholder="Ex: Agente de Pesquisa"
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <Label htmlFor="agentType">Tipo de Agente</Label>
+                  <Select
+                    value={agentConfig.type}
+                    onValueChange={handleSelectChange}
+                    disabled // Disabled as per instruction, forcing LLM Agent for now
+                  >
+                    <SelectTrigger id="agentType">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={AgentType.LLM}>LLM Agent</SelectItem>
+                      {/* Add other agent types here if/when supported */}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <Label htmlFor="instruction">Instrução</Label>
+                  <Textarea
+                    id="instruction"
+                    name="instruction"
+                    value={agentConfig.instruction}
+                    onChange={handleInputChange}
+                    placeholder="Instrução detalhada para o agente..."
+                    rows={4}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <Label htmlFor="model">Modelo</Label>
+                  <Input
+                    id="model"
+                    name="model"
+                    value={agentConfig.model}
+                    onChange={handleInputChange}
+                    placeholder="Ex: gpt-4, gemini-pro"
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger>Parâmetros Avançados</AccordionTrigger>
+            <AccordionContent>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '1rem' }}>
+                <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Label htmlFor="codeExecutionSwitch" style={{ marginRight: '1rem' }}>Execução de Código</Label>
+                  <Switch
+                    id="codeExecutionSwitch"
+                    checked={agentConfig.code_execution}
+                    onCheckedChange={(checked) => handleSwitchChange(checked, 'code_execution')}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Label htmlFor="planningEnabledSwitch" style={{ marginRight: '1rem' }}>Planejamento Habilitado</Label>
+                  <Switch
+                    id="planningEnabledSwitch"
+                    checked={agentConfig.planning_enabled}
+                    onCheckedChange={(checked) => handleSwitchChange(checked, 'planning_enabled')}
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Dialog open={isToolSelectorOpen} onOpenChange={setIsToolSelectorOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" style={{ marginTop: '20px', marginRight: '10px' }}>
+              Adicionar Ferramenta
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Selecionar Ferramentas</DialogTitle>
+            </DialogHeader>
+            <ToolSelector
+              availableTools={MOCK_AVAILABLE_TOOLS} // Using mock data for now
+              selectedTools={agentConfig.tools || []} // Assuming agentConfig might have a tools array
+              onSelectionChange={(selectedIds) => {
+                onConfigChange({ ...agentConfig, tools: selectedIds });
+                console.log("Seleção de ferramentas alterada:", selectedIds);
+              }}
+            />
+            {/* DialogFooter can be added here or inside ToolSelector if needed */}
+            {/* Example:
+            <DialogFooter>
+              <Button onClick={() => setIsToolSelectorOpen(false)}>Confirmar</Button>
+            </DialogFooter>
+            */}
+          </DialogContent>
+        </Dialog>
 
         <Button
           onClick={handleSave}
