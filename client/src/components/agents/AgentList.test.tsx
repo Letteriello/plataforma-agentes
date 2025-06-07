@@ -58,5 +58,30 @@ describe('AgentList Component', () => {
     expect(screen.getByText('Agente Gamma')).toBeInTheDocument();
   });
 
-  // Mais testes virão aqui (para filtro, seleção, etc.)
+  test('filters agents based on searchTerm (case-insensitive)', () => {
+    render(<AgentList title="Meus Agentes" searchTerm="alpha" />);
+
+    expect(screen.getByText('Agente Alpha')).toBeInTheDocument();
+    expect(screen.queryByText('Agente Beta')).not.toBeInTheDocument();
+    expect(screen.queryByText('Agente Gamma')).not.toBeInTheDocument();
+  });
+
+  test('filters agents based on searchTerm (partial match)', () => {
+    render(<AgentList title="Meus Agentes" searchTerm="Agent" />); // Deve corresponder a todos
+
+    expect(screen.getByText('Agente Alpha')).toBeInTheDocument();
+    expect(screen.getByText('Agente Beta')).toBeInTheDocument();
+    expect(screen.getByText('Agente Gamma')).toBeInTheDocument();
+  });
+
+  test('shows "Nenhum agente encontrado" when searchTerm matches no agents', () => {
+    render(<AgentList title="Meus Agentes" searchTerm="Omega" />);
+
+    expect(screen.getByText('Nenhum agente encontrado.')).toBeInTheDocument();
+    expect(screen.queryByText('Agente Alpha')).not.toBeInTheDocument();
+    expect(screen.queryByText('Agente Beta')).not.toBeInTheDocument();
+    expect(screen.queryByText('Agente Gamma')).not.toBeInTheDocument();
+  });
+
+  // Mais testes virão aqui (para seleção, exclusão, etc.)
 });
