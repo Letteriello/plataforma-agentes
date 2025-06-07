@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { LlmAgentConfig, AgentType, AnyAgentConfig } from '@/types/agent'; // Assuming '@/' path alias
+import { LlmAgentConfig, AgentType } from '@/types/agent'; // Assuming '@/' path alias
 import AgentConfigurator from '@/components/agents/AgentConfigurator'; // Assuming '@/' path alias
 import JsonPreview from './JsonPreview';
 
 const AgentWorkspace: React.FC = () => {
   const initialLlmConfig: LlmAgentConfig = {
+  const initialConfig: LlmAgentConfig = {
     id: crypto.randomUUID(),
     name: '',
     type: AgentType.LLM,
@@ -15,6 +17,9 @@ const AgentWorkspace: React.FC = () => {
     tools: [],
   };
   const [agentConfig, setAgentConfig] = useState<AnyAgentConfig>(initialLlmConfig);
+    // tools: [] // Uncomment or add if 'tools' is part of LlmAgentConfig and needed
+  };
+  const [agentConfig, setAgentConfig] = useState<LlmAgentConfig>(initialConfig);
 
   return (
     <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
