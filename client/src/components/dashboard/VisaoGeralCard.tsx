@@ -25,12 +25,16 @@ interface VisaoGeralCardProps {
   activeAgents: number;
   activeSessions: number;
   totalSessions24h: number;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
-export function VisaoGeralCard({ 
-  activeAgents, 
-  activeSessions, 
-  totalSessions24h 
+export function VisaoGeralCard({
+  activeAgents,
+  activeSessions,
+  totalSessions24h,
+  isLoading,
+  error,
 }: VisaoGeralCardProps) {
   return (
     <Card className="h-full">
@@ -38,23 +42,29 @@ export function VisaoGeralCard({
         <CardTitle className="text-lg">Visão Geral</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <StatCard
-          title="Agentes Ativos"
-          value={activeAgents}
-          icon={<LucideCpu className="h-5 w-5" />}
-        />
-        <div className="h-px bg-border" />
-        <StatCard
-          title="Sessões Ativas"
-          value={activeSessions}
-          icon={<LucideUsers className="h-5 w-5" />}
-        />
-        <div className="h-px bg-border" />
-        <StatCard
-          title="Sessões (24h)"
-          value={totalSessions24h}
-          icon={<LucideZap className="h-5 w-5" />}
-        />
+        {error ? (
+          <p className="text-sm text-destructive">{error}</p>
+        ) : (
+          <>
+            <StatCard
+              title="Agentes Ativos"
+              value={isLoading ? '...' : activeAgents}
+              icon={<LucideCpu className="h-5 w-5" />}
+            />
+            <div className="h-px bg-border" />
+            <StatCard
+              title="Sessões Ativas"
+              value={isLoading ? '...' : activeSessions}
+              icon={<LucideUsers className="h-5 w-5" />}
+            />
+            <div className="h-px bg-border" />
+            <StatCard
+              title="Sessões (24h)"
+              value={isLoading ? '...' : totalSessions24h}
+              icon={<LucideZap className="h-5 w-5" />}
+            />
+          </>
+        )}
       </CardContent>
     </Card>
   );

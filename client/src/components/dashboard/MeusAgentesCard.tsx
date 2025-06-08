@@ -10,6 +10,9 @@ interface MeusAgentesCardProps {
   onCreateAgent: () => void;
   onAgentClick: (agent: Agent) => void;
   className?: string;
+  createButton?: React.ReactNode;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 const statusVariantMap = {
@@ -25,41 +28,44 @@ const typeIconMap = {
   tool: '🛠️',
 } as const;
 
-export function MeusAgentesCard({ 
-  agents, 
-  onCreateAgent, 
-  onAgentClick, 
-  className = '' 
+export function MeusAgentesCard({
+  agents,
+  onCreateAgent,
+  onAgentClick,
+  className = '',
+  createButton,
+  isLoading,
+  error,
 }: MeusAgentesCardProps) {
   return (
     <Card className={`h-full flex flex-col ${className || ''}`.trim()}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-lg">Meus Agentes</CardTitle>
-        <Button 
-          size="sm" 
-          className="h-8 gap-1"
-          onClick={onCreateAgent}
-        >
-          <Plus className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Criar Agente
-          </span>
-        </Button>
+        {createButton || (
+          <Button size="sm" className="h-8 gap-1" onClick={onCreateAgent}>
+            <Plus className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Criar Agente
+            </span>
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto">
-        {agents.length === 0 ? (
+        {error ? (
+          <p className="text-sm text-destructive text-center py-4">{error}</p>
+        ) : isLoading ? (
+          <p className="text-sm text-muted-foreground text-center py-4">Carregando...</p>
+        ) : agents.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <p className="text-sm text-muted-foreground mb-4">
               Nenhum agente encontrado
             </p>
-            <Button 
-              size="sm" 
-              variant="outline"
-              onClick={onCreateAgent}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Criar seu primeiro agente
-            </Button>
+            {createButton || (
+              <Button size="sm" variant="outline" onClick={onCreateAgent}>
+                <Plus className="h-4 w-4 mr-2" />
+                Criar seu primeiro agente
+              </Button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
