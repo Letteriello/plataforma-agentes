@@ -7,6 +7,7 @@ export * from "./select"
 export * from "./badge"
 export * from "./avatar"
 export * from "./tooltip"
+export * from "./slider"
 
 // New UI Components
 export * from "./dialog"

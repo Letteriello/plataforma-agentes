@@ -35,7 +35,9 @@ import {
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { XIcon } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { XIcon, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 import mockToolsDataJson from '@/data/mocks/mock-tools.json'; // Corrected import
 import { mockInitialAgents as importedMockExistingAgents } from '@/data/mocks/mock-initial-agents'; // Corrected import
@@ -141,6 +143,12 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
     if (config.type === AgentType.LLM) {
       const { name, value } = e.target;
       updateField(name, value);
+    }
+  };
+
+  const handleSliderChange = (value: number, field: keyof LlmAgentConfig) => {
+    if (config.type === AgentType.LLM) {
+      updateField(field, value);
     }
   };
 
@@ -303,6 +311,136 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
                 />
               </div>
             </div>
+            
+            {/* Generation Parameters Section */}
+            <div style={{ marginTop: '24px', marginBottom: '20px' }}>
+              <h3 className="text-lg font-medium mb-4">Configurações de Geração</h3>
+              
+              {/* Temperature */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center">
+                  <Label htmlFor="temperature" className="mr-2">Temperatura: {llmConfig.temperature?.toFixed(1) || '0.7'}</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Controla a aleatoriedade. Valores mais baixos (0.1-0.3) tornam a saída mais focada, enquanto valores mais altos (0.7-1.0) a tornam mais criativa.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Slider
+                  id="temperature"
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  value={[llmConfig.temperature ?? 0.7]}
+                  onValueChange={([value]) => handleSliderChange(value, 'temperature')}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Preciso</span>
+                  <span>Equilibrado</span>
+                  <span>Criativo</span>
+                </div>
+              </div>
+
+              {/* Max Output Tokens */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center">
+                  <Label htmlFor="maxTokens" className="mr-2">Máx. Tokens de Saída: {llmConfig.maxOutputTokens || 1000}</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Limita o número de tokens na resposta. Valores mais altos permitem respostas mais longas, mas consomem mais recursos.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Slider
+                  id="maxTokens"
+                  min={100}
+                  max={4000}
+                  step={100}
+                  value={[llmConfig.maxOutputTokens ?? 1000]}
+                  onValueChange={([value]) => handleSliderChange(value, 'maxOutputTokens')}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>100</span>
+                  <span>1000</span>
+                  <span>4000</span>
+                </div>
+              </div>
+
+              {/* Top P */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center">
+                  <Label htmlFor="topP" className="mr-2">Top P: {llmConfig.topP?.toFixed(1) || '0.9'}</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Controla a diversidade via amostragem de núcleo. Valores mais baixos (0.5-0.8) tornam a saída mais focada, enquanto valores mais altos (0.9-1.0) permitem mais diversidade.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Slider
+                  id="topP"
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                  value={[llmConfig.topP ?? 0.9]}
+                  onValueChange={([value]) => handleSliderChange(Number(value.toFixed(1)), 'topP')}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Focado</span>
+                  <span>Equilibrado</span>
+                  <span>Diverso</span>
+                </div>
+              </div>
+
+              {/* Top K */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center">
+                  <Label htmlFor="topK" className="mr-2">Top K: {llmConfig.topK || 40}</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Limita a geração aos K tokens mais prováveis a cada etapa. Valores mais baixos tornam a saída mais previsível, enquanto valores mais altos permitem mais criatividade.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Slider
+                  id="topK"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={[llmConfig.topK ?? 40]}
+                  onValueChange={([value]) => handleSliderChange(value, 'topK')}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Previsível</span>
+                  <span>Equilibrado</span>
+                  <span>Criativo</span>
+                </div>
+              </div>
+            </div>
+            
             <div style={{ marginTop: '20px' }}>
               <Label>Ferramentas Selecionadas</Label>
               <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
