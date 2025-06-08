@@ -27,7 +27,7 @@ const MainLayout = () => {
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Sidebar Panel */}
-      <div className="w-full sm:w-64 md:w-72 lg:w-80 xl:w-[340px] flex-none h-full overflow-y-auto border-r border-border bg-card shadow-lg dark:shadow-slate-700/50">
+      <div className="flex-none w-64 md:w-72 lg:w-80 xl:w-[340px] h-full overflow-y-auto border-r border-border bg-card shadow-lg dark:shadow-slate-700/50">
           {/* Adicionada classe 'sm:w-64' para telas pequenas e aumentada um pouco a largura em telas maiores, e adicionado shadow */}
         <Sidebar />
       </div>

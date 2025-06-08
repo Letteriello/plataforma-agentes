@@ -1,9 +1,35 @@
-// src/pages/Configuracoes.tsx
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { useAuthStore } from '@/store/authStore'
+
 export default function ConfiguracoesPage() {
+  const { user, setUser } = useAuthStore()
+  const [name, setName] = useState(user?.name ?? '')
+
+  const handleSave = () => {
+    if (user) setUser({ ...user, name })
+  }
+
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-semibold">Página de Configurações</h1>
-      <p>Conteúdo da página de Configurações.</p>
+    <div className="mx-auto max-w-2xl space-y-6 p-4">
+      <h1 className="text-2xl font-semibold">Configura\u00e7\u00f5es</h1>
+
+      <div className="space-y-2">
+        <label htmlFor="name" className="text-sm font-medium">
+          Nome
+        </label>
+        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+        <Button onClick={handleSave} className="mt-2">
+          Salvar
+        </Button>
+      </div>
+
+      <div className="pt-4">
+        <p className="mb-2 text-sm font-medium">Tema</p>
+        <ThemeToggle />
+      </div>
     </div>
-  );
+  )
 }
