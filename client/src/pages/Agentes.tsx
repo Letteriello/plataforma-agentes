@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,66 +13,106 @@ import {
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"; // DialogTrigger não é usado pois abrimos programaticamente, DialogClose removido pois não é exportado/usado
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Plus, Pencil, Trash2, Save, X } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
-// TODO: Definir tipos mais robustos para o estado do agente e ferramentas
-interface AgentToolParameter {
+// Tipos do Google ADK
+import { 
+  LlmAgentConfig, 
+  ToolDefinition, 
+  GenerateContentConfig, 
+  SchemaDefinition 
+} from '@/types/adk';
+import { 
+  formatAgentForAdk, 
+  validateAgentConfig, 
+  createDefaultAgentConfig, 
+  createDefaultToolDefinition,
+  createDefaultParameterDefinition,
+  schemaToString,
+  stringToSchema
+} from '@/utils/adkUtils';
+
+// Tipos locais para o estado do formulário
+interface FormToolParameter {
   id: string;
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'integer' | 'null';
   description: string;
   required: boolean;
-  defaultValue?: string | number | boolean;
+  defaultValue?: string | number | boolean | null;
 }
 
-interface SafetySetting {
-  id: string; // Para a chave React e identificação única na UI
-  category: string; // Ex: HARM_CATEGORY_SEXUALLY_EXPLICIT
-  threshold: string; // Ex: BLOCK_NONE, BLOCK_LOW_AND_ABOVE, etc.
-}
-
-interface AgentTool {
+interface FormTool {
   id: string;
   name: string;
   description: string;
-  parameters: AgentToolParameter[];
-  returnType: string; // Ou um schema mais complexo
+  parameters: FormToolParameter[];
+  returnType: string;
 }
 
-interface AgentState {
+interface FormSafetySetting {
+  id: string;
+  category: string;
+  threshold: 'BLOCK_NONE' | 'BLOCK_ONLY_HIGH' | 'BLOCK_MEDIUM_AND_ABOVE' | 'BLOCK_LOW_AND_ABOVE';
+}
+
+interface FormAgentState {
+  // Identificação
   name: string;
   description: string;
   model: string;
   instruction: string;
-  // generate_content_config
+  
+  // Configurações de geração
   temperature: number;
   maxOutputTokens: number;
   topP: number;
   topK: number;
-  safetySettings: SafetySetting[];
-  // tools
-  tools: AgentTool[];
-  // advanced
+  stopSequences: string;
+  frequencyPenalty: number;
+  presencePenalty: number;
+  
+  // Ferramentas
+  tools: FormTool[];
+  
+  // Configurações de segurança
+  safetySettings: FormSafetySetting[];
+  
+  // Configurações avançadas
   inputSchema: string;
   outputSchema: string;
   outputKey: string;
-  includeContents: 'default' | 'none';
-  planner: string; // Simplificado
-  codeExecutor: string; // Simplificado
+  includeContents: 'default' | 'none' | 'all';
+  planner: string;
+  codeExecutor: string;
 }
 
-const initialAgentState: AgentState = {
+const initialAgentState: FormAgentState = {
+  // Identificação
   name: '',
   description: '',
-  model: 'gemini-pro', // Default model
+  model: 'gemini-2.0-flash', // Modelo padrão do Google ADK
   instruction: '',
+  
+  // Configurações de geração (valores padrão do Google ADK)
   temperature: 0.7,
   maxOutputTokens: 2048,
-  topP: 1,
+  topP: 0.95,
   topK: 40,
-  safetySettings: [],
+  stopSequences: '',
+  frequencyPenalty: 0,
+  presencePenalty: 0,
+  
+  // Ferramentas
   tools: [],
+  
+  // Configurações de segurança
+  safetySettings: [],
+  
+  // Configurações avançadas
   inputSchema: '',
   outputSchema: '',
   outputKey: '',
@@ -335,14 +375,12 @@ const Agentes: React.FC = () => {
   };
 
   return (
-    <>
-    // Removido o div container externo, o Card agora é o elemento raiz.
-    // As classes max-w-4xl e mx-auto foram removidas do Card para que ele ocupe a largura disponível.
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">Configurar Agente de IA</CardTitle>
-        <CardDescription>Defina os parâmetros para o seu agente utilizando o Google ADK.</CardDescription>
-      </CardHeader>
+    <div className="container mx-auto p-4">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold">Configurar Agente de IA</CardTitle>
+          <CardDescription>Defina os parâmetros para o seu agente utilizando o Google ADK.</CardDescription>
+        </CardHeader>
       <CardContent className="space-y-8">
         <Tabs defaultValue="identidade" className="w-full">
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4">
@@ -828,15 +866,10 @@ const Agentes: React.FC = () => {
               </div>
             </div>
           </DialogContent>
-          <DialogFooter>
-            <Button variant="outline" onClick={closeToolDialog}>Cancelar</Button>
-            <Button onClick={handleSaveTool}>Salvar Ferramenta</Button>
-          </DialogFooter>
         </Dialog>
       )}
-    </>
+    </div>
   );
 };
 
 export default Agentes;
-
