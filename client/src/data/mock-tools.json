@@ -1,0 +1,58 @@
+[
+  {
+    "id": "web_search",
+    "name": "Pesquisa na Web",
+    "description": "Realiza pesquisas na web para obter informações atualizadas",
+    "parameters": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Termo de busca",
+        "required": true
+      },
+      {
+        "name": "max_results",
+        "type": "number",
+        "description": "Número máximo de resultados",
+        "required": false,
+        "default": 5
+      }
+    ],
+    "returnType": "array"
+  },
+  {
+    "id": "calculator",
+    "name": "Calculadora",
+    "description": "Realiza cálculos matemáticos",
+    "parameters": [
+      {
+        "name": "expression",
+        "type": "string",
+        "description": "Expressão matemática para cálculo",
+        "required": true
+      }
+    ],
+    "returnType": "number"
+  },
+  {
+    "id": "get_weather",
+    "name": "Previsão do Tempo",
+    "description": "Obtém a previsão do tempo para uma localização",
+    "parameters": [
+      {
+        "name": "location",
+        "type": "string",
+        "description": "Cidade e estado/país",
+        "required": true
+      },
+      {
+        "name": "days",
+        "type": "number",
+        "description": "Número de dias para previsão",
+        "required": false,
+        "default": 1
+      }
+    ],
+    "returnType": "object"
+  }
+]

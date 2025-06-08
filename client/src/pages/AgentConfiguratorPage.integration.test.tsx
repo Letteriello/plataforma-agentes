@@ -5,7 +5,9 @@ import AgentConfiguratorPage from './AgentConfiguratorPage';
 import * as agentService from '@/services/agentService';
 
 vi.mock('@/services/agentService', () => ({
-  saveAgentConfig: vi.fn().mockResolvedValue({ success: true }),
+  __esModule: true,
+  default: { saveAgent: vi.fn().mockResolvedValue({ success: true }) },
+  agentService: { saveAgent: vi.fn().mockResolvedValue({ success: true }) }
 }));
 
 describe.skip('AgentConfiguratorPage Integration Flow', () => {
@@ -42,7 +44,7 @@ describe.skip('AgentConfiguratorPage Integration Flow', () => {
     const mainSaveButton = screen.getByRole('button', { name: /Salvar Configuração do Agente/i });
     await user.click(mainSaveButton);
 
-    expect(agentService.saveAgentConfig).not.toHaveBeenCalled();
+    expect(agentService.agentService.saveAgent).not.toHaveBeenCalled();
     expect(await screen.findByText(/O nome do agente é obrigatório/i)).toBeInTheDocument();
   });
 });

@@ -89,7 +89,7 @@ const AgentList: React.FC<AgentListProps> = ({
               {selectable && (
                 <Checkbox
                   checked={selectedAgentIds.includes(agent.id)}
-                  onCheckedChange={() => onAgentToggle && onAgentToggle(agent.id)}
+                  onChange={() => onAgentToggle && onAgentToggle(agent.id)}
                   className="ml-2"
                 />
               )}

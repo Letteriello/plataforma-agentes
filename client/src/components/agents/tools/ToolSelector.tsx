@@ -3,16 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import mockToolsData from '../../../data/mock-tools.json';
 import { Tool } from '@/types';
-
-// Importe aqui os componentes do shadcn/ui que serão usados no futuro
-// Ex: import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-// Ex: import { Button } from "@/components/ui/button";
-// Importe aqui os componentes do shadcn/ui que serão usados no futuro
-// Ex: import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-// Ex: import { Button } from "@/components/ui/button";
-// Ex: import { Checkbox } from "@/components/ui/checkbox";
-// Ex: import { Label } from "@/components/ui/label";
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ToolSelectorProps {
   availableTools: Tool[]; // Ferramentas que podem ser selecionadas
@@ -37,68 +28,44 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({
   }, []);
 
   return (
-    <div className="grid gap-4 py-4">
-      {loadedTools.map((tool) => (
-        <div key={tool.id} className="flex items-center space-x-3">
-          <Checkbox
-            id={tool.id}
-            checked={selectedTools.includes(tool.id)}
-            onCheckedChange={(checked) => {
-              const newSelectedIds = typeof checked === 'boolean' && checked
-                ? [...selectedTools, tool.id]
-                : selectedTools.filter((id) => id !== tool.id);
-              onSelectionChange(newSelectedIds);
-            }}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <Label
-              htmlFor={tool.id}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {tool.name}
-            </Label>
-            {tool.description && (
-              <p className="text-xs text-muted-foreground">
-                {tool.description}
-              </p>
-            )}
-          </div>
-        </div>
-      ))}
-  // Por enquanto, um placeholder simples. O conteúdo do Dialog será implementado nas próximas tarefas.
-  return (
-    <div>
-      <h4>Tool Selector Placeholder</h4>
-      <p>Lista de ferramentas e checkboxes aparecerão aqui.</p>
-      {/*
-        Futuramente, este será o conteúdo de um <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Selecionar Ferramentas</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          {availableTools.map((tool) => (
-            <div key={tool.id} className="flex items-center space-x-2">
+    <Card>
+      <CardHeader>
+        <CardTitle>Ferramentas Disponíveis</CardTitle>
+        <CardDescription>Selecione as ferramentas que este agente pode utilizar</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 py-2">
+          {loadedTools.map((tool) => (
+            <div key={tool.id} className="flex items-center space-x-3 p-2 hover:bg-accent/50 rounded-md">
               <Checkbox
                 id={tool.id}
                 checked={selectedTools.includes(tool.id)}
-                onCheckedChange={(checked) => {
-                  const newSelected = checked
+                onChange={e => {
+                  const checked = e.target.checked;
+                  const newSelectedIds = checked
                     ? [...selectedTools, tool.id]
                     : selectedTools.filter((id) => id !== tool.id);
-                  onSelectionChange(newSelected);
+                  onSelectionChange(newSelectedIds);
                 }}
               />
-              <Label htmlFor={tool.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {tool.name}
-              </Label>
+              <div className="grid gap-1.5 leading-none">
+                <Label
+                  htmlFor={tool.id}
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {tool.name}
+                </Label>
+                {tool.description && (
+                  <p className="text-xs text-muted-foreground">
+                    {tool.description}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
         </div>
-        <DialogFooter>
-          <Button onClick={() => onOpenChange(false)}>Confirmar</Button>
-        </DialogFooter>
-      */}
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

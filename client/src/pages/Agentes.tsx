@@ -3,10 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"; // DialogTrigger não é usado pois abrimos programaticamente, DialogClose removido pois não é exportado/usado
 import { useToast } from "@/components/ui/use-toast";
 
@@ -567,7 +572,7 @@ const Agentes: React.FC = () => {
                   )}
                   <Accordion type="multiple" className="w-full">
                     {agentState.tools.map((tool, toolIndex) => (
-                      <AccordionItem value={`tool-${tool.id}`} key={tool.id}>
+                      <AccordionItem value={`tool-${tool.id}`} key={tool.id} className="border-b">
                         <AccordionTrigger className="hover:no-underline bg-slate-50 dark:bg-slate-800/50 px-4 py-3 rounded-md data-[state=open]:rounded-b-none data-[state=open]:border-b border-slate-200 dark:border-slate-700 flex justify-between items-center w-full">
                           <span className="text-lg font-semibold">Ferramenta: {tool.name || 'Nova Ferramenta'}</span>
                           <div className="ml-auto flex items-center space-x-2">
