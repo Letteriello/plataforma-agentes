@@ -13,6 +13,9 @@ export * from "./dialog"
 export * from "./tabs"
 export * from "./table"
 export * from "./separator"
+export * from "./scroll-area"
+export * from "./skeleton"
+export * from "./progress"
 
 // Toaster and Toast components
 export * from "./toaster"
