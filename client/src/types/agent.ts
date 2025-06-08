@@ -3,6 +3,7 @@ import { Tool } from "./tool";
 export interface AgentConfig {
   id: string; // Unique identifier for the agent
   name: string; // Display name for the agent
+  description?: string; // Optional description for the agent
   type: AgentType; // Type of the agent
 }
 
@@ -20,6 +21,11 @@ export interface LlmAgentConfig extends AgentConfig {
   type: AgentType.LLM;
   instruction: string;
   model: string;
+  // Generation parameters
+  temperature?: number;
+  maxOutputTokens?: number;
+  topP?: number;
+  topK?: number;
   code_execution?: boolean;
   planning_enabled?: boolean;
   tools?: string[]; // <--- Adicionar esta linha
