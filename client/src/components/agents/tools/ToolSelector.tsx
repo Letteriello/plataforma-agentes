@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import mockToolsData from '../../../data/mock-tools.json'; // Ajuste o caminho se necessário
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import mockToolsData from '../../../data/mock-tools.json';
+import { Tool } from '@/types';
 
 // Importe aqui os componentes do shadcn/ui que serão usados no futuro
 // Ex: import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -12,11 +13,6 @@ import mockToolsData from '../../../data/mock-tools.json'; // Ajuste o caminho s
 // Ex: import { Checkbox } from "@/components/ui/checkbox";
 // Ex: import { Label } from "@/components/ui/label";
 
-interface Tool {
-  id: string;
-  name: string;
-  description: string;
-}
 
 interface ToolSelectorProps {
   availableTools: Tool[]; // Ferramentas que podem ser selecionadas

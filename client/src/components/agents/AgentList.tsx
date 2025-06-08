@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAgentStore } from '@/store/agentStore'; // Ajuste o caminho
 import { Button } from '@/components/ui/button';
 import { Trash2Icon } from 'lucide-react';
-import { deleteAgent } from '@/api/agentService';
+import agentService from '@/services/agentService';
 
 interface AgentListProps {
   agents?: AnyAgentConfig[]; // Tornar opcional
@@ -47,7 +47,7 @@ const AgentList: React.FC<AgentListProps> = ({
 
     setDeletingAgentId(agentId);
     try {
-      await deleteAgent(agentId);
+      await agentService.deleteAgent(agentId);
       console.log('Agente deletado com sucesso (da UI):', agentId);
       // O store será atualizado, e AgentList re-renderizará
     } catch (error) {

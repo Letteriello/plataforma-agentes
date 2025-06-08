@@ -119,6 +119,26 @@ export const useSessionStore = create<SessionState>((set) => ({
 }));
 ```
 
+### **5.1 Hook de Lógica de UI (useAgentConfig)**
+
+Para manter os componentes de formulário enxutos, criamos o hook `useAgentConfig`. Ele centraliza toda a manipulação de um `AnyAgentConfig` (adição de ferramentas, atualização de campos e restauração do estado inicial). Assim, componentes como `AgentConfigurator` apenas consomem o hook e exibem a interface.
+
+### **5.2 Divisão de Stores Zustand por Contexto**
+
+Além do `agentStore` que contém a lista mestre de agentes, agora existe o `agentConfigStore`, dedicado à configuração em edição no `AgentWorkspace`. Esse store mantém `currentConfig`, sinaliza se há alterações (`isDirty`) e facilita o reset sem afetar a lista global.
+
+```
+AgentWorkspace
+   │
+   ├── useAgentConfigStore ── currentConfig
+   │         │
+   │         └─→ AgentConfigurator (useAgentConfig)
+   │
+   └─ saveAgent ⇄ agentService ⇄ agentStore
+```
+
+
+
 ---
 
 ## **6. Comunicação com o Backend (API & Streaming)**

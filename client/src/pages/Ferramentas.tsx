@@ -22,12 +22,7 @@ import {
   TableCell,
 } from '@/components/ui/table';
 
-interface Tool {
-  id: string;
-  name: string;
-  description: string;
-}
-
+import { Tool } from '@/types';
 export default function FerramentasPage() {
   const [tools, setTools] = useState<Tool[]>(mockTools as Tool[]);
   const [search, setSearch] = useState('');

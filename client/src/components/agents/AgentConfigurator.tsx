@@ -1,4 +1,5 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
+import { useAgentConfig } from '@/hooks/useAgentConfig';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {
   AgentType,
@@ -8,7 +9,7 @@ import {
   ParallelAgentConfig,
   LoopAgentConfig,
   Tool
-} from '@/types/agent'; // Import shared types
+} from '@/types';
 
 import {
   Input,
@@ -42,7 +43,6 @@ import { mockInitialAgents as importedMockExistingAgents } from '@/data/mocks/mo
 import { ToolSelector } from './tools/ToolSelector'; // Named import
 import AgentList from './AgentList';
 import AgentDropzone from './workflow/AgentDropzone';
-import { deepClone } from '@/lib/utils';
 
 // Cast the imported JSON to the Tool array type
 const MOCK_AVAILABLE_TOOLS: Tool[] = mockToolsDataJson as Tool[];
@@ -50,8 +50,7 @@ const MOCK_AVAILABLE_TOOLS: Tool[] = mockToolsDataJson as Tool[];
 const localMockExistingAgents: AnyAgentConfig[] = importedMockExistingAgents;
 
 interface AgentConfiguratorProps {
-  agentConfig: AnyAgentConfig; // Use shared AnyAgentConfig
-  onConfigChange: (newConfig: AnyAgentConfig) => void;
+  agentConfig: AnyAgentConfig; // Configuração inicial
   onSave?: (configToSave: AnyAgentConfig) => Promise<void>;
   isSaving?: boolean;
   isCreatingNew?: boolean;
@@ -102,14 +101,23 @@ const createNewAgentConfig = (type: AgentType, existingId?: string, existingName
   }
 };
 
+/**
+ * Componente de formulário para edição de agentes.
+ * A lógica de estado é delegada ao hook `useAgentConfig`, mantendo a UI simples.
+ */
 const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
   agentConfig: initialAgentConfig,
-  onConfigChange,
   onSave,
   isSaving = false,
   isCreatingNew = false,
 }) => {
-  const [internalConfig, setInternalConfig] = useState<AnyAgentConfig>(deepClone(initialAgentConfig));
+  const {
+    config,
+    updateConfig,
+    updateField,
+    addTool,
+    removeTool,
+  } = useAgentConfig({ initialConfig: initialAgentConfig });
   const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
   const [isAddSubAgentModalOpen, setIsAddSubAgentModalOpen] = useState(false);
   const [selectedAgentIdsForModal, setSelectedAgentIdsForModal] = useState<string[]>([]);
@@ -124,48 +132,39 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
     });
   };
 
-  useEffect(() => {
-    setInternalConfig(deepClone(initialAgentConfig));
-  }, [initialAgentConfig]);
-
-  const commitChange = (newConfig: AnyAgentConfig) => {
-    setInternalConfig(newConfig);
-    onConfigChange(newConfig);
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    commitChange({ ...internalConfig, [name]: value } as AnyAgentConfig); // Cast as AnyAgentConfig for base props
+    updateField(name, value);
   };
 
   const handleLlmInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (internalConfig.type === AgentType.LLM) {
+    if (config.type === AgentType.LLM) {
       const { name, value } = e.target;
-      commitChange({ ...internalConfig, [name]: value } as LlmAgentConfig);
+      updateField(name, value);
     }
   };
 
   const handleTypeChange = (newType: AgentType) => {
-    const newConfig = createNewAgentConfig(newType, internalConfig.id, internalConfig.name);
-    commitChange(newConfig);
+    const newConfig = createNewAgentConfig(newType, config.id, config.name);
+    updateConfig(newConfig);
   };
 
   const handleSwitchChange = (checked: boolean, name: keyof LlmAgentConfig) => {
-    if (internalConfig.type === AgentType.LLM) {
-      commitChange({ ...internalConfig, [name]: checked } as LlmAgentConfig);
+    if (config.type === AgentType.LLM) {
+      updateField(name, checked);
     }
   };
 
   const handleToolsSelectionChange = (selectedToolIds: string[]) => {
-    if (internalConfig.type === AgentType.LLM) {
-      commitChange({ ...internalConfig, tools: selectedToolIds } as LlmAgentConfig);
+    if (config.type === AgentType.LLM) {
+      updateField('tools', selectedToolIds);
     }
   };
 
   const handleRemoveTool = (toolIdToRemove: string) => {
-    if (internalConfig.type === AgentType.LLM && internalConfig.tools) {
-      const updatedTools = internalConfig.tools.filter((toolId: string) => toolId !== toolIdToRemove);
-      commitChange({ ...internalConfig, tools: updatedTools } as LlmAgentConfig);
+    if (config.type === AgentType.LLM && config.tools) {
+      const updatedTools = config.tools.filter((toolId: string) => toolId !== toolIdToRemove);
+      updateField('tools', updatedTools);
     }
   };
 
@@ -174,63 +173,61 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
       .map((id: string) => localMockExistingAgents.find((agent: AnyAgentConfig) => agent.id === id))
       .filter(Boolean) as AnyAgentConfig[];
 
-    if (internalConfig.type === AgentType.Sequential) {
-      const currentAgents = internalConfig.agents || [];
+    if (config.type === AgentType.Sequential) {
+      const currentAgents = config.agents || [];
       const newAgentIds = new Set(currentAgents.map(a => a.id));
       const uniqueNewAgents = agentsToAdd.filter(agent => !newAgentIds.has(agent.id));
-      commitChange({ ...internalConfig, agents: [...currentAgents, ...uniqueNewAgents] } as SequentialAgentConfig);
-    } else if (internalConfig.type === AgentType.Parallel) {
-      const currentAgents = internalConfig.agents || []; // parallel_agents is named 'agents' in ParallelAgentConfig type
+      updateField('agents', [...currentAgents, ...uniqueNewAgents]);
+    } else if (config.type === AgentType.Parallel) {
+      const currentAgents = config.agents || []; // parallel_agents is named 'agents' in ParallelAgentConfig type
       const newAgentIds = new Set(currentAgents.map(a => a.id));
       const uniqueNewAgents = agentsToAdd.filter(agent => !newAgentIds.has(agent.id));
-      commitChange({ ...internalConfig, agents: [...currentAgents, ...uniqueNewAgents] } as ParallelAgentConfig);
+      updateField('agents', [...currentAgents, ...uniqueNewAgents]);
     }
     setIsAddSubAgentModalOpen(false);
     setSelectedAgentIdsForModal([]);
   };
 
   const handleRemoveSubAgentFromWorkflow = (agentIdToRemove: string) => {
-    if (internalConfig.type === AgentType.Sequential) {
-      const currentAgents = internalConfig.agents || [];
+    if (config.type === AgentType.Sequential) {
+      const currentAgents = config.agents || [];
       const updatedAgents = currentAgents.filter((agent: AnyAgentConfig) => agent.id !== agentIdToRemove);
-      commitChange({ ...internalConfig, agents: updatedAgents } as SequentialAgentConfig);
-    } else if (internalConfig.type === AgentType.Parallel) {
-      const currentAgents = internalConfig.agents || []; // parallel_agents is named 'agents' in ParallelAgentConfig type
+      updateField('agents', updatedAgents);
+    } else if (config.type === AgentType.Parallel) {
+      const currentAgents = config.agents || [];
       const updatedAgents = currentAgents.filter((agent: AnyAgentConfig) => agent.id !== agentIdToRemove);
-      commitChange({ ...internalConfig, agents: updatedAgents } as ParallelAgentConfig);
+      updateField('agents', updatedAgents);
     }
   };
 
   const handleSubAgentsOrderChange = (orderedSubAgents: AnyAgentConfig[]) => {
-    if (internalConfig.type === AgentType.Sequential) {
-      commitChange({ ...internalConfig, agents: orderedSubAgents } as SequentialAgentConfig);
-    } else if (internalConfig.type === AgentType.Parallel) {
-      commitChange({ ...internalConfig, agents: orderedSubAgents } as ParallelAgentConfig);
+    if (config.type === AgentType.Sequential || config.type === AgentType.Parallel) {
+      updateField('agents', orderedSubAgents);
     }
   };
   
   const handleLoopAgentChange = (selectedAgentId: string) => {
-    if (internalConfig.type === AgentType.Loop) {
+    if (config.type === AgentType.Loop) {
       const selectedAgent = localMockExistingAgents.find((agent: AnyAgentConfig) => agent.id === selectedAgentId);
       if (selectedAgent) {
-        commitChange({ ...internalConfig, agent: selectedAgent } as LoopAgentConfig);
+        updateField('agent', selectedAgent);
       }
     }
   };
 
   const handleSavePress = async () => {
     if (onSave) {
-      await onSave(internalConfig);
+      await onSave(config);
     }
   };
 
-  const llmConfig = internalConfig.type === AgentType.LLM ? internalConfig : null;
-  const sequentialConfig = internalConfig.type === AgentType.Sequential ? internalConfig : null;
-  const parallelConfig = internalConfig.type === AgentType.Parallel ? internalConfig : null;
-  const loopConfig = internalConfig.type === AgentType.Loop ? internalConfig : null;
+  const llmConfig = config.type === AgentType.LLM ? config : null;
+  const sequentialConfig = config.type === AgentType.Sequential ? config : null;
+  const parallelConfig = config.type === AgentType.Parallel ? config : null;
+  const loopConfig = config.type === AgentType.Loop ? config : null;
 
   const isSaveDisabled = 
-    !internalConfig.name || 
+    !config.name ||
     isSaving ||
     (llmConfig && !llmConfig.instruction) ||
     (sequentialConfig && (sequentialConfig.agents?.length || 0) < 1) ||
@@ -248,7 +245,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
         <Input
           id="agentName"
           name="name"
-          value={internalConfig.name}
+          value={config.name}
           onChange={handleInputChange}
           placeholder="Ex: Agente de Pesquisa"
           style={{ marginTop: '5px' }}
@@ -257,7 +254,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
 
       <div style={{ marginBottom: '20px' }}>
         <Label htmlFor="agentType">Tipo de Agente</Label>
-        <Select value={internalConfig.type} onValueChange={(value: AgentType) => handleTypeChange(value)}>
+        <Select value={config.type} onValueChange={(value: AgentType) => handleTypeChange(value)}>
           <SelectTrigger id="agentType" style={{ marginTop: '5px' }}>
             <SelectValue placeholder="Selecione o tipo" />
           </SelectTrigger>
@@ -369,7 +366,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
                 <DialogTitle>Adicionar Agentes à Sequência</DialogTitle>
               </DialogHeader>
               <AgentList 
-                agents={localMockExistingAgents.filter((agent: AnyAgentConfig) => agent.id !== internalConfig.id && !(sequentialConfig.agents || []).find((sa: AnyAgentConfig) => sa.id === agent.id))}
+                agents={localMockExistingAgents.filter((agent: AnyAgentConfig) => agent.id !== config.id && !(sequentialConfig.agents || []).find((sa: AnyAgentConfig) => sa.id === agent.id))}
                 selectedAgentIds={selectedAgentIdsForModal}
                 onAgentToggle={handleAgentSelectionForModal}
                 selectable={true}
@@ -404,7 +401,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
                 <DialogTitle>Adicionar Agentes ao Paralelo</DialogTitle>
               </DialogHeader>
               <AgentList 
-                agents={localMockExistingAgents.filter((agent: AnyAgentConfig) => agent.id !== internalConfig.id && !(parallelConfig.agents || []).find((sa: AnyAgentConfig) => sa.id === agent.id))}
+                agents={localMockExistingAgents.filter((agent: AnyAgentConfig) => agent.id !== config.id && !(parallelConfig.agents || []).find((sa: AnyAgentConfig) => sa.id === agent.id))}
                 selectedAgentIds={selectedAgentIdsForModal}
                 onAgentToggle={handleAgentSelectionForModal}
                 selectable={true}
@@ -432,7 +429,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
             </SelectTrigger>
             <SelectContent>
               {localMockExistingAgents
-                .filter((agent: AnyAgentConfig) => agent.id !== internalConfig.id)
+                .filter((agent: AnyAgentConfig) => agent.id !== config.id)
                 .map((agent: AnyAgentConfig) => (
                   <SelectItem key={agent.id} value={agent.id}>{agent.name}</SelectItem>
               ))}

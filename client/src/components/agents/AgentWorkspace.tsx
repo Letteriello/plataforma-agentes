@@ -1,11 +1,12 @@
 // src/components/agents/AgentWorkspace.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AgentType, AnyAgentConfig, LlmAgentConfig } from '@/types/agent';
 import AgentConfigurator from '@/components/agents/AgentConfigurator';
 import JsonPreview from './JsonPreview';
 import { useAgentStore } from '@/store/agentStore';
+import { useAgentConfigStore } from '@/store/agentConfigStore';
 import { deepClone } from '@/lib/utils';
-import { saveAgent } from '@/api/agentService';
+import agentService from '@/services/agentService';
 import { useToast } from '@/components/ui/use-toast';
 
 const initialLlmConfig: LlmAgentConfig = {
@@ -27,29 +28,34 @@ const AgentWorkspace: React.FC = () => {
   const activeAgentFromStore = useAgentStore((state) => state.activeAgent);
   const setActiveAgentInStore = useAgentStore((state) => state.setActiveAgent);
 
-  const [currentConfig, setCurrentConfig] = useState<AnyAgentConfig>(
-    activeAgentFromStore ? deepClone(activeAgentFromStore) : deepClone(initialLlmConfig)
-  );
+  const { currentConfig, setConfig } = useAgentConfigStore((state) => ({
+    currentConfig: state.currentConfig,
+    setConfig: state.setConfig,
+  }));
   const [isCreatingNew, setIsCreatingNew] = useState(!activeAgentFromStore);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     // Sincroniza o workspace com o agente ativo no store
-    const agentToLoad = activeAgentFromStore || initialLlmConfig;
-    setCurrentConfig(deepClone(agentToLoad));
+    const agentToLoad = activeAgentFromStore
+      ? deepClone(activeAgentFromStore)
+      : deepClone(initialLlmConfig);
+    setConfig(agentToLoad);
     setIsCreatingNew(!activeAgentFromStore);
-  }, [activeAgentFromStore]);
+  }, [activeAgentFromStore, setConfig]);
 
   /**
    * Manipula o salvamento da configuração atual do agente,
    * exibindo toasts de sucesso ou erro.
    */
   const handleSaveCurrentConfig = async () => {
+    if (!currentConfig) return;
     setIsSaving(true);
     try {
-      const savedAgent = await saveAgent(currentConfig);
+      const savedAgent = await agentService.saveAgent(currentConfig);
       setActiveAgentInStore(savedAgent);
+      setConfig(savedAgent);
       toast({
         title: 'Agente salvo com sucesso!',
         description: `O agente "${savedAgent.name}" foi salvo.`,
@@ -72,16 +78,17 @@ const AgentWorkspace: React.FC = () => {
         <h2 className="text-lg font-semibold mb-4">
           {isCreatingNew ? 'Novo Agente' : `Editando: ${currentConfig?.name}`}
         </h2>
-        <AgentConfigurator
-          agentConfig={currentConfig}
-          onConfigChange={setCurrentConfig}
-          onSave={handleSaveCurrentConfig}
-          isSaving={isSaving}
-          isCreatingNew={isCreatingNew}
-        />
+        {currentConfig && (
+          <AgentConfigurator
+            agentConfig={currentConfig}
+            onSave={handleSaveCurrentConfig}
+            isSaving={isSaving}
+            isCreatingNew={isCreatingNew}
+          />
+        )}
       </div>
       <div style={{ flex: 1 }}>
-        <JsonPreview data={currentConfig} />
+        {currentConfig && <JsonPreview data={currentConfig} />}
       </div>
     </div>
   );
