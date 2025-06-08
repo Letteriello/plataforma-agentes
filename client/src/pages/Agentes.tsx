@@ -319,6 +319,7 @@ const Agentes: React.FC = () => {
   };
 
   return (
+    <>
     // Removido o div container externo, o Card agora é o elemento raiz.
     // As classes max-w-4xl e mx-auto foram removidas do Card para que ele ocupe a largura disponível.
     <Card className="w-full">
@@ -889,7 +890,7 @@ const Agentes: React.FC = () => {
           </DialogFooter>
         </Dialog>
       )}
-    </Card>
+    </>
   );
 };
 
