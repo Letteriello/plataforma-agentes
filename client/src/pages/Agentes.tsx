@@ -123,10 +123,10 @@ const initialAgentState: FormAgentState = {
 
 const Agentes: React.FC = () => {
   const { toast } = useToast();
-  const [agentState, setAgentState] = useState<AgentState>(initialAgentState);
+  const [agentState, setAgentState] = useState<FormAgentState>(initialAgentState);
   const [isToolDialogOpen, setIsToolDialogOpen] = useState(false);
   const [editingToolIndex, setEditingToolIndex] = useState<number | null>(null); // null para nova ferramenta, índice para editar
-  const [currentEditingTool, setCurrentEditingTool] = useState<AgentTool | null>(null);
+  const [currentEditingTool, setCurrentEditingTool] = useState<FormTool | null>(null);
 
   // Estados para o modal de Descrição do Agente
   const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
@@ -138,26 +138,47 @@ const Agentes: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setAgentState(prev => ({ ...prev, [name]: value }));
+    setAgentState((prev: FormAgentState) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: keyof AgentState, value: string) => {
-    setAgentState(prev => ({ ...prev, [name]: value }));
+  const handleSelectChange = (name: keyof FormAgentState, value: string) => {
+    setAgentState((prev: FormAgentState) => ({ ...prev, [name]: value }));
   };
 
   const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setAgentState(prev => ({
+    setAgentState((prev: FormAgentState) => ({
       ...prev,
       [name]: name === 'temperature' || name === 'topP' ? parseFloat(value) : parseInt(value, 10)
     }));
   };
 
+  // Add a type assertion to handle the slider change for numeric fields
   const handleSliderChange = (name: string, value: number) => {
-    setAgentState(prev => ({
+    setAgentState((prev: FormAgentState) => ({
       ...prev,
-      [name]: value
+      [name as keyof FormAgentState]: value
     }));
+  };
+
+  // Add the missing function for adding tool parameters
+  const addToolParameter = (toolIndex: number) => {
+    setAgentState((prev: FormAgentState) => {
+      const newTools = [...prev.tools];
+      const newParameter: FormToolParameter = {
+        id: `param-${Date.now()}`,
+        name: '',
+        type: 'string',
+        description: '',
+        required: true,
+        defaultValue: ''
+      };
+      newTools[toolIndex] = {
+        ...newTools[toolIndex],
+        parameters: [...newTools[toolIndex].parameters, newParameter]
+      };
+      return { ...prev, tools: newTools };
+    });
   };
 
   const openToolDialog = (index?: number) => {
@@ -189,86 +210,104 @@ const Agentes: React.FC = () => {
   };
 
   const removeTool = (toolIndex: number) => {
-    setAgentState(prev => ({
+    setAgentState((prev: FormAgentState) => ({
       ...prev,
-      tools: prev.tools.filter((_, index) => index !== toolIndex)
+      tools: prev.tools.filter((_: FormTool, index: number) => index !== toolIndex)
     }));
   };
 
-  const handleToolChange = (toolIndex: number, fieldName: keyof AgentTool, value: string) => {
-    setAgentState(prev => {
+  const handleToolChange = (toolIndex: number, fieldName: keyof FormTool, value: string) => {
+    setAgentState((prev: FormAgentState) => {
       const newTools = [...prev.tools];
       newTools[toolIndex] = { ...newTools[toolIndex], [fieldName]: value };
       return { ...prev, tools: newTools };
     });
   };
 
-  // Dummy function for now, to be implemented
-  const addToolParameter = (toolIndex: number) => {
-    console.log(`TODO: Add parameter to tool ${toolIndex}`);
-    // Placeholder: Add a new empty parameter to the tool
-    setAgentState(prev => {
+  const handleAddParameter = (toolIndex: number) => {
+    setAgentState((prev: FormAgentState) => {
       const newTools = [...prev.tools];
-      const newParameters = [...newTools[toolIndex].parameters, {
+      const newParameter: FormToolParameter = {
         id: `param-${Date.now()}`,
         name: '',
-        type: 'string' as 'string' | 'number' | 'boolean' | 'object' | 'array',
+        type: 'string',
         description: '',
-        required: false,
-        defaultValue: ''
-      }];
-      newTools[toolIndex] = { ...newTools[toolIndex], parameters: newParameters };
+        required: true
+      };
+      newTools[toolIndex].parameters.push(newParameter);
       return { ...prev, tools: newTools };
     });
   };
 
-  const handleToolParameterChange = (
-    toolIndex: number, 
-    paramIndex: number, 
-    fieldName: keyof AgentToolParameter | string, // string for checkbox case
-    value: string | boolean
-  ) => {
-    setAgentState(prev => {
+  const handleRemoveParameter = (toolIndex: number, paramIndex: number) => {
+    setAgentState((prev: FormAgentState) => {
       const newTools = [...prev.tools];
-      const newParameters = [...newTools[toolIndex].parameters];
-      // Type assertion to satisfy TypeScript for fieldName as keyof AgentToolParameter
-      (newParameters[paramIndex] as any)[fieldName] = value;
-      newTools[toolIndex] = { ...newTools[toolIndex], parameters: newParameters };
+      newTools[toolIndex].parameters = newTools[toolIndex].parameters.filter(
+        (_: FormToolParameter, index: number) => index !== paramIndex
+      );
+      return { ...prev, tools: newTools };
+    });
+  };
+
+  const handleParameterChange = (
+    toolIndex: number,
+    paramIndex: number,
+    field: keyof FormToolParameter,
+    value: string | boolean | number | null
+  ) => {
+    setAgentState((prev: FormAgentState) => {
+      const newTools = [...prev.tools];
+      const updatedParameters = [...newTools[toolIndex].parameters];
+      updatedParameters[paramIndex] = {
+        ...updatedParameters[paramIndex],
+        [field]: value
+      };
+      newTools[toolIndex] = {
+        ...newTools[toolIndex],
+        parameters: updatedParameters
+      };
       return { ...prev, tools: newTools };
     });
   };
 
   const removeToolParameter = (toolIndex: number, paramIndex: number) => {
-    setAgentState(prev => {
+    setAgentState((prev: FormAgentState) => {
       const newTools = [...prev.tools];
-      const newParameters = newTools[toolIndex].parameters.filter((_, index) => index !== paramIndex);
+      const newParameters = newTools[toolIndex].parameters.filter((_: FormToolParameter, index: number) => index !== paramIndex);
       newTools[toolIndex] = { ...newTools[toolIndex], parameters: newParameters };
       return { ...prev, tools: newTools };
     });
   };
 
   const addSafetySetting = () => {
-    setAgentState(prev => ({
+    setAgentState((prev: FormAgentState) => ({
       ...prev,
       safetySettings: [...prev.safetySettings, {
         id: `safety-${Date.now()}`,
-        category: '',
-        threshold: 'BLOCK_NONE' // Default threshold
+        category: 'HARM_CATEGORY_UNSPECIFIED',
+        threshold: 'BLOCK_NONE' as const
       }]
     }));
   };
 
   const removeSafetySetting = (index: number) => {
-    setAgentState(prev => ({
+    setAgentState((prev: FormAgentState) => ({
       ...prev,
-      safetySettings: prev.safetySettings.filter((_, i) => i !== index)
+      safetySettings: prev.safetySettings.filter((_, i: number) => i !== index)
     }));
   };
 
-  const handleSafetySettingChange = (index: number, fieldName: keyof SafetySetting, value: string) => {
-    setAgentState(prev => {
+  const handleSafetySettingChange = (
+    index: number, 
+    fieldName: keyof FormSafetySetting, 
+    value: string
+  ) => {
+    setAgentState((prev: FormAgentState) => {
       const newSafetySettings = [...prev.safetySettings];
-      newSafetySettings[index] = { ...newSafetySettings[index], [fieldName]: value };
+      newSafetySettings[index] = { 
+        ...newSafetySettings[index], 
+        [fieldName]: value 
+      } as FormSafetySetting;
       return { ...prev, safetySettings: newSafetySettings };
     });
   };
@@ -611,7 +650,7 @@ const Agentes: React.FC = () => {
                                         id={`tool-${toolIndex}-param-name-${paramIndex}`} 
                                         name="name" 
                                         value={param.name} 
-                                        onChange={(e) => handleToolParameterChange(toolIndex, paramIndex, 'name', e.target.value)} 
+                                        onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'name', e.target.value)} 
                                         placeholder="Ex: location"
                                       />
                                     </div>
@@ -620,7 +659,7 @@ const Agentes: React.FC = () => {
                                       <Select 
                                         name="type" 
                                         value={param.type} 
-                                        onValueChange={(value) => handleToolParameterChange(toolIndex, paramIndex, 'type', value as AgentToolParameter['type'])}
+                                        onValueChange={(value) => handleParameterChange(toolIndex, paramIndex, 'type', value as FormToolParameter['type'])}
                                       >
                                         <SelectTrigger id={`tool-${toolIndex}-param-type-${paramIndex}`}>
                                           <SelectValue placeholder="Selecione o tipo" />
@@ -641,7 +680,7 @@ const Agentes: React.FC = () => {
                                       id={`tool-${toolIndex}-param-description-${paramIndex}`} 
                                       name="description" 
                                       value={param.description} 
-                                      onChange={(e) => handleToolParameterChange(toolIndex, paramIndex, 'description', e.target.value)} 
+                                      onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'description', e.target.value)} 
                                       placeholder="Ex: A cidade e estado, ex: San Francisco, CA"
                                       rows={2}
                                     />
@@ -653,7 +692,7 @@ const Agentes: React.FC = () => {
                                         id={`tool-${toolIndex}-param-defaultValue-${paramIndex}`} 
                                         name="defaultValue" 
                                         value={String(param.defaultValue ?? '')} 
-                                        onChange={(e) => handleToolParameterChange(toolIndex, paramIndex, 'defaultValue', e.target.value)} 
+                                        onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'defaultValue', e.target.value)} 
                                         placeholder="Ex: metric"
                                       />
                                     </div>
@@ -663,7 +702,7 @@ const Agentes: React.FC = () => {
                                         id={`tool-${toolIndex}-param-required-${paramIndex}`} 
                                         name="required" 
                                         checked={param.required} 
-                                        onChange={(e) => handleToolParameterChange(toolIndex, paramIndex, 'required', e.target.checked)} 
+                                        onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'required', e.target.checked)} 
                                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                       />
                                       <Label htmlFor={`tool-${toolIndex}-param-required-${paramIndex}`} className="text-sm font-medium">
