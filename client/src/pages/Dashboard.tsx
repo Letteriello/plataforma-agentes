@@ -1,44 +1,37 @@
-import { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { useDashboardStore } from '@/store/dashboardStore';
+import { useNavigate } from 'react-router-dom';
+import useDashboardData from '@/hooks/useDashboardData';
+import agentService from '@/services/agentService';
+import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
 import { VisaoGeralCard } from '@/components/dashboard/VisaoGeralCard';
 import { MeusAgentesCard } from '@/components/dashboard/MeusAgentesCard';
 import { AtividadeRecenteCard } from '@/components/dashboard/AtividadeRecenteCard';
 
 export default function DashboardPage() {
-  // Busca dados do store
-  const { 
-    agents, 
-    activeAgentsCount, 
-    activeSessions, 
-    totalSessions24h, 
-    recentActivities, 
-    fetchDashboardData,
-    createAgent,
-  } = useDashboardStore();
-
-  // Carrega os dados iniciais
-  useEffect(() => {
-    fetchDashboardData();
-    
-    // Atualiza os dados a cada minuto (simulando atualização em tempo real)
-    const interval = setInterval(fetchDashboardData, 60000);
-    return () => clearInterval(interval);
-  }, [fetchDashboardData]);
+  const navigate = useNavigate();
+  const {
+    stats,
+    agents,
+    recentActivities,
+    isLoading,
+    error,
+    refreshData,
+  } = useDashboardData();
 
   // Manipuladores de eventos
-  const handleCreateAgent = () => {
-    const agentName = prompt('Digite o nome do novo agente:');
-    if (agentName) {
-      createAgent(agentName, 'llm'); // Por padrão, cria um agente do tipo LLM
+  const handleCreateAgent = async (name: string, type: any) => {
+    try {
+      const saved = await agentService.saveAgent({ id: '', name, type } as any);
+      navigate(`/agent/${saved.id}`);
+      refreshData();
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const handleAgentClick = (agent: any) => {
-    // Navega para a página de detalhes do agente
-    console.log('Agent clicked:', agent);
-    // navigate(`/agentes/${agent.id}`);
+    navigate(`/agent/${agent.id}`);
   };
 
   return (
@@ -60,25 +53,34 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Visão Geral */}
         <div className="md:col-span-1 lg:row-span-2">
-          <VisaoGeralCard 
-            activeAgents={activeAgentsCount} 
-            activeSessions={activeSessions} 
-            totalSessions24h={totalSessions24h} 
+          <VisaoGeralCard
+            activeAgents={stats.activeAgentsCount}
+            activeSessions={stats.activeSessions}
+            totalSessions24h={stats.totalSessions24h}
+            isLoading={isLoading}
+            error={error}
           />
         </div>
 
         {/* Meus Agentes */}
         <div className="md:col-span-1 lg:col-span-2">
-          <MeusAgentesCard 
-            agents={agents} 
-            onCreateAgent={handleCreateAgent}
+          <MeusAgentesCard
+            agents={agents}
+            onCreateAgent={() => {}}
             onAgentClick={handleAgentClick}
+            createButton={<CreateAgentDialog onConfirm={handleCreateAgent} />}
+            isLoading={isLoading}
+            error={error}
           />
         </div>
 
         {/* Atividade Recente */}
         <div className="md:col-span-2 lg:col-span-3">
-          <AtividadeRecenteCard activities={recentActivities} />
+          <AtividadeRecenteCard
+            activities={recentActivities}
+            isLoading={isLoading}
+            error={error}
+          />
         </div>
       </div>
     </div>

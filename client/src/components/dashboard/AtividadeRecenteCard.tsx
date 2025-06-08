@@ -42,9 +42,11 @@ const activityColors = {
 
 interface AtividadeRecenteCardProps {
   activities: Activity[];
+  isLoading?: boolean;
+  error?: string | null;
 }
 
-export function AtividadeRecenteCard({ activities }: AtividadeRecenteCardProps) {
+export function AtividadeRecenteCard({ activities, isLoading, error }: AtividadeRecenteCardProps) {
   return (
     <Card className="h-full">
       <CardHeader>
@@ -52,7 +54,11 @@ export function AtividadeRecenteCard({ activities }: AtividadeRecenteCardProps) 
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {activities.length === 0 ? (
+          {error ? (
+            <p className="text-sm text-destructive text-center py-4">{error}</p>
+          ) : isLoading ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Carregando...</p>
+          ) : activities.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               Nenhuma atividade recente
             </p>
