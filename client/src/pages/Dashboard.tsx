@@ -1,4 +1,4 @@
-import { Input } from '@/components/ui/input';
+import { Input, Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useDashboardData from '@/hooks/useDashboardData';
@@ -49,21 +49,38 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Grid principal */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Visão Geral */}
-        <div className="md:col-span-1 lg:row-span-2">
-          <VisaoGeralCard
-            activeAgents={stats.activeAgentsCount}
-            activeSessions={stats.activeSessions}
-            totalSessions24h={stats.totalSessions24h}
-            isLoading={isLoading}
-            error={error}
-          />
-        </div>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="agents">Agentes</TabsTrigger>
+          <TabsTrigger value="activity">Atividade</TabsTrigger>
+        </TabsList>
 
-        {/* Meus Agentes */}
-        <div className="md:col-span-1 lg:col-span-2">
+        <TabsContent value="overview">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="md:col-span-1 lg:row-span-2">
+              <VisaoGeralCard
+                activeAgents={stats.activeAgentsCount}
+                activeSessions={stats.activeSessions}
+                totalSessions24h={stats.totalSessions24h}
+                isLoading={isLoading}
+                error={error}
+              />
+            </div>
+            <div className="md:col-span-1 lg:col-span-2">
+              <MeusAgentesCard
+                agents={agents}
+                onCreateAgent={() => {}}
+                onAgentClick={handleAgentClick}
+                createButton={<CreateAgentDialog onConfirm={handleCreateAgent} />}
+                isLoading={isLoading}
+                error={error}
+              />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="agents">
           <MeusAgentesCard
             agents={agents}
             onCreateAgent={() => {}}
@@ -72,17 +89,16 @@ export default function DashboardPage() {
             isLoading={isLoading}
             error={error}
           />
-        </div>
+        </TabsContent>
 
-        {/* Atividade Recente */}
-        <div className="md:col-span-2 lg:col-span-3">
+        <TabsContent value="activity">
           <AtividadeRecenteCard
             activities={recentActivities}
             isLoading={isLoading}
             error={error}
           />
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
