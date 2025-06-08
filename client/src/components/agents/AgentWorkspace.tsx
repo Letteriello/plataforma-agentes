@@ -6,7 +6,7 @@ import JsonPreview from './JsonPreview';
 import { useAgentStore } from '@/store/agentStore';
 import { useAgentConfigStore } from '@/store/agentConfigStore';
 import { deepClone } from '@/lib/utils';
-import { saveAgent } from '@/api/agentService';
+import agentService from '@/services/agentService';
 import { useToast } from '@/components/ui/use-toast';
 
 const initialLlmConfig: LlmAgentConfig = {
@@ -53,7 +53,7 @@ const AgentWorkspace: React.FC = () => {
     if (!currentConfig) return;
     setIsSaving(true);
     try {
-      const savedAgent = await saveAgent(currentConfig);
+      const savedAgent = await agentService.saveAgent(currentConfig);
       setActiveAgentInStore(savedAgent);
       setConfig(savedAgent);
       toast({

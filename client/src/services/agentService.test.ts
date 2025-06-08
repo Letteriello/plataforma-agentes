@@ -1,23 +1,25 @@
 import { vi, describe, beforeEach, test, expect } from 'vitest';
-import { saveAgent } from './agentService';
+import agentService from './agentService';
 import { AnyAgentConfig, AgentType, LlmAgentConfig } from '@/types/agent';
 import { useAgentStore } from '@/store/agentStore';
 
 const addAgent = vi.fn();
 const updateAgent = vi.fn();
+const removeAgent = vi.fn();
 
 vi.mock('@/store/agentStore', () => ({
   useAgentStore: {
-    getState: () => ({ addAgent, updateAgent }),
+    getState: () => ({ addAgent, updateAgent, removeAgent }),
   },
 }));
 
 beforeEach(() => {
   addAgent.mockClear();
   updateAgent.mockClear();
+  removeAgent.mockClear();
 });
 
-describe('agentService.saveAgent', () => {
+describe('agentService', () => {
   const configWithoutId: LlmAgentConfig = {
     id: '',
     name: 'New',
@@ -29,20 +31,22 @@ describe('agentService.saveAgent', () => {
     tools: [],
   };
 
-  const configWithId: LlmAgentConfig = {
-    ...configWithoutId,
-    id: '123',
-  };
+  const configWithId: LlmAgentConfig = { ...configWithoutId, id: '123' };
 
-  test('calls addAgent when id is missing', async () => {
-    await saveAgent(configWithoutId);
+  test('saveAgent calls addAgent when id is missing', async () => {
+    await agentService.saveAgent(configWithoutId);
     expect(addAgent).toHaveBeenCalled();
     expect(updateAgent).not.toHaveBeenCalled();
   });
 
-  test('calls updateAgent when id exists', async () => {
-    await saveAgent(configWithId);
+  test('saveAgent calls updateAgent when id exists', async () => {
+    await agentService.saveAgent(configWithId);
     expect(updateAgent).toHaveBeenCalled();
     expect(addAgent).not.toHaveBeenCalled();
+  });
+
+  test('deleteAgent calls removeAgent', async () => {
+    await agentService.deleteAgent('abc');
+    expect(removeAgent).toHaveBeenCalledWith('abc');
   });
 });
