@@ -15,7 +15,7 @@ export function App() {
         <TooltipProvider>
           <ToastProvider>
             <div className="relative flex min-h-screen flex-col">
-              <RouterProvider router={router} />
+              <RouterProvider router={router} future={{ v7_startTransition: true }} />
               <Toaster />
             </div>
           </ToastProvider>

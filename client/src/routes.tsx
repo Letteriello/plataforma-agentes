@@ -12,13 +12,13 @@ const withSuspense = (Component: React.ComponentType) => {
 };
 
 // Lazy load pages
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 import AgentesMinimoContent from '@/pages/Agentes'; // Importação direta
 // const Agentes = lazy(() => import('@/pages/Agentes')); // Comentado
-const Ferramentas = lazy(() => import('@/pages/Ferramentas'));
-const Deploy = lazy(() => import('@/pages/Deploy'));
-const Configuracoes = lazy(() => import('@/pages/Configuracoes'));
-const ChatPage = lazy(() => import('@/pages/ChatPage'));
+const Ferramentas = lazy(() => import('./pages/Ferramentas'));
+const Deploy = lazy(() => import('./pages/Deploy'));
+const Configuracoes = lazy(() => import('./pages/Configuracoes'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
 
 // Error boundary component
 const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
