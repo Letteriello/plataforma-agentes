@@ -41,11 +41,11 @@ const MainLayout = () => {
           onSelectAgentForSelector={setSelectedAgentId}
         />
         {/* Outlet Panel - Agora ocupa todo o espaço abaixo da Topbar */}
-        <div className="flex-1 h-full overflow-y-auto p-4 md:p-6 bg-muted/20 dark:bg-muted/10">
-          <main>
-            <Outlet />
-          </main>
-        </div>
+        <div className="flex-1 h-full overflow-y-auto bg-muted/20 dark:bg-muted/10">
+  <main className="p-4 md:p-6">
+    <Outlet />
+  </main>
+</div>
       </div>
     </div>
   );
