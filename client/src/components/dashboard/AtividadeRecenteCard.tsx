@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Activity } from '@/store/dashboardStore';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const activityIcons = {
   info: (
@@ -57,42 +59,47 @@ export function AtividadeRecenteCard({ activities, isLoading, error }: Atividade
           {error ? (
             <p className="text-sm text-destructive text-center py-4">{error}</p>
           ) : isLoading ? (
-            <p className="text-sm text-muted-foreground text-center py-4">Carregando...</p>
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-full" />
+              ))}
+            </div>
           ) : activities.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               Nenhuma atividade recente
             </p>
           ) : (
-            <div className="relative">
-              {/* Linha do tempo */}
-              <div className="absolute left-4 top-0 h-full w-0.5 bg-border -translate-x-1/2" />
-              
-              <div className="space-y-6">
-                {activities.map((activity) => (
-                  <div key={activity.id} className="relative pl-8">
-                    {/* Ponto da linha do tempo */}
-                    <div 
-                      className={`absolute left-0 top-1 flex h-4 w-4 items-center justify-center rounded-full ${activityColors[activity.type]}`}
-                    >
-                      {activityIcons[activity.type]}
+            <ScrollArea className="h-72 pr-4">
+              <div className="relative">
+                {/* Linha do tempo */}
+                <div className="absolute left-4 top-0 h-full w-0.5 bg-border -translate-x-1/2" />
+
+                <div className="space-y-6">
+                  {activities.map((activity) => (
+                    <div key={activity.id} className="relative pl-8">
+                      {/* Ponto da linha do tempo */}
+                      <div
+                        className={`absolute left-0 top-1 flex h-4 w-4 items-center justify-center rounded-full ${activityColors[activity.type]}`}
+                      >
+                        {activityIcons[activity.type]}
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                          {activity.message}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(activity.timestamp), {
+                            addSuffix: true,
+                            locale: ptBR
+                          })}
+                        </p>
+                      </div>
                     </div>
-                    
-                    <div className="space-y-1
-                    ">
-                      <p className="text-sm font-medium leading-none">
-                        {activity.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(activity.timestamp), { 
-                          addSuffix: true,
-                          locale: ptBR 
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            </ScrollArea>
           )}
         </div>
       </CardContent>

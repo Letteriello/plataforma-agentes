@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LucideUsers, LucideCpu, LucideZap } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface StatCardProps {
   title: string;
@@ -44,23 +45,29 @@ export function VisaoGeralCard({
       <CardContent className="space-y-4">
         {error ? (
           <p className="text-sm text-destructive">{error}</p>
+        ) : isLoading ? (
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
         ) : (
           <>
             <StatCard
               title="Agentes Ativos"
-              value={isLoading ? '...' : activeAgents}
+              value={activeAgents}
               icon={<LucideCpu className="h-5 w-5" />}
             />
             <div className="h-px bg-border" />
             <StatCard
               title="Sessões Ativas"
-              value={isLoading ? '...' : activeSessions}
+              value={activeSessions}
               icon={<LucideUsers className="h-5 w-5" />}
             />
             <div className="h-px bg-border" />
             <StatCard
               title="Sessões (24h)"
-              value={isLoading ? '...' : totalSessions24h}
+              value={totalSessions24h}
               icon={<LucideZap className="h-5 w-5" />}
             />
           </>
