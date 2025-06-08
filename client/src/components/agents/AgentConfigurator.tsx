@@ -9,7 +9,7 @@ import {
   ParallelAgentConfig,
   LoopAgentConfig,
   Tool
-} from '@/types/agent'; // Import shared types
+} from '@/types';
 
 import {
   Input,

@@ -1,3 +1,4 @@
+import { Tool } from "./tool";
 // Base interface for all agent configurations
 export interface AgentConfig {
   id: string; // Unique identifier for the agent
@@ -51,15 +52,6 @@ export interface WorkflowAgentConfig extends AgentConfig {
 
 // Union type for any agent configuration
 export type AnyAgentConfig = LlmAgentConfig | SequentialAgentConfig | ParallelAgentConfig | LoopAgentConfig;
-
-// Interface for a tool that can be used by an agent
-export interface Tool {
-  id: string;
-  name: string;
-  description: string;
-  // Parameters specific to the tool, if any
-  // Example: parameters: { [key: string]: any };
-}
 
 // Interface for an agent definition that might include tools
 export interface AgentWithToolsConfig extends AgentConfig {
