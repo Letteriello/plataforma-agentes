@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AnyAgentConfig } from '@/types';
 import { useAgentStore } from '@/store/agentStore';
-import agentService from '@/services/agentService';
+import agentService from '@/api/agentService';
 
 export interface UseAgentConfiguratorReturn {
   config: AnyAgentConfig;

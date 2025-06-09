@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAgentStore } from '@/store/agentStore'; // Ajuste o caminho
 import { Button } from '@/components/ui/button';
 import { Trash2Icon } from 'lucide-react';
-import agentService from '@/services/agentService';
+import agentService from '@/api/agentService';
 
 interface AgentListProps {
   agents?: AnyAgentConfig[]; // Tornar opcional

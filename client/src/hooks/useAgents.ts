@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAgentStore } from '@/store/agentStore';
-import agentService from '@/services/agentService';
+import agentService from '@/api/agentService';
 import { AnyAgentConfig } from '@/types';
 
 export interface UseAgentsReturn {

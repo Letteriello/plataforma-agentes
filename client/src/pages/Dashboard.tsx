@@ -2,7 +2,7 @@ import { Input, Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useDashboardData from '@/hooks/useDashboardData';
-import agentService from '@/services/agentService';
+import agentService from '@/api/agentService';
 import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
 import { VisaoGeralCard } from '@/components/dashboard/VisaoGeralCard';
 import { MeusAgentesCard } from '@/components/dashboard/MeusAgentesCard';
