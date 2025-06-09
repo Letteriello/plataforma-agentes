@@ -1,54 +1,45 @@
-# React + TypeScript + Vite
+# Cliente da Plataforma de Agentes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este diretório contém o frontend em React e TypeScript. A arquitetura completa é descrita em [../ARCHITECTURE.md](../ARCHITECTURE.md) e na pasta `docs`.
 
-Currently, two official plugins are available:
+## Requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js 20 ou superior
+- npm
 
-## Expanding the ESLint configuration
+## Instalação
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Navegue até `client/` e execute `npm install` para instalar as dependências.
+2. Copie `.env.example` para `.env.development`, `.env.staging` e `.env.production`.
+   Ajuste `VITE_API_BASE_URL` conforme a URL do backend.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Scripts Disponíveis
+
+- `npm run dev` – inicia o servidor de desenvolvimento.
+- `npm run build` – gera o build de produção em `dist/`.
+- `npm run preview` – visualiza o build já gerado.
+- `npm run test` – executa os testes com Vitest.
+- `npm run lint` – roda o ESLint.
+- `npm run format` – formata o código com Prettier.
+- `npm run storybook` – abre o Storybook para visualizar componentes.
+
+## Estrutura de Pastas
+
+```
+src/
+├── api/
+├── assets/
+├── components/
+│   ├── features/
+│   ├── layouts/
+│   └── ui/
+├── data/
+├── hooks/
+├── lib/
+├── pages/
+├── routes/
+├── store/
+└── types/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Para mais detalhes consulte `docs/docs/ai/07_estrutura_do_projeto.md`.
