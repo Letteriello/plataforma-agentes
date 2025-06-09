@@ -40,16 +40,14 @@ import { Slider } from '@/components/ui/slider';
 import { XIcon, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-import mockToolsDataJson from '@/data/mocks/mock-tools.json'; // Corrected import
-import { mockInitialAgents as importedMockExistingAgents } from '@/data/mocks/mock-initial-agents'; // Corrected import
+import { mockInitialAgents as importedMockExistingAgents } from '@/data/mocks/mock-initial-agents';
+import { useToolStore } from '@/store/toolStore';
 
 import { ToolSelector } from './tools/ToolSelector'; // Named import
 import AgentList from './AgentList';
 import AgentDropzone from './workflow/AgentDropzone';
 import { createNewAgentConfig } from '@/lib/agent-utils';
 
-// Cast the imported JSON to the Tool array type
-const MOCK_AVAILABLE_TOOLS: Tool[] = mockToolsDataJson as Tool[];
 // Use the imported agents directly as they should conform to AnyAgentConfig[]
 const localMockExistingAgents: AnyAgentConfig[] = importedMockExistingAgents;
 
@@ -104,7 +102,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
     onSave, // Pass onSave to the hook
     isSavingGlobal: बाहेरून_येणारे_isSaving, // Pass isSaving to the hook
   });
-  // MOCK_AVAILABLE_TOOLS is still needed for ToolSelector and rendering tool names.
+  const availableTools = useToolStore((state) => state.tools);
   // localMockExistingAgents from the component scope is used for AgentList filters.
   // The hook also returns localMockExistingAgents, decide which one to use or if they should be synced.
   // For now, assuming component's localMockExistingAgents for AgentList filters is fine.
@@ -312,7 +310,7 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
               <Label>Ferramentas Selecionadas</Label>
               <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {llmConfig.tools?.map((toolId: string) => {
-                  const tool = MOCK_AVAILABLE_TOOLS.find((t: Tool) => t.id === toolId);
+                  const tool = availableTools.find((t: Tool) => t.id === toolId);
                   return tool ? (
                     <Badge key={toolId} variant="secondary" className="flex items-center">
                       {tool.name}
@@ -337,7 +335,6 @@ const AgentConfigurator: React.FC<AgentConfiguratorProps> = ({
                     <DialogTitle>Selecionar Ferramentas</DialogTitle>
                   </DialogHeader>
                   <ToolSelector
-                    availableTools={MOCK_AVAILABLE_TOOLS}
                     selectedTools={llmConfig.tools || []}
                     onSelectionChange={handleToolsSelectionChange}
                   />
