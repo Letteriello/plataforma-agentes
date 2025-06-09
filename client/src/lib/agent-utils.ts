@@ -1,0 +1,186 @@
+import { Agent, AgentType, LLMAgent, SequentialAgent, ParallelAgent, A2AAgent } from '@/types/agents';
+
+/**
+ * Get the display name for an agent type
+ */
+export function getAgentTypeDisplayName(type: AgentType): string {
+  const typeMap: Record<AgentType, string> = {
+    llm: 'LLM Agent',
+    sequential: 'Sequential Workflow',
+    parallel: 'Parallel Workflow',
+    a2a: 'A2A (Agent-to-Agent)',
+  };
+  return typeMap[type] || 'Unknown Agent Type';
+}
+
+/**
+ * Get the description for an agent type
+ */
+export function getAgentTypeDescription(type: AgentType): string {
+  const descriptionMap: Record<AgentType, string> = {
+    llm: 'A single LLM agent that can be configured with instructions and tools',
+    sequential: 'A workflow that runs agents in sequence, passing the output of one agent as input to the next',
+    parallel: 'A workflow that runs multiple agents in parallel and combines their outputs',
+    a2a: 'An agent that communicates with external services via HTTP requests',
+  };
+  return descriptionMap[type] || 'An agent with custom functionality';
+}
+
+/**
+ * Get the icon for an agent type
+ */
+export function getAgentTypeIcon(type: AgentType): string {
+  const iconMap: Record<AgentType, string> = {
+    llm: '🤖',
+    sequential: '⏩',
+    parallel: '🔄',
+    a2a: '🔌',
+  };
+  return iconMap[type] || '❓';
+}
+
+/**
+ * Validate an agent configuration
+ */
+export function validateAgent(agent: Agent): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  // Common validations
+  if (!agent.name?.trim()) {
+    errors.push('Agent name is required');
+  }
+  
+  // Type-specific validations
+  switch (agent.type) {
+    case 'llm':
+      const llmAgent = agent as LLMAgent;
+      if (!llmAgent.instruction?.trim()) {
+        errors.push('Instructions are required for LLM agents');
+      }
+      break;
+      
+    case 'sequential':
+    case 'parallel':
+      const workflowAgent = agent as SequentialAgent | ParallelAgent;
+      if (!workflowAgent.agents?.length) {
+        errors.push('Workflow must contain at least one agent');
+      }
+      break;
+      
+    case 'a2a':
+      const a2aAgent = agent as A2AAgent;
+      try {
+        new URL(a2aAgent.endpoint);
+      } catch {
+        errors.push('A valid endpoint URL is required for A2A agents');
+      }
+      break;
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Get the default configuration for a tool based on its schema
+ */
+export function getDefaultToolConfig(parameters: any[]): Record<string, any> {
+  const config: Record<string, any> = {};
+  
+  parameters.forEach(param => {
+    if (param.default !== undefined) {
+      config[param.name] = param.default;
+    } else if (param.required) {
+      // Set sensible defaults based on type
+      switch (param.type) {
+        case 'string':
+          config[param.name] = '';
+          break;
+        case 'number':
+          config[param.name] = 0;
+          break;
+        case 'boolean':
+          config[param.name] = false;
+          break;
+        case 'array':
+          config[param.name] = [];
+          break;
+        case 'object':
+          config[param.name] = {};
+          break;
+      }
+    }
+  });
+  
+  return config;
+}
+
+/**
+ * Format an agent's configuration for display
+ */
+export function formatAgentConfig(agent: Agent): string {
+  const config: Record<string, any> = { ...agent };
+  
+  // Remove internal fields
+  const internalFields = ['id', 'createdAt', 'updatedAt', 'version'];
+  internalFields.forEach(field => delete config[field]);
+  
+  // Format the config as a readable string
+  return Object.entries(config)
+    .map(([key, value]) => {
+      if (value === undefined || value === null) return '';
+      if (Array.isArray(value) && value.length === 0) return '';
+      if (typeof value === 'object' && Object.keys(value).length === 0) return '';
+      
+      let displayValue = value;
+      if (Array.isArray(value)) {
+        displayValue = `[${value.join(', ')}]`;
+      } else if (typeof value === 'object') {
+        displayValue = JSON.stringify(value, null, 2);
+      }
+      
+      return `${key}: ${displayValue}`;
+    })
+    .filter(Boolean)
+    .join('\n');
+}
+
+/**
+ * Get the estimated token count for an agent's configuration
+ */
+export function estimateTokenCount(agent: Agent): number {
+  // This is a very rough estimate - in a real app, you'd want to use a proper tokenizer
+  const configString = JSON.stringify(agent);
+  return Math.ceil(configString.length / 4); // Roughly 4 chars per token
+}
+
+/**
+ * Check if an agent is using a specific model
+ */
+export function isUsingModel(agent: Agent, modelId: string): boolean {
+  return agent.type === 'llm' && (agent as LLMAgent).model === modelId;
+}
+
+/**
+ * Get the list of agent IDs referenced in a workflow
+ */
+export function getReferencedAgentIds(agent: Agent): string[] {
+  if (agent.type === 'sequential' || agent.type === 'parallel') {
+    return (agent as SequentialAgent | ParallelAgent).agents || [];
+  }
+  return [];
+}
+
+/**
+ * Check if an agent is referenced by any workflows
+ */
+export function isAgentReferenced(agentId: string, allAgents: Agent[]): boolean {
+  return allAgents.some(agent => {
+    if (agent.type === 'sequential' || agent.type === 'parallel') {
+      return (agent as SequentialAgent | ParallelAgent).agents.includes(agentId);
+    }
+    return false;
+  });
+}
