@@ -1,3 +1,5 @@
+export type ToolParameterType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'integer' | 'null';
+
 /**
  * Parameter for a tool
  */
