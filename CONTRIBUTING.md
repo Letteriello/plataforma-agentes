@@ -3,7 +3,10 @@
 Bem-vindo ao projeto! Agradecemos seu interesse em contribuir. Para garantir a qualidade e consistência do código, siga as diretrizes abaixo.
 
 ## Configuração do Ambiente
-(Esta seção será preenchida posteriormente, conforme item 4.3 do plano geral)
+1. Instale o **Node.js 20**.
+2. Execute `npm install` dentro de `client/` para instalar as dependências.
+3. Copie `.env.example` para `.env.development`, `.env.staging` e `.env.production`, ajustando `VITE_API_BASE_URL` conforme o backend.
+4. Inicie o servidor de desenvolvimento com `npm run dev`.
 
 ## Convenções de Nomenclatura
 
@@ -46,7 +49,17 @@ Para manter o código organizado e legível, adotamos as seguintes convenções 
     - Use `kebab-case` (ex: `client/src/features/agent-configurator/`) ou `PascalCase` se for um agrupamento de componentes com o mesmo nome (ex: `client/src/components/MeuComponente/`).
 
 ## Mensagens de Commit
-(Esta seção será preenchida posteriormente, ligada à tarefa 1.3)
+Siga o padrão **Conventional Commits**. Exemplos:
+
+- `feat: nova funcionalidade`
+- `fix: correção de bug`
+- `docs: atualização de documentação`
+- `chore: ajustes de configuração`
+
+Use `npm run commit` para abrir o assistente interativo do Commitizen que já aplica esse padrão.
 
 ## Processo de Pull Request
-(Esta seção será preenchida posteriormente)
+1. Abra uma **Issue** descrevendo a tarefa a ser realizada.
+2. Crie uma branch a partir de `develop`.
+3. Faça commits seguindo o padrão acima.
+4. Envie um Pull Request vinculando a Issue com `Closes #ID` e descreva brevemente a solução.
