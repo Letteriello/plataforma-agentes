@@ -22,9 +22,7 @@ export default tseslint.config(
     languageOptions: {
       ...eslintPluginReact.configs.flat.recommended.languageOptions, // Spread to ensure JSX features, etc.
       ...(jsxA11y.flatConfigs.recommended.languageOptions || {}),
-      globals: {
-        ...globals.browser,
-      },
+      globals: {},
       parserOptions: { // Ensure JSX is enabled
         ecmaFeatures: {
           jsx: true,
@@ -41,6 +39,7 @@ export default tseslint.config(
       // Rules from eslintPluginReact.configs.flat.recommended and jsxA11y.flatConfigs.recommended are spread.
       // Override or add specific rules below.
       ...reactHooks.configs.recommended.rules,
+      '@typescript-eslint/no-explicit-any': 'warn',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
