@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { getApiBaseUrlFromEnv } from '../config'; // Adjust path if necessary
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: getApiBaseUrlFromEnv(),
 });
 
 export default apiClient;

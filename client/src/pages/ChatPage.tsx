@@ -1,118 +1,154 @@
 // client/src/pages/ChatPage.tsx
-import React, { useState } from 'react'; // Import useState
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { ConversationList, ChatInterface } from '@/components/chat'; // Import components
-import type { ChatMessage } from '@/components/chat'; // Import type ChatMessage
-import { getInitialMessages, initialActiveConversationId } from '@/components/chat/mockData';
+import { ConversationList, ChatInterface } from '@/components/chat';
+import type { ChatMessage } from '@/components/chat';
+import { chatService } from '@/api/chatService';
 
 console.log('ChatPage module loaded');
 
 const ChatPage: React.FC = () => {
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(initialActiveConversationId);
-  const [messages, setMessages] = useState<ChatMessage[]>(() => 
-    getInitialMessages(initialActiveConversationId)
-  );
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // For loading messages list or sending
+  const [isStreaming, setIsStreaming] = useState<boolean>(false); // Specifically for streaming response
+  const [error, setError] = useState<string | null>(null);
 
-  // This function will be passed to ChatInput within ChatInterface
-  // It needs to be adapted if ChatInput's onSendMessage prop has a different signature
-  const handleSendMessage = (messageText: string) => {
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(), // Simple unique ID for now
+  // Fetch messages when activeConversationId changes
+  useEffect(() => {
+    if (activeConversationId) {
+      setError(null);
+      setIsLoading(true);
+      setMessages([]); // Clear previous messages
+      chatService.fetchSessionMessages(activeConversationId)
+        .then(fetchedMessages => {
+          setMessages(fetchedMessages);
+        })
+        .catch(err => {
+          console.error(`Error fetching messages for session ${activeConversationId}:`, err);
+          setError(`Failed to fetch messages. ${err.message || ''}`);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setMessages([]);
+    }
+  }, [activeConversationId]);
+
+  const handleSendMessage = async (messageText: string) => {
+    if (!activeConversationId) {
+      setError('Cannot send message: no active conversation selected.');
+      return;
+    }
+
+    setError(null);
+    const tempUserMessage: ChatMessage = {
+      id: `temp-user-${crypto.randomUUID()}`,
       text: messageText,
-      sender: 'user', // Assuming messages sent through ChatInput are from the user
-      timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      senderName: 'Usuário', // Placeholder
-      avatarSeed: 'User', // Placeholder
+      sender: 'user',
+      timestamp: new Date().toISOString(),
     };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessages(prevMessages => [...prevMessages, tempUserMessage]);
 
-    // Simular resposta do agente
-    setTimeout(() => {
-      const userMessageText = messageText.toLowerCase();
-      let agentResponseText = `Recebi sua mensagem: "${messageText}". Como posso ajudar?`;
+    const messagePayload = {
+      text: messageText,
+      sender: 'user' as 'user',
+      timestamp: tempUserMessage.timestamp,
+    };
 
-      if (userMessageText.includes('nexus') || userMessageText.includes('plano')) {
-        agentResponseText = 'O Plano Nexus é nossa solução completa para desenvolvimento de agentes inteligentes. Gostaria de saber mais sobre preços ou funcionalidades específicas?';
-      } else if (userMessageText.includes('ajuda') || userMessageText.includes('suporte')) {
-        agentResponseText = 'Claro, posso ajudar! Qual é a sua dúvida ou problema específico?';
-      } else if (userMessageText.includes('olá') || userMessageText.includes('oi') || userMessageText.includes('bom dia') || userMessageText.includes('boa tarde') || userMessageText.includes('boa noite')) {
-        agentResponseText = 'Olá! Em que posso ser útil hoje?';
-      }
+    setIsStreaming(true); // Indicate that a stream is about to start
 
-      const agentMessage: ChatMessage = {
-        id: Date.now().toString() + '-agent',
-        text: agentResponseText,
-        sender: 'agent',
-        timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        senderName: 'Agente ProAtivo',
-        avatarSeed: 'AgentProActiveBot',
+    try {
+      // onChunkReceived callback
+      const onChunkReceived = (chunk: string, isLastChunk: boolean, streamId: string) => {
+        setMessages(prevMessages => {
+          const existingAgentMessageIndex = prevMessages.findIndex(
+            msg => msg.streamId === streamId && msg.sender === 'agent'
+          );
+
+          if (existingAgentMessageIndex !== -1) {
+            // Found existing agent message, append chunk
+            const updatedMessages = [...prevMessages];
+            const currentText = updatedMessages[existingAgentMessageIndex].text;
+            updatedMessages[existingAgentMessageIndex] = {
+              ...updatedMessages[existingAgentMessageIndex],
+              text: currentText + chunk,
+              isStreaming: !isLastChunk,
+            };
+            return updatedMessages;
+          } else if (chunk) { // First chunk for this agent message and chunk is not empty
+            const newAgentMessage: ChatMessage = {
+              id: streamId, // Use streamId as React key and temp ID
+              streamId: streamId,
+              text: chunk,
+              sender: 'agent',
+              timestamp: new Date().toISOString(),
+              isStreaming: !isLastChunk,
+              senderName: 'Agent', // Placeholder
+              avatarSeed: `agent-${streamId}`, // Placeholder
+            };
+            return [...prevMessages, newAgentMessage];
+          }
+          return prevMessages; // No change if empty initial chunk or other edge cases
+        });
+
+        if (isLastChunk) {
+          setIsStreaming(false);
+          // Optionally, if the backend could send a final ID for the message:
+          // setMessages(prev => prev.map(m => m.streamId === streamId ? {...m, id: finalIdFromBackend} : m));
+        }
       };
-      setMessages((prevMessages) => [...prevMessages, agentMessage]);
-    }, 1500);
+
+      await chatService.sendMessage(activeConversationId, messagePayload, onChunkReceived);
+      // The sendMessage promise now resolves when the stream has been fully processed by onChunkReceived
+      // or rejects on error. isStreaming state is managed inside onChunkReceived.
+
+    } catch (err) {
+      console.error('Error sending message or processing stream:', err);
+      setError(`Failed to send message. ${err.message || ''}`);
+      setIsStreaming(false); // Ensure streaming stops on error
+      // Optionally remove the optimistic user message or mark it as failed
+      // setMessages(prevMessages => prevMessages.filter(m => m.id !== tempUserMessage.id));
+    }
   };
 
   const handleSelectConversation = (conversationId: string) => {
     setActiveConversationId(conversationId);
-    // Carrega as mensagens da conversa selecionada
-    const conversationMessages = getInitialMessages(conversationId);
-    setMessages(conversationMessages);
+    // The useEffect hook will now handle fetching messages for the new activeConversationId
   };
+
+  // TODO: Need a way to get userId for chatService.fetchSessions or startNewSession
+  // For now, ConversationList might handle fetching its own sessions or receive them via props.
+  // If ChatPage needs to initiate session fetching (e.g. if no conversations exist),
+  // that logic would go here, perhaps in another useEffect.
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
       className="h-full max-h-[calc(100vh-4rem-2rem)] w-full rounded-lg border border-border bg-background text-foreground"
-      // Assumindo Topbar h-16 (4rem) e MainLayout p-4 (py-4 -> 2rem)
-      // Changed border and bg-card to bg-background to match MainLayout style for the group
     >
       <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
-        {/* Conteúdo da Lista de Conversas */}
-        <ConversationList activeConversationId={activeConversationId} onSelectConversation={handleSelectConversation} />
+        <ConversationList
+          activeConversationId={activeConversationId}
+          onSelectConversation={handleSelectConversation}
+          // sessions={sessions} // If sessions are fetched here or in a parent component
+          // userId={userId} // If userId is available
+        />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={75}>
-        {/* ChatInterface now accepts messages and onSendMessage props */}
-        <ChatInterface messages={messages} onSendMessage={handleSendMessage} />
-        {/* The ChatInterface is expected to take messages and onSendMessage as props if we follow the previous pattern.
-            However, the example ChatInterface in Step 2 did not define these props explicitly,
-            instead it had mockMessages and a console.log for onSendMessage.
-            For a real integration, ChatInterface should accept these.
-            Let's assume for now ChatInterface is self-contained or we will modify it in a later step
-            to accept messages and onSendMessage from ChatPage.
-
-            If ChatInterface from Step 2 is used directly:
-            It has its own mock messages and console.logs send.
-            This means the messages state and handleSendMessage in ChatPage would not be used by ChatInterface
-            unless ChatInterface is modified.
-
-            Revisiting ChatInterface from Step 2:
-            It takes NO props. It has its OWN mockMessages and its OWN console.log for sending.
-            This means the state `messages` and `handleSendMessage` in `ChatPage` are now NOT connected to the UI.
-            This needs to be rectified. ChatInterface should be a "dumb" component taking props.
-
-            Let's modify ChatInterface (from step 2) to accept messages and onSendMessage.
-            This was not part of *this* subtask, but is necessary for correct integration.
-            The example for ChatInterface in *this* subtask (Step 3) is:
-            <div style={{ height: 'calc(100vh - YOUR_HEADER_HEIGHT_IF_ANY)', width: '100%' }}>
-              <ChatInterface />
-            </div>
-            This still implies ChatInterface is self-contained.
-
-            Given the current ChatInterface definition (from Step 2 output):
-            `const ChatInterface: React.FC = () => { ... }` takes no props.
-            It uses its own `mockMessages`.
-            Its `ChatInput` calls `console.log('Send:', msg)`.
-
-            To make this work with ChatPage's state, ChatInterface MUST be modified.
-            I will proceed with the current task of placing <ChatInterface />.
-            Then, a follow-up task will be to make ChatInterface prop-driven.
-
-            For now, the ChatPage's message state and send handler will be unused by the rendered UI.
-            The ChatInterface will display its own internal mock messages.
-          */}
+        {/* Pass isLoading and error to ChatInterface if it's designed to display them */}
+        <ChatInterface
+          messages={messages}
+          onSendMessage={handleSendMessage}
+          isLoading={isLoading} // Pass loading state
+          error={error} // Pass error state
+        />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
