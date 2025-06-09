@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Removed useMemo
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast as sonnerToast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, Plus, Pencil, Trash2, Save, X, Info, ArrowLeft, Copy, Share2, Play, Code, Settings, Shield, Wrench, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+// Removed: Info, ArrowLeft, Copy, Share2, Play, Code, Settings, Shield, Wrench, ChevronDown, ChevronUp, GripVertical
+// Kept: Plus, Pencil, Trash2, Save, X, Loader2 (confirm their usage later)
+import { Loader2, Plus, Pencil, Trash2, Save, X } from 'lucide-react';
 
 // Import UI components
 import { Button } from '@/components/ui/button';
@@ -14,17 +16,17 @@ import { Fieldset } from '@/components/ui/fieldset';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
+// import { ScrollArea } from '@/components/ui/scroll-area'; // Removed
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { Separator } from '@/components/ui/separator'; // Removed
+// import { Switch } from '@/components/ui/switch'; // Removed
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Removed
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+// import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'; // Removed
 import DescriptionEditorDialog from "./Agentes/components/DescriptionEditorDialog";
 import InstructionEditorDialog from "./Agentes/components/InstructionEditorDialog";
 import ToolDialog from "./Agentes/components/ToolDialog";
@@ -32,16 +34,16 @@ import { ToolList } from "./Agentes/components/ToolList";
 
 // Import types
 import { 
-  AgentType,
-  type LlmAgentConfig,
-  type WorkflowAgentConfig,
-  type SequentialAgentConfig,
-  type A2AAgentConfig as A2AAgentConfigType,
-  type SafetySetting
+  AgentType
+  // type LlmAgentConfig, // Removed
+  // type WorkflowAgentConfig, // Removed
+  // type SequentialAgentConfig, // Removed
+  // type A2AAgentConfig as A2AAgentConfigType, // Removed
+  // type SafetySetting // Removed
 } from '@/types/agent';
 
 // Import tool types
-import { Tool, ToolParameter } from '@/types/tool';
+// import { Tool, ToolParameter } from '@/types/tool'; // Removed
 
 // Services
 import { agentService } from '@/api/agentService';
@@ -272,178 +274,6 @@ const getDefaultAgentConfig = (type: AgentType): AgentState => {
       return base;
   }
 };
-
-const DEFAULT_SEQUENTIAL_AGENT: Omit<AgentState, 'type'> & { 
-  type: AgentType.SEQUENTIAL;
-} = {
-  id: `agent-${uuidv4()}`,
-  name: 'Novo Fluxo Sequencial',
-  description: 'Executa agentes em sequência',
-  type: AgentType.SEQUENTIAL,
-  version: '1.0.0',
-  workflowType: 'sequential',
-  agents: [],
-  maxSteps: 10,
-  stopCondition: '',
-  continueOnError: false,
-  instructions: '',
-  tools: [],
-  safetySettings: [],
-  model: '',
-  temperature: 0.7,
-  maxTokens: 2048,
-  topP: 1,
-  topK: 40,
-  stopSequences: [],
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  logitBias: {},
-  isPublic: false,
-  tags: []
-};
-
-const DEFAULT_PARALLEL_AGENT: Omit<AgentState, 'type'> & { 
-  type: AgentType.PARALLEL;
-} = {
-  id: `agent-${uuidv4()}`,
-  name: 'Novo Fluxo Paralelo',
-  description: 'Executa agentes em paralelo',
-  version: '1.0.0',
-  type: AgentType.PARALLEL,
-  workflowType: 'parallel',
-  agents: [],
-  maxConcurrent: 3,
-  timeoutMs: 30000,
-  instructions: '',
-  tools: [],
-  safetySettings: [],
-  model: '',
-  temperature: 0.7,
-  maxTokens: 2048,
-  topP: 1,
-  topK: 40,
-  stopSequences: [],
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  logitBias: {},
-  isPublic: false,
-  tags: []
-};
-
-const DEFAULT_LOOP_AGENT: Omit<AgentState, 'type'> & { 
-  type: AgentType.LOOP;
-} = {
-  id: `agent-${uuidv4()}`,
-  name: 'Novo Loop',
-  description: 'Executa um agente em loop até que uma condição seja atendida',
-  type: AgentType.LOOP,
-  version: '1.0.0',
-  workflowType: 'loop',
-  agent: null,
-  condition: '',
-  maxIterations: 10,
-  continueOnError: false,
-  instructions: '',
-  tools: [],
-  safetySettings: [],
-  model: '',
-  temperature: 0.7,
-  maxTokens: 2048,
-  topP: 1,
-  topK: 40,
-  stopSequences: [],
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  logitBias: {},
-  isPublic: false,
-  tags: []
-};
-
-// Default A2A agent configuration
-const DEFAULT_A2A_AGENT: Omit<AgentState, 'type'> & { 
-  type: AgentType.A2A;
-} = {
-  id: `agent-${uuidv4()}`,
-  name: 'Novo Agente A2A',
-  description: 'Um agente que se comunica via A2A Protocol',
-  type: AgentType.A2A,
-  version: '1.0.0',
-  endpoint: 'https://api.example.com/a2a',
-  authType: 'none',
-  supportedFormats: ['application/json'],
-  supportsPush: false,
-  instructions: '',
-  tools: [],
-  safetySettings: [],
-  model: '',
-  temperature: 0.7,
-  maxTokens: 2048,
-  topP: 1,
-  topK: 40,
-  stopSequences: [],
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  logitBias: {},
-  isPublic: false,
-  tags: []
-};
-
-const DEFAULT_AGENT: AgentState = {
-  id: `agent-${uuidv4()}`,
-  name: 'Novo Agente',
-  description: '',
-  type: AgentType.LLM,
-  instructions: '',
-  tools: [],
-  safetySettings: [],
-  model: 'gemini-2.0-flash',
-  temperature: 0.7,
-  maxTokens: 2048,
-  topP: 1,
-  topK: 0,
-  stopSequences: [],
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  logitBias: {},
-  version: '1.0.0',
-  isPublic: false,
-  tags: [],
-  streaming: false,
-
-// Tool Card component
-const ToolCard = ({ tool, onEdit, onDelete }: { tool: FormTool; onEdit: () => void; onDelete: () => void }) => (
-  <div className="bg-white border rounded-md shadow-sm p-4 mb-3">
-    <div className="flex justify-between items-start">
-      <div>
-        <h3 className="font-medium text-gray-900">{tool.name}</h3>
-        <p className="text-sm text-gray-500 mt-1">{tool.description}</p>
-      </div>
-      <div className="flex space-x-2">
-        <Button variant="ghost" size="sm" onClick={onEdit}>
-          <Pencil className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="sm" onClick={onDelete}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>
-    </div>
-    {tool.parameters && tool.parameters.length > 0 && (
-      <div className="mt-3">
-        <p className="text-xs font-medium text-gray-500 mb-1">Parâmetros:</p>
-        <div className="space-y-1">
-          {tool.parameters.map((param) => (
-            <div key={param.id} className="flex items-center text-xs">
-              <span className="font-medium">{param.name}</span>
-              <span className="mx-1">:</span>
-              <span className="text-gray-600">{param.type}</span>
-              {param.required && <Badge variant="outline" className="ml-2 text-xs">Obrigatório</Badge>}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-  </div>
-);
 
     {/* Conteúdo Principal */}
     <div className="flex-1 overflow-auto p-6">
@@ -713,56 +543,6 @@ const ToolCard = ({ tool, onEdit, onDelete }: { tool: FormTool; onEdit: () => vo
   </div>
 );
 
-type ToolDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  tool: FormTool;
-  onSave: (tool: FormTool) => void;
-};
-
-const ToolDialog = ({
-  open,
-  onOpenChange,
-  tool,
-  onSave,
-}: ToolDialogProps) => {
-  const [formData, setFormData] = useState<FormTool>(tool);
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{tool.id ? 'Editar Ferramenta' : 'Nova Ferramenta'}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="tool-name">Nome</Label>
-            <Input
-              id="tool-name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="tool-description">Descrição</Label>
-            <Textarea
-              id="tool-description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={() => onSave(formData)}>Salvar</Button>
-          </DialogFooter>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
 // Agent form components
 interface LLMAgentFormProps {
   agent: AgentState;
@@ -783,368 +563,31 @@ const LLMAgentForm = React.memo(({
 }: LLMAgentFormProps) => {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="model">Modelo</Label>
-          <Input
-            id="model"
-            value={agent.model}
-            onChange={(e) => onChange('model', e.target.value)}
-            placeholder="gpt-4"
-          />
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="temperature">Temperatura: {agent.temperature}</Label>
-            <span className="text-sm text-muted-foreground">
-              {getTemperatureDescription(agent.temperature)}
-            </span>
-          </div>
-          <Slider
-            id="temperature"
-            min={0}
-            max={2}
-            step={0.1}
-            value={[agent.temperature]}
-            onValueChange={(value) => onChange('temperature', value[0])}
-          />
-        </div>
-      </div>
-      {/* Add more LLM-specific fields as needed */}
+      {/* Content of LLMAgentForm - removing the component definition */}
     </div>
   );
 });
 
 // ...
-
-interface A2AAgentConfig {
-  id: string;
-  name: string;
-  description: string;
-  endpoint: string;
-  method: string;
-  condition: string;
-  maxIterations: number;
-  timeoutMs: number;
-  maxConcurrent: number;
-  headers?: Record<string, string>;
-  requestSchema?: Record<string, unknown>;
-  responseSchema?: Record<string, unknown>;
-}
-
-type A2AAgentFormProps = {
-  agent: A2AAgentConfig;
-  onChange: (field: string, value: unknown) => void;
-  onNestedChange: (field: string, value: unknown) => void;
-};
-
-const A2AAgentForm = React.memo(({ agent, onChange, onNestedChange }: A2AAgentFormProps) => {
-  const handleChange = useCallback((field: keyof A2AAgentConfig, value: unknown) => {
-    onChange(field, value);
-  }, [onChange]);
-
-  const handleNestedChange = useCallback((field: string, value: unknown) => {
-    onNestedChange(field, value);
-  }, [onNestedChange]);
-
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Configurações do Agente A2A</CardTitle>
-          <CardDescription>Configure as opções do agente A2A</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="endpoint">Endpoint</Label>
-              <Input
-                id="endpoint"
-                value={agent.endpoint || ''}
-                onChange={(e) => handleChange('endpoint', e.target.value)}
-                placeholder="https://api.example.com/endpoint"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="method">Método HTTP</Label>
-              <Select
-                value={agent.method || 'GET'}
-                onValueChange={(value) => handleChange('method', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o método" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="GET">GET</SelectItem>
-                  <SelectItem value="POST">POST</SelectItem>
-                  <SelectItem value="PUT">PUT</SelectItem>
-                  <SelectItem value="PATCH">PATCH</SelectItem>
-                  <SelectItem value="DELETE">DELETE</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="condition">Condição de Parada</Label>
-              <Input
-                id="condition"
-                value={agent.condition || ''}
-                onChange={(e) => handleChange('condition', e.target.value)}
-                placeholder="Ex: response.status === 'completed'"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="maxIterations">Máx. Iterações</Label>
-              <Input
-                type="number"
-                id="maxIterations"
-                value={agent.maxIterations || 10}
-                onChange={(e) => handleChange('maxIterations', Number(e.target.value))}
-                min={1}
-                max={100}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="timeoutMs">Timeout (ms)</Label>
-              <Input
-                type="number"
-                id="timeoutMs"
-                value={agent.timeoutMs || 30000}
-                onChange={(e) => handleChange('timeoutMs', Number(e.target.value))}
-                min={1000}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="maxConcurrent">Máx. Concorrente</Label>
-              <Input
-                type="number"
-                id="maxConcurrent"
-                value={agent.maxConcurrent || 5}
-                onChange={(e) => handleChange('maxConcurrent', Number(e.target.value))}
-                min={1}
-                max={20}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="isActive">Ativo</Label>
-              <Checkbox
-                id="isActive"
-                checked={agent.isActive}
-                onCheckedChange={(checked) => handleChange('isActive', checked === true)}
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="headers">Cabeçalhos (JSON)</Label>
-            <Textarea
-              id="headers"
-              value={JSON.stringify(agent.headers || {}, null, 2)}
-              onChange={(e) => {
-                try {
-                  const value = JSON.parse(e.target.value);
-                  handleChange('headers', value);
-                } catch (error) {
-                  // Ignorar JSON inválido
-                }
-              }}
-              className="font-mono text-sm h-32"
-              placeholder={`{
-  "Content-Type": "application/json",
-  "Authorization": "Bearer ..."
-}`}
-            />
-          </div>
-        </CardContent>
-
-const Agentes: React.FC = () => {
-  // Router hooks
-  const navigate = useNavigate();
-  const { id: routeId } = useParams<{ id?: string }>(); // Renamed to avoid conflict if 'id' is used elsewhere
-  
-  // State management
-  const [agentState, setAgentState] = useState<ADKAgentConfig>(() => {
-    const newId = routeId || uuidv4();
-    return {
-      identity: {
-        id: newId,
-        name: '',
-        description: '',
-        model: 'gemini-1.5-flash-latest', // Default model
-      },
-      guidance: {
-        instruction: '',
-      },
-      tools: [],
-      generateContentConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 2048,
-        topP: 1,
-        topK: 40,
-        safetySettings: [],
-        // stopSequences: [], // Add if part of GenerateContentConfig type
-        // frequencyPenalty: 0, // Add if part of GenerateContentConfig type
-        // presencePenalty: 0, // Add if part of GenerateContentConfig type
-        // logitBias: {}, // Add if part of GenerateContentConfig type
-      },
-      version: '1.0.0',
-      // These fields might not be part of ADKAgentConfig directly, adjust as needed or add to a wrapper type
-      // type: 'llm', // This seems to be a local form type, not ADK
-      // isPublic: false,
-      // tags: [],
-      // inputSchema, outputSchema, outputKey, includeContents, planner, codeExecutor - add if needed
-    };
-  });
-  
-  // UI state
-  // Dialog states
-  const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
-  const [currentEditingDescription, setCurrentEditingDescription] = useState('');
-  const [isInstructionDialogOpen, setIsInstructionDialogOpen] = useState(false);
-  const [currentEditingInstruction, setCurrentEditingInstruction] = useState('');
-  const [isToolDialogOpen, setIsToolDialogOpen] = useState(false);
-  const [currentToolForDialog, setCurrentToolForDialog] = useState<FormTool | null>(null);
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('identity'); // From checkpoint summary
-
-  // Ensure toast is available from useToast() hook declared earlier in the component
-  // const { toast } = useToast(); // Assuming this is already declared above
-
-  // Handlers for Description Dialog
-  const handleOpenDescriptionDialog = useCallback(() => {
-    setCurrentEditingDescription(agentState.identity.description);
-    setIsDescriptionDialogOpen(true);
-  }, [agentState.identity.description]);
-
-  const handleSaveDescription = useCallback(() => {
-    setAgentState(prev => ({
-      ...prev,
-      identity: {
-        ...prev.identity,
-        description: currentEditingDescription,
-      },
-    }));
-    setIsDescriptionDialogOpen(false);
-    toast({ title: 'Success', description: 'Agent description updated.' });
-  }, [currentEditingDescription, agentState, toast, setAgentState, setIsDescriptionDialogOpen]);
-
-  // Handlers for Instruction Dialog
-  const handleOpenInstructionDialog = useCallback(() => {
-    setCurrentEditingInstruction(agentState.guidance.instruction);
-    setIsInstructionDialogOpen(true);
-  }, [agentState.guidance.instruction]);
-
-  const handleSaveInstruction = useCallback(() => {
-    setAgentState(prev => ({
-      ...prev,
-      guidance: {
-        ...prev.guidance,
-        instruction: currentEditingInstruction,
-      },
-    }));
-    setIsInstructionDialogOpen(false);
-    toast({ title: 'Success', description: 'Agent instructions updated.' });
-  }, [currentEditingInstruction, agentState, toast, setAgentState, setIsInstructionDialogOpen]);
-
-  // Placeholder for handleSaveTool - needed for ToolDialog
-  // Ensure FormTool is imported and ADKAgentConfig includes 'tools' array
-  const handleSaveTool = useCallback((toolToSave: FormTool) => {
-    const existingToolIndex = agentState.tools.findIndex(t => t.id === toolToSave.id);
-    let updatedTools: FormTool[]; // Assuming agentState.tools is FormTool[] or compatible
-    
-    if (existingToolIndex > -1) {
-      updatedTools = agentState.tools.map((t, index) => index === existingToolIndex ? toolToSave : t);
-    } else {
-      updatedTools = [...agentState.tools, toolToSave];
-    }
-    
-    setAgentState(prev => ({ ...prev, tools: updatedTools as any })); // Using 'as any' if FormTool[] is not directly assignable to ADKAgentConfig['tools'] without mapping
-    setIsToolDialogOpen(false);
-    toast({ title: 'Success', description: `Tool ${toolToSave.name} saved.`});
-  }, [agentState, toast, setAgentState, setIsToolDialogOpen]);
-  const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
-  const [currentEditingDescription, setCurrentEditingDescription] = useState('');
-  const [isInstructionDialogOpen, setIsInstructionDialogOpen] = useState(false); // Added for instruction dialog
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-  const [currentEditingInstruction, setCurrentEditingInstruction] = useState('');
-  const [toolDialogOpen, setToolDialogOpen] = useState(false);
-  const [currentTool, setCurrentTool] = useState<FormTool | null>(null);
-  const [isEditingTool, setIsEditingTool] = useState(false);
-  const [toolToDeleteIndex, setToolToDeleteIndex] = useState<number | null>(null);
-  const [isSaving, setIsSaving] = useState(false); // Added isSaving state
-  
-  // Toast for user feedback
-  const { toast } = useToast();
-  
-  // Query client for data fetching
-  const queryClient = useQueryClient();
-
-  // Helper function for temperature description (stub)
-  const getTemperatureDescription = (temp: number): string => {
-    if (temp < 0.3) return "Muito preciso";
-    if (temp < 0.7) return "Preciso e criativo";
-    if (temp < 1) return "Criativo";
-    return "Muito criativo";
-  };
-
-  // Stub for handleSaveAgent
-  const handleSaveAgent = async () => {
-    setIsSaving(true);
-    console.log("Saving agent:", agentState);
-    // Replace with actual save logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast({
-      title: "Agent Saved (Stub)",
-      description: "Agent configuration has been logged.",
-    });
-    setIsSaving(false);
-    // navigate('/agents'); // Uncomment when save is real
-  };
-
-  // Stubs for dialogs and tool management
-  const openToolDialog = (tool: FormTool | null = null, index: number | null = null) => {
-    setCurrentTool(tool ? { ...tool } : {
-      id: uuidv4(),
-      name: '',
-      description: '',
-      parameters: [],
-      returnType: 'string' // Default return type
-    });
-    setIsEditingTool(tool !== null && index !== null);
-    setToolDialogOpen(true);
-  };
-
-  const confirmDeleteTool = (index: number) => {
-    setToolToDeleteIndex(index);
-    // Logic to open a confirmation dialog for deleting a tool can be added here
-    // For now, directly delete or use a simple confirm
-    if (window.confirm("Tem certeza que deseja remover esta ferramenta?")) {
-      handleDeleteTool(index);
-    }
-    setToolToDeleteIndex(null);
-  };
-
-  const handleDeleteTool = (index: number) => {
-    if (agentState.tools) {
-        setAgentState(prev => ({
-            ...prev,
-            tools: prev.tools ? prev.tools.filter((_, i) => i !== index) : [],
-        }));
-    }
-  };
-
+// Removing A2AAgentConfig interface and A2AAgentForm component
 // Componente principal Agentes
+// Definitions of handleSaveDescription, handleSaveInstruction, etc. are now within this main component.
 export default function Agentes() {
   // Router and navigation
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // Standardizing to 'id' as it's used throughout this component's core logic.
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
   // State management
-  const [agentState, setAgentState] = useState<AgentState>(() => ({
-    ...getDefaultAgentConfig(AgentType.LLM),
-    id: id || `agent-${uuidv4()}`,
-    name: id ? 'Carregando...' : `Novo Agente ${AgentType.LLM}`,
-  }));
+  const [agentState, setAgentState] = useState<AgentState>(() => {
+    const newAgentId = id || `agent-${uuidv4()}`; // Use 'id' from useParams
+    return {
+      ...getDefaultAgentConfig(AgentType.LLM),
+      id: newAgentId, // This is agentState.id
+      name: id ? 'Carregando...' : `Novo Agente ${AgentType.LLM}`,
+    };
+  });
 
   // UI State
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -1168,17 +611,8 @@ export default function Agentes() {
     required: false,
     returnType: 'string'
   });
-  const [editingToolIndex, setEditingToolIndex] = useState<number>(-1);
+  const [editingToolIndex, setEditingToolIndex] = useState<number>(-1); // -1 indicates new tool
   const [toolToDeleteIndex, setToolToDeleteIndex] = useState<number | null>(null);
-    id: `tool-${Date.now()}`,
-    name: '',
-    description: '',
-    parameters: [],
-    enabled: true,
-    required: false
-  const [editingToolIndex, setEditingToolIndex] = useState<number>(-1);
-  const [toolToDeleteIndex, setToolToDeleteIndex] = useState<number>(-1);
-  const [currentEditingInstruction, setCurrentEditingInstruction] = useState<string>('');
 
   // Funções para manipulação de ferramentas
   const openToolDialog = useCallback((index: number | null = null) => {
@@ -1203,6 +637,16 @@ export default function Agentes() {
 
   const closeToolDialog = useCallback(() => {
     setIsToolDialogOpen(false);
+    setCurrentEditingTool({ // Reset to default empty tool
+      id: `tool-${uuidv4()}`,
+      name: '',
+      description: '',
+      parameters: [],
+      enabled: true,
+      required: false,
+      returnType: 'string'
+    });
+    setEditingToolIndex(-1);
   }, []);
 
   const confirmDeleteTool = useCallback((index: number) => {
@@ -1247,48 +691,61 @@ export default function Agentes() {
   // Carregar dados do agente se existir um ID
   useEffect(() => {
     const loadAgentData = async () => {
-      if (!id) {
+      if (!id) { // Use 'id' from useParams
         setIsLoading(false);
+        const newAgentId = `agent-${uuidv4()}`;
+        setAgentState({
+          ...getDefaultAgentConfig(AgentType.LLM),
+          id: newAgentId,
+          name: `Novo Agente ${AgentType.LLM}`
+        });
+        setCurrentEditingDescription('');
+        setCurrentEditingInstruction('');
         return;
       }
 
       try {
         setIsLoading(true);
-        // Usar o método correto do serviço para buscar o agente
-        const agentData = await agentService.getAgentById(id);
+        const agentData = await agentService.getAgentById(id); // Use 'id' from useParams
         
         if (!agentData) {
-          throw new Error('Agente não encontrado');
+          toast({ title: 'Erro', description: 'Agente não encontrado', variant: 'destructive' });
+          navigate('/agentes');
+          return;
         }
         
-        // Atualizar o estado com os dados do agente
-        setAgentState(prev => ({
-          ...prev,
+        const loadedAgentState: AgentState = {
+          ...getDefaultAgentConfig(agentData.type || AgentType.LLM),
           ...agentData,
-          // Garantir que arrays não sejam nulos
-          tools: agentData.tools || [],
+          id: agentData.id || id, // Use 'id' from useParams as fallback
+          name: agentData.name || `Agente ${id}`, // Use 'id' from useParams
+          tools: agentData.tools?.map(t => ({ ...t, parameters: t.parameters || [] })) || [],
           safetySettings: agentData.safetySettings || [],
           stopSequences: agentData.stopSequences || [],
           tags: agentData.tags || [],
-          // Preencher campos opcionais com valores padrão se não existirem
-          instruction: agentData.instruction || '',
-          systemPrompt: agentData.systemPrompt || '',
-          agents: agentData.agents || [],
-          maxSteps: agentData.maxSteps ?? 10,
-          stopOnError: agentData.stopOnError ?? true,
-          maxConcurrent: agentData.maxConcurrent ?? 5,
-          timeoutMs: agentData.timeoutMs ?? 30000,
-        }));
+          instructions: agentData.instructions || '',
+          model: agentData.model || getDefaultAgentConfig(agentData.type || AgentType.LLM).model,
+          temperature: agentData.temperature ?? getDefaultAgentConfig(agentData.type || AgentType.LLM).temperature,
+          maxTokens: agentData.maxTokens ?? getDefaultAgentConfig(agentData.type || AgentType.LLM).maxTokens,
+          topP: agentData.topP ?? getDefaultAgentConfig(agentData.type || AgentType.LLM).topP,
+          topK: agentData.topK ?? getDefaultAgentConfig(agentData.type || AgentType.LLM).topK,
+          frequencyPenalty: agentData.frequencyPenalty ?? getDefaultAgentConfig(agentData.type || AgentType.LLM).frequencyPenalty,
+          presencePenalty: agentData.presencePenalty ?? getDefaultAgentConfig(agentData.type || AgentType.LLM).presencePenalty,
+          logitBias: agentData.logitBias || getDefaultAgentConfig(agentData.type || AgentType.LLM).logitBias,
+          version: agentData.version || '1.0.0',
+          isPublic: agentData.isPublic ?? false,
+          streaming: agentData.streaming ?? false,
+        };
+        setAgentState(loadedAgentState);
         
-        // Atualizar estados de edição
-        setCurrentEditingInstruction(agentData.instructions || '');
-        setCurrentEditingDescription(agentData.description || '');
+        setCurrentEditingInstruction(loadedAgentState.instructions || '');
+        setCurrentEditingDescription(loadedAgentState.description || '');
         
       } catch (error) {
         console.error('Erro ao carregar agente:', error);
         toast({
           title: 'Erro',
-          description: 'Não foi possível carregar os dados do agente',
+          description: 'Não foi possível carregar os dados do agente.',
           variant: 'destructive'
         });
         navigate('/agentes');
@@ -1298,7 +755,7 @@ export default function Agentes() {
     };
     
     loadAgentData();
-  }, [id, navigate, toast]);
+  }, [id, navigate, toast]); // Use 'id' from useParams in dependency array
 
   // Função para salvar o agente
   const handleSaveAgent = useCallback(async (e?: React.FormEvent): Promise<void> => {
@@ -1331,7 +788,7 @@ export default function Agentes() {
       };
       
       // Salvar o agente usando o serviço
-      if (id) {
+      if (id) { // Use 'id' from useParams
         await agentService.updateAgent(id, payload);
       } else {
         await agentService.createAgent(payload);
@@ -1339,85 +796,16 @@ export default function Agentes() {
       
       toast({
         title: 'Sucesso',
-        description: `Agente ${id ? 'atualizado' : 'criado'} com sucesso`,
+        description: `Agente ${id ? 'atualizado' : 'criado'} com sucesso`, // Use 'id' from useParams
       });
 
       // Invalidate queries
       queryClient.invalidateQueries({ queryKey: ['agents'] });
 
       // Navigate to agent list if this was a new agent
-      if (!id) {
+      if (!id) { // Use 'id' from useParams
         navigate('/agentes');
       }
-  const [currentEditingTool, setCurrentEditingTool] = useState<FormTool | null>(null);
-  const [editingToolIndex, setEditingToolIndex] = useState<number>(-1);
-  const [toolToDeleteIndex, setToolToDeleteIndex] = useState<number>(-1);
-
-  // Estados para controle de diálogos
-  const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState<boolean>(false);
-  const [isInstructionDialogOpen, setIsInstructionDialogOpen] = useState<boolean>(false);
-  const [isToolDialogOpen, setIsToolDialogOpen] = useState<boolean>(false);
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState<boolean>(false);
-
-  // Estados de carregamento
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Estados para edição
-  const [currentEditingInstruction, setCurrentEditingInstruction] = useState<string>('');
-  const [currentEditingDescription, setCurrentEditingDescription] = useState<string>('');
-
-  // Estado para armazenar o ID do agente atual
-  const [currentAgentId, setCurrentAgentId] = useState<string | undefined>(id);
-
-  const handleToolChange = useCallback((index: number, field: keyof FormTool, value: any) => {
-    setAgentState((prev: AgentState) => {
-      const newTools = [...prev.tools];
-      newTools[index] = { ...newTools[index], [field]: value };
-      return { ...prev, tools: newTools };
-    });
-  }, []);
-
-  const handleCurrentToolChange = useCallback((field: keyof FormTool, value: any) => {
-    if (!currentEditingTool) return;
-    setCurrentEditingTool({ ...currentEditingTool, [field]: value });
-  }, [currentEditingTool]);
-
-  const addParameter = useCallback(() => {
-    if (!currentEditingTool) return;
-
-    const newParameter: FormToolParameter = {
-      id: `param-${Date.now()}`,
-      name: '',
-      type: 'string',
-      description: '',
-      required: false,
-    };
-
-    setCurrentEditingTool({
-      ...currentEditingTool,
-      parameters: [...currentEditingTool.parameters, newParameter],
-    });
-  }, [currentEditingTool]);
-
-  const removeParameter = useCallback((paramIndex: number) => {
-    if (!currentEditingTool) return;
-
-    setCurrentEditingTool({
-      ...currentEditingTool,
-      parameters: currentEditingTool.parameters.filter((_, i) => i !== paramIndex),
-    });
-  }, [currentEditingTool]);
-
-  const updateParameter = useCallback((paramIndex: number, field: keyof FormToolParameter, value: any) => {
-    if (!currentEditingTool) return;
-
-    const newParameters = [...currentEditingTool.parameters];
-    newParameters[paramIndex] = { ...newParameters[paramIndex], [field]: value };
-
-    setCurrentEditingTool({
-      ...currentEditingTool,
-    });
     
   } catch (error) {
     console.error('Erro ao salvar agente:', error);
@@ -1776,173 +1164,10 @@ const handleDeleteTool = useCallback(() => {
   }
 }, [toolToDeleteIndex, agentState.tools]);
 
-const handleSaveDescription = useCallback(() => {
-  try {
-    setAgentState(prev => ({
-      ...prev,
-      description: currentEditingDescription
-    }));
-    
-    setIsDescriptionDialogOpen(false);
-    
-    sonnerToast.success('Descrição salva', {
-      description: 'A descrição do agente foi atualizada com sucesso!',
-    });
-    
-  } catch (error) {
-    console.error('Erro ao salvar descrição:', error);
-    sonnerToast.error('Erro', {
-      description: 'Não foi possível salvar a descrição. Tente novamente.',
-    });
-  }
-}, [currentEditingDescription]);
-
-const handleSaveInstructions = useCallback(() => {
-  try {
-    setAgentState(prev => ({
-      ...prev,
-      instructions: currentEditingInstruction
-    }));
-    
-    setIsInstructionDialogOpen(false);
-    
-    sonnerToast.success('Instruções salvas', {
-      description: 'As instruções do agente foram atualizadas com sucesso!',
-    });
-    
-  } catch (error) {
-    console.error('Erro ao salvar instruções:', error);
-    sonnerToast.error('Erro', {
-      description: 'Não foi possível salvar as instruções. Tente novamente.',
-    });
-  }
-}, [currentEditingInstruction]);
-
-const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  setCurrentEditingDescription(e.target.value);
-}, []);
-
-const handleInstructionsChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  setCurrentEditingInstruction(e.target.value);
-}, []);
-
-const handleAddTool = useCallback((): void => {
-  openToolDialog(-1);
-}, [openToolDialog]);
-
-const handleEditTool = useCallback((index: number): void => {
-  openToolDialog(index);
-}, [openToolDialog]);
-
 // ...
 
 // Load agent data if editing
-useEffect(() => {
-  const loadAgentData = async () => {
-    if (!id) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const data = await agentService.getAgent(id);
-      
-      if (!data) {
-        toast.error('Agente não encontrado');
-        navigate('/agentes');
-        return;
-      }
-
-      setAgentState(prev => {
-        const defaultConfig = getDefaultAgentConfig(data.type as AgentType);
-        return {
-          ...defaultConfig,
-          ...data,
-          tools: Array.isArray(data.tools) 
-            ? data.tools.map((t: any) => ({
-                ...t,
-                enabled: true,
-                parameters: t.parameters?.map((p: any) => ({
-                  ...p,
-                  required: p.required ?? false,
-                  defaultValue: p.defaultValue ?? ''
-                })) || []
-              })) 
-            : [],
-          // Ensure required fields are set
-          id: data.id || prev.id,
-          type: data.type || prev.type,
-          name: data.name || prev.name,
-          description: data.description || prev.description,
-          version: data.version || prev.version || '1.0.0'
-        };
-      });
-    } catch (error) {
-      console.error('Failed to load agent:', error);
-      toast.error('Falha ao carregar o agente');
-      navigate('/agentes');
-
-        setAgentState(prev => {
-          const defaultConfig = getDefaultAgentConfig(data.type as AgentType);
-          return {
-            ...defaultConfig,
-            ...data,
-            tools: Array.isArray(data.tools) 
-              ? data.tools.map((t: any) => ({
-                  ...t,
-                  enabled: true,
-                  parameters: t.parameters?.map((p: any) => ({
-                    ...p,
-                    required: p.required ?? false,
-                    defaultValue: p.defaultValue ?? ''
-                  })) || []
-                })) 
-              : []
-          };
-        });
-      } catch (error) {
-        console.error('Failed to load agent:', error);
-        toast.error('Falha ao carregar o agente');
-        navigate('/agentes');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadAgentData();
-  }, [id, navigate]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    // Handle save operation
-    // ...
-    setIsSaving(false);
-  };
-
-  const openToolDialog = useCallback((index = -1) => {
-    if (index >= 0 && index < agentState.tools.length) {
-      setCurrentEditingTool(agentState.tools[index]);
-      setEditingToolIndex(index);
-    } else {
-      setCurrentEditingTool({
-        id: uuidv4(),
-        name: '',
-        description: '',
-        parameters: [],
-        enabled: true
-      });
-      setEditingToolIndex(-1);
-    }
-    setIsToolDialogOpen(true);
-  }, [agentState.tools]);
-
-  const closeToolDialog = useCallback(() => {
-    setIsToolDialogOpen(false);
-    setCurrentEditingTool(null);
-    setEditingToolIndex(-1);
-  }, []);
+// useEffect block is now using 'id' from useParams consistently.
 
   const handleSaveTool = useCallback((tool: FormTool) => {
     try {
@@ -2025,11 +1250,6 @@ useEffect(() => {
 
 // ...
 
-<CardFooter className="flex justify-end">
-  <Button onClick={handleSubmit} size="lg">Salvar Configuração do Agente</Button>
-</CardFooter>
-</Card>
-
 {/* Dialog for Editing Agent Description */}
 <Dialog open={isDescriptionDialogOpen} onOpenChange={setIsDescriptionDialogOpen}>
   <DialogContent className="sm:max-w-[625px]">
@@ -2096,7 +1316,7 @@ useEffect(() => {
 
       {/* DIALOGS REFACTORED */}
       <DescriptionEditorDialog
-        isOpen={isDescriptionDialogOpen}
+        open={isDescriptionDialogOpen}
         onOpenChange={setIsDescriptionDialogOpen}
         description={currentEditingDescription}
         onDescriptionChange={setCurrentEditingDescription}
@@ -2104,19 +1324,19 @@ useEffect(() => {
       />
 
       <InstructionEditorDialog
-        isOpen={isInstructionDialogOpen}
+        open={isInstructionDialogOpen}
         onOpenChange={setIsInstructionDialogOpen}
         instruction={currentEditingInstruction}
         onInstructionChange={setCurrentEditingInstruction}
-        onSave={handleSaveInstruction}
+        onSave={handleSaveInstruction} // Ensure this uses currentEditingInstruction
       />
 
       <ToolDialog
-        isOpen={isToolDialogOpen}
-        onOpenChange={setIsToolDialogOpen}
-        tool={currentToolForDialog}
-        onSave={handleSaveTool} 
-        isEditing={!!currentToolForDialog}
+        open={isToolDialogOpen}
+        onOpenChange={closeToolDialog} // Make sure closeToolDialog resets currentEditingTool and editingToolIndex
+        tool={currentEditingTool} // This should be the state variable for the tool being edited
+        onSave={handleSaveTool}
+        isEditing={editingToolIndex >= 0}
       />
     </div>
   );
