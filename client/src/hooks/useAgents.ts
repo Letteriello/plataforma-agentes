@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useAgentStore } from '@/store/agentStore';
 import agentService from '@/api/agentService';
 import { AnyAgentConfig } from '@/types';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export interface UseAgentsReturn {
   agents: AnyAgentConfig[];
@@ -12,36 +12,30 @@ export interface UseAgentsReturn {
 
 export const useAgents = (): UseAgentsReturn => {
   const { agents, loadAgents } = useAgentStore();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetch = async () => {
-      setIsLoading(true);
-      try {
-        const data = await agentService.fetchAgents();
-        loadAgents(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetch();
-  }, [loadAgents]);
+  const { isLoading, error } = useQuery({
+    queryKey: ['agents'],
+    queryFn: async () => {
+      const data = await agentService.fetchAgents();
+      loadAgents(data);
+      return data;
+    },
+  });
 
-  const deleteAgent = async (id: string) => {
-    setIsLoading(true);
-    try {
-      await agentService.deleteAgent(id);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
+  const { mutateAsync: deleteAgent, isLoading: isDeleting } = useMutation({
+    mutationFn: (id: string) => agentService.deleteAgent(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+    },
+  });
+
+  return {
+    agents,
+    isLoading: isLoading || isDeleting,
+    error: error as Error | null,
+    deleteAgent,
   };
-
-  return { agents, isLoading, error, deleteAgent };
 };
 
 export default useAgents;
