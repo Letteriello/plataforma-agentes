@@ -16,6 +16,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 import AgentesMinimoContent from '@/pages/Agentes'; // Importação direta
 // const Agentes = lazy(() => import('@/pages/Agentes')); // Comentado
 const Ferramentas = lazy(() => import('./pages/Ferramentas'));
+const Memoria = lazy(() => import('./pages/Memoria'));
 const Deploy = lazy(() => import('./pages/Deploy'));
 const Configuracoes = lazy(() => import('./pages/Configuracoes'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
@@ -57,6 +58,11 @@ export const router = createBrowserRouter([
         path: 'ferramentas',
         element: withSuspense(Ferramentas),
         handle: { title: 'Ferramentas' },
+      },
+      {
+        path: 'memoria',
+        element: withSuspense(Memoria),
+        handle: { title: 'Memória' },
       },
       {
         path: 'deploy',

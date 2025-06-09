@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Menu,
   X,
+  Database
 } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { useAuthStore } from '@/store/authStore'
@@ -49,6 +50,11 @@ const sidebarNavItems: NavItem[] = [
     title: 'Ferramentas', // Translated (or kept as is)
     href: '/ferramentas',
     icon: <Wrench className="h-5 w-5" />,
+  },
+  {
+    title: 'Memória', // Novo item para o módulo de Memória
+    href: '/memoria',
+    icon: <Database className="h-5 w-5" />,
   },
   {
     title: 'Experimentação', // Translated (Playground)
