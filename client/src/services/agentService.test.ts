@@ -1,28 +1,28 @@
-import { vi, describe, beforeEach, test, expect } from 'vitest';
+import { describe, beforeEach, test, expect, vi } from 'vitest';
 import agentService from './agentService';
-import { AnyAgentConfig, AgentType, LlmAgentConfig } from '@/types/agent';
-import { useAgentStore } from '@/store/agentStore';
+import apiClient from '@/api/apiClient';
+import { AgentType, LlmAgentConfig } from '@/types/agent';
 
-const addAgent = vi.fn();
-const updateAgent = vi.fn();
-const removeAgent = vi.fn();
+vi.mock('@/api/apiClient');
 
-vi.mock('@/store/agentStore', () => ({
-  useAgentStore: {
-    getState: () => ({ addAgent, updateAgent, removeAgent }),
-  },
-}));
+const mockedApi = apiClient as unknown as {
+  get: any;
+  post: any;
+  put: any;
+  delete: any;
+};
 
 beforeEach(() => {
-  addAgent.mockClear();
-  updateAgent.mockClear();
-  removeAgent.mockClear();
+  mockedApi.get = vi.fn();
+  mockedApi.post = vi.fn();
+  mockedApi.put = vi.fn();
+  mockedApi.delete = vi.fn();
 });
 
 describe('agentService', () => {
-  const configWithoutId: LlmAgentConfig = {
-    id: '',
-    name: 'New',
+  const agent: LlmAgentConfig = {
+    id: '123',
+    name: 'Test',
     type: AgentType.LLM,
     instruction: '',
     model: 'gpt',
@@ -31,22 +31,30 @@ describe('agentService', () => {
     tools: [],
   };
 
-  const configWithId: LlmAgentConfig = { ...configWithoutId, id: '123' };
-
-  test('saveAgent calls addAgent when id is missing', async () => {
-    await agentService.saveAgent(configWithoutId);
-    expect(addAgent).toHaveBeenCalled();
-    expect(updateAgent).not.toHaveBeenCalled();
+  test('fetchAgents returns data', async () => {
+    mockedApi.get.mockResolvedValue({ data: [agent] });
+    const result = await agentService.fetchAgents();
+    expect(mockedApi.get).toHaveBeenCalledWith('/agents');
+    expect(result).toEqual([agent]);
   });
 
-  test('saveAgent calls updateAgent when id exists', async () => {
-    await agentService.saveAgent(configWithId);
-    expect(updateAgent).toHaveBeenCalled();
-    expect(addAgent).not.toHaveBeenCalled();
+  test('saveAgent creates when id missing', async () => {
+    mockedApi.post.mockResolvedValue({ data: agent });
+    const result = await agentService.saveAgent({ ...agent, id: '' });
+    expect(mockedApi.post).toHaveBeenCalledWith('/agents', { ...agent, id: '' });
+    expect(result).toEqual(agent);
   });
 
-  test('deleteAgent calls removeAgent', async () => {
-    await agentService.deleteAgent('abc');
-    expect(removeAgent).toHaveBeenCalledWith('abc');
+  test('saveAgent updates when id exists', async () => {
+    mockedApi.put.mockResolvedValue({ data: agent });
+    const result = await agentService.saveAgent(agent);
+    expect(mockedApi.put).toHaveBeenCalledWith(`/agents/${agent.id}`, agent);
+    expect(result).toEqual(agent);
+  });
+
+  test('deleteAgent calls API', async () => {
+    mockedApi.delete.mockResolvedValue({});
+    await agentService.deleteAgent(agent.id);
+    expect(mockedApi.delete).toHaveBeenCalledWith(`/agents/${agent.id}`);
   });
 });

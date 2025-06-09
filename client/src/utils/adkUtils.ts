@@ -1,4 +1,5 @@
 import { LlmAgentConfig, ToolDefinition, GenerateContentConfig, SchemaDefinition } from '@/types/adk';
+import logger from '@/lib/logger';
 
 /**
  * Converte os dados do formulário para o formato esperado pelo Google ADK
@@ -41,7 +42,7 @@ export function formatAgentForAdk(formData: any): LlmAgentConfig {
     },
     // Esta função seria implementada para chamar a ferramenta real
     execute: async (params: Record<string, any>) => {
-      console.log(`Executing tool ${tool.name} with params:`, params);
+      logger.debug(`Executing tool ${tool.name} with params:`, params);
       // Implementação real da chamada da ferramenta
       return { result: 'Tool executed successfully' };
     },

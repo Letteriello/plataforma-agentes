@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { cn } from '@/lib/utils';
+import logger from '@/lib/logger';
 
 // Props para o AgentCard, incluindo a possibilidade de um callback onClick
 export interface AgentCardProps {
@@ -19,18 +20,7 @@ export function AgentCard({ agent, onClick, className, isSelected }: AgentCardPr
   const handleCardClick = () => {
     if (onClick) {
       onClick(id);
-      console.log(`Agente selecionado: ${id}`);
-      console.log(`Agente selecionado: ${title}`);
-      console.log(`Agente selecionado: ${imageUrl}`);
-      console.log(`Agente selecionado: ${status}`);
-      console.log(`Agente selecionado: ${isSelected}`);
-      console.log(`Agente selecionado: ${onClick}`);
-      console.log(`Agente selecionado: ${className}`);
-      console.log(`Agente selecionado: ${agent}`);
-      console.log(`Agente selecionado: ${agent.id}`);
-      console.log(`Agente selecionado: ${agent.title}`);
-      console.log(`Agente selecionado: ${agent.imageUrl}`);
-      console.log(`Agente selecionado: ${agent.status}`);
+      logger.debug('Agente selecionado', agent);
     }
   };
 

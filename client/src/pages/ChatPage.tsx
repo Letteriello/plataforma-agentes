@@ -1,5 +1,6 @@
 // client/src/pages/ChatPage.tsx
 import React, { useState } from 'react'; // Import useState
+import logger from '@/lib/logger';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -9,7 +10,7 @@ import { ConversationList, ChatInterface } from '@/components/chat'; // Import c
 import type { ChatMessage } from '@/components/chat'; // Import type ChatMessage
 import { getInitialMessages, initialActiveConversationId } from '@/components/chat/mockData';
 
-console.log('ChatPage module loaded');
+logger.debug('ChatPage module loaded');
 
 const ChatPage: React.FC = () => {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(initialActiveConversationId);

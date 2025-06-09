@@ -7,6 +7,7 @@ import { useAgentStore } from '@/store/agentStore'; // Ajuste o caminho
 import { Button } from '@/components/ui/button';
 import { Trash2Icon } from 'lucide-react';
 import agentService from '@/services/agentService';
+import logger from '@/lib/logger';
 
 interface AgentListProps {
   agents?: AnyAgentConfig[]; // Tornar opcional
@@ -48,10 +49,10 @@ const AgentList: React.FC<AgentListProps> = ({
     setDeletingAgentId(agentId);
     try {
       await agentService.deleteAgent(agentId);
-      console.log('Agente deletado com sucesso (da UI):', agentId);
+      logger.info('Agente deletado com sucesso (da UI):', agentId);
       // O store será atualizado, e AgentList re-renderizará
     } catch (error) {
-      console.error('Falha ao deletar o agente (da UI):', error);
+      logger.error('Falha ao deletar o agente (da UI):', error);
       // (Futuro: mostrar toast de erro)
     } finally {
       setDeletingAgentId(null);
