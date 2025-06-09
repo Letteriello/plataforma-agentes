@@ -26,3 +26,13 @@ client/src/
 Os servi\u00e7os que antes estavam em `src/services/` foram movidos para `src/api/`, alinhando a nomenclatura com a documenta\u00e7\u00e3o.
 
 Consulte `ARCHITECTURE.md` para detalhes sobre as camadas e boas pr\u00e1ticas.
+
+## Ambiente
+
+Crie arquivos `.env.development`, `.env.staging` e `.env.production` em `client/` para definir a URL da API conforme o ambiente. Exemplo:
+
+```
+VITE_API_BASE_URL=http://localhost:3000/api
+```
+
+A aplicação lê `import.meta.env.VITE_API_BASE_URL` do Vite para se conectar ao backend adequado.
