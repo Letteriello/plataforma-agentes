@@ -5,7 +5,7 @@ import {
   getRecentAgents,
   getRecentActivities,
   type DashboardStats,
-} from '@/services/dashboardService';
+} from '@/api/dashboardService';
 
 
 export type AgentStatus = 'online' | 'offline' | 'busy' | 'error';

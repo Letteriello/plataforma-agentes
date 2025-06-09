@@ -44,7 +44,7 @@ import {
 import { Tool, ToolParameter } from '@/types/tool';
 
 // Services
-import { agentService } from '@/services/agentService';
+import { agentService } from '@/api/agentService';
 
 // Utils
 import { cn } from '@/lib/utils';

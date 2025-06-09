@@ -6,7 +6,7 @@ import JsonPreview from './JsonPreview';
 import { useAgentStore } from '@/store/agentStore';
 import { useAgentConfigStore } from '@/store/agentConfigStore';
 import { deepClone } from '@/lib/utils';
-import agentService from '@/services/agentService';
+import agentService from '@/api/agentService';
 import { useToast } from '@/components/ui/use-toast';
 
 const initialLlmConfig: LlmAgentConfig = {

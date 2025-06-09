@@ -26,7 +26,7 @@
       "@/lib/*": ["./src/lib/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/store/*": ["./src/store/*"],
-      "@/services/*": ["./src/services/*"],
+      "@/api/*": ["./src/api/*"],
       "@/pages/*": ["./src/pages/*"],
       "@/assets/*": ["./src/assets/*"],
       "@/styles/*": ["./src/styles/*"]
