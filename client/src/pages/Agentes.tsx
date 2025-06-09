@@ -1,877 +1,1009 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from '@/components/ui/use-toast';
+
+// Import types
+import { 
+  AgentType,
+  createDefaultAgentConfig,
+  type AnyAgentConfig,
+  type LlmAgentConfig,
+  type WorkflowAgentConfig,
+  type SequentialAgentConfig,
+  type A2AAgentConfig
+} from '@/types/agent';
+
+// Agent form types
+interface FormToolParameter {
+  id: string;
+  name: string;
+  type: string;
+  description: string;
+  required: boolean;
+  defaultValue?: string;
+}
+
+// Type for tool in the form
+interface FormTool {
+  id: string;
+  name: string;
+  description: string;
+  parameters: FormToolParameter[];
+  enabled: boolean;
+  required?: boolean;
+  condition?: string;
+  returnType?: string;
+}
+
+// Type for safety settings in the form
+interface FormSafetySetting {
+  id: string;
+  category: string;
+  threshold: string;
+  enabled: boolean;
+  condition: string;
+}
+
+// Type for agent state
+interface AgentState {
+  id: string;
+  name: string;
+  description: string;
+  type: AgentType;
+  instructions: string;
+  tools: FormTool[];
+  safetySettings: FormSafetySetting[];
+  model: string;
+  temperature: number;
+  maxTokens: number;
+  topP: number;
+  topK: number;
+  stopSequences: string[];
+  frequencyPenalty: number;
+  presencePenalty: number;
+  logitBias: Record<string, number>;
+  version: string;
+  isPublic: boolean;
+  tags: string[];
+  instruction: string;
+  systemPrompt: string;
+  agents: string[];
+  agent: string | null;
+  condition: string;
+  maxIterations: number;
+  endpoint: string;
+  method: string;
+  headers: Record<string, string>;
+  requestSchema: Record<string, unknown>;
+  responseSchema: Record<string, unknown>;
+  maxSteps: number;
+  stopOnError: boolean;
+  maxConcurrent: number;
+  timeoutMs: number;
+  maxDurationMs: number;
+  authType: string;
+  supportedFormats: string[];
+  [key: string]: unknown;
+}
+
+// UI Components
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { AgentGenerationSettings } from '@/components/features/agent-configurator/generation';
+import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { Plus, Pencil, Trash2, Save, X } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
+import { Form } from '@/components/ui/form';
+import { Fieldset } from '@/components/ui/fieldset';
+import { Legend } from '@/components/ui/legend';
 
-// Tipos do Google ADK
-import { 
-  LlmAgentConfig, 
-  ToolDefinition, 
-  GenerateContentConfig, 
-  SchemaDefinition 
-} from '@/types/adk';
-import { 
-  formatAgentForAdk, 
-  validateAgentConfig, 
-  createDefaultAgentConfig, 
-  createDefaultToolDefinition,
-  createDefaultParameterDefinition,
-  schemaToString,
-  stringToSchema
-} from '@/utils/adkUtils';
+// Icons
+import { Plus, Pencil, Trash2, Save, X, Info, ArrowLeft, Copy, Share2, Play, Code, Settings, Shield, Wrench } from 'lucide-react';
 
-// Tipos locais para o estado do formulário
-interface FormToolParameter {
-  id: string;
-  name: string;
-  type: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'integer' | 'null';
-  description: string;
-  required: boolean;
-  defaultValue?: string | number | boolean | null;
-}
+// Services
+import { agentService } from '@/services/agentService';
 
-interface FormTool {
-  id: string;
-  name: string;
-  description: string;
-  parameters: FormToolParameter[];
-  returnType: string;
-}
+// Utils
+import { cn } from '@/lib/utils';
 
-interface FormSafetySetting {
-  id: string;
-  category: string;
-  threshold: 'BLOCK_NONE' | 'BLOCK_ONLY_HIGH' | 'BLOCK_MEDIUM_AND_ABOVE' | 'BLOCK_LOW_AND_ABOVE';
-}
+// ...
 
-interface FormAgentState {
-  // Identificação
-  name: string;
-  description: string;
-  model: string;
-  instruction: string;
-  
-  // Configurações de geração
-  temperature: number;
-  maxOutputTokens: number;
-  topP: number;
-  topK: number;
-  stopSequences: string;
-  frequencyPenalty: number;
-  presencePenalty: number;
-  
-  // Ferramentas
-  tools: FormTool[];
-  
-  // Configurações de segurança
-  safetySettings: FormSafetySetting[];
-  
-  // Configurações avançadas
-  inputSchema: string;
-  outputSchema: string;
-  outputKey: string;
-  includeContents: 'default' | 'none' | 'all';
-  planner: string;
-  codeExecutor: string;
-}
+const getDefaultAgentConfig = (type: AgentType): AgentState => {
+  const base: AgentState = {
+    id: `agent-${uuidv4()}`,
+    name: `Novo Agente ${type}`,
+    description: '',
+    type,
+    instructions: '',
+    tools: [],
+    safetySettings: [],
+    model: 'gpt-4',
+    temperature: 0.7,
+    maxTokens: 2048,
+    topP: 1,
+    topK: 0,
+    stopSequences: [],
+    frequencyPenalty: 0,
+    presencePenalty: 0,
+    logitBias: {},
+    version: '1.0.0',
+    isPublic: false,
+    tags: [],
+    // Additional fields for backward compatibility
+    instruction: '',
+    systemPrompt: '',
+    // Sequential/Parallel specific
+    agents: [],
+    // A2A specific
+    agent: null,
+    condition: '',
+    maxIterations: 10,
+    endpoint: '',
+    method: 'POST',
+    headers: {},
+    requestSchema: {},
+    responseSchema: {},
+    // Additional agent type specific fields
+    maxSteps: 10,
+    stopOnError: true,
+    maxConcurrent: 5,
+    timeoutMs: 30000,
+    maxDurationMs: 60000,
+    authType: 'none',
+    supportedFormats: ['json']
+  };
 
-const initialAgentState: FormAgentState = {
-  // Identificação
-  name: '',
-  description: '',
-  model: 'gemini-2.0-flash', // Modelo padrão do Google ADK
-  instruction: '',
-  
-  // Configurações de geração (valores padrão do Google ADK)
-  temperature: 0.7,
-  maxOutputTokens: 2048,
-  topP: 0.95,
-  topK: 40,
-  stopSequences: '',
-  frequencyPenalty: 0,
-  presencePenalty: 0,
-  
-  // Ferramentas
-  tools: [],
-  
-  // Configurações de segurança
-  safetySettings: [],
-  
-  // Configurações avançadas
-  inputSchema: '',
-  outputSchema: '',
-  outputKey: '',
-  includeContents: 'default',
-  planner: '',
-  codeExecutor: '',
+  switch (type) {
+    case AgentType.LLM:
+      return base;
+    case AgentType.SEQUENTIAL:
+      return {
+        ...base,
+        agents: [],
+        maxSteps: 10,
+        stopOnError: true
+      };
+    case AgentType.PARALLEL:
+      return {
+        ...base,
+        agents: [],
+        maxConcurrent: 3,
+        timeoutMs: 30000
+      };
+    case AgentType.LOOP:
+      return {
+        ...base,
+        agent: null,
+        maxIterations: 5,
+        condition: '',
+        maxDurationMs: 60000
+      };
+    case AgentType.A2A:
+      return {
+        ...base,
+        endpoint: '',
+        method: 'POST',
+        headers: {},
+        requestSchema: {},
+        responseSchema: {},
+        authType: 'none',
+        supportedFormats: ['application/json']
+      };
+    default:
+      return base;
+  }
 };
 
+const DEFAULT_SEQUENTIAL_AGENT: Omit<SequentialAgentConfig, 'type'> & { type: AgentType.SEQUENTIAL } = {
+  id: `agent-${uuidv4()}`,
+  name: 'Novo Fluxo Sequencial',
+  description: 'Executa agentes em sequência',
+  type: AgentType.SEQUENTIAL,
+  version: '1.0.0',
+  workflowType: 'sequential',
+  agents: [],
+  maxIterations: 3,
+  stopCondition: '',
+  continueOnError: false,
+  tools: [],
+  safetySettings: []
+};
+
+const DEFAULT_PARALLEL_AGENT: ParallelAgentConfig = {
+  id: `agent-${uuidv4()}`,
+  name: 'Novo Fluxo Paralelo',
+  description: 'Executa agentes em paralelo',
+  version: '1.0.0',
+  type: AgentType.PARALLEL,
+  workflowType: 'parallel',
+  agents: [],
+  maxConcurrent: 3,
+};
+
+const DEFAULT_LOOP_AGENT: Omit<AgentState, 'agent' | 'type'> & { agent: string | null; type: AgentType } & { version: string; tools: FormTool[]; safetySettings: FormSafetySetting[] } = {
+  id: `agent-${uuidv4()}`,
+  name: 'Novo Loop',
+  description: 'Executa um agente em loop até que uma condição seja atendida',
+  type: AgentType.LOOP,
+  version: '1.0.0',
+  workflowType: 'loop',
+  agent: null,
+  condition: '',
+  maxIterations: 10,
+  continueOnError: false,
+  tools: [],
+  safetySettings: []
+};
+
+// Default A2A agent configuration
+const DEFAULT_A2A_AGENT: Partial<A2AAgentConfig> = {
+  type: AgentType.A2A,
+  name: 'Novo Agente A2A',
+  description: 'Um agente que se comunica via A2A Protocol',
+  version: '1.0.0',
+  endpoint: 'https://api.example.com/a2a',
+  authType: 'none',
+  supportedFormats: ['application/json'],
+  supportsPush: false,
+  tools: [],
+  safetySettings: []
+};
+
+const DEFAULT_AGENT: AgentState = {
+  id: `agent-${uuidv4()}`,
+  name: 'Novo Agente',
+  description: '',
+  type: AgentType.LLM,
+  instructions: '',
+  tools: [],
+  safetySettings: [],
+  model: 'gemini-2.0-flash',
+  temperature: 0.7,
+  maxTokens: 2048,
+  topP: 1,
+  topK: 0,
+  stopSequences: [],
+  frequencyPenalty: 0,
+  presencePenalty: 0,
+  logitBias: {},
+  version: '1.0.0',
+  isPublic: false,
+  tags: [],
+};
+
+// Stub components for missing imports
+const ToolCard = ({ tool, onEdit, onDelete }: { tool: FormTool; onEdit: () => void; onDelete: () => void }) => (
+  <div className="border p-4 rounded-lg">
+    <div className="flex justify-between items-start">
+      <div>
+        <h4 className="font-medium">{tool.name}</h4>
+        <p className="text-sm text-muted-foreground">{tool.description}</p>
+      </div>
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={onEdit}>
+          <Pencil className="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="sm" onClick={onDelete}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  </div>
+);
+
+const ToolDialog = ({ 
+  open, 
+  onOpenChange, 
+  tool, 
+  onSave 
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void; 
+  tool: FormTool; 
+  onSave: (tool: FormTool) => void 
+}) => {
+  const [formData, setFormData] = useState<FormTool>(tool);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{tool.id ? 'Editar Ferramenta' : 'Nova Ferramenta'}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="tool-name">Nome</Label>
+            <Input
+              id="tool-name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="tool-description">Descrição</Label>
+            <Textarea
+              id="tool-description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => onSave(formData)}>Salvar</Button>
+          </DialogFooter>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// Agent form components
+interface LLMAgentFormProps {
+  agent: AgentState;
+  onChange: (field: keyof AgentState, value: unknown) => void;
+  onNestedChange: (field: string, value: any) => void;
+  onAddTool: () => void;
+  onEditTool: (index: number) => void;
+  onDeleteTool: (index: number) => void;
+}
+
+const LLMAgentForm = React.memo(({ agent, onChange, onNestedChange, onAddTool, onEditTool, onDeleteTool }: LLMAgentFormProps) => {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="model">Modelo</Label>
+          <Input
+            id="model"
+            value={agent.model}
+            onChange={(e) => onChange('model', e.target.value)}
+            placeholder="gpt-4"
+          />
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="temperature">Temperatura: {agent.temperature}</Label>
+            <span className="text-sm text-muted-foreground">
+              {getTemperatureDescription(agent.temperature)}
+            </span>
+          </div>
+          <Slider
+            id="temperature"
+            min={0}
+            max={2}
+            step={0.1}
+            value={[agent.temperature]}
+            onValueChange={(value) => onChange('temperature', value[0])}
+          />
+        </div>
+      </div>
+      {/* Add more LLM-specific fields as needed */}
+    </div>
+  );
+});
+
+// ...
+
+interface A2AAgentConfig {
+  id: string;
+  name: string;
+  description: string;
+  endpoint: string;
+  method: string;
+  condition: string;
+  maxIterations: number;
+  timeoutMs: number;
+  maxConcurrent: number;
+  headers?: Record<string, string>;
+  requestSchema?: Record<string, unknown>;
+  responseSchema?: Record<string, unknown>;
+}
+
+interface A2AAgentFormProps {
+  agent: A2AAgentConfig;
+  onChange: (field: keyof A2AAgentConfig, value: unknown) => void;
+  onNestedChange: (field: string, value: unknown) => void;
+}
+
+const A2AAgentForm = React.memo<A2AAgentFormProps>(({ agent, onChange, onNestedChange }) => {
+  const handleChange = useCallback((field: keyof A2AAgentConfig, value: unknown) => {
+    onChange(field, value);
+  }, [onChange]);
+
+  const handleNestedChange = useCallback((field: string, value: unknown) => {
+    onNestedChange(field, value);
+  }, [onNestedChange]);
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Configurações do Agente A2A</CardTitle>
+          <CardDescription>Configure as opções do agente A2A</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="endpoint">Endpoint</Label>
+              <Input
+                id="endpoint"
+                value={agent.endpoint || ''}
+                onChange={(e) => handleChange('endpoint', e.target.value)}
+                placeholder="https://api.example.com/endpoint"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="method">Método HTTP</Label>
+              <Select
+                value={agent.method || 'GET'}
+                onValueChange={(value) => handleChange('method', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o método" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="GET">GET</SelectItem>
+                  <SelectItem value="POST">POST</SelectItem>
+                  <SelectItem value="PUT">PUT</SelectItem>
+                  <SelectItem value="PATCH">PATCH</SelectItem>
+                  <SelectItem value="DELETE">DELETE</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="condition">Condição de Parada</Label>
+              <Input
+                id="condition"
+                value={agent.condition || ''}
+                onChange={(e) => handleChange('condition', e.target.value)}
+                placeholder="Ex: response.status === 'completed'"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="maxIterations">Máx. Iterações</Label>
+              <Input
+                type="number"
+                id="maxIterations"
+                value={agent.maxIterations || 10}
+                onChange={(e) => handleChange('maxIterations', Number(e.target.value))}
+                min={1}
+                max={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="timeoutMs">Timeout (ms)</Label>
+              <Input
+                type="number"
+                id="timeoutMs"
+                value={agent.timeoutMs || 30000}
+                onChange={(e) => handleChange('timeoutMs', Number(e.target.value))}
+                min={1000}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="maxConcurrent">Máx. Concorrente</Label>
+              <Input
+                type="number"
+                id="maxConcurrent"
+                value={agent.maxConcurrent || 5}
+                onChange={(e) => handleChange('maxConcurrent', Number(e.target.value))}
+                min={1}
+                max={20}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="headers">Cabeçalhos (JSON)</Label>
+            <Textarea
+              id="headers"
+              value={JSON.stringify(agent.headers || {}, null, 2)}
+              onChange={(e) => {
+                try {
+                  const value = JSON.parse(e.target.value);
+                  handleChange('headers', value);
+                } catch (error) {
+                  // Ignorar JSON inválido
+                }
+              }}
+              className="font-mono text-sm h-32"
+              placeholder={`{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer ..."
+}`}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+});
+
 const Agentes: React.FC = () => {
+  // Router and navigation
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [agentState, setAgentState] = useState<FormAgentState>(initialAgentState);
-  const [isToolDialogOpen, setIsToolDialogOpen] = useState(false);
-  const [editingToolIndex, setEditingToolIndex] = useState<number | null>(null); // null para nova ferramenta, índice para editar
-  const [currentEditingTool, setCurrentEditingTool] = useState<FormTool | null>(null);
 
-  // Estados para o modal de Descrição do Agente
-  const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
-  const [currentEditingDescription, setCurrentEditingDescription] = useState('');
+  // State management
+  const [agentState, setAgentState] = useState<AgentState>(() => ({
+    ...getDefaultAgentConfig(AgentType.LLM),
+    id: id || `agent-${uuidv4()}`,
+    name: `Novo Agente ${AgentType.LLM}`,
+  }));
 
-  // Estados para o modal de Instrução Principal
-  const [isInstructionDialogOpen, setIsInstructionDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState<boolean>(false);
+  const [isInstructionDialogOpen, setIsInstructionDialogOpen] = useState<boolean>(false);
+  const [isToolDialogOpen, setIsToolDialogOpen] = useState<boolean>(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState<boolean>(false);
+  const [currentEditingTool, setCurrentEditingTool] = useState<FormTool>({
+    id: `tool-${Date.now()}`,
+    name: '',
+    description: '',
+    parameters: [],
+    enabled: true,
+    required: false
+  } as FormTool);
+  const [editingToolIndex, setEditingToolIndex] = useState<number>(-1);
+  const [toolToDeleteIndex, setToolToDeleteIndex] = useState<number>(-1);
   const [currentEditingInstruction, setCurrentEditingInstruction] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setAgentState((prev: FormAgentState) => ({ ...prev, [name]: value }));
-  };
+  // Load agent data when component mounts or id changes
+  useEffect(() => {
+    const loadAgentData = async () => {
+      if (!id) return;
 
-  const handleSelectChange = (name: keyof FormAgentState, value: string) => {
-    setAgentState((prev: FormAgentState) => ({ ...prev, [name]: value }));
-  };
+      try {
+        setIsLoading(true);
+        // TODO: Implement agent data loading
+        // const agent = await agentService.getAgent(id);
+        // setAgentState(agent);
+      } catch (error) {
+        console.error('Error loading agent:', error);
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível carregar o agente.',
+          variant: 'destructive',
+        });
+        navigate('/agentes');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setAgentState((prev: FormAgentState) => ({
-      ...prev,
-      [name]: name === 'temperature' || name === 'topP' ? parseFloat(value) : parseInt(value, 10)
-    }));
-  };
+    loadAgentData();
+  }, [id, navigate, toast]);
 
-  // Add a type assertion to handle the slider change for numeric fields
-  const handleSliderChange = (name: string, value: number) => {
-    setAgentState((prev: FormAgentState) => ({
-      ...prev,
-      [name as keyof FormAgentState]: value
-    }));
-  };
+  // Handle saving agent
+  const handleSaveAgent = useCallback(async (): Promise<void> => {
+    try {
+      setIsSaving(true);
+      // TODO: Replace with actual API call
+      // const method = id ? 'PUT' : 'POST';
+      // const url = id ? `/api/agents/${id}` : '/api/agents';
+      // const response = await fetch(url, {
+      //   method,
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(agentState)
+      // });
+      // if (!response.ok) throw new Error('Failed to save agent');
+      
+      // Show success message
+      toast({
+        title: 'Sucesso',
+        description: id ? 'Agente atualizado com sucesso!' : 'Agente criado com sucesso!',
+      });
 
-  // Add the missing function for adding tool parameters
-  const addToolParameter = (toolIndex: number) => {
-    setAgentState((prev: FormAgentState) => {
+      // Invalidate queries
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+      
+      // Navigate to agent list if this was a new agent
+      if (!id) {
+        navigate('/agentes');
+      }
+    } catch (error) {
+      console.error('Error saving agent:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível salvar o agente. Por favor, tente novamente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [agentState, id, navigate, queryClient, toast]);
+    try {
+      setIsSaving(true);
+      
+      // Basic validation
+      if (!agentState.name.trim()) {
+        throw new Error('O nome do agente é obrigatório');
+      }
+      
+      if (!agentState.model) {
+        throw new Error('O modelo é obrigatório');
+      }
+      
+      // Prepare the payload
+      const payload = {
+        ...agentState,
+        // Ensure required fields are properly typed
+        tools: agentState.tools.map(tool => ({
+          ...tool,
+          parameters: tool.parameters.map(param => ({
+            ...param,
+            required: param.required || false,
+            defaultValue: param.defaultValue || ''
+          }))
+        }))
+      };
+      
+      // TODO: Replace with actual API call
+      // const method = id ? 'PUT' : 'POST';
+      // const url = id ? `/api/agents/${id}` : '/api/agents';
+      // const response = await fetch(url, {
+      //   method,
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(payload)
+      // });
+      
+      // if (!response.ok) {
+      //   const error = await response.json();
+      //   throw new Error(error.message || 'Falha ao salvar o agente');
+      // }
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: 'Sucesso',
+        description: `Agente ${id ? 'atualizado' : 'criado'} com sucesso`,
+      });
+
+      // Invalidate queries
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+
+      // Navigate to agent list if this was a new agent
+      if (!id) {
+        navigate('/agentes');
+      }
+    } catch (error) {
+      console.error('Error saving agent:', error);
+      toast({
+        title: 'Erro',
+        description: error instanceof Error ? error.message : 'Falha ao salvar o agente',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [agentState, id, navigate, queryClient, toast]);
+
+  const handleToolChange = useCallback((index: number, field: keyof FormTool, value: any) => {
+    setAgentState((prev: AgentState) => {
       const newTools = [...prev.tools];
-      const newParameter: FormToolParameter = {
-        id: `param-${Date.now()}`,
-        name: '',
-        type: 'string',
-        description: '',
-        required: true,
-        defaultValue: ''
-      };
-      newTools[toolIndex] = {
-        ...newTools[toolIndex],
-        parameters: [...newTools[toolIndex].parameters, newParameter]
-      };
+      newTools[index] = { ...newTools[index], [field]: value };
       return { ...prev, tools: newTools };
     });
+  }, []);
+
+  const handleCurrentToolChange = useCallback((field: keyof FormTool, value: any) => {
+    if (!currentEditingTool) return;
+    setCurrentEditingTool({ ...currentEditingTool, [field]: value });
+  }, [currentEditingTool]);
+
+  const addParameter = useCallback(() => {
+    if (!currentEditingTool) return;
+
+    const newParameter: FormToolParameter = {
+      id: `param-${Date.now()}`,
+      name: '',
+      type: 'string',
+      description: '',
+      required: false,
+    };
+
+    setCurrentEditingTool({
+      ...currentEditingTool,
+      parameters: [...currentEditingTool.parameters, newParameter],
+    });
+  }, [currentEditingTool]);
+
+  const removeParameter = useCallback((paramIndex: number) => {
+    if (!currentEditingTool) return;
+
+    setCurrentEditingTool({
+      ...currentEditingTool,
+      parameters: currentEditingTool.parameters.filter((_, i) => i !== paramIndex),
+    });
+  }, [currentEditingTool]);
+
+  const updateParameter = useCallback((paramIndex: number, field: keyof FormToolParameter, value: any) => {
+    if (!currentEditingTool) return;
+
+    const newParameters = [...currentEditingTool.parameters];
+    newParameters[paramIndex] = { ...newParameters[paramIndex], [field]: value };
+
+    setCurrentEditingTool({
+      ...currentEditingTool,
+      parameters: newParameters,
+    });
+  }, [currentEditingTool]);
+
+  const closeDescriptionDialog = useCallback((): void => {
+    setIsDescriptionDialogOpen(false);
+  }, []);
+
+  const openInstructionDialog = useCallback((): void => {
+    setCurrentEditingInstruction(agentState.instruction || '');
+    setIsInstructionDialogOpen(true);
+  }, [agentState.instruction]);
+
+  const openToolDialog = useCallback((index: number = -1): void => {
+    if (index >= 0) {
+}, [editingToolIndex, closeToolDialog, toast]);
+
+const handleDeleteTool = useCallback((index: number): void => {
+  setAgentState(prev => ({
+    ...prev,
+    tools: prev.tools.filter((_, i) => i !== index)
+  }));
+  toast.success('Ferramenta removida com sucesso!');
+}, [toast]);
+
+// Tool management callbacks
+const handleAddTool = useCallback((): void => {
+  openToolDialog(-1);
+}, [openToolDialog]);
+
+const handleEditTool = useCallback((index: number): void => {
+  openToolDialog(index);
+}, [openToolDialog]);
+
+// ...
+
+// Load agent data if editing
+useEffect(() => {
+  const loadAgentData = async () => {
+    if (!id) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await agentService.getAgent(id);
+      
+      if (!data) {
+        toast.error('Agente não encontrado');
+        navigate('/agentes');
+        return;
+      }
+
+      setAgentState(prev => {
+        const defaultConfig = getDefaultAgentConfig(data.type as AgentType);
+        return {
+          ...defaultConfig,
+          ...data,
+          tools: Array.isArray(data.tools) 
+            ? data.tools.map((t: any) => ({
+                ...t,
+                enabled: true,
+                parameters: t.parameters?.map((p: any) => ({
+                  ...p,
+                  required: p.required ?? false,
+                  defaultValue: p.defaultValue ?? ''
+                })) || []
+              })) 
+            : [],
+          // Ensure required fields are set
+          id: data.id || prev.id,
+          type: data.type || prev.type,
+          name: data.name || prev.name,
+          description: data.description || prev.description,
+          version: data.version || prev.version || '1.0.0'
+        };
+      });
+    } catch (error) {
+      console.error('Failed to load agent:', error);
+      toast.error('Falha ao carregar o agente');
+      navigate('/agentes');
+
+        setAgentState(prev => {
+          const defaultConfig = getDefaultAgentConfig(data.type as AgentType);
+          return {
+            ...defaultConfig,
+            ...data,
+            tools: Array.isArray(data.tools) 
+              ? data.tools.map((t: any) => ({
+                  ...t,
+                  enabled: true,
+                  parameters: t.parameters?.map((p: any) => ({
+                    ...p,
+                    required: p.required ?? false,
+                    defaultValue: p.defaultValue ?? ''
+                  })) || []
+                })) 
+              : []
+          };
+        });
+      } catch (error) {
+        console.error('Failed to load agent:', error);
+        toast.error('Falha ao carregar o agente');
+        navigate('/agentes');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadAgentData();
+  }, [id, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    // Handle save operation
+    // ...
+    setIsSaving(false);
   };
 
-  const openToolDialog = (index?: number) => {
-    if (index !== undefined && agentState.tools[index]) {
-      setCurrentEditingTool({ ...agentState.tools[index] });
+  const openToolDialog = useCallback((index: number = -1) => {
+    if (index >= 0 && index < agentState.tools.length) {
+      setCurrentEditingTool(agentState.tools[index]);
       setEditingToolIndex(index);
     } else {
-      // Nova ferramenta
       setCurrentEditingTool({
-        id: `tool-new-${Date.now()}`,
+        id: uuidv4(),
         name: '',
         description: '',
         parameters: [],
-        returnType: ''
+        enabled: true
       });
       setEditingToolIndex(null);
     }
     setIsToolDialogOpen(true);
-  };
+  }, [agentState.tools]);
 
-  const closeToolDialog = () => {
+  const handleSaveTool = useCallback((tool: FormTool) => {
+    setAgentState(prev => ({
+      ...prev,
+      tools: editingToolIndex !== null && editingToolIndex >= 0
+        ? prev.tools.map((t, i) => i === editingToolIndex ? tool : t)
+        : [...prev.tools, tool]
+    }));
     setIsToolDialogOpen(false);
-    setCurrentEditingTool(null);
-    setEditingToolIndex(null);
-  };
+  }, [editingToolIndex]);
 
-  const addTool = () => {
-    openToolDialog(); // Abre o dialog para uma nova ferramenta
-  };
-
-  const removeTool = (toolIndex: number) => {
-    setAgentState((prev: FormAgentState) => ({
-      ...prev,
-      tools: prev.tools.filter((_: FormTool, index: number) => index !== toolIndex)
-    }));
-  };
-
-  const handleToolChange = (toolIndex: number, fieldName: keyof FormTool, value: string) => {
-    setAgentState((prev: FormAgentState) => {
-      const newTools = [...prev.tools];
-      newTools[toolIndex] = { ...newTools[toolIndex], [fieldName]: value };
-      return { ...prev, tools: newTools };
-    });
-  };
-
-  const handleAddParameter = (toolIndex: number) => {
-    setAgentState((prev: FormAgentState) => {
-      const newTools = [...prev.tools];
-      const newParameter: FormToolParameter = {
-        id: `param-${Date.now()}`,
-        name: '',
-        type: 'string',
-        description: '',
-        required: true
-      };
-      newTools[toolIndex].parameters.push(newParameter);
-      return { ...prev, tools: newTools };
-    });
-  };
-
-  const handleRemoveParameter = (toolIndex: number, paramIndex: number) => {
-    setAgentState((prev: FormAgentState) => {
-      const newTools = [...prev.tools];
-      newTools[toolIndex].parameters = newTools[toolIndex].parameters.filter(
-        (_: FormToolParameter, index: number) => index !== paramIndex
-      );
-      return { ...prev, tools: newTools };
-    });
-  };
-
-  const handleParameterChange = (
-    toolIndex: number,
-    paramIndex: number,
-    field: keyof FormToolParameter,
-    value: string | boolean | number | null
-  ) => {
-    setAgentState((prev: FormAgentState) => {
-      const newTools = [...prev.tools];
-      const updatedParameters = [...newTools[toolIndex].parameters];
-      updatedParameters[paramIndex] = {
-        ...updatedParameters[paramIndex],
-        [field]: value
-      };
-      newTools[toolIndex] = {
-        ...newTools[toolIndex],
-        parameters: updatedParameters
-      };
-      return { ...prev, tools: newTools };
-    });
-  };
-
-  const removeToolParameter = (toolIndex: number, paramIndex: number) => {
-    setAgentState((prev: FormAgentState) => {
-      const newTools = [...prev.tools];
-      const newParameters = newTools[toolIndex].parameters.filter((_: FormToolParameter, index: number) => index !== paramIndex);
-      newTools[toolIndex] = { ...newTools[toolIndex], parameters: newParameters };
-      return { ...prev, tools: newTools };
-    });
-  };
-
-  const addSafetySetting = () => {
-    setAgentState((prev: FormAgentState) => ({
-      ...prev,
-      safetySettings: [...prev.safetySettings, {
-        id: `safety-${Date.now()}`,
-        category: 'HARM_CATEGORY_UNSPECIFIED',
-        threshold: 'BLOCK_NONE' as const
-      }]
-    }));
-  };
-
-  const removeSafetySetting = (index: number) => {
-    setAgentState((prev: FormAgentState) => ({
-      ...prev,
-      safetySettings: prev.safetySettings.filter((_, i: number) => i !== index)
-    }));
-  };
-
-  const handleSafetySettingChange = (
-    index: number, 
-    fieldName: keyof FormSafetySetting, 
-    value: string
-  ) => {
-    setAgentState((prev: FormAgentState) => {
-      const newSafetySettings = [...prev.safetySettings];
-      newSafetySettings[index] = { 
-        ...newSafetySettings[index], 
-        [fieldName]: value 
-      } as FormSafetySetting;
-      return { ...prev, safetySettings: newSafetySettings };
-    });
-  };
-
-  const handleSaveTool = () => {
-    if (!currentEditingTool) return;
-
-    // Validação básica dentro do dialog
-    if (!currentEditingTool.name.trim()) {
-      toast({
-        title: "Erro de Validação",
-        description: "Por favor, preencha o nome da ferramenta.",
-        variant: "destructive",
-      });
-      return;
+  const handleDeleteTool = useCallback(() => {
+    if (toolToDeleteIndex >= 0) {
+      setAgentState(prev => ({
+        ...prev,
+        tools: prev.tools.filter((_, i) => i !== toolToDeleteIndex)
+      }));
+      setToolToDeleteIndex(-1);
+      setIsConfirmDeleteOpen(false);
     }
+  }, [toolToDeleteIndex]);
 
-    setAgentState(prev => {
-      const newTools = [...prev.tools];
-      if (editingToolIndex !== null) {
-        // Editando ferramenta existente
-        newTools[editingToolIndex] = { ...currentEditingTool, id: newTools[editingToolIndex].id }; // Mantém o ID original
-      } else {
-        // Adicionando nova ferramenta
-        newTools.push({ ...currentEditingTool, id: `tool-${Date.now()}-${Math.random().toString(36).substring(2, 7)}` });
-      }
-      return { ...prev, tools: newTools };
-    });
-    closeToolDialog();
-  };
+// ...
 
-  // Handlers para o modal de Descrição do Agente
-  const openDescriptionDialog = () => {
-    setCurrentEditingDescription(agentState.description);
-    setIsDescriptionDialogOpen(true);
-  };
+<CardFooter className="flex justify-end">
+  <Button onClick={handleSubmit} size="lg">Salvar Configuração do Agente</Button>
+</CardFooter>
+</Card>
 
-  const closeDescriptionDialog = () => {
-    setIsDescriptionDialogOpen(false);
-    // Não é necessário resetar currentEditingDescription aqui, pois será pego do agentState ao reabrir
-  };
-
-  const handleSaveDescription = () => {
-    setAgentState(prev => ({ ...prev, description: currentEditingDescription }));
-    closeDescriptionDialog();
-  };
-
-  // Handlers para o modal de Instrução Principal
-  const openInstructionDialog = () => {
-    setCurrentEditingInstruction(agentState.instruction);
-    setIsInstructionDialogOpen(true);
-  };
-
-  const closeInstructionDialog = () => {
-    setIsInstructionDialogOpen(false);
-  };
-
-  const handleSaveInstruction = () => {
-    setAgentState(prev => ({ ...prev, instruction: currentEditingInstruction }));
-    closeInstructionDialog();
-  };
-
-  const handleSubmit = () => {
-    // Validação básica
-    const { name, model, instruction } = agentState;
-    let isValid = true;
-
-    if (!name.trim()) {
-      toast({
-        title: "Erro de Validação",
-        description: "Por favor, preencha o Nome do Agente.",
-        variant: "destructive",
-      });
-      isValid = false;
-    }
-
-    if (!model.trim()) {
-      toast({
-        title: "Erro de Validação",
-        description: "Por favor, selecione o Modelo Base.",
-        variant: "destructive",
-      });
-      isValid = false;
-    }
-
-    if (!instruction.trim()) {
-      toast({
-        title: "Erro de Validação",
-        description: "Por favor, forneça as Instruções do Agente.",
-        variant: "destructive",
-      });
-      isValid = false;
-    }
-
-    if (!isValid) {
-      return;
-    }
-
-    // TODO: Adicionar validações mais detalhadas para ferramentas, parâmetros, etc.
-
-    console.log("Agent State Submitted:", JSON.stringify(agentState, null, 2));
-    alert("Configurações do Agente validadas e salvas no console! Verifique o log para a estrutura JSON completa.");
-    // TODO: Implementar a lógica de envio para o backend ou armazenamento
-  };
-
-  return (
-    <div className="container mx-auto p-4">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold">Configurar Agente de IA</CardTitle>
-          <CardDescription>Defina os parâmetros para o seu agente utilizando o Google ADK.</CardDescription>
-        </CardHeader>
-      <CardContent className="space-y-8">
-        <Tabs defaultValue="identidade" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-4">
-            <TabsTrigger value="identidade">Identidade</TabsTrigger>
-            <TabsTrigger value="instrucoes">Instruções</TabsTrigger>
-            <TabsTrigger value="geracao">Geração</TabsTrigger>
-            <TabsTrigger value="seguranca">Segurança</TabsTrigger>
-            <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
-            <TabsTrigger value="avancado">Avançado</TabsTrigger>
-          </TabsList>
-
-
-            <TabsContent value="identidade" className="pt-4">
-              {/* Identidade do Agente */}
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>Identidade do Agente</CardTitle>
-                  <CardDescription>Informações básicas para identificar e descrever seu agente.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Nome do Agente (Obrigatório)</Label>
-                    <Input id="name" name="name" value={agentState.name} onChange={handleInputChange} placeholder="Ex: meu_agente_financeiro" />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <Label htmlFor="description">Descrição do Agente</Label>
-                      <Button variant="outline" size="sm" onClick={openDescriptionDialog}>Editar Descrição</Button>
-                    </div>
-                    <Textarea 
-                      id="descriptionDisplay" // ID diferente para não conflitar com o do modal
-                      name="descriptionDisplay" 
-                      value={agentState.description} 
-                      readOnly 
-                      placeholder="Ex: Um agente para ajudar com cotações de ações."
-                      rows={3} // Menos linhas para exibição
-                      className="mt-1 resize-none bg-slate-50 dark:bg-slate-800/60 cursor-not-allowed"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="model">Modelo LLM (Obrigatório)</Label>
-                    <Select name="model" value={agentState.model} onValueChange={(value) => handleSelectChange('model', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um modelo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="gemini-pro">Gemini Pro</SelectItem>
-                        <SelectItem value="gemini-1.0-pro">Gemini 1.0 Pro</SelectItem>
-                        <SelectItem value="gemini-1.5-pro-latest">Gemini 1.5 Pro (Latest)</SelectItem>
-                        <SelectItem value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Latest)</SelectItem>
-                        {/* Adicionar outros modelos conforme necessário */}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="instrucoes" className="pt-4">
-              {/* Instruções do Agente */}
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>Instruções do Agente</CardTitle>
-                  <CardDescription>Defina o comportamento principal, persona e como o agente deve operar.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <Label htmlFor="instruction">Instrução Principal (Prompt)</Label>
-                      <Button variant="outline" size="sm" onClick={openInstructionDialog}>Editar Instrução</Button>
-                    </div>
-                    <Textarea
-                      id="instructionDisplay" // ID diferente para não conflitar com o do modal
-                      name="instructionDisplay"
-                      value={agentState.instruction}
-                      readOnly
-                      placeholder="Ex: Você é um assistente prestativo que responde perguntas sobre o clima..."
-                      rows={4} // Menos linhas para exibição
-                      className="mt-1 resize-none bg-slate-50 dark:bg-slate-800/60 cursor-not-allowed"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="geracao" className="pt-4">
-              {/* Configurações de Geração */}
-              <AgentGenerationSettings 
-                config={{
-                  temperature: agentState.temperature,
-                  maxOutputTokens: agentState.maxOutputTokens,
-                  topP: agentState.topP,
-                  topK: agentState.topK
-                }}
-                onNumberInputChange={handleNumberInputChange}
-                onSliderChange={handleSliderChange}
-              />
-            </TabsContent>
-
-            <TabsContent value="seguranca" className="pt-4">
-              {/* Configurações de Segurança */}
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>Configurações de Segurança</CardTitle>
-                  <CardDescription>Defina categorias de dano e os limites de bloqueio correspondentes.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {agentState.safetySettings.map((setting, index) => (
-                    <Card key={setting.id} className="mb-3 p-3 bg-slate-100 dark:bg-slate-700/50">
-                      <div className="flex justify-between items-center mb-2">
-                        <p className="text-sm font-medium">Regra de Segurança #{index + 1}</p>
-                        <Button variant="ghost" size="sm" onClick={() => removeSafetySetting(index)}>
-                          Remover Regra
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor={`safety-category-${index}`}>Categoria de Dano</Label>
-                          <Input 
-                            id={`safety-category-${index}`} 
-                            name="category" 
-                            value={setting.category} 
-                            onChange={(e) => handleSafetySettingChange(index, 'category', e.target.value)} 
-                            placeholder="Ex: HARM_CATEGORY_HARASSMENT"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`safety-threshold-${index}`}>Limite de Bloqueio</Label>
-                          <Select 
-                            name="threshold" 
-                            value={setting.threshold} 
-                            onValueChange={(value) => handleSafetySettingChange(index, 'threshold', value)}
-                          >
-                            <SelectTrigger id={`safety-threshold-${index}`}>
-                              <SelectValue placeholder="Selecione o limite" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {/* Valores de exemplo baseados na documentação do Google AI */}
-                              <SelectItem value="BLOCK_NONE">BLOCK_NONE</SelectItem>
-                              <SelectItem value="BLOCK_ONLY_HIGH">BLOCK_ONLY_HIGH</SelectItem>
-                              <SelectItem value="BLOCK_MEDIUM_AND_ABOVE">BLOCK_MEDIUM_AND_ABOVE</SelectItem>
-                              <SelectItem value="BLOCK_LOW_AND_ABOVE">BLOCK_LOW_AND_ABOVE</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                  <Button variant="outline" size="sm" onClick={addSafetySetting} className="mt-2 w-full">
-                    Adicionar Nova Regra de Segurança
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="ferramentas" className="pt-4">
-              {/* Ferramentas do Agente */}
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>Ferramentas do Agente</CardTitle>
-                  <CardDescription>Defina as ferramentas que o agente pode utilizar para interagir ou obter informações.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {agentState.tools.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">Nenhuma ferramenta adicionada.</p>
-                  )}
-                  <Accordion type="multiple" className="w-full">
-                    {agentState.tools.map((tool, toolIndex) => (
-                      <AccordionItem value={`tool-${tool.id}`} key={tool.id} className="border-b">
-                        <AccordionTrigger className="hover:no-underline bg-slate-50 dark:bg-slate-800/50 px-4 py-3 rounded-md data-[state=open]:rounded-b-none data-[state=open]:border-b border-slate-200 dark:border-slate-700 flex justify-between items-center w-full">
-                          <span className="text-lg font-semibold">Ferramenta: {tool.name || 'Nova Ferramenta'}</span>
-                          <div className="ml-auto flex items-center space-x-2">
-                            <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); openToolDialog(toolIndex); }} className="mr-2">
-                              Editar
-                            </Button>
-                            <Button variant="destructive" size="sm" onClick={(e) => { e.stopPropagation(); removeTool(toolIndex); }}>
-                              Remover
-                            </Button>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="pt-0 pb-4 px-4 bg-slate-50 dark:bg-slate-800/50 rounded-b-md border-x border-b border-slate-200 dark:border-slate-700">
-                          <div className="space-y-4 pt-4">
-                            <div>
-                              <Label htmlFor={`tool-name-${toolIndex}`}>Nome da Ferramenta</Label>
-                              <Input 
-                                id={`tool-name-${toolIndex}`} 
-                                name="name" 
-                                value={tool.name} 
-                                readOnly 
-                                placeholder="Ex: get_current_weather"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor={`tool-description-${toolIndex}`}>Descrição da Ferramenta</Label>
-                              <Textarea 
-                                id={`tool-description-${toolIndex}`} 
-                                name="description" 
-                                value={tool.description} 
-                                readOnly 
-                                placeholder="Ex: Obtém o clima atual para uma localidade específica."
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor={`tool-returnType-${toolIndex}`}>Tipo de Retorno da Ferramenta</Label>
-                              <Input 
-                                id={`tool-returnType-${toolIndex}`} 
-                                name="returnType" 
-                                value={tool.returnType} 
-                                readOnly 
-                                placeholder='Ex: string ou JSON schema {"type": "object", ...}'
-                              />
-                            </div>
-                            <div className="space-y-3 pt-3 border-t mt-4">
-                              <h4 className="font-semibold">Parâmetros da Ferramenta:</h4>
-                              {tool.parameters.length === 0 && <p className="text-sm text-muted-foreground">Nenhum parâmetro definido.</p>}
-                              {tool.parameters.map((param, paramIndex) => (
-                                <Card key={param.id} className="p-3 bg-slate-100 dark:bg-slate-700/50">
-                                  <div className="flex justify-between items-center mb-2">
-                                    <p className="text-sm font-medium">Parâmetro #{paramIndex + 1}</p>
-                                    <Button variant="ghost" size="sm" onClick={() => removeToolParameter(toolIndex, paramIndex)}>
-                                      Remover Parâmetro
-                                    </Button>
-                                  </div>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div>
-                                      <Label htmlFor={`tool-${toolIndex}-param-name-${paramIndex}`}>Nome do Parâmetro</Label>
-                                      <Input 
-                                        id={`tool-${toolIndex}-param-name-${paramIndex}`} 
-                                        name="name" 
-                                        value={param.name} 
-                                        onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'name', e.target.value)} 
-                                        placeholder="Ex: location"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label htmlFor={`tool-${toolIndex}-param-type-${paramIndex}`}>Tipo</Label>
-                                      <Select 
-                                        name="type" 
-                                        value={param.type} 
-                                        onValueChange={(value) => handleParameterChange(toolIndex, paramIndex, 'type', value as FormToolParameter['type'])}
-                                      >
-                                        <SelectTrigger id={`tool-${toolIndex}-param-type-${paramIndex}`}>
-                                          <SelectValue placeholder="Selecione o tipo" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="string">String</SelectItem>
-                                          <SelectItem value="number">Number</SelectItem>
-                                          <SelectItem value="boolean">Boolean</SelectItem>
-                                          <SelectItem value="object">Object (JSON)</SelectItem>
-                                          <SelectItem value="array">Array (JSON)</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </div>
-                                  </div>
-                                  <div className="mt-3">
-                                    <Label htmlFor={`tool-${toolIndex}-param-description-${paramIndex}`}>Descrição do Parâmetro</Label>
-                                    <Textarea 
-                                      id={`tool-${toolIndex}-param-description-${paramIndex}`} 
-                                      name="description" 
-                                      value={param.description} 
-                                      onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'description', e.target.value)} 
-                                      placeholder="Ex: A cidade e estado, ex: San Francisco, CA"
-                                      rows={2}
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                                    <div>
-                                      <Label htmlFor={`tool-${toolIndex}-param-defaultValue-${paramIndex}`}>Valor Padrão (Opcional)</Label>
-                                      <Input 
-                                        id={`tool-${toolIndex}-param-defaultValue-${paramIndex}`} 
-                                        name="defaultValue" 
-                                        value={String(param.defaultValue ?? '')} 
-                                        onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'defaultValue', e.target.value)} 
-                                        placeholder="Ex: metric"
-                                      />
-                                    </div>
-                                    <div className="flex items-center space-x-2 mt-3 md:mt-auto">
-                                      <input 
-                                        type="checkbox" 
-                                        id={`tool-${toolIndex}-param-required-${paramIndex}`} 
-                                        name="required" 
-                                        checked={param.required} 
-                                        onChange={(e) => handleParameterChange(toolIndex, paramIndex, 'required', e.target.checked)} 
-                                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                      />
-                                      <Label htmlFor={`tool-${toolIndex}-param-required-${paramIndex}`} className="text-sm font-medium">
-                                        Obrigatório
-                                      </Label>
-                                    </div>
-                                  </div>
-                                </Card>
-                              ))}
-                              <Button variant="outline" size="sm" onClick={() => addToolParameter(toolIndex)} className="mt-3 w-full">
-                                Adicionar Novo Parâmetro à Ferramenta #{toolIndex + 1}
-                              </Button>
-                            </div>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                  <Button onClick={addTool} className="w-full">Adicionar Nova Ferramenta</Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="avancado" className="pt-4">
-              {/* Configurações Avançadas */}
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>Configurações Avançadas</CardTitle>
-                  <CardDescription>Ajustes detalhados para estruturação de dados, contexto, planejamento e execução.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="inputSchema">Schema de Entrada (JSON)</Label>
-                    <Textarea 
-                      id="inputSchema" 
-                      name="inputSchema" 
-                      value={agentState.inputSchema} 
-                      onChange={handleInputChange} 
-                      placeholder="Defina o schema JSON para a entrada do agente (opcional)" 
-                      rows={4} 
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">Opcional. Define a estrutura JSON esperada para a entrada do agente.</p>
-                  </div>
-                  <div>
-                    <Label htmlFor="outputSchema">Schema de Saída (JSON)</Label>
-                    <Textarea 
-                      id="outputSchema" 
-                      name="outputSchema" 
-                      value={agentState.outputSchema} 
-                      onChange={handleInputChange} 
-                      placeholder="Defina o schema JSON para a saída do agente (opcional)" 
-                      rows={4} 
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">Opcional. Define a estrutura JSON desejada para a saída. Usar isso desabilita ferramentas.</p>
-                  </div>
-                  <div>
-                    <Label htmlFor="outputKey">Chave de Saída</Label>
-                    <Input 
-                      id="outputKey" 
-                      name="outputKey" 
-                      value={agentState.outputKey} 
-                      onChange={handleInputChange} 
-                      placeholder="Ex: found_capital (usado com Schema de Saída)" 
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">Opcional. Chave para armazenar a saída estruturada no estado da sessão.</p>
-                  </div>
-                  <div>
-                    <Label htmlFor="includeContents">Gerenciamento de Contexto (include_contents)</Label>
-                    <Select name="includeContents" value={agentState.includeContents} onValueChange={(value) => handleSelectChange('includeContents', value as 'default' | 'none')}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o modo de contexto" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="default">Padrão (envia histórico relevante)</SelectItem>
-                        <SelectItem value="none">Nenhum (agente opera sem histórico)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-muted-foreground mt-1">Controla se o histórico da conversa é enviado ao LLM.</p>
-                  </div>
-                  <div>
-                    <Label htmlFor="planner">Planejador (Planner)</Label>
-                    <Input 
-                      id="planner" 
-                      name="planner" 
-                      value={agentState.planner} 
-                      onChange={handleInputChange} 
-                      placeholder="Referência/Nome do BasePlanner (opcional)" 
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">Opcional. Habilita raciocínio multi-etapas.</p>
-                  </div>
-                  <div>
-                    <Label htmlFor="codeExecutor">Executor de Código (CodeExecutor)</Label>
-                    <Input 
-                      id="codeExecutor" 
-                      name="codeExecutor" 
-                      value={agentState.codeExecutor} 
-                      onChange={handleInputChange} 
-                      placeholder="Referência/Nome do BaseCodeExecutor (opcional)" 
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">Opcional. Permite ao agente executar blocos de código.</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-          </Tabs>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button onClick={handleSubmit} size="lg">Salvar Configuração do Agente</Button>
-        </CardFooter>
-      </Card>
-
-      {/* Dialog para Editar Descrição do Agente */}
-      <Dialog open={isDescriptionDialogOpen} onOpenChange={setIsDescriptionDialogOpen}>
-        <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>Editar Descrição do Agente</DialogTitle>
-            <DialogDescription>
-              Forneça uma descrição clara e concisa sobre o que seu agente faz, seus objetivos e suas capacidades.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Textarea
-              id="currentEditingDescription"
-              value={currentEditingDescription}
-              onChange={(e) => setCurrentEditingDescription(e.target.value)}
-              placeholder="Descreva o propósito e as capacidades do seu agente..."
-              rows={10}
-              className="min-h-[200px]"
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={closeDescriptionDialog}>Cancelar</Button>
-            <Button onClick={handleSaveDescription}>Salvar Descrição</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog para Editar Instrução Principal */}
-      <Dialog open={isInstructionDialogOpen} onOpenChange={setIsInstructionDialogOpen}>
-        <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>Editar Instrução Principal (Prompt)</DialogTitle>
-            <DialogDescription>
-              Defina o comportamento central, a persona e as diretrizes operacionais para o seu agente.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Textarea
-              id="currentEditingInstruction"
-              value={currentEditingInstruction}
-              onChange={(e) => setCurrentEditingInstruction(e.target.value)}
-              placeholder="Ex: Você é um assistente amigável e eficiente, especializado em fornecer informações sobre produtos de tecnologia..."
-              rows={15}
-              className="min-h-[300px]"
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={closeInstructionDialog}>Cancelar</Button>
-            <Button onClick={handleSaveInstruction}>Salvar Instrução</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog para Adicionar/Editar Ferramenta */}
+{/* Dialog for Editing Agent Description */}
+<Dialog open={isDescriptionDialogOpen} onOpenChange={setIsDescriptionDialogOpen}>
+  <DialogContent className="sm:max-w-[625px]">
+    <DialogHeader>
+      <DialogTitle>Editar Descrição do Agente</DialogTitle>
+      <DialogDescription>
+        Adicione ou edite a descrição do agente para melhor identificação
+      </DialogDescription>
+    </DialogHeader>
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="description" className="text-right">
+          Descrição
+        </Label>
+        <Textarea
+          id="description"
+          value={currentEditingDescription}
+          onChange={(e) => setCurrentEditingDescription(e.target.value)}
+          className="col-span-3"
+          rows={4}
+          placeholder="Descreva o propósito e funcionalidade deste agente"
+        />
+      </div>
+    </div>
+    <DialogFooter>
+      <Button 
+        variant="outline" 
+        onClick={() => setIsDescriptionDialogOpen(false)}
+      >
+        Cancelar
+      </Button>
+      <Button 
+        onClick={handleSaveDescription}
+        disabled={!currentEditingDescription.trim()}
+      >
+        Salvar
+      </Button>
+    </DialogFooter>
+        Forneça uma descrição clara e concisa sobre o que seu agente faz, seus objetivos e suas capacidades.
+      </DialogDescription>
+    </DialogHeader>
+    <div className="grid gap-4 py-4">
+      <Textarea
+        id="currentEditingDescription"
+        value={currentEditingDescription}
+        onChange={(e) => setCurrentEditingDescription(e.target.value)}
+        placeholder="Ex: Um assistente especializado em ajudar desenvolvedores a resolver problemas de programação..."
+        rows={8}
+        className="min-h-[200px]"
+      />
+    </div>
+    <DialogFooter>
+      <Button variant="outline" onClick={() => setIsDescriptionDialogOpen(false)}>
+        Cancelar
+      </Button>
+      <Button 
+        onClick={handleSaveDescription} 
+        disabled={!currentEditingDescription.trim()}
+      >
+        Salvar Descrição
+      </Button>
+    </DialogFooter>
       {isToolDialogOpen && (
         <Dialog open={isToolDialogOpen} onOpenChange={setIsToolDialogOpen}>
           <DialogContent>
-            <DialogTitle>Adicionar/Editar Ferramenta</DialogTitle>
+            <DialogHeader>
+              <DialogTitle>Adicionar/Editar Ferramenta</DialogTitle>
+              <DialogDescription>
+                Configure os detalhes da ferramenta que o agente poderá utilizar.
+              </DialogDescription>
+            </DialogHeader>
             <div className="space-y-4">
               <div>
                 <Label htmlFor="tool-name">Nome da Ferramenta</Label>
@@ -904,6 +1036,10 @@ const Agentes: React.FC = () => {
                 />
               </div>
             </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsToolDialogOpen(false)}>Cancelar</Button>
+              <Button onClick={() => onSave(formData)}>Salvar</Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       )}
