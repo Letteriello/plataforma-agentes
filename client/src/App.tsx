@@ -3,7 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ToastProvider } from '@/components/ui/use-toast';
-import { router } from '@/routes';
+import { router } from '@/routes.tsx';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
 import './App.css';

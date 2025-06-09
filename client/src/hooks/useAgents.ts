@@ -1,47 +1,42 @@
-import { useState, useEffect } from 'react';
-import { useAgentStore } from '@/store/agentStore';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import agentService from '@/api/agentService';
 import { AnyAgentConfig } from '@/types';
 
 export interface UseAgentsReturn {
-  agents: AnyAgentConfig[];
+  agents: AnyAgentConfig[] | undefined;
   isLoading: boolean;
   error: Error | null;
   deleteAgent: (agentId: string) => Promise<void>;
+  isDeleting: boolean;
 }
 
 export const useAgents = (): UseAgentsReturn => {
-  const { agents, loadAgents } = useAgentStore();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetch = async () => {
-      setIsLoading(true);
-      try {
-        const data = await agentService.fetchAgents();
-        loadAgents(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetch();
-  }, [loadAgents]);
+  const { data: agents, isLoading, error } = useQuery<AnyAgentConfig[], Error>({
+    queryKey: ['agents'],
+    queryFn: agentService.fetchAgents,
+  });
 
-  const deleteAgent = async (id: string) => {
-    setIsLoading(true);
-    try {
-      await agentService.deleteAgent(id);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setIsLoading(false);
+  const { mutateAsync: deleteAgentMutation, isLoading: isDeleting } = useMutation<void, Error, string>({
+    mutationFn: (agentId: string) => agentService.deleteAgent(agentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+      // TODO: Consider adding toast notification for success
+    },
+    onError: (err) => {
+      // TODO: Consider adding toast notification for error
+      console.error("Error deleting agent:", err);
     }
-  };
+  });
 
-  return { agents, isLoading, error, deleteAgent };
+  return {
+    agents,
+    isLoading,
+    error: error || null,
+    deleteAgent: deleteAgentMutation,
+    isDeleting
+  };
 };
 
 export default useAgents;
