@@ -2,7 +2,7 @@ import { Input, Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useDashboardData from '@/hooks/useDashboardData';
-import agentService from '@/api/agentService';
+import { useAgentStore } from '@/store/agentStore';
 import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
 import { VisaoGeralCard } from '@/components/dashboard/VisaoGeralCard';
 import { MeusAgentesCard } from '@/components/dashboard/MeusAgentesCard';
@@ -10,6 +10,7 @@ import { AtividadeRecenteCard } from '@/components/dashboard/AtividadeRecenteCar
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const saveAgent = useAgentStore(state => state.saveAgent);
   const {
     stats,
     agents,
@@ -22,7 +23,7 @@ export default function DashboardPage() {
   // Manipuladores de eventos
   const handleCreateAgent = async (name: string, type: any) => {
     try {
-      const saved = await agentService.saveAgent({ id: '', name, type } as any);
+      const saved = await saveAgent({ id: '', name, type } as any);
       navigate(`/agent/${saved.id}`);
       refreshData();
     } catch (err) {

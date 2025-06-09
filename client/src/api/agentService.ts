@@ -1,5 +1,5 @@
-import { useAgentStore } from "@/store/agentStore";
 import { AnyAgentConfig } from '@/types';
+import { mockInitialAgents } from '@/data/mocks/mock-initial-agents';
 
 export interface IAgentService {
   /** Retorna a lista de agentes */
@@ -15,39 +15,41 @@ export interface IAgentService {
 const SIMULATED_DELAY_MS = 300;
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+let agentsData: AnyAgentConfig[] = [...mockInitialAgents];
+
 export const agentService: IAgentService = {
   async fetchAgents() {
     await delay(SIMULATED_DELAY_MS);
-    const { agents } = useAgentStore.getState();
-    return [...agents];
+    return [...agentsData];
   },
 
   async fetchAgentById(agentId: string) {
     await delay(SIMULATED_DELAY_MS);
-    const { agents } = useAgentStore.getState();
-    const found = agents.find(a => a.id === agentId);
+    const found = agentsData.find(a => a.id === agentId);
     if (!found) throw new Error('Agent not found');
-    return found;
+    return { ...found };
   },
 
   async saveAgent(config: AnyAgentConfig) {
     await delay(SIMULATED_DELAY_MS);
-    const { addAgent, updateAgent } = useAgentStore.getState();
     let saved = { ...config };
-    if (config.id && config.id !== '') {
-      updateAgent(saved);
+    if (config.id && agentsData.some(a => a.id === config.id)) {
+      agentsData = agentsData.map(a => (a.id === config.id ? saved : a));
     } else {
-      saved.id = crypto.randomUUID();
-      addAgent(saved);
+      saved.id = saved.id && saved.id !== '' ? saved.id : crypto.randomUUID();
+      agentsData.push(saved);
     }
     return saved;
   },
 
   async deleteAgent(agentId: string) {
     await delay(SIMULATED_DELAY_MS);
-    const { removeAgent } = useAgentStore.getState();
-    removeAgent(agentId);
+    agentsData = agentsData.filter(a => a.id !== agentId);
   },
+};
+
+export const __resetAgents = (agents: AnyAgentConfig[] = mockInitialAgents) => {
+  agentsData = [...agents];
 };
 
 export default agentService;

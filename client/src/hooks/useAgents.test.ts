@@ -1,32 +1,28 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { useAgents } from './useAgents';
-import agentService from '@/api/agentService';
 import { useAgentStore } from '@/store/agentStore';
 import { AgentType, AnyAgentConfig } from '@/types/agent';
 
-vi.mock('@/api/agentService');
 vi.mock('@/store/agentStore');
+const fetchAgentsMock = vi.fn();
+const deleteAgentMock = vi.fn();
 
-const fetchAgentsMock = agentService.fetchAgents as unknown as vi.Mock;
-const deleteAgentMock = agentService.deleteAgent as unknown as vi.Mock;
-
-const loadAgents = vi.fn();
 
 const mockAgents: AnyAgentConfig[] = [
   { id: '1', name: 'Agent', type: AgentType.LLM, instruction: '', model: 'gpt', code_execution: false, planning_enabled: false, tools: [] },
 ];
 
-vi.mocked(useAgentStore).mockReturnValue({ agents: [], loadAgents });
-
-fetchAgentsMock.mockResolvedValue(mockAgents);
-deleteAgentMock.mockResolvedValue(undefined);
+vi.mocked(useAgentStore).mockReturnValue({
+  agents: [],
+  fetchAgents: fetchAgentsMock,
+  deleteAgent: deleteAgentMock,
+});
 
 describe('useAgents hook', () => {
   test('fetches agents on init', async () => {
     renderHook(() => useAgents());
     await waitFor(() => expect(fetchAgentsMock).toHaveBeenCalled());
-    expect(loadAgents).toHaveBeenCalledWith(mockAgents);
   });
 
   test('deleteAgent calls service', async () => {

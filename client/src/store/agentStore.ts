@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { AnyAgentConfig } from '@/types/agent';
 import { mockInitialAgents } from '@/data/mocks/mock-initial-agents';
+import agentService from '@/api/agentService';
 
 /**
  * @interface AgentState
@@ -28,6 +29,10 @@ interface AgentActions {
   removeAgent: (agentId: string) => void;
   updateAgent: (agent: AnyAgentConfig) => void;
   setActiveAgent: (agent: AnyAgentConfig | string | null) => void;
+  fetchAgents: () => Promise<void>;
+  fetchAgentById: (agentId: string) => Promise<void>;
+  saveAgent: (agent: AnyAgentConfig) => Promise<AnyAgentConfig>;
+  deleteAgent: (agentId: string) => Promise<void>;
 }
 
 /**
@@ -77,7 +82,61 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
       set({ activeAgent: agentOrId });
     }
   },
+
+  fetchAgents: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const data = await agentService.fetchAgents();
+      set({ agents: data, isLoading: false });
+    } catch (err) {
+      set({ error: (err as Error).message, isLoading: false });
+    }
+  },
+
+  fetchAgentById: async (agentId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const agent = await agentService.fetchAgentById(agentId);
+      set({ activeAgent: agent, isLoading: false });
+    } catch (err) {
+      set({ error: (err as Error).message, isLoading: false });
+    }
+  },
+
+  saveAgent: async (agent: AnyAgentConfig) => {
+    set({ isLoading: true, error: null });
+    try {
+      const saved = await agentService.saveAgent(agent);
+      set((state) => ({
+        agents: state.agents.some((a) => a.id === saved.id)
+          ? state.agents.map((a) => (a.id === saved.id ? saved : a))
+          : [...state.agents, saved],
+        activeAgent: saved,
+        isLoading: false,
+      }));
+      return saved;
+    } catch (err) {
+      set({ error: (err as Error).message, isLoading: false });
+      throw err;
+    }
+  },
+
+  deleteAgent: async (agentId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      await agentService.deleteAgent(agentId);
+      set((state) => ({
+        agents: state.agents.filter((a) => a.id !== agentId),
+        activeAgent: state.activeAgent?.id === agentId ? null : state.activeAgent,
+        isLoading: false,
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, isLoading: false });
+    }
+  },
 }));
 
-// Carrega os dados mockados iniciais para popular o store na inicialização.
-useAgentStore.getState().loadAgents(mockInitialAgents);
+// Carrega os dados mockados iniciais na inicialização
+useAgentStore.getState().fetchAgents().catch(() => {
+  useAgentStore.getState().loadAgents(mockInitialAgents);
+});

@@ -1,52 +1,41 @@
-import { vi, describe, beforeEach, test, expect } from 'vitest';
-import agentService from './agentService';
-import { AnyAgentConfig, AgentType, LlmAgentConfig } from '@/types/agent';
-import { useAgentStore } from '@/store/agentStore';
-
-const addAgent = vi.fn();
-const updateAgent = vi.fn();
-const removeAgent = vi.fn();
-
-vi.mock('@/store/agentStore', () => ({
-  useAgentStore: {
-    getState: () => ({ addAgent, updateAgent, removeAgent }),
-  },
-}));
+import { describe, beforeEach, test, expect } from 'vitest';
+import agentService, { __resetAgents } from './agentService';
+import { AgentType, LlmAgentConfig } from '@/types/agent';
 
 beforeEach(() => {
-  addAgent.mockClear();
-  updateAgent.mockClear();
-  removeAgent.mockClear();
+  __resetAgents();
 });
 
 describe('agentService', () => {
-  const configWithoutId: LlmAgentConfig = {
-    id: '',
-    name: 'New',
-    type: AgentType.LLM,
-    instruction: '',
-    model: 'gpt',
-    code_execution: false,
-    planning_enabled: false,
-    tools: [],
-  };
+  test('saveAgent creates a new agent when id is missing', async () => {
+    const config: LlmAgentConfig = {
+      id: '',
+      name: 'New',
+      type: AgentType.LLM,
+      instruction: '',
+      model: 'gpt',
+      code_execution: false,
+      planning_enabled: false,
+      tools: [],
+    };
 
-  const configWithId: LlmAgentConfig = { ...configWithoutId, id: '123' };
-
-  test('saveAgent calls addAgent when id is missing', async () => {
-    await agentService.saveAgent(configWithoutId);
-    expect(addAgent).toHaveBeenCalled();
-    expect(updateAgent).not.toHaveBeenCalled();
+    const saved = await agentService.saveAgent(config);
+    const agents = await agentService.fetchAgents();
+    expect(agents.find(a => a.id === saved.id)).toBeTruthy();
   });
 
-  test('saveAgent calls updateAgent when id exists', async () => {
-    await agentService.saveAgent(configWithId);
-    expect(updateAgent).toHaveBeenCalled();
-    expect(addAgent).not.toHaveBeenCalled();
+  test('saveAgent updates existing agent', async () => {
+    const [first] = await agentService.fetchAgents();
+    const updated = { ...first, name: 'Updated' } as LlmAgentConfig;
+    await agentService.saveAgent(updated);
+    const result = await agentService.fetchAgentById(first.id);
+    expect(result.name).toBe('Updated');
   });
 
-  test('deleteAgent calls removeAgent', async () => {
-    await agentService.deleteAgent('abc');
-    expect(removeAgent).toHaveBeenCalledWith('abc');
+  test('deleteAgent removes agent', async () => {
+    const [first] = await agentService.fetchAgents();
+    await agentService.deleteAgent(first.id);
+    const agents = await agentService.fetchAgents();
+    expect(agents.find(a => a.id === first.id)).toBeUndefined();
   });
 });

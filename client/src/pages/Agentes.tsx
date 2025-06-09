@@ -44,7 +44,7 @@ import {
 import { Tool, ToolParameter } from '@/types/tool';
 
 // Services
-import { agentService } from '@/api/agentService';
+import { useAgentStore } from '@/store/agentStore';
 
 // Utils
 import { cn } from '@/lib/utils';
@@ -1138,6 +1138,7 @@ export default function Agentes() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { fetchAgentById, saveAgent } = useAgentStore();
   
   // State management
   const [agentState, setAgentState] = useState<AgentState>(() => ({
@@ -1254,8 +1255,8 @@ export default function Agentes() {
 
       try {
         setIsLoading(true);
-        // Usar o método correto do serviço para buscar o agente
-        const agentData = await agentService.getAgentById(id);
+        await fetchAgentById(id);
+        const agentData = useAgentStore.getState().activeAgent;
         
         if (!agentData) {
           throw new Error('Agente não encontrado');
@@ -1330,12 +1331,8 @@ export default function Agentes() {
         }))
       };
       
-      // Salvar o agente usando o serviço
-      if (id) {
-        await agentService.updateAgent(id, payload);
-      } else {
-        await agentService.createAgent(payload);
-      }
+      // Salvar o agente via store
+      const saved = await saveAgent({ ...payload, id: id || payload.id });
       
       toast({
         title: 'Sucesso',
@@ -1846,7 +1843,8 @@ useEffect(() => {
 
     try {
       setIsLoading(true);
-      const data = await agentService.getAgent(id);
+      await fetchAgentById(id);
+      const data = useAgentStore.getState().activeAgent;
       
       if (!data) {
         toast.error('Agente não encontrado');

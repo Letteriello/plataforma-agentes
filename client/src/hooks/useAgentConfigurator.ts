@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AnyAgentConfig } from '@/types';
 import { useAgentStore } from '@/store/agentStore';
-import agentService from '@/api/agentService';
 
 export interface UseAgentConfiguratorReturn {
   config: AnyAgentConfig;
@@ -18,7 +17,7 @@ export const useAgentConfigurator = (initial: AnyAgentConfig): UseAgentConfigura
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { updateAgent } = useAgentStore();
+  const { updateAgent, saveAgent } = useAgentStore();
 
   const updateConfig = (newConfig: Partial<AnyAgentConfig>) => {
     setConfig(prev => ({ ...prev, ...newConfig }));
@@ -28,8 +27,7 @@ export const useAgentConfigurator = (initial: AnyAgentConfig): UseAgentConfigura
   const saveConfig = async () => {
     setIsSaving(true);
     try {
-      const saved = await agentService.saveAgent(config);
-      updateAgent(saved);
+      const saved = await saveAgent(config);
       setIsDirty(false);
     } catch (err) {
       setError(err as Error);

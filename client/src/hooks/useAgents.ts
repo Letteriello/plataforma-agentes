@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAgentStore } from '@/store/agentStore';
-import agentService from '@/api/agentService';
 import { AnyAgentConfig } from '@/types';
 
 export interface UseAgentsReturn {
@@ -11,7 +10,7 @@ export interface UseAgentsReturn {
 }
 
 export const useAgents = (): UseAgentsReturn => {
-  const { agents, loadAgents } = useAgentStore();
+  const { agents, fetchAgents, deleteAgent: deleteFromStore } = useAgentStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -19,8 +18,7 @@ export const useAgents = (): UseAgentsReturn => {
     const fetch = async () => {
       setIsLoading(true);
       try {
-        const data = await agentService.fetchAgents();
-        loadAgents(data);
+        await fetchAgents();
       } catch (err) {
         setError(err as Error);
       } finally {
@@ -28,12 +26,12 @@ export const useAgents = (): UseAgentsReturn => {
       }
     };
     fetch();
-  }, [loadAgents]);
+  }, [fetchAgents]);
 
   const deleteAgent = async (id: string) => {
     setIsLoading(true);
     try {
-      await agentService.deleteAgent(id);
+      await deleteFromStore(id);
     } catch (err) {
       setError(err as Error);
     } finally {

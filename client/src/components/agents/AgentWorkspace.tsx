@@ -6,7 +6,6 @@ import JsonPreview from './JsonPreview';
 import { useAgentStore } from '@/store/agentStore';
 import { useAgentConfigStore } from '@/store/agentConfigStore';
 import { deepClone } from '@/lib/utils';
-import agentService from '@/api/agentService';
 import { useToast } from '@/components/ui/use-toast';
 
 const initialLlmConfig: LlmAgentConfig = {
@@ -22,7 +21,7 @@ const initialLlmConfig: LlmAgentConfig = {
 
 /**
  * O Workspace do Agente é o ambiente principal para criar e configurar agentes.
- * Ele gerencia o estado da configuração atual e interage com o `agentService` para persistir as mudanças.
+ * Ele gerencia o estado da configuração atual e persiste as mudanças via store.
  */
 const AgentWorkspace: React.FC = () => {
   const activeAgentFromStore = useAgentStore((state) => state.activeAgent);
@@ -49,11 +48,13 @@ const AgentWorkspace: React.FC = () => {
    * Manipula o salvamento da configuração atual do agente,
    * exibindo toasts de sucesso ou erro.
    */
+  const saveAgent = useAgentStore((state) => state.saveAgent);
+
   const handleSaveCurrentConfig = async () => {
     if (!currentConfig) return;
     setIsSaving(true);
     try {
-      const savedAgent = await agentService.saveAgent(currentConfig);
+      const savedAgent = await saveAgent(currentConfig);
       setActiveAgentInStore(savedAgent);
       setConfig(savedAgent);
       toast({
