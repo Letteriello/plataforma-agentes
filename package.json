@@ -1,0 +1,25 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Este reposit\\u00f3rio cont\\u00e9m a implementa\\u00e7\\u00e3o da interface web da plataforma de agentes. A arquitetura completa est\\u00e1 documentada em [ARCHITECTURE.md](ARCHITECTURE.md) e nos arquivos em `docs/docs/ai`.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Letteriello/plataforma-agentes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Letteriello/plataforma-agentes/issues"
+  },
+  "homepage": "https://github.com/Letteriello/plataforma-agentes#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.30"
+  }
+}

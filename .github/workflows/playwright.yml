@@ -1,0 +1,90 @@
+name: CI Pipeline # Renamed for broader scope
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  unit_integration_tests:
+    name: Unit & Integration Tests (Vitest)
+    timeout-minutes: 15 # Shorter timeout for Vitest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client # Set working directory for all steps in this job
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/* # Use LTS version of Node
+
+    - name: Install client dependencies
+      run: npm ci # Runs in ./client due to job default
+
+    - name: Run Vitest tests with coverage
+      # Vitest will automatically fail if coverage thresholds are not met
+      run: npx vitest run --coverage # Runs in ./client
+
+    # Optional: Upload Vitest coverage report as an artifact
+    - name: Upload Vitest coverage report
+      if: ${{ !cancelled() }} # Run this step even if previous steps failed, unless job was cancelled
+      uses: actions/upload-artifact@v4
+      with:
+        name: vitest-coverage-report
+        path: client/coverage/ # Default Vitest coverage output directory
+        retention-days: 7
+
+  e2e_tests:
+    name: E2E Tests (Playwright)
+    needs: unit_integration_tests # Depends on the Vitest job
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    # No default working directory for Playwright job, as commands are run from root
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+
+    - name: Install root dependencies (if any, for Playwright)
+      # If Playwright is listed in the root package.json and client has its own
+      run: npm ci
+      # If client dependencies are also needed for Playwright's webServer to start,
+      # ensure they are installed. The webServer command `npm run dev --prefix client`
+      # will use client's node_modules. `npm ci --prefix client` could be added here too if necessary,
+      # but `unit_integration_tests` job already installs them, and workspace state isn't shared directly.
+      # For simplicity, assuming `npm run dev --prefix client` handles its own context.
+      # If client/node_modules are needed by the Playwright runner itself (not just webServer),
+      # then `npm ci --prefix client` would be necessary here.
+      # The `npm ci` at root should install Playwright itself.
+      # The `npx playwright install --with-deps` should handle browser deps.
+
+    - name: Install client dependencies (for webServer)
+      run: npm ci --prefix client
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps # Installs browsers and OS dependencies
+
+    - name: Run Playwright tests
+      # This will use playwright.config.ts which starts the webServer (client dev server)
+      run: npx playwright test
+      # The --project=client flag in playwright.config.ts default project name is used automatically
+      # Or specify: npx playwright test --project=client
+
+    - name: Upload Playwright report
+      if: ${{ !cancelled() }} # Run this step always, unless job was cancelled
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report
+        path: playwright-report/ # Default Playwright report output directory
+        retention-days: 30
