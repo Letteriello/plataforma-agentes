@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import mockToolsData from '../../../data/mock-tools.json';
+import toolService from '@/api/toolService';
 import { Tool } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ToolSelectorProps {
-  availableTools: Tool[]; // Ferramentas que podem ser selecionadas
   selectedTools: string[]; // IDs das ferramentas já selecionadas
   onSelectionChange: (selectedIds: string[]) => void; // Função para atualizar as ferramentas selecionadas
   // open: boolean; // Controlará a visibilidade do Dialog
@@ -14,17 +13,13 @@ interface ToolSelectorProps {
 }
 
 export const ToolSelector: React.FC<ToolSelectorProps> = ({
-  availableTools,
   selectedTools,
   onSelectionChange,
-  // open,
-  // onOpenChange
 }) => {
   const [loadedTools, setLoadedTools] = useState<Tool[]>([]);
 
   useEffect(() => {
-    // Simula o carregamento, em um cenário real seria uma chamada API
-    setLoadedTools(mockToolsData);
+    toolService.fetchTools().then(setLoadedTools);
   }, []);
 
   return (
