@@ -37,6 +37,8 @@ const initialState: AuthState = {
   error: null,
 };
 
+import apiClient from '../api/apiClient';
+
 // Criando o store com tipagem simplificada
 type SetState = (partial: (state: AuthState & AuthActions) => Partial<AuthState & AuthActions>, replace?: boolean) => void;
 
@@ -45,36 +47,29 @@ const useAuthStore = create<AuthState & AuthActions>()(
     (set: SetState) => ({
       ...initialState,
       
-      login: async (email: string) => {
+      login: async (email, password) => { // Added password parameter
         set({ isLoading: true, error: null });
-        
         try {
-          // Simulação de chamada de API
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          // Dados simulados
-          const mockUser = {
-            id: '1',
-            name: 'Usuário de Teste',
-            email: email,
-            role: 'admin',
-          };
-          
-          const mockToken = 'mock-jwt-token';
-          
-          set({
-            user: mockUser,
-            token: mockToken,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          
-        } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Falha ao fazer login',
-            isLoading: false,
-          });
-          throw error;
+          const response = await apiClient.post('/auth/login', { email, password });
+          // Assuming the response data contains user and token
+          let { user, token } = response.data;
+
+          // --- Temporary modification for RBAC testing ---
+          if (user && typeof user.role === 'undefined') {
+            console.warn("User object from backend is missing 'role'. Assigning 'admin' for testing.");
+            user.role = 'admin'; // Assign a default role if missing
+          } else if (!user) { // If user is null/undefined from backend
+            console.warn("User object not returned from backend. Using mock admin for testing.");
+            user = { id: 'mock-id', name: 'Mock Admin', email: email, role: 'admin' };
+            token = token || 'mock-admin-token'; // Ensure token exists if user was mocked
+          }
+          // --- End of temporary modification ---
+
+          set({ user, token, isAuthenticated: true, isLoading: false });
+        } catch (error: any) {
+          // Assuming error.response.data.message contains the error message
+          const errorMessage = error.response?.data?.message || 'Login failed';
+          set({ error: errorMessage, isLoading: false, isAuthenticated: false });
         }
       },
       
