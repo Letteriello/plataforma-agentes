@@ -1,11 +1,23 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject as DefaultRouteObject } from 'react-router-dom';
 import MainLayout from '@/components/layouts/MainLayout';
 import { lazy, Suspense } from 'react';
+
+// Define custom handle and AppRouteObject types
+interface CustomRouteHandle {
+  title: string;
+  // Add other potential properties if observed or anticipated
+}
+
+interface AppRouteObject extends Omit<DefaultRouteObject, 'handle' | 'children'> {
+  handle?: CustomRouteHandle;
+  children?: AppRouteObject[];
+  lazy?: () => Promise<{ Component: React.ComponentType }>; // Ensure lazy is correctly typed
+}
 
 // Lazy load components with proper error boundaries
 const withSuspense = (Component: React.ComponentType) => {
   return (
-    <Suspense fallback={<div>Carregando...</div>}>
+    <Suspense fallback={<div>Loading...</div>}>
       <Component />
     </Suspense>
   );
@@ -13,15 +25,16 @@ const withSuspense = (Component: React.ComponentType) => {
 
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-import AgentesMinimoContent from '@/pages/Agentes'; // Importação direta
-// const Agentes = lazy(() => import('@/pages/Agentes')); // Comentado
-const Ferramentas = lazy(() => import('./pages/Ferramentas'));
-const Memoria = lazy(() => import('./pages/Memoria'));
+import AgentsPage from '@/pages/Agents'; // Renamed from AgentesMinimoContent and Agentes.tsx
+const ToolsPage = lazy(() => import('./pages/Tools')); // Renamed from Ferramentas.tsx
+const MemoryPage = lazy(() => import('./pages/Memory')); // Renamed from Memoria.tsx
 const Deploy = lazy(() => import('./pages/Deploy'));
-const Configuracoes = lazy(() => import('./pages/Configuracoes'));
+const SettingsPage = lazy(() => import('./pages/Settings')); // Renamed from Configuracoes.tsx
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 
 // Error boundary component
+// Ensure ErrorBoundary is defined before its usage or imported if defined elsewhere.
+// For now, assuming it's correctly defined here or imported.
 const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
   try {
     return <>{children}</>;
@@ -31,7 +44,7 @@ const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
   }
 };
 
-export const router = createBrowserRouter([
+const routes: AppRouteObject[] = [
   {
     path: '/',
     element: (
@@ -50,19 +63,19 @@ export const router = createBrowserRouter([
         handle: { title: 'Dashboard' },
       },
       {
-        path: 'agentes',
-        element: <AgentesMinimoContent />,
-        handle: { title: 'Agentes' },
+        path: 'agents', // path changed from 'agentes'
+        element: <AgentsPage />,
+        handle: { title: 'Agents' }, // title changed
       },
       {
-        path: 'ferramentas',
-        element: withSuspense(Ferramentas),
-        handle: { title: 'Ferramentas' },
+        path: 'tools', // path changed from 'ferramentas'
+        element: withSuspense(ToolsPage),
+        handle: { title: 'Tools' }, // title changed
       },
       {
-        path: 'memoria',
-        element: withSuspense(Memoria),
-        handle: { title: 'Memória' },
+        path: 'memory', // path changed from 'memoria'
+        element: withSuspense(MemoryPage),
+        handle: { title: 'Memory' }, // title changed
       },
       {
         path: 'deploy',
@@ -70,9 +83,9 @@ export const router = createBrowserRouter([
         handle: { title: 'Deploy' },
       },
       {
-        path: 'configuracoes',
-        element: withSuspense(Configuracoes),
-        handle: { title: 'Configurações' },
+        path: 'settings', // path changed from 'configuracoes'
+        element: withSuspense(SettingsPage),
+        handle: { title: 'Settings' }, // title changed
       },
       {
         path: 'chat',
@@ -83,8 +96,8 @@ export const router = createBrowserRouter([
         path: 'agent/:id',
         lazy: () => import('@/pages/AgentWorkspace').then(module => ({
           Component: () => withSuspense(module.default)
-        })),
-        handle: { title: 'Workspace do Agente' },
+        })), // Explicitly typing Component
+        handle: { title: 'Agent Workspace' }, // title changed
       },
     ],
   },
@@ -92,4 +105,6 @@ export const router = createBrowserRouter([
     path: '*',
     element: <Navigate to="/" replace />,
   },
-]);
+];
+
+export const router = createBrowserRouter(routes);
