@@ -1,4 +1,5 @@
 import { Agent, AgentType, LLMAgent, SequentialAgent, ParallelAgent, A2AAgent } from '@/types/agents';
+import { AnyAgentConfig, LlmAgentConfig, SequentialAgentConfig, ParallelAgentConfig, LoopAgentConfig } from '@/types';
 
 /**
  * Get the display name for an agent type
@@ -184,3 +185,48 @@ export function isAgentReferenced(agentId: string, allAgents: Agent[]): boolean 
     return false;
   });
 }
+
+export const createNewAgentConfig = (type: AgentType, existingId?: string, existingName?: string): AnyAgentConfig => {
+  const baseConfig = {
+    id: existingId || crypto.randomUUID(),
+    name: existingName || '',
+  };
+
+  switch (type) {
+    case AgentType.LLM:
+      return {
+        ...baseConfig,
+        type: AgentType.LLM,
+        instruction: '',
+        model: '', // Add model as per shared LlmAgentConfig
+        code_execution: false,
+        planning_enabled: false,
+        tools: [],
+      } as LlmAgentConfig;
+    case AgentType.Sequential:
+      return {
+        ...baseConfig,
+        type: AgentType.Sequential,
+        agents: [], // Will store AnyAgentConfig[]
+      } as SequentialAgentConfig;
+    case AgentType.Parallel:
+      return {
+        ...baseConfig,
+        type: AgentType.Parallel,
+        agents: [], // Will store AnyAgentConfig[] (prop name in type is 'agents')
+      } as ParallelAgentConfig;
+    case AgentType.Loop:
+      // LoopAgentConfig expects an 'agent' property of type AnyAgentConfig.
+      // For creation, it might be null or a placeholder initially.
+      // Or, we find a default agent if applicable, otherwise it's an invalid state until one is selected.
+      return {
+        ...baseConfig,
+        type: AgentType.Loop,
+        // agent: undefined, // Or a default/placeholder if that makes sense
+        // For now, let's assume it can be temporarily invalid until selected
+      } as unknown as LoopAgentConfig; // Cast needed if agent is not set initially
+    default:
+      const _exhaustiveCheck: never = type;
+      throw new Error(`Unknown agent type: ${_exhaustiveCheck}`);
+  }
+};
