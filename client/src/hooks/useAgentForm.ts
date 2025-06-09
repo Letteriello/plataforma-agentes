@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query'; // Using @tanstack/react-query
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import { Agent, AgentType, createDefaultAgent } from '@/types/agents'; // Assuming Agent is compatible with AnyAgentConfig
