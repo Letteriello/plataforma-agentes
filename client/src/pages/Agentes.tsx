@@ -5,8 +5,8 @@ import { toast as sonnerToast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/components/ui/use-toast';
 // Removed: Info, ArrowLeft, Copy, Share2, Play, Code, Settings, Shield, Wrench, ChevronDown, ChevronUp, GripVertical
-// Kept: Plus, Pencil, Trash2, Save, X, Loader2 (confirm their usage later)
-import { Loader2, Plus, Pencil, Trash2, Save, X } from 'lucide-react';
+// Kept: Plus, Trash2, Save, X, Loader2 (Pencil is now in AgentBasicInfoForm)
+import { Loader2, Plus, Trash2, Save, X } from 'lucide-react';
 
 // Import UI components
 import { Button } from '@/components/ui/button';
@@ -21,16 +21,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 // import { Separator } from '@/components/ui/separator'; // Removed
 // import { Switch } from '@/components/ui/switch'; // Removed
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Removed
-import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+// Textarea, Tooltip related components are now in AgentBasicInfoForm
+// import { Textarea } from '@/components/ui/textarea';
+// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
+// import { Slider } from '@/components/ui/slider'; // Moved to AgentLLMSettingsForm
 import { Badge } from '@/components/ui/badge';
 // import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'; // Removed
 import DescriptionEditorDialog from "./Agentes/components/DescriptionEditorDialog";
 import InstructionEditorDialog from "./Agentes/components/InstructionEditorDialog";
 import ToolDialog from "./Agentes/components/ToolDialog";
 import { ToolList } from "./Agentes/components/ToolList";
+import AgentBasicInfoForm from '@/components/agents/AgentForm/AgentBasicInfoForm';
+import AgentInstructionsForm from '@/components/agents/AgentForm/AgentInstructionsForm';
+import AgentLLMSettingsForm from '@/components/agents/AgentForm/AgentLLMSettingsForm';
+import AgentSequentialSettingsForm from '@/components/agents/AgentForm/AgentSequentialSettingsForm';
+import AgentA2ASettingsForm from '@/components/agents/AgentForm/AgentA2ASettingsForm';
 
 // Import types
 import { 
@@ -278,115 +284,35 @@ const getDefaultAgentConfig = (type: AgentType): AgentState => {
     {/* Conteúdo Principal */}
     <div className="flex-1 overflow-auto p-6">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Seção de Informações Básicas */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900">Informações Básicas</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="agent-name">Nome do Agente</Label>
-              <Input
-                id="agent-name"
-                value={agentState.name}
-                onChange={(e) => setAgentState(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Digite o nome do agente"
-                className="mt-1"
-              />
-            </div>
-            
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="agent-description" className="text-sm font-medium">Descrição</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={() => {
-                              setCurrentEditingDescription(agentState.description || '');
-                              setIsDescriptionDialogOpen(true);
-                            }} 
-                            className="h-7 w-7"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Editar Descrição</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <Textarea
-                    id="agent-description"
-                    value={agentState.description} 
-                    placeholder="Descreva o que seu agente faz, suas capacidades e quaisquer características notáveis."
-                    className="min-h-[80px] mt-1"
-                    readOnly
-                  />
-                </div>
-            
-            <div>
-              <Label htmlFor="agent-type">Tipo de Agente</Label>
-              <Select
-                value={agentState.type}
-                onValueChange={(value) => {
-                  const newType = value as AgentType;
-                  setAgentState(prev => ({
-                    ...prev,
-                    ...getDefaultAgentConfig(newType),
-                    type: newType,
-                    id: prev.id,
-                    name: prev.name || `Novo Agente ${newType}`
-                  }));
-                }}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Selecione o tipo de agente" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={AgentType.LLM}>LLM Agent</SelectItem>
-                  <SelectItem value={AgentType.SEQUENTIAL}>Sequential Agent</SelectItem>
-                  <SelectItem value={AgentType.A2A}>A2A Agent</SelectItem>
-                  <SelectItem value={AgentType.PARALLEL}>Parallel Agent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
+        {/* Seção de Informações Básicas - Refatorada */}
+        <AgentBasicInfoForm
+          name={agentState.name}
+          description={agentState.description}
+          type={agentState.type}
+          onNameChange={(name) => setAgentState(prev => ({ ...prev, name }))}
+          onEditDescription={() => {
+            setCurrentEditingDescription(agentState.description || '');
+            setIsDescriptionDialogOpen(true);
+          }}
+          onTypeChange={(newType) => {
+            setAgentState(prev => ({
+              ...prev,
+              ...getDefaultAgentConfig(newType),
+              type: newType,
+              id: prev.id, // Preserve existing ID
+              name: prev.name || `Novo Agente ${newType}` // Preserve name or set default
+            }));
+          }}
+        />
 
-        {/* Seção de Instruções */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900">Instruções</h2>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setCurrentEditingInstruction(agentState.instructions || '');
-                setIsInstructionDialogOpen(true);
-              }}
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
-              Editar
-            </Button>
-          </div>
-          <div 
-            onClick={() => {
-              setCurrentEditingInstruction(agentState.instructions || '');
-              setIsInstructionDialogOpen(true);
-            }}
-            className="p-4 bg-gray-50 rounded-md border border-gray-200 min-h-[120px] cursor-text hover:bg-gray-100 transition-colors whitespace-pre-wrap"
-          >
-            {agentState.instructions || (
-              <p className="text-gray-400 italic">Clique para adicionar instruções para o agente</p>
-            )}
-          </div>
-        </div>
+        {/* Seção de Instruções - Refatorada */}
+        <AgentInstructionsForm
+          instructions={agentState.instructions}
+          onEditInstructions={() => {
+            setCurrentEditingInstruction(agentState.instructions || '');
+            setIsInstructionDialogOpen(true);
+          }}
+        />
 
         {/* Seção de Ferramentas */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -402,141 +328,34 @@ const getDefaultAgentConfig = (type: AgentType): AgentState => {
 
         {/* Configurações Avançadas */}
         {agentState.type === AgentType.LLM && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Configurações Avançadas</h2>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="agent-model">Modelo</Label>
-                <Input
-                  id="agent-model"
-                  value={agentState.model}
-                  onChange={(e) => setAgentState(prev => ({ ...prev, model: e.target.value }))}
-                  placeholder="Ex: gpt-4, claude-2, etc."
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="agent-temperature">Temperatura: {agentState.temperature}</Label>
-                <div className="flex items-center space-x-4 mt-2">
-                  <span className="text-sm text-gray-500">0.0</span>
-                  <Slider
-                    id="agent-temperature"
-                    min={0}
-                    max={2}
-                    step={0.1}
-                    value={[agentState.temperature]}
-                    onValueChange={([value]) => setAgentState(prev => ({ ...prev, temperature: value }))}
-                    className="flex-1"
-                  />
-                  <span className="text-sm text-gray-500">2.0</span>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Valores mais baixos tornam as saídas mais focadas e determinísticas.
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="agent-streaming"
-                  checked={agentState.streaming}
-                  onCheckedChange={(checked) => 
-                    setAgentState(prev => ({ ...prev, streaming: checked as boolean }))
-                  }
-                />
-                <Label htmlFor="agent-streaming" className="font-normal">
-                  Habilitar streaming de respostas
-                </Label>
-              </div>
-            </div>
-          </div>
+          <AgentLLMSettingsForm
+            model={agentState.model}
+            temperature={agentState.temperature}
+            streaming={agentState.streaming || false} // Ensure streaming has a default boolean value
+            onModelChange={(model) => setAgentState(prev => ({ ...prev, model }))}
+            onTemperatureChange={(temperature) => setAgentState(prev => ({ ...prev, temperature }))}
+            onStreamingChange={(streaming) => setAgentState(prev => ({ ...prev, streaming }))}
+          />
         )}
         
         {/* Configurações Específicas para Agentes Sequenciais */}
         {agentState.type === AgentType.SEQUENTIAL && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Configurações de Fluxo Sequencial</h2>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="sequential-max-steps">Máximo de Passos</Label>
-                <Input
-                  id="sequential-max-steps"
-                  type="number"
-                  min={1}
-                  max={50}
-                  value={agentState.maxSteps}
-                  onChange={(e) => 
-                    setAgentState(prev => ({ 
-                      ...prev, 
-                      maxSteps: Math.min(50, Math.max(1, parseInt(e.target.value) || 1)) 
-                    }))
-                  }
-                  className="mt-1 w-24"
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Número máximo de passos que o agente pode executar.
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="sequential-stop-on-error"
-                  checked={agentState.stopOnError}
-                  onCheckedChange={(checked) => 
-                    setAgentState(prev => ({ ...prev, stopOnError: checked as boolean }))
-                  }
-                />
-                <Label htmlFor="sequential-stop-on-error" className="font-normal">
-                  Parar execução em caso de erro
-                </Label>
-              </div>
-            </div>
-          </div>
+          <AgentSequentialSettingsForm
+            maxSteps={agentState.maxSteps}
+            stopOnError={agentState.stopOnError}
+            onMaxStepsChange={(maxSteps) => setAgentState(prev => ({ ...prev, maxSteps }))}
+            onStopOnErrorChange={(stopOnError) => setAgentState(prev => ({ ...prev, stopOnError }))}
+          />
         )}
         
         {/* Configurações Específicas para Agentes A2A */}
         {agentState.type === AgentType.A2A && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Configurações A2A</h2>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="a2a-timeout">Tempo Limite (ms)</Label>
-                <Input
-                  id="a2a-timeout"
-                  type="number"
-                  min={0}
-                  value={agentState.timeoutMs}
-                  onChange={(e) => 
-                    setAgentState(prev => ({ 
-                      ...prev, 
-                      timeoutMs: Math.max(0, parseInt(e.target.value) || 0) 
-                    }))
-                  }
-                  className="mt-1 w-32"
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Tempo máximo de espera para respostas (0 para sem limite).
-                </p>
-              </div>
-              
-              <div>
-                <Label htmlFor="a2a-max-concurrent">Máximo de Requisições Paralelas</Label>
-                <Input
-                  id="a2a-max-concurrent"
-                  type="number"
-                  min={1}
-                  value={agentState.maxConcurrent}
-                  onChange={(e) => 
-                    setAgentState(prev => ({ 
-                      ...prev, 
-                      maxConcurrent: Math.max(1, parseInt(e.target.value) || 1) 
-                    }))
-                  }
-                  className="mt-1 w-24"
-                />
-              </div>
-            </div>
-          </div>
+          <AgentA2ASettingsForm
+            timeoutMs={agentState.timeoutMs}
+            maxConcurrent={agentState.maxConcurrent}
+            onTimeoutMsChange={(timeoutMs) => setAgentState(prev => ({ ...prev, timeoutMs }))}
+            onMaxConcurrentChange={(maxConcurrent) => setAgentState(prev => ({ ...prev, maxConcurrent }))}
+          />
         )}
       </div>
     </div>
@@ -890,115 +709,35 @@ return (
     {/* Conteúdo Principal */}
     <div className="flex-1 overflow-auto p-6">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Seção de Informações Básicas */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900">Informações Básicas</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="agent-name">Nome do Agente</Label>
-              <Input
-                id="agent-name"
-                value={agentState.name}
-                onChange={(e) => setAgentState(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Digite o nome do agente"
-                className="mt-1"
-              />
-            </div>
-            
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="agent-description" className="text-sm font-medium">Descrição</Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => {
-                          setCurrentEditingDescription(agentState.description || '');
-                          setIsDescriptionDialogOpen(true);
-                        }} 
-                        className="h-7 w-7"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Editar Descrição</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <Textarea
-                id="agent-description"
-                value={agentState.description} 
-                placeholder="Descreva o que seu agente faz, suas capacidades e quaisquer características notáveis."
-                className="min-h-[80px] mt-1"
-                readOnly
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="agent-type">Tipo de Agente</Label>
-              <Select
-                value={agentState.type}
-                onValueChange={(value) => {
-                  const newType = value as AgentType;
-                  setAgentState(prev => ({
-                    ...prev,
-                    ...getDefaultAgentConfig(newType),
-                    type: newType,
-                    id: prev.id,
-                    name: prev.name || `Novo Agente ${newType}`
-                  }));
-                }}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Selecione o tipo de agente" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={AgentType.LLM}>LLM Agent</SelectItem>
-                  <SelectItem value={AgentType.SEQUENTIAL}>Sequential Agent</SelectItem>
-                  <SelectItem value={AgentType.A2A}>A2A Agent</SelectItem>
-                  <SelectItem value={AgentType.PARALLEL}>Parallel Agent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
+        {/* Seção de Informações Básicas - Refatorada */}
+        <AgentBasicInfoForm
+          name={agentState.name}
+          description={agentState.description}
+          type={agentState.type}
+          onNameChange={(name) => setAgentState(prev => ({ ...prev, name }))}
+          onEditDescription={() => {
+            setCurrentEditingDescription(agentState.description || '');
+            setIsDescriptionDialogOpen(true);
+          }}
+          onTypeChange={(newType) => {
+            setAgentState(prev => ({
+              ...prev,
+              ...getDefaultAgentConfig(newType),
+              type: newType,
+              id: prev.id, // Preserve existing ID
+              name: prev.name || `Novo Agente ${newType}` // Preserve name or set default
+            }));
+          }}
+        />
 
-        {/* Seção de Instruções */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900">Instruções</h2>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setCurrentEditingInstruction(agentState.instructions || '');
-                setIsInstructionDialogOpen(true);
-              }}
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
-              Editar
-            </Button>
-          </div>
-          <div 
-            onClick={() => {
-              setCurrentEditingInstruction(agentState.instructions || '');
-              setIsInstructionDialogOpen(true);
-            }}
-            className="p-4 bg-gray-50 rounded-md border border-gray-200 min-h-[120px] cursor-text hover:bg-gray-100 transition-colors whitespace-pre-wrap"
-          >
-            {agentState.instructions || (
-              <p className="text-gray-400 italic">Clique para adicionar instruções para o agente</p>
-            )}
-          </div>
-        </div>
+        {/* Seção de Instruções - Refatorada */}
+        <AgentInstructionsForm
+          instructions={agentState.instructions}
+          onEditInstructions={() => {
+            setCurrentEditingInstruction(agentState.instructions || '');
+            setIsInstructionDialogOpen(true);
+          }}
+        />
 
         {/* Seção de Ferramentas */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
