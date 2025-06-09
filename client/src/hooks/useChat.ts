@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSessionStore } from '@/store/sessionStore';
-import chatService from '@/services/chatService';
+import chatService from '@/api/chatService';
 import { Session, ChatMessage } from '@/types';
 
 export interface UseChatReturn {

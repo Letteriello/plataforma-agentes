@@ -42,7 +42,7 @@ declare module '@/components/*';
 declare module '@/lib/*';
 declare module '@/hooks/*';
 declare module '@/store/*';
-declare module '@/services/*';
+declare module '@/api/*';
 declare module '@/pages/*';
 declare module '@/assets/*';
 declare module '@/styles/*';

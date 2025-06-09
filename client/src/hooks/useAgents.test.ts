@@ -1,11 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { useAgents } from './useAgents';
-import agentService from '@/services/agentService';
+import agentService from '@/api/agentService';
 import { useAgentStore } from '@/store/agentStore';
 import { AgentType, AnyAgentConfig } from '@/types/agent';
 
-vi.mock('@/services/agentService');
+vi.mock('@/api/agentService');
 vi.mock('@/store/agentStore');
 
 const fetchAgentsMock = agentService.fetchAgents as unknown as vi.Mock;

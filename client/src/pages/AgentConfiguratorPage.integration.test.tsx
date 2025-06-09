@@ -2,9 +2,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import AgentConfiguratorPage from './AgentConfiguratorPage';
-import * as agentService from '@/services/agentService';
+import * as agentService from '@/api/agentService';
 
-vi.mock('@/services/agentService', () => ({
+vi.mock('@/api/agentService', () => ({
   __esModule: true,
   default: { saveAgent: vi.fn().mockResolvedValue({ success: true }) },
   agentService: { saveAgent: vi.fn().mockResolvedValue({ success: true }) }
