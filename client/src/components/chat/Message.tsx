@@ -1,29 +1,43 @@
 import React from 'react';
-import { ChatMessage as MessageType } from './types'; // Using ChatMessage as MessageType
+import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
+// Corresponds to ChatMessage.sender but narrowed for this component's direct use
+type MessageAuthor = 'user' | 'agent';
 
 interface MessageProps {
-  message: MessageType;
+  author: MessageAuthor;
+  content: string;
+  agentName?: string; // Optional, but should be provided if author is 'agent'
 }
 
-const Message: React.FC<MessageProps> = ({ message }) => {
-  const isUser = message.sender === 'user';
-  const messageStyle: React.CSSProperties = {
-    padding: '10px 15px',
-    borderRadius: '20px',
-    maxWidth: '70%',
-    wordWrap: 'break-word',
-    alignSelf: isUser ? 'flex-end' : 'flex-start',
-    backgroundColor: isUser ? '#007bff' : '#e9ecef',
-    color: isUser ? 'white' : 'black',
-    // Basic styling for message bubbles
-  };
+const Message: React.FC<MessageProps> = ({ author, content, agentName }) => {
+  const isUser = author === 'user';
+
+  // Determine avatar initials
+  const avatarInitial = agentName ? agentName.charAt(0).toUpperCase() : 'A';
 
   return (
-    <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: '8px' }}>
-      <div style={messageStyle}>
-        <p style={{ margin: 0 }}>{message.text}</p>
-        {/* Optional: Display timestamp */}
-        {/* <span style={{ fontSize: '0.75em', color: isUser ? '#f0f0f0' : '#555' }}>{new Date(message.timestamp).toLocaleTimeString()}</span> */}
+    <div
+      className={cn(
+        'mb-3 flex items-end gap-2',
+        isUser ? 'justify-end' : 'justify-start'
+      )}
+    >
+      {!isUser && (
+        <Avatar className="h-8 w-8">
+          <AvatarFallback>{avatarInitial}</AvatarFallback>
+        </Avatar>
+      )}
+      <div
+        className={cn(
+          'max-w-xs rounded-lg px-3 py-2 md:max-w-md', // Common styling
+          isUser
+            ? 'bg-primary text-primary-foreground' // User message specific styling
+            : 'bg-muted' // Agent message specific styling
+        )}
+      >
+        <p className="text-sm">{content}</p>
       </div>
     </div>
   );

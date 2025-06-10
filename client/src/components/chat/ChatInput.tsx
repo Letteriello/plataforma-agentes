@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input'; // Assuming shadcn path
-import { Button } from '@/components/ui/button'; // Assuming shadcn path
+import React, { useState, useRef, KeyboardEvent } from 'react';
+import { Textarea } from '@/components/ui/textarea'; // Changed from Input to Textarea
+import { Button } from '@/components/ui/button';
 import ToolSelector from './ToolSelector';
-// Removed Paperclip and SendHorizonal as they are not in the new design
-// import type { ChatMessage } from '@/components/chat'; // No longer creating full ChatMessage here
 
 interface ChatInputProps {
   onSendMessage: (messageText: string) => void;
@@ -11,45 +9,40 @@ interface ChatInputProps {
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
-  const [inputText, setInputText] = useState('');
+  const [message, setMessage] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSend = () => {
-    if (inputText.trim()) {
-      onSendMessage(inputText.trim());
-      setInputText('');
+  const handleSendMessage = () => {
+    const trimmedMessage = message.trim();
+    if (trimmedMessage) {
+      onSendMessage(trimmedMessage);
+      setMessage('');
+      textareaRef.current?.focus(); // Re-focus the textarea
     }
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      handleSend();
+      event.preventDefault(); // Prevent default Enter behavior (new line)
+      handleSendMessage();
     }
+    // If Shift + Enter is pressed, default behavior (new line) is allowed
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      {/* The attachment button is removed as per the new example structure */}
-      {/* <Button variant="ghost" size="icon" className="mr-2 text-muted-foreground hover:text-foreground">
-        <Paperclip className="h-5 w-5" />
-        <span className="sr-only">Anexar arquivo</span>
-      </Button> */}
-      <Input
-        type="text"
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder="Type a message..."
-        style={{ flexGrow: 1 }}
-        // disabled={isLoading}
-        // className="flex-1 resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-2.5 min-h-[40px]" // From old Textarea
+    <div className="flex items-center gap-2 p-2 border-t"> {/* Adjusted styling for the container */}
+      <Textarea
+        ref={textareaRef}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown} // Changed from onKeyPress
+        placeholder="Digite sua mensagem aqui..." // Updated placeholder
+        className="flex-1 resize-none border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-2.5 min-h-[40px]" // Styling from example
+        // disabled={isLoading} // Will be re-enabled when isLoading is implemented
       />
       <ToolSelector />
-      <Button onClick={handleSend} /*disabled={isLoading || !inputText.trim()}*/>
-        {/* Using text "Send" instead of an icon as per example */}
+      <Button onClick={handleSendMessage} disabled={!message.trim()}> {/* Updated disabled logic */}
         Send
-        {/* <SendHorizonal className="h-5 w-5" />
-        <span className="sr-only">Enviar mensagem</span> */}
       </Button>
     </div>
   );
