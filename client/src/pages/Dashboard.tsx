@@ -1,4 +1,5 @@
 import React from 'react'
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Input,
   Tabs,
@@ -53,9 +54,10 @@ export default function DashboardPage() {
   const totalTokens = tokenUsage.reduce((acc, item) => acc + item.tokens, 0)
 
   return (
-    <div className="flex-1 space-y-6 p-4 sm:p-6">
-      {/* Cabeçalho */}
-      <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
+    <ScrollArea className="h-[calc(100vh-8rem)]">
+      <div className="space-y-6 p-4 sm:p-6">
+        {/* Cabeçalho */}
+        <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <div className="flex gap-4 items-center w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
@@ -152,6 +154,7 @@ export default function DashboardPage() {
           />
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </ScrollArea>
   )
 }
