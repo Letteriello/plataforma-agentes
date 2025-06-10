@@ -1,20 +1,27 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 import { useAgentForm } from './useAgentForm';
 // Assuming AgentType here is the union of string literals like 'llm', 'a2a', etc.
 // and createDefaultAgent is from '@/types/agents'
 import { createDefaultAgent, LLMAgent, A2AAgent, SequentialAgent } from '@/types/agents';
 import { vi } from 'vitest';
 
+const mockNavigate = vi.fn();
+const mockInvalidateQueries = vi.fn();
+const mockToast = vi.fn();
+const mockMutateAsync = vi.fn();
+
 // Mock dependencies
 vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
+  useNavigate: () => mockNavigate, // Use the mockNavigate defined above
 }));
 
 vi.mock('react-query', () => ({
   useQueryClient: () => ({
-    invalidateQueries: vi.fn(),
+    invalidateQueries: mockInvalidateQueries, // Use the mockInvalidateQueries defined above
   }),
-  useMutation: vi.fn(),
+  useMutation: () => ({ // Return the object with mutateAsync from the factory
+    mutateAsync: mockMutateAsync,
+  }),
 }));
 
 vi.mock('@/components/ui/use-toast', () => ({
@@ -26,25 +33,21 @@ vi.mock('@/components/ui/use-toast', () => ({
 // Define AgentType as a string literal union for test purposes based on its usage
 type AgentType = 'llm' | 'sequential' | 'parallel' | 'a2a';
 
-
-const mockNavigate = vi.fn();
-const mockInvalidateQueries = vi.fn();
-const mockToast = vi.fn();
-const mockMutateAsync = vi.fn();
-
 beforeEach(() => {
   vi.clearAllMocks();
-  (require('react-router-dom') as any).useNavigate = () => mockNavigate;
-  (require('react-query') as any).useQueryClient = () => ({
-    invalidateQueries: mockInvalidateQueries,
-  });
-  (require('react-query') as any).useMutation = (fn: any, options?: any) => ({
-    mutateAsync: mockMutateAsync,
-    // Add other mutation properties if the hook uses them (e.g., isLoading)
-  });
-  (require('@/components/ui/use-toast') as any).useToast = () => ({
-    toast: mockToast,
-  });
+  // mockNavigate, mockInvalidateQueries, mockMutateAsync, mockToast are cleared by vi.clearAllMocks()
+  // and then reused by the vi.mock factories above.
+  // No need for require-based assignments here anymore.
+  // (require('react-query') as any).useQueryClient = () => ({
+  //   invalidateQueries: mockInvalidateQueries,
+  // });
+  // (require('react-query') as any).useMutation = (fn: any, options?: any) => ({
+  //   mutateAsync: mockMutateAsync,
+  //   // Add other mutation properties if the hook uses them (e.g., isLoading)
+  // });
+  // (require('@/components/ui/use-toast') as any).useToast = () => ({
+  //   toast: mockToast,
+  // });
 });
 
 describe('useAgentForm', () => {
@@ -186,9 +189,9 @@ describe('useAgentForm', () => {
       agentToCreate.name = 'Test LLM Agent';
       agentToCreate.instruction = 'Be helpful'; // Valid instruction
       // Ensure mockMutateAsync is correctly configured for this call
-      (require('react-query') as any).useMutation = (fn: any) => ({
-        mutateAsync: mockMutateAsync.mockResolvedValueOnce({ ...agentToCreate, id: 'new-agent-id' }),
-      });
+      // The vi.mock factory for react-query should now handle providing mockMutateAsync.
+      // We just need to ensure mockMutateAsync itself is set up for this specific test case.
+      mockMutateAsync.mockResolvedValueOnce({ ...agentToCreate, id: 'new-agent-id' });
 
       const { result } = renderHook(() => useAgentForm());
 
@@ -212,9 +215,7 @@ describe('useAgentForm', () => {
       existingAgent.instruction = 'Be very helpful'; // Valid instruction
 
       // Ensure mockMutateAsync is correctly configured for this call
-       (require('react-query') as any).useMutation = (fn: any) => ({
-        mutateAsync: mockMutateAsync.mockResolvedValueOnce(existingAgent),
-      });
+      mockMutateAsync.mockResolvedValueOnce(existingAgent);
 
       const { result } = renderHook(() => useAgentForm(existingAgent));
 
@@ -239,9 +240,7 @@ describe('useAgentForm', () => {
       const errorMessage = 'Network Error';
 
       // Ensure mockMutateAsync is correctly configured for this call
-      (require('react-query') as any).useMutation = (fn: any) => ({
-        mutateAsync: mockMutateAsync.mockRejectedValueOnce(new Error(errorMessage)),
-      });
+      mockMutateAsync.mockRejectedValueOnce(new Error(errorMessage));
 
       const { result } = renderHook(() => useAgentForm());
 

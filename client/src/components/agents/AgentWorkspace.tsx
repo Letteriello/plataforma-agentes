@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { AgentType, AnyAgentConfig, LlmAgentConfig } from '@/types/agent';
 import AgentConfigurator from '@/components/agents/AgentConfigurator';
 import JsonPreview from './JsonPreview';
-import { useAgentStore } from '@/store/agentStore';
+import { useAgentStore } from '@/components/features/agents-list/store/agentStore';
 import { useAgentConfigStore } from '@/store/agentConfigStore';
 import { deepClone } from '@/lib/utils';
 import agentService from '@/api/agentService';

@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 import { useAgentConfiguratorLogic } from './useAgentConfiguratorLogic';
 import { useAgentConfig } from '@/hooks/useAgentConfig';
 import { AgentType, AnyAgentConfig, LlmAgentConfig, SequentialAgentConfig, ParallelAgentConfig, LoopAgentConfig, createDefaultAgentConfig } from '@/types/core/agent';

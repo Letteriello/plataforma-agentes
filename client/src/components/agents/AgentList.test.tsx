@@ -2,11 +2,11 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import AgentList from './AgentList'
-import { useAgentStore } from '@/store/agentStore'
+import { useAgentStore } from '@/components/features/agents-list/store/agentStore'
 import { AnyAgentConfig, AgentType } from '@/types/agent'
 
 // Mock o useAgentStore
-vi.mock('@/store/agentStore')
+vi.mock('@/components/features/agents-list/store/agentStore')
 
 const mockAgents: AnyAgentConfig[] = [
   {

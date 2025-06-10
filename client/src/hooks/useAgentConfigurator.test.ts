@@ -1,12 +1,12 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 import { useAgentConfigurator } from './useAgentConfigurator';
-import { useAgentStore } from '@/store/agentStore';
+import { useAgentStore } from '@/components/features/agents-list/store/agentStore';
 import agentService from '@/api/agentService';
 import { AnyAgentConfig, AgentType } from '@/types/core/agent'; // Assuming core types
 import { vi } from 'vitest';
 
 // Mock dependencies
-vi.mock('@/store/agentStore');
+vi.mock('@/components/features/agents-list/store/agentStore');
 vi.mock('@/api/agentService');
 
 const mockUpdateAgent = vi.fn();

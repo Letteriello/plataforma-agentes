@@ -1,14 +1,15 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 import { useAgentConfig } from './useAgentConfig';
 import { AgentType, LlmAgentConfig, AnyAgentConfig, SafetySetting, createDefaultAgentConfig } from '@/types/core/agent'; // Adjusted import path
 import { vi } from 'vitest';
+import { deepClone } from '@/lib/utils'; // Import the actual function to be mocked
 
 // Mock deepClone or ensure it's available if it's from a module not auto-mocked
 vi.mock('@/lib/utils', async (importOriginal) => {
-  const original = await importOriginal<typeof import('@/lib/utils')>();
+  const originalModule = await importOriginal<typeof import('@/lib/utils')>();
   return {
-    ...original,
-    deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))), // Simple mock for deepClone
+    ...originalModule, // Spread original module exports
+    deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))), // Mock specific function
   };
 });
 
@@ -27,15 +28,15 @@ describe('useAgentConfig', () => {
 
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    // Reset mock for deepClone if needed, or ensure it's fresh for each test run
-    (require('@/lib/utils') as any).deepClone = vi.fn((obj) => JSON.parse(JSON.stringify(obj)));
+    vi.clearAllMocks(); // This will clear all mocks, including the auto-mocked deepClone
+    // If you need specific reset behavior for deepClone, ensure it's done via the imported mock:
+    // deepClone.mockClear(); // or deepClone.mockImplementation(...) if needed for specific tests
   });
 
   it('should initialize with initialConfig', () => {
     const { result } = renderHook(() => useAgentConfig({ initialConfig: initialLlmConfig }));
     expect(result.current.config).toEqual(initialLlmConfig);
-    expect(require('@/lib/utils').deepClone).toHaveBeenCalledWith(initialLlmConfig);
+    expect(deepClone).toHaveBeenCalledWith(initialLlmConfig);
   });
 
   it('should update config when initialConfig prop changes', () => {
@@ -49,7 +50,7 @@ describe('useAgentConfig', () => {
 
     expect(result.current.config.name).toBe(anotherLlmConfig.name);
     expect(result.current.config.model).toBe(anotherLlmConfig.model);
-    expect(require('@/lib/utils').deepClone).toHaveBeenCalledWith(anotherLlmConfig);
+    expect(deepClone).toHaveBeenCalledWith(anotherLlmConfig);
   });
 
   it('should update config completely with updateConfig', () => {
@@ -58,7 +59,7 @@ describe('useAgentConfig', () => {
       result.current.updateConfig(anotherLlmConfig);
     });
     expect(result.current.config).toEqual(anotherLlmConfig);
-    expect(require('@/lib/utils').deepClone).toHaveBeenCalledWith(anotherLlmConfig);
+    expect(deepClone).toHaveBeenCalledWith(anotherLlmConfig);
   });
 
   it('should update a specific field with updateField', () => {
@@ -217,7 +218,7 @@ describe('useAgentConfig', () => {
       result.current.reset();
     });
     expect(result.current.config).toEqual(initialLlmConfig);
-    expect(require('@/lib/utils').deepClone).toHaveBeenCalledWith(initialLlmConfig);
+    expect(deepClone).toHaveBeenCalledWith(initialLlmConfig);
   });
 
   it('should reset to the most recent initialConfig if it changed', () => {
@@ -241,6 +242,6 @@ describe('useAgentConfig', () => {
     });
     // Should reset to 'anotherLlmConfig', not the original 'initialLlmConfig'
     expect(result.current.config).toEqual(anotherLlmConfig);
-    expect(require('@/lib/utils').deepClone).toHaveBeenCalledWith(anotherLlmConfig);
+    expect(deepClone).toHaveBeenCalledWith(anotherLlmConfig);
   });
 });

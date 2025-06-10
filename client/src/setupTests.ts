@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { server } from './mocks/server';
 import { resetMockAgentsDB } from './mocks/handlers'; // Import the reset function
 import { vi } from 'vitest';

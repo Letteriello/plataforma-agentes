@@ -1,52 +1,55 @@
 import { vi, describe, beforeEach, test, expect } from 'vitest';
 import agentService from './agentService';
-import { AnyAgentConfig, AgentType, LlmAgentConfig } from '@/types/agent';
-import { useAgentStore } from '@/store/agentStore';
+import apiClient from '../apiClient'; // Import apiClient to mock it
+import { AgentType, LlmAgentConfig } from '@/types/agent'; // Assuming AnyAgentConfig is not needed for these specific tests now
 
-const addAgent = vi.fn();
-const updateAgent = vi.fn();
-const removeAgent = vi.fn();
+// Remove store mocks as agentService directly uses apiClient, not the store's state-modifying functions.
+// const addAgent = vi.fn();
+// const updateAgent = vi.fn();
+// const removeAgent = vi.fn();
 
-vi.mock('@/store/agentStore', () => ({
-  useAgentStore: {
-    getState: () => ({ addAgent, updateAgent, removeAgent }),
-  },
-}));
+// vi.mock('@/components/features/agents-list/store/agentStore', () => ({
+//   useAgentStore: {
+//     getState: () => ({ addAgent, updateAgent, removeAgent }),
+//   },
+// }));
+
+vi.mock('../apiClient'); // Mock apiClient
 
 beforeEach(() => {
-  addAgent.mockClear();
-  updateAgent.mockClear();
-  removeAgent.mockClear();
+  vi.clearAllMocks(); // Clears all mocks including apiClient if methods are mocked individually
 });
 
 describe('agentService', () => {
-  const configWithoutId: LlmAgentConfig = {
-    id: '',
-    name: 'New',
-    type: AgentType.LLM,
-    instruction: '',
-    model: 'gpt',
-    code_execution: false,
-    planning_enabled: false,
-    tools: [],
-  };
+  // Tests for saveAgent are removed as saveAgent does not exist on agentService.
+  // Proper tests for createAgent and updateAgent would mock apiClient.post and apiClient.put.
 
-  const configWithId: LlmAgentConfig = { ...configWithoutId, id: '123' };
+  test('deleteAgent should call apiClient.delete with the correct URL', async () => {
+    const agentId = 'abc';
+    const mockDelete = vi.fn().mockResolvedValueOnce({}); // Mock apiClient.delete
+    (apiClient.delete as vi.Mock).mockImplementation(mockDelete);
 
-  test('saveAgent calls addAgent when id is missing', async () => {
-    await agentService.saveAgent(configWithoutId);
-    expect(addAgent).toHaveBeenCalled();
-    expect(updateAgent).not.toHaveBeenCalled();
+    await agentService.deleteAgent(agentId);
+
+    expect(mockDelete).toHaveBeenCalledWith(`/agents/${agentId}`);
+    // We are not checking removeAgent from the store here, as the service doesn't call it.
   });
 
-  test('saveAgent calls updateAgent when id exists', async () => {
-    await agentService.saveAgent(configWithId);
-    expect(updateAgent).toHaveBeenCalled();
-    expect(addAgent).not.toHaveBeenCalled();
-  });
+  // Example test for createAgent (if time permitted, similar for updateAgent)
+  test('createAgent should call apiClient.post with the correct config', async () => {
+    const configWithoutId: Omit<LlmAgentConfig, 'id'> = {
+      name: 'New',
+      type: AgentType.LLM,
+      instruction: '',
+      model: 'gpt',
+      code_execution: false,
+      planning_enabled: false,
+      tools: [],
+    };
+    const mockPost = vi.fn().mockResolvedValueOnce({ data: { ...configWithoutId, id: 'newId' } });
+    (apiClient.post as vi.Mock).mockImplementation(mockPost);
 
-  test('deleteAgent calls removeAgent', async () => {
-    await agentService.deleteAgent('abc');
-    expect(removeAgent).toHaveBeenCalledWith('abc');
+    await agentService.createAgent(configWithoutId);
+    expect(mockPost).toHaveBeenCalledWith('/agents', configWithoutId);
   });
 });
