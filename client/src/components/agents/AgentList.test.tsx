@@ -77,5 +77,18 @@ describe('AgentList Component', () => {
     expect(screen.queryByText('Agente Gamma')).not.toBeInTheDocument();
   });
 
+  test('renders call to action when list is empty and onCreateAgent provided', () => {
+    render(
+      <AgentList
+        title="Meus Agentes"
+        agents={[]}
+        onCreateAgent={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Nenhum agente encontrado.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /criar novo agente/i })).toBeInTheDocument();
+  });
+
   // Mais testes virão aqui (para seleção, exclusão, etc.)
 });

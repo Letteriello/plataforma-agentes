@@ -17,6 +17,7 @@ interface AgentListProps {
   selectable?: boolean;
   activeAgentId?: string | null; // Nova prop
   searchTerm?: string; // Nova prop para busca
+  onCreateAgent?: () => void;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
@@ -28,6 +29,7 @@ const AgentList: React.FC<AgentListProps> = ({
   selectable = false,
   activeAgentId,
   searchTerm = '', // Valor padrão para searchTerm
+  onCreateAgent,
 }) => {
   const agentsFromStore = useAgentStore((state: any) => state.agents);
   let displayAgents = agentsFromProps !== undefined ? agentsFromProps : agentsFromStore;
@@ -64,7 +66,16 @@ const AgentList: React.FC<AgentListProps> = ({
         <CardTitle>{currentTitle}</CardTitle>
       </CardHeader>
       <CardContent>
-        {displayAgents.length === 0 && <p className="text-sm text-muted-foreground">Nenhum agente encontrado.</p>}
+        {displayAgents.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-6 text-center space-y-3">
+            <p className="text-sm text-muted-foreground">Nenhum agente encontrado.</p>
+            {onCreateAgent && (
+              <Button variant="outline" size="sm" onClick={onCreateAgent}>
+                Criar Novo Agente
+              </Button>
+            )}
+          </div>
+        )}
         <div className="space-y-3">
           {displayAgents.map((agent: AnyAgentConfig) => (
             <div
