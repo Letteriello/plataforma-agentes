@@ -72,3 +72,69 @@ export interface AnyAgentConfig {
   type: string;
 }
 ```
+
+## Architecture Decision Records (ADRs)
+
+Architecture Decision Records (ADRs) are used to document important architectural decisions made during the project's lifecycle. They provide context, rationale, and consequences for these decisions, ensuring clarity and consistency in our architectural approach.
+
+### When to Write an ADR
+
+An ADR should be written for any decision that has a significant impact on the system's architecture, including:
+
+*   Choosing a new technology, framework, or library.
+*   Defining a major architectural pattern or approach.
+*   Changing an existing architectural decision.
+*   Adopting a new standard or convention.
+
+### Using the ADR Template
+
+ADRs should follow the template defined in `docs/adrs/0000-template.md`. The template includes the following sections:
+
+*   **Title:** A concise summary of the decision.
+*   **Status:** The current status of the ADR (e.g., Proposed, Accepted, Deprecated, Superseded).
+*   **Context:** The background, problem, and constraints that led to the decision.
+*   **Decision:** The specific decision made.
+*   **Consequences:** The potential positive and negative impacts of the decision.
+
+### ADR Lifecycle
+
+The typical lifecycle of an ADR is as follows:
+
+1.  **Proposed:** An ADR is initially proposed with a clear description of the problem, decision, and consequences.
+2.  **Discussion:** The proposed ADR is reviewed and discussed by the team.
+3.  **Accepted/Rejected:** Based on the discussion, the ADR is either accepted or rejected.
+4.  **Deprecated/Superseded:** If an accepted ADR becomes outdated or is replaced by a new decision, its status is updated accordingly.
+
+## Request for Comments (RFCs)
+
+A Request for Comments (RFC) is a document used to propose and discuss significant changes, new features, or architectural decisions for the project. The RFC process aims to gather feedback from the team, ensure thorough consideration of proposals, and maintain a record of design choices.
+
+### When to Write an RFC
+
+An RFC is generally required for:
+
+*   **Significant New Features:** Any new functionality that has a considerable impact on the user experience or system architecture.
+*   **Major Architectural Changes:** Modifications to the core architecture, data models, or technology stack.
+*   **Substantial Modifications:** Changes to existing systems that might affect their behavior, performance, or how other parts of the system interact with them.
+*   **Introducing New Standards or Processes:** Proposals for new coding standards, development processes, or tools that the team will adopt.
+
+ADRs are typically for documenting decisions already made or with a narrower scope, while RFCs are for proposing and discussing more substantial changes before a decision is reached.
+
+### Using the RFC Template
+
+RFCs should be created using the template located at `docs/rfcs/000-template.md`. The template provides a structured format for presenting the proposal, including sections for the problem statement, proposed solution, alternatives, impact, and open questions.
+
+All RFCs should be stored in the `docs/rfcs/` directory, with filenames following the pattern `NNN-short-descriptive-title.md`, where `NNN` is a sequential number.
+
+### RFC Lifecycle
+
+The typical lifecycle of an RFC includes the following stages:
+
+1.  **Draft:** The author(s) write the initial RFC document outlining the proposal. The status is set to "Draft".
+2.  **In Review:** Once the draft is ready, the author(s) share it with the team for review and feedback (e.g., by creating a Pull Request or sharing a link to the document). The status changes to "In Review".
+3.  **Discussion:** Team members discuss the RFC, ask questions, suggest improvements, and raise concerns. This may involve multiple iterations of feedback and revisions to the RFC document.
+4.  **Accepted/Rejected:** After sufficient discussion, a decision is made to either accept or reject the RFC. This decision should be documented in the RFC itself.
+    *   **Accepted:** If the RFC is accepted, it means the proposed changes are approved for implementation.
+    *   **Rejected:** If the RFC is rejected, the reasons for rejection should be clearly documented.
+5.  **Implemented:** Once an accepted RFC's changes have been implemented, its status can be updated to "Implemented".
+6.  **Withdrawn:** An author may choose to withdraw their RFC at any point if they no longer wish to pursue it.
