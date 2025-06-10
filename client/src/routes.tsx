@@ -63,6 +63,11 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Dashboard' },
       },
       {
+        path: 'chat',
+        element: withSuspense(ChatPage),
+        handle: { title: 'Chat' },
+      },
+      {
         path: 'agents', // path changed from 'agentes'
         element: <AgentsPage />,
         handle: { title: 'Agents' }, // title changed
