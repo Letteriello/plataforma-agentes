@@ -40,4 +40,4 @@ const ConversationList: React.FC = () => {
   );
 };
 
-export default ConversationList;
+export { ConversationList };

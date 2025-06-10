@@ -48,4 +48,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   );
 };
 
-export default ChatInput;
+export { ChatInput };
+
+

@@ -23,4 +23,4 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   );
 };
 
-export default MessageList;
+export { MessageList };
