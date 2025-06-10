@@ -12,13 +12,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { LLMAgentForm } from './forms/LLMAgentForm';
 import { BaseAgentForm } from './forms/BaseAgentForm'; // This should provide useForm methods
 import { LLMAgent, createDefaultAgent, LLMAgentSchema } from '@/types/agents';
+import AgentDeployTab from './AgentDeployTab';
 
-const WIZARD_STEPS = ['identidade', 'instrucoes', 'ferramentas', 'revisao'];
+const WIZARD_STEPS = ['identidade', 'instrucoes', 'ferramentas', 'revisao', 'deploy'];
 const STEP_LABELS: { [key: string]: string } = {
   identidade: 'Identidade',
   instrucoes: 'Instruções',
   ferramentas: 'Ferramentas',
   revisao: 'Revisão',
+  deploy: 'Deploy',
 };
 
 // Mock data - replace with actual API calls
@@ -301,6 +303,10 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
 
           <TabsContent value="revisao">
             <ReviewStep />
+          </TabsContent>
+
+          <TabsContent value="deploy">
+            <AgentDeployTab />
           </TabsContent>
         </Tabs>
 
