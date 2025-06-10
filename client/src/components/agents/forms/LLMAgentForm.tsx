@@ -9,7 +9,9 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useCallback, useMemo } from 'react';
-import { useAgentForm } from '../AgentForm';
+// import { useAgentForm } from '../AgentForm'; // Replaced with useFormContext
+import { useFormContext } from 'react-hook-form';
+import { LLMAgent } from '@/types/agents'; // Added LLMAgent type
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -28,107 +30,91 @@ type LLMAgentFormProps = {
 };
 
 export function LLMAgentForm({ disabled = false, className = '' }: LLMAgentFormProps) {
-  const {
-    registerField,
-    setFieldValue,
-    values,
-    formState: { errors },
-  } = useAgentForm();
+  const { control, watch, setValue } = useFormContext<LLMAgent>();
+
+  const modelValue = watch('model');
+  const maxTokensValue = watch('maxTokens');
+  const stopSequencesValue = watch('stopSequences', []);
+  const temperatureValue = watch('temperature', 0.7);
+  // const maxTokensForDisplay = watch('maxTokens', 2048); // Already have maxTokensValue
 
   const selectedModel = useMemo(
-    () => AVAILABLE_MODELS.find((m) => m.id === values.model) || AVAILABLE_MODELS[0],
-    [values.model]
+    () => AVAILABLE_MODELS.find((m) => m.id === modelValue) || AVAILABLE_MODELS[0],
+    [modelValue]
   );
 
   const handleModelChange = useCallback(
     (value: string) => {
-      setFieldValue('model', value, true);
-      // Update max tokens to the model's default if current value is higher than the model's max
+      setValue('model', value, { shouldValidate: true });
       const model = AVAILABLE_MODELS.find((m) => m.id === value);
-      if (model && values.maxTokens > model.maxTokens) {
-        setFieldValue('maxTokens', model.maxTokens, true);
+      if (model && maxTokensValue > model.maxTokens) {
+        setValue('maxTokens', model.maxTokens, { shouldValidate: true });
       }
     },
-    [setFieldValue, values.maxTokens]
+    [setValue, maxTokensValue]
   );
 
   const handleTemperatureChange = useCallback(
     (value: number[]) => {
-      setFieldValue('temperature', value[0], true);
+      setValue('temperature', value[0], { shouldValidate: true });
     },
-    [setFieldValue]
+    [setValue]
   );
 
   const handleMaxTokensChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value, 10);
-      if (!isNaN(value) && value > 0 && value <= selectedModel.maxTokens) {
-        setFieldValue('maxTokens', value, true);
+    (value: number[]) => {
+      const val = value[0];
+      if (val > 0 && val <= selectedModel.maxTokens) {
+        setValue('maxTokens', val, { shouldValidate: true });
+      } else if (val > selectedModel.maxTokens) {
+        setValue('maxTokens', selectedModel.maxTokens, { shouldValidate: true });
       }
     },
-    [selectedModel.maxTokens, setFieldValue]
+    [selectedModel.maxTokens, setValue]
   );
 
   const handleTopPChange = useCallback(
     (value: number[]) => {
-      setFieldValue('topP', value[0], true);
+      setValue('topP', value[0], { shouldValidate: true });
     },
-    [setFieldValue]
+    [setValue]
   );
 
   const handleTopKChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value, 10);
-      if (!isNaN(value) && value >= 1 && value <= 100) {
-        setFieldValue('topK', value, true);
-      }
+    (value: number[]) => {
+       setValue('topK', value[0], { shouldValidate: true });
     },
-    [setFieldValue]
+    [setValue]
   );
 
   const handleStopSequenceAdd = useCallback(() => {
     const newSequence = prompt('Enter a stop sequence:');
     if (newSequence) {
-      const currentSequences = values.stopSequences || [];
+      const currentSequences = stopSequencesValue || [];
       if (!currentSequences.includes(newSequence)) {
-        setFieldValue('stopSequences', [...currentSequences, newSequence], true);
+        setValue('stopSequences', [...currentSequences, newSequence], { shouldValidate: true });
       }
     }
-  }, [setFieldValue, values.stopSequences]);
+  }, [setValue, stopSequencesValue]);
 
   const handleStopSequenceRemove = useCallback(
     (index: number) => {
-      const newSequences = [...(values.stopSequences || [])];
+      const newSequences = [...(stopSequencesValue || [])];
       newSequences.splice(index, 1);
-      setFieldValue('stopSequences', newSequences, true);
+      setValue('stopSequences', newSequences, { shouldValidate: true });
     },
-    [setFieldValue, values.stopSequences]
+    [setValue, stopSequencesValue]
   );
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Basic Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Basic Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={registerField}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Agent Name</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="My LLM Agent" 
-                    {...field} 
-                    disabled={disabled}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
+      {/* Name and Description FormFields removed */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Model Configuration</CardTitle>
+          <CardDescription>Select the base LLM model and its core parameters.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <FormField
             control={control}
             name="model"
@@ -136,8 +122,8 @@ export function LLMAgentForm({ disabled = false, className = '' }: LLMAgentFormP
               <FormItem>
                 <FormLabel>Model</FormLabel>
                 <Select 
-                  onValueChange={field.onChange} 
-                  defaultValue={field.value}
+                  onValueChange={handleModelChange}
+                  value={field.value}
                   disabled={disabled}
                 >
                   <FormControl>
@@ -146,221 +132,173 @@ export function LLMAgentForm({ disabled = false, className = '' }: LLMAgentFormP
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="gemini-1.5-pro">Gemini 1.5 Pro</SelectItem>
-                    <SelectItem value="gemini-1.5-flash">Gemini 1.5 Flash</SelectItem>
-                    <SelectItem value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</SelectItem>
-                    <SelectItem value="gemini-1.5-flash-latest">Gemini 1.5 Flash Latest</SelectItem>
+                    {AVAILABLE_MODELS.map(m => (
+                      <SelectItem key={m.id} value={m.id}>{m.name} (Max Tokens: {m.maxTokens})</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
-        
-        <FormField
-          control={control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="What does this agent do?" 
-                  {...field} 
-                  disabled={disabled}
-                  rows={2}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+          {/* Model Settings are now part of this card's content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <div className="space-y-4">
+              <FormField
+                control={control}
+                name="temperature"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex justify-between items-center">
+                      <FormLabel>Temperature: {field.value?.toFixed(1)}</FormLabel>
+                      <span className="text-sm text-muted-foreground">
+                        {field.value < 0.3 ? 'Deterministic' :
+                         field.value < 0.7 ? 'Balanced' : 'Creative'}
+                      </span>
+                    </div>
+                    <FormControl>
+                      <Slider
+                        min={0}
+                        max={2}
+                        step={0.1}
+                        value={[field.value]}
+                        onValueChange={handleTemperatureChange}
+                        disabled={disabled}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Lower values make the output more focused and deterministic.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-      {/* Model Settings */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Model Settings</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <FormField
-              control={control}
-              name="temperature"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex justify-between items-center">
-                    <FormLabel>Temperature: {temperature.toFixed(1)}</FormLabel>
-                    <span className="text-sm text-muted-foreground">
-                      {temperature < 0.3 ? 'Deterministic' : 
-                       temperature < 0.7 ? 'Balanced' : 'Creative'}
-                    </span>
-                  </div>
-                  <FormControl>
-                    <Slider
-                      min={0}
-                      max={2}
-                      step={0.1}
-                      value={[field.value]}
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Lower values make the output more focused and deterministic.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={control}
+                name="maxTokens"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Max Tokens: {field.value}</FormLabel>
+                    <FormControl>
+                      <Slider
+                        min={1}
+                        max={selectedModel.maxTokens}
+                        step={1}
+                        value={[field.value]}
+                        onValueChange={handleMaxTokensChange}
+                        disabled={disabled}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Max for {selectedModel.name}: {selectedModel.maxTokens}.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={control}
-              name="maxTokens"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Max Tokens: {maxTokens}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={1}
-                      max={8192}
-                      step={1}
-                      value={[field.value]}
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Maximum number of tokens to generate in the response.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-4">
+              <FormField
+                control={control}
+                name="topP"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Top-P: {field.value?.toFixed(1)}</FormLabel>
+                    <FormControl>
+                      <Slider
+                        min={0.1}
+                        max={1}
+                        step={0.1}
+                        value={[field.value]}
+                        onValueChange={handleTopPChange}
+                        disabled={disabled}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Controls diversity via nucleus sampling.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="topK"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Top-K: {field.value}</FormLabel>
+                    <FormControl>
+                       <Slider
+                        min={1}
+                        max={100}
+                        step={1}
+                        value={[field.value]}
+                        onValueChange={handleTopKChange}
+                        disabled={disabled}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Limits selection to top K likely tokens.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="space-y-4">
-            <FormField
-              control={control}
-              name="topP"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Top-P: {field.value}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={0.1}
-                      max={1}
-                      step={0.1}
-                      value={[field.value]}
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Controls diversity via nucleus sampling. Lower values make the output more focused.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="topK"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Top-K: {field.value}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={1}
-                      max={100}
-                      step={1}
-                      value={[field.value]}
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Limits the next token selection to the top K most likely tokens.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Instructions */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Instructions</h3>
-        <FormField
-          control={control}
-          name="instruction"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Instructions</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="You are a helpful assistant that..." 
-                  {...field} 
-                  disabled={disabled}
-                  rows={4}
-                  className="font-mono text-sm"
-                />
-              </FormControl>
-              <FormDescription>
-                System instructions that guide the agent's behavior and responses.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="systemPrompt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>System Prompt (Optional)</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="## System Instructions\n- Be helpful and concise\n- Format responses in markdown" 
-                  {...field} 
-                  disabled={disabled}
-                  rows={4}
-                  className="font-mono text-sm"
-                />
-              </FormControl>
-              <FormDescription>
-                Additional system-level instructions in markdown format.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+      {/* Instructions section removed */}
 
       {/* Advanced Settings */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Advanced Settings</h3>
-        
+      <Card>
+        <CardHeader>
+          <CardTitle>Advanced Settings</CardTitle>
+          <CardDescription>Fine-tune other model behaviors.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
         <FormField
           control={control}
           name="stopSequences"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Stop Sequences</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Enter sequences separated by commas" 
-                  value={field.value.join(', ')} 
-                  onChange={(e) => field.onChange(e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
-                  disabled={disabled}
-                />
-              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormControl>
+                  <Input
+                    placeholder="e.g., ###, ---"
+                    value={field.value?.join(', ') || ''}
+                    onChange={(e) => {
+                      const newSequences = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                      field.onChange(newSequences);
+                    }}
+                    disabled={disabled}
+                  />
+                </FormControl>
+              </div>
+              {field.value && field.value.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {field.value.map((seq, index) => (
+                    <span key={index} className="flex items-center gap-1 px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
+                      {seq}
+                      <button
+                        type="button"
+                        onClick={() => handleStopSequenceRemove(index)}
+                        className="text-red-500 hover:text-red-700"
+                        disabled={disabled}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
               <FormDescription>
-                Sequences where the model will stop generating further tokens.
+                Sequences where the model will stop generating. Separate by comma.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -373,17 +311,18 @@ export function LLMAgentForm({ disabled = false, className = '' }: LLMAgentFormP
             name="frequencyPenalty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Frequency Penalty</FormLabel>
+                <FormLabel>Frequency Penalty: {field.value?.toFixed(1)}</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    min="-2" 
-                    max="2" 
-                    step="0.1"
-                    {...field} 
+                  <Slider
+                    min={-2}
+                    max={2}
+                    step={0.1}
+                    value={[field.value]}
+                    onValueChange={(value) => field.onChange(value[0])}
                     disabled={disabled}
                   />
                 </FormControl>
+                <FormDescription>Positive values penalize new tokens based on their existing frequency.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -394,23 +333,25 @@ export function LLMAgentForm({ disabled = false, className = '' }: LLMAgentFormP
             name="presencePenalty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Presence Penalty</FormLabel>
+                <FormLabel>Presence Penalty: {field.value?.toFixed(1)}</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    min="-2" 
-                    max="2" 
-                    step="0.1"
-                    {...field} 
+                  <Slider
+                    min={-2}
+                    max={2}
+                    step={0.1}
+                    value={[field.value]}
+                    onValueChange={(value) => field.onChange(value[0])}
                     disabled={disabled}
                   />
                 </FormControl>
+                <FormDescription>Positive values penalize new tokens if they appear in the text so far.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
