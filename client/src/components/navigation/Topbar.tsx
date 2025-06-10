@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Bell } from 'lucide-react';
+import { Bell, PlusCircle } from 'lucide-react'; // Added PlusCircle
 import type { ContextPanelData } from '@/components/context/types';
+import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog'; // Added CreateAgentDialog
 
 interface TopbarProps {
   pageTitle?: string;
@@ -32,6 +33,17 @@ export function Topbar({
 
       {/* Right section - User Actions */}
       <div className="flex items-center gap-x-2 sm:gap-x-4">
+        {/* NEW "Criar Agente" Button */}
+        <CreateAgentDialog>
+          <Button size="sm" className="gap-1">
+            <PlusCircle className="h-4 w-4" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Criar Agente
+            </span>
+          </Button>
+        </CreateAgentDialog>
+
+        {/* Existing ThemeToggle and Bell Button */}
         <ThemeToggle />
         <Button variant="outline" size="icon" className="rounded-full shrink-0">
           <Bell className="h-4 w-4 text-muted-foreground" />
