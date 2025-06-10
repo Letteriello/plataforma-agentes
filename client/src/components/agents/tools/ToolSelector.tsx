@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import toolService from '@/api/toolService';
 import { Tool } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +18,7 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({
   onSelectionChange,
 }) => {
   const [loadedTools, setLoadedTools] = useState<Tool[]>([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     toolService.fetchTools().then(setLoadedTools);
@@ -29,8 +31,18 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({
         <CardDescription>Selecione as ferramentas que este agente pode utilizar</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 py-2">
-          {loadedTools.map((tool) => (
+        <Input
+          placeholder="Buscar ferramenta..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-4"
+        />
+        <div className="grid gap-4 py-2 max-h-60 overflow-y-auto">
+          {loadedTools
+            .filter((tool) =>
+              tool.name.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((tool) => (
             <div key={tool.id} className="flex items-center space-x-3 p-2 hover:bg-accent/50 rounded-md">
               <Checkbox
                 id={tool.id}
