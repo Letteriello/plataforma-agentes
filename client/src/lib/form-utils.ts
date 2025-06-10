@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AgentType } from '@/types/agents';
+import { AgentType } from '@/types/core/agent';
 
 // Common form schemas
 export const nameSchema = z
@@ -58,28 +58,17 @@ export const baseAgentSchema = z.object({
   id: z.string().optional(),
   name: nameSchema,
   description: descriptionSchema,
-  type: z.nativeEnum(AgentType),
+  // type: z.nativeEnum(AgentType), // Discriminated union handles type
   isPublic: z.boolean().default(false),
   tags: tagsSchema,
 });
 
 // Union of all agent schemas
 export const agentSchema = z.discriminatedUnion('type', [
-  baseAgentSchema.merge(z.object({
-    type: z.literal(AgentType.LLM),
-  })).merge(llmAgentSchema),
-  
-  baseAgentSchema.merge(z.object({
-    type: z.literal(AgentType.Sequential),
-  })).merge(sequentialAgentSchema),
-  
-  baseAgentSchema.merge(z.object({
-    type: z.literal(AgentType.Parallel),
-  })).merge(parallelAgentSchema),
-  
-  baseAgentSchema.merge(z.object({
-    type: z.literal(AgentType.A2A),
-  })).merge(a2aAgentSchema),
+  z.object({ type: z.literal(AgentType.LLM) }).merge(baseAgentSchema).merge(llmAgentSchema),
+  z.object({ type: z.literal(AgentType.Sequential) }).merge(baseAgentSchema).merge(sequentialAgentSchema),
+  z.object({ type: z.literal(AgentType.Parallel) }).merge(baseAgentSchema).merge(parallelAgentSchema),
+  z.object({ type: z.literal(AgentType.A2A) }).merge(baseAgentSchema).merge(a2aAgentSchema),
 ]);
 
 // Type inference

@@ -3,7 +3,7 @@ import { AnyAgentConfig } from '@/types/agent'; // Ajuste o caminho
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAgentStore } from '@/store/agentStore'; // Ajuste o caminho
+import { useAgentStore } from '@/components/features/agents-list/store/agentStore'; // Ajuste o caminho
 import { Button } from '@/components/ui/button';
 import { Trash2Icon } from 'lucide-react';
 import agentService from '@/api/agentService';
