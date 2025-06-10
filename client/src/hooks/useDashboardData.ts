@@ -6,6 +6,7 @@ export const useDashboardData = () => {
   const stats = useDashboardStore(state => state.stats);
   const agents = useDashboardStore(state => state.agents);
   const recentActivities = useDashboardStore(state => state.recentActivities);
+  const tokenUsage = useDashboardStore(state => state.tokenUsage);
   const isLoading = useDashboardStore(state => state.isLoading);
   const error = useDashboardStore(state => state.error);
   const loadDashboardData = useDashboardStore(state => state.loadDashboardData);
@@ -18,6 +19,7 @@ export const useDashboardData = () => {
     stats,
     agents,
     recentActivities,
+    tokenUsage,
     isLoading,
     error,
     refreshData: loadDashboardData,
