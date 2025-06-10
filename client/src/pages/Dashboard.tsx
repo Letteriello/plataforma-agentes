@@ -7,6 +7,7 @@ import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
 import { VisaoGeralCard } from '@/components/dashboard/VisaoGeralCard';
 import { MeusAgentesCard } from '@/components/dashboard/MeusAgentesCard';
 import { AtividadeRecenteCard } from '@/components/dashboard/AtividadeRecenteCard';
+import { TokenUsageCard } from '@/components/dashboard/TokenUsageCard';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function DashboardPage() {
     stats,
     agents,
     recentActivities,
+    tokenUsage,
     isLoading,
     error,
     refreshData,
@@ -76,6 +78,9 @@ export default function DashboardPage() {
                 isLoading={isLoading}
                 error={error}
               />
+            </div>
+            <div className="md:col-span-2 lg:col-span-3">
+              <TokenUsageCard data={tokenUsage} isLoading={isLoading} error={error} />
             </div>
           </div>
         </TabsContent>

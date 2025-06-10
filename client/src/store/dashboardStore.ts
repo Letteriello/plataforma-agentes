@@ -4,7 +4,9 @@ import {
   getDashboardStats,
   getRecentAgents,
   getRecentActivities,
+  getTokenUsageMetrics,
   type DashboardStats,
+  type TokenUsage,
 } from '@/api/dashboardService';
 
 
@@ -31,6 +33,7 @@ interface DashboardState {
   stats: DashboardStats;
   agents: Agent[];
   recentActivities: Activity[];
+  tokenUsage: TokenUsage[];
   isLoading: boolean;
   error: string | null;
 }
@@ -45,6 +48,7 @@ const initialState: DashboardState = {
   stats: { activeAgentsCount: 0, activeSessions: 0, totalSessions24h: 0 },
   agents: [],
   recentActivities: [],
+  tokenUsage: [],
   isLoading: false,
   error: null,
 };
@@ -87,16 +91,18 @@ const store: StateCreator<DashboardState & DashboardActions> = (set, get) => ({
   loadDashboardData: async () => {
     set({ isLoading: true, error: null });
     try {
-      const [stats, agents, activities] = await Promise.all([
+      const [stats, agents, activities, tokenUsage] = await Promise.all([
         getDashboardStats(),
         getRecentAgents(),
         getRecentActivities(),
+        getTokenUsageMetrics(),
       ]);
 
       set({
         stats,
         agents,
         recentActivities: activities,
+        tokenUsage,
         isLoading: false,
       });
     } catch (e) {

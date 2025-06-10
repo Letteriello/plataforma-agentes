@@ -42,3 +42,17 @@ export const getRecentActivities = async (): Promise<RecentActivity[]> => {
   const response = await apiClient.get<RecentActivity[]>('/dashboard/recent-activities');
   return response.data;
 };
+
+export interface TokenUsage {
+  date: string;
+  tokens: number;
+}
+
+export const getTokenUsageMetrics = async (
+  period: string = '7d'
+): Promise<TokenUsage[]> => {
+  const response = await apiClient.get<TokenUsage[]>(
+    `/dashboard/token-usage?period=${period}`
+  );
+  return response.data;
+};
