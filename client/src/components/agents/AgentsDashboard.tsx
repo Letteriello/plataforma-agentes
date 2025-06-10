@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react'; // Added React and useRef
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { AgentListItem } from './AgentListItem'; // Adjusted path if necessary
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 // Mock data - replace with actual API calls
 const mockAgents: Agent[] = [
@@ -67,7 +69,8 @@ const mockAgents: Agent[] = [
   },
 ];
 
-const agentTypeLabels: Record<AgentType, string> = {
+// Labels for dashboard filter buttons - AgentListItem has its own encapsulated version
+const dashboardAgentTypeLabels: Record<AgentType, string> = {
   llm: 'LLM',
   sequential: 'Sequential',
   parallel: 'Parallel',
@@ -84,6 +87,15 @@ export function AgentsDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<AgentFilter>('all');
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
+
+  const parentRef = React.useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredAgents.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100, // Estimated height of an AgentListItem
+    overscan: 5,
+  });
 
   // Load agents on component mount
   useEffect(() => {
@@ -108,19 +120,22 @@ export function AgentsDashboard() {
     loadAgents();
   }, [toast]);
 
-  const handleDeleteAgent = async (agentId: string) => {
+  const navigateToEdit = useCallback((id: string) => {
+    navigate(`/agents/edit/${id}`);
+  }, [navigate]);
+
+  const navigateToRun = useCallback((id: string) => {
+    navigate(`/agents/run/${id}`);
+  }, [navigate]);
+
+  const memoizedHandleDeleteAgent = useCallback(async (agentId: string) => {
     if (!window.confirm('Are you sure you want to delete this agent? This action cannot be undone.')) {
       return;
     }
-
     try {
       setIsDeleting(prev => ({ ...prev, [agentId]: true }));
-      
-      // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
       setAgents(prev => prev.filter(agent => agent.id !== agentId));
-      
       toast({
         title: 'Success',
         description: 'Agent deleted successfully',
@@ -135,24 +150,16 @@ export function AgentsDashboard() {
     } finally {
       setIsDeleting(prev => ({ ...prev, [agentId]: false }));
     }
-  };
+  }, [toast]); // setAgents and setIsDeleting are stable from useState
 
   const filteredAgents = agents.filter(agent => {
     const matchesSearch = agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        agent.description.toLowerCase().includes(searchQuery.toLowerCase());
+                        (agent.description && agent.description.toLowerCase().includes(searchQuery.toLowerCase())); // Made description check safer
     const matchesFilter = filter === 'all' || agent.type === filter;
     return matchesSearch && matchesFilter;
   });
 
-  const getAgentTypeColor = (type: AgentType) => {
-    const colors = {
-      llm: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-      sequential: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
-      parallel: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-      a2a: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-    };
-    return colors[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
-  };
+  // getAgentTypeColor is removed, as it's encapsulated in AgentListItem
 
   if (isLoading) {
     return (
@@ -197,7 +204,7 @@ export function AgentsDashboard() {
               >
                 All
               </Button>
-              {Object.entries(agentTypeLabels).map(([type, label]) => (
+              {Object.entries(dashboardAgentTypeLabels).map(([type, label]) => (
                 <Button
                   key={type}
                   variant={filter === type ? 'default' : 'outline'}
@@ -229,96 +236,37 @@ export function AgentsDashboard() {
               )}
             </div>
           ) : (
-            <div className="space-y-2">
-              {filteredAgents.map((agent) => (
-                <div 
-                  key={agent.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0">
-                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${getAgentTypeColor(agent.type)}`}>
-                        {agent.name.charAt(0).toUpperCase()}
-                      </div>
+            <div
+              ref={parentRef}
+              className="space-y-2 overflow-y-auto"
+              style={{ maxHeight: '600px' /* Adjust height as needed */ }}
+            >
+              <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+                {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+                  const agent = filteredAgents[virtualItem.index];
+                  if (!agent) return null; // Should not happen if count is correct
+                  return (
+                    <div
+                      key={agent.id} // Using agent.id as key
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        transform: `translateY(${virtualItem.start}px)`,
+                      }}
+                    >
+                      <AgentListItem
+                        agent={agent}
+                        onEdit={navigateToEdit}
+                        onRun={navigateToRun}
+                        onDelete={memoizedHandleDeleteAgent}
+                        isDeleting={isDeleting[agent.id] || false}
+                      />
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-2">
-                        <h3 className="text-sm font-medium truncate">
-                          {agent.name}
-                        </h3>
-                        <Badge variant="outline" className={getAgentTypeColor(agent.type)}>
-                          {agentTypeLabels[agent.type]}
-                        </Badge>
-                        {!agent.isPublic && (
-                          <Badge variant="outline" className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
-                            Private
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {agent.description || 'No description provided'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => navigate(`/agents/run/${agent.id}`)}
-                          >
-                            <Play className="h-4 w-4" />
-                            <span className="sr-only">Run</span>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Run agent</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => navigate(`/agents/edit/${agent.id}`)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Edit agent</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-destructive hover:text-destructive/90"
-                            onClick={() => handleDeleteAgent(agent.id)}
-                            disabled={isDeleting[agent.id]}
-                          >
-                            {isDeleting[agent.id] ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4" />
-                            )}
-                            <span className="sr-only">Delete</span>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Delete agent</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
           )}
         </CardContent>
