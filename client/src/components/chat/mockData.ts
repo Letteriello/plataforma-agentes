@@ -11,7 +11,7 @@ export const mockConversationsData: Record<string, ConversationMock> = {
   'conv-alpha-01': {
     id: 'conv-alpha-01',
     name: 'Agente Alpha',
-    lastMessagePreview: 'Olá! Como posso ajudar hoje?',
+    lastMessagePreview: 'O agente está raciocinando...',
     messages: [
       {
         id: 'msg1-alpha',
@@ -35,6 +35,15 @@ export const mockConversationsData: Record<string, ConversationMock> = {
         timestamp: '10:02',
         senderName: 'Agente Alpha',
         avatarSeed: 'agente-alpha-seed',
+      },
+      {
+        id: 'msg4-alpha',
+        text: '',
+        sender: 'agent',
+        timestamp: '10:03',
+        senderName: 'Agente Alpha',
+        avatarSeed: 'agente-alpha-seed',
+        type: 'agent_thought',
       },
     ],
   },
