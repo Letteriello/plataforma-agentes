@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ChatMessage } from '../components/chat/types'; // Import ChatMessage
+import { ChatMessage, Artifact } from '../components/chat/types'; // Import ChatMessage and Artifact
 import { getInitialMessages } from '../components/chat/mockData'; // Import mock messages function
 
 export interface Conversation {
@@ -12,16 +12,19 @@ interface ChatStore {
   conversations: Conversation[];
   selectedConversationId: string | null;
   messages: ChatMessage[]; // Add messages state
+  activeArtifact: Artifact | null;
   setSelectedConversationId: (id: string | null) => void;
   loadConversations: (conversations: Conversation[]) => void;
   loadMessages: (messages: ChatMessage[]) => void; // Add loadMessages action
   addMessage: (message: ChatMessage) => void; // Add addMessage action
+  setActiveArtifact: (artifact: Artifact | null) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   conversations: [],
   selectedConversationId: null,
   messages: [], // Initialize messages
+  activeArtifact: null,
   setSelectedConversationId: (id) => {
     set({ selectedConversationId: id });
     if (id === null) {
@@ -34,4 +37,5 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   loadConversations: (conversations) => set({ conversations }),
   loadMessages: (messages) => set({ messages }), // Implement loadMessages
   addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })), // Implement addMessage
+  setActiveArtifact: (artifact) => set({ activeArtifact: artifact }),
 }));

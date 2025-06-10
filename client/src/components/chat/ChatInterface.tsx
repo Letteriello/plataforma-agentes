@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { ConversationList } from './ConversationList';
+import { AgentWorkspace } from './AgentWorkspace';
 import { useChatStore } from '@/store/chatStore';
 import { getConversationList, initialActiveConversationId } from './mockData'; // Import initialActiveConversationId
 import { MessageList } from './MessageList';
@@ -61,11 +62,11 @@ export const ChatInterface = () => {
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1 rounded-lg border">
-      <ResizablePanel defaultSize={25} minSize={20}>
+      <ResizablePanel defaultSize={20} minSize={15}>
         <ConversationList />
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={75}>
+      <ResizablePanel defaultSize={50} minSize={30}>
         <div className="flex h-full flex-col">
           <header className="flex items-center gap-4 border-b p-4">
             <Avatar>
@@ -93,6 +94,12 @@ export const ChatInterface = () => {
           </div>
         </div>
       </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={30} minSize={25}>
+        <AgentWorkspace />
+      </ResizablePanel>
     </ResizablePanelGroup>
   );
 };
+
+export default ChatInterface;
