@@ -1,19 +1,21 @@
-import { useEffect } from 'react';
-import { useDashboardStore } from '@/store/dashboardStore';
+import { useEffect } from 'react'
+import { useDashboardStore } from '@/store/dashboardStore'
 
-export const useDashboardData = () => {
+export const useDashboardData = (period: string = '7d') => {
   // Select each piece of state individually to keep the snapshot stable
-  const stats = useDashboardStore(state => state.stats);
-  const agents = useDashboardStore(state => state.agents);
-  const recentActivities = useDashboardStore(state => state.recentActivities);
-  const tokenUsage = useDashboardStore(state => state.tokenUsage);
-  const isLoading = useDashboardStore(state => state.isLoading);
-  const error = useDashboardStore(state => state.error);
-  const loadDashboardData = useDashboardStore(state => state.loadDashboardData);
+  const stats = useDashboardStore((state) => state.stats)
+  const agents = useDashboardStore((state) => state.agents)
+  const recentActivities = useDashboardStore((state) => state.recentActivities)
+  const tokenUsage = useDashboardStore((state) => state.tokenUsage)
+  const isLoading = useDashboardStore((state) => state.isLoading)
+  const error = useDashboardStore((state) => state.error)
+  const loadDashboardData = useDashboardStore(
+    (state) => state.loadDashboardData,
+  )
 
   useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
+    loadDashboardData(period)
+  }, [loadDashboardData, period])
 
   return {
     stats,
@@ -22,8 +24,8 @@ export const useDashboardData = () => {
     tokenUsage,
     isLoading,
     error,
-    refreshData: loadDashboardData,
-  };
-};
+    refreshData: () => loadDashboardData(period),
+  }
+}
 
-export default useDashboardData;
+export default useDashboardData
