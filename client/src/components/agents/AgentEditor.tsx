@@ -97,8 +97,8 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: 'Success',
-        description: `Agent ${mode === 'create' ? 'created' : 'updated'} successfully`,
+        title: 'Sucesso',
+        description: `Agente ${mode === 'create' ? 'criado' : 'atualizado'} com sucesso`,
       });
       
       // Navigate back to agents list or to the new agent's edit page
@@ -106,8 +106,8 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
     } catch (error) {
       console.error('Error saving agent:', error);
       toast({
-        title: 'Error',
-        description: `Failed to ${mode} agent. Please try again.`,
+        title: 'Erro',
+        description: `Falha ao ${mode === 'create' ? 'criar' : 'atualizar'} o agente. Por favor, tente novamente.`,
         variant: 'destructive',
       });
     } finally {
@@ -135,31 +135,31 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Review Your Agent</CardTitle>
-          <CardDescription>Please review the agent's configuration before proceeding.</CardDescription>
+          <CardTitle>Revise Seu Agente</CardTitle>
+          <CardDescription>Por favor, revise a configuração do agente antes de prosseguir.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
-            <h4 className="font-semibold">Name:</h4>
-            <p>{watchedAgentData.name || 'Not set'}</p>
+            <h4 className="font-semibold">Nome:</h4>
+            <p>{watchedAgentData.name || 'Não definido'}</p>
           </div>
           <div>
-            <h4 className="font-semibold">Description:</h4>
-            <p>{watchedAgentData.description || 'Not set'}</p>
+            <h4 className="font-semibold">Descrição:</h4>
+            <p>{watchedAgentData.description || 'Não definido'}</p>
           </div>
           <div>
-            <h4 className="font-semibold">Avatar URL:</h4>
-            <p>{watchedAgentData.avatarUrl || 'Not set'}</p>
+            <h4 className="font-semibold">URL do Avatar:</h4>
+            <p>{watchedAgentData.avatarUrl || 'Não definido'}</p>
           </div>
           <div>
-            <h4 className="font-semibold">Instructions:</h4>
+            <h4 className="font-semibold">Instruções:</h4>
             <pre className="whitespace-pre-wrap p-2 bg-gray-100 dark:bg-gray-900 rounded-md">
-              {watchedAgentData.instruction || 'Not set'}
+              {watchedAgentData.instruction || 'Não definido'}
             </pre>
           </div>
           {watchedAgentData.systemPrompt && (
             <div>
-              <h4 className="font-semibold">System Prompt:</h4>
+              <h4 className="font-semibold">Prompt de Sistema:</h4>
               <pre className="whitespace-pre-wrap p-2 bg-gray-100 dark:bg-gray-900 rounded-md">
                 {watchedAgentData.systemPrompt}
               </pre>
@@ -174,7 +174,7 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">
-          {mode === 'create' ? 'Create New Agent' : `Edit Agent: ${agent?.name}`}
+          {mode === 'create' ? 'Criar Novo Agente' : `Editar Agente: ${agent?.name}`}
         </h1>
       </div>
 
@@ -209,9 +209,9 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
                   name="name"
                   render={({ field, formState }) => ( // control is implicitly from BaseAgentForm's FormProvider
                     <FormItem>
-                      <FormLabel>Agent Name</FormLabel>
+                      <FormLabel>Nome do Agente</FormLabel>
                       <FormControl>
-                        <Input placeholder="My Awesome Agent" {...field} />
+                        <Input placeholder="Meu Agente Incrível" {...field} />
                       </FormControl>
                       <FormMessage>{formState.errors.name?.message?.toString()}</FormMessage>
                     </FormItem>
@@ -221,9 +221,9 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
                   name="description"
                   render={({ field, formState }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Descrição</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Describe what your agent does." {...field} rows={3} />
+                        <Textarea placeholder="Descreva o que seu agente faz." {...field} rows={3} />
                       </FormControl>
                       <FormMessage>{formState.errors.description?.message?.toString()}</FormMessage>
                     </FormItem>
@@ -233,7 +233,7 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
                   name="avatarUrl"
                   render={({ field, formState }) => (
                     <FormItem>
-                      <FormLabel>Avatar URL (Optional)</FormLabel>
+                      <FormLabel>URL do Avatar (Opcional)</FormLabel>
                       <FormControl>
                         <Input placeholder="https://example.com/avatar.png" {...field} value={field.value ?? ''} />
                       </FormControl>
@@ -256,16 +256,16 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
                   name="instruction"
                   render={({ field, formState }) => (
                     <FormItem>
-                      <FormLabel>Instructions</FormLabel>
+                      <FormLabel>Instruções</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="You are a helpful assistant that..."
+                          placeholder="Você é um assistente útil que..."
                           {...field}
                           rows={6}
                           className="font-mono text-sm"
                         />
                       </FormControl>
-                      <FormDescription>System instructions that guide the agent's behavior.</FormDescription>
+                      <FormDescription>Instruções de sistema que guiam o comportamento do agente.</FormDescription>
                       <FormMessage>{formState.errors.instruction?.message?.toString()}</FormMessage>
                     </FormItem>
                   )}
@@ -274,16 +274,16 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
                   name="systemPrompt"
                   render={({ field, formState }) => (
                     <FormItem>
-                      <FormLabel>System Prompt (Optional)</FormLabel>
+                      <FormLabel>Prompt de Sistema (Opcional)</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="## Context\n- ...\n## Rules\n- ..."
+                          placeholder="## Contexto\n- ...\n## Regras\n- ..."
                           {...field}
                           rows={6}
                           className="font-mono text-sm"
                         />
                       </FormControl>
-                      <FormDescription>Additional system-level instructions, e.g., in Markdown.</FormDescription>
+                      <FormDescription>Instruções adicionais de nível de sistema, ex: em Markdown.</FormDescription>
                       <FormMessage>{formState.errors.systemPrompt?.message?.toString()}</FormMessage>
                     </FormItem>
                   )}
@@ -296,7 +296,7 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
             <Card>
               <CardHeader><CardTitle>Ferramentas</CardTitle></CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Coming soon: Configure tools and capabilities for your agent.</p>
+                <p className="text-muted-foreground">Em breve: Configure ferramentas e capacidades para o seu agente.</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -327,20 +327,20 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
               disabled={currentStepIndex === 0 || isLoading}
               className={currentStepIndex === 0 ? 'invisible' : ''}
             >
-              Previous
+              Anterior
             </Button>
           </div>
           <div className="space-x-3">
             <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
-              Cancel
+              Cancelar
             </Button>
             {currentStepIndex === WIZARD_STEPS.length - 1 ? (
               <Button form="agent-form" type="submit" disabled={isLoading}>
-                {isLoading ? (mode === 'create' ? 'Creating...' : 'Saving...') : (mode === 'create' ? 'Create Agent' : 'Save Changes')}
+                {isLoading ? (mode === 'create' ? 'Criando...' : 'Salvando...') : (mode === 'create' ? 'Criar Agente' : 'Salvar Alterações')}
               </Button>
             ) : (
               <Button type="button" onClick={handleNextStep} disabled={currentStepIndex === WIZARD_STEPS.length - 1 || isLoading}>
-                Next
+                Próximo
               </Button>
             )}
           </div>

@@ -10,6 +10,8 @@ import {
   Settings,
   Menu,
   X,
+  MessageCircle, // Added
+  PlusSquare, // Added
   // MessageCircle, FlaskConical, FileText, Database removed
 } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
@@ -26,6 +28,8 @@ type NavItem = {
 // New navigation item structures
 const navItems: NavItem[] = [
   { href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" />, label: 'Painel' },
+  { href: '/chat', icon: <MessageCircle className="h-5 w-5" />, label: 'Chat' },
+  { href: '/agents/new', icon: <PlusSquare className="h-5 w-5" />, label: 'Criar Agente' },
 ];
 
 const agentManagementItems: NavItem[] = [

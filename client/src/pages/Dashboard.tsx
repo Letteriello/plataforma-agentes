@@ -53,7 +53,7 @@ export default function DashboardPage() {
   const totalTokens = tokenUsage.reduce((acc, item) => acc + item.tokens, 0)
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="flex-1 space-y-6 p-4 sm:p-6">
       {/* Cabeçalho */}
       <div className="flex flex-col justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
