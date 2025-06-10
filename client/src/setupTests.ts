@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom';
+import { toHaveNoViolations } from 'jest-axe';
 import { server } from './mocks/server';
 import { resetMockAgentsDB } from './mocks/handlers'; // Import the reset function
 import { vi } from 'vitest';
+
+expect.extend(toHaveNoViolations);
 
 // Establish API mocking before all tests.
 // Using { onUnhandledRequest: 'error' } will make tests fail if a request is made that doesn't have a handler.
