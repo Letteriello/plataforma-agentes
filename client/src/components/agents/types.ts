@@ -1,4 +1,5 @@
 // client/src/components/agents/types.ts
+import type { AgentStatus } from '../../types/statusTypes';
 
 /**
  * Interface para os dados resumidos de um agente a serem exibidos no AgentCard.
@@ -18,9 +19,8 @@ export interface AgentCardData {
     /** 
      * Texto curto representando o estado do agente (ex: 'active', 'pending', 'error').
      * Usado para lógica de estilização (cores do badge, ícones).
-     * Permite string para flexibilidade com futuros status não previstos.
      */
-    text: 'active' | 'pending' | 'error' | 'unknown' | string;
+    text: AgentStatus;
     
     /** Rótulo descritivo do status (ex: "Status Operacional", "Pendente de Configuração"). */
     label: string;
