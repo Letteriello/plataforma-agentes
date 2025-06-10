@@ -25,7 +25,7 @@ const MainLayout = () => {
 
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
+    <div className="flex h-screen bg-muted/40">
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         onMouseEnter={() => setIsSidebarCollapsed(false)}
@@ -33,8 +33,8 @@ const MainLayout = () => {
       />
       <div
         className={cn(
-          "flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out",
-          isSidebarCollapsed ? "ml-20" : "ml-64"
+          "flex flex-1 flex-col transition-all duration-300 ease-in-out h-full overflow-hidden",
+          isSidebarCollapsed ? "pl-20" : "pl-64"
         )}
       >
         <Topbar
