@@ -1,6 +1,6 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
-import { NavLink } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { NavLink } from 'react-router-dom'
+import { cn, generateAvatarUrl } from '@/lib/utils'
 import {
   LayoutDashboard,
   Users, // Changed from Bot
@@ -12,49 +12,73 @@ import {
   MessageCircle, // Added
   PlusSquare, // Added
   // MessageCircle, FlaskConical, FileText, Database removed
-} from 'lucide-react';
-import { Bot } from 'lucide-react'; // Using Bot icon as per plan
-import { Avatar } from '@/components/ui/avatar';
-import { useAuthStore } from '@/store/authStore';
+} from 'lucide-react'
+import { Bot } from 'lucide-react' // Using Bot icon as per plan
+import { Avatar } from '@/components/ui/avatar'
+import { useAuthStore } from '@/store/authStore'
 // useState removed
 
 interface SidebarProps {
-  isCollapsed: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  isCollapsed: boolean
+  onMouseEnter: () => void
+  onMouseLeave: () => void
 }
 
 type NavItem = {
-  label: string;
-  href: string;
-  icon: React.ReactNode; // Keep as React.ReactNode for direct icon components
-  disabled?: boolean;
-};
+  label: string
+  href: string
+  icon: React.ReactNode // Keep as React.ReactNode for direct icon components
+  disabled?: boolean
+}
 
 // New navigation item structures
 const navItems: NavItem[] = [
-  { href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" />, label: 'Painel' },
+  {
+    href: '/dashboard',
+    icon: <LayoutDashboard className="h-5 w-5" />,
+    label: 'Painel',
+  },
   { href: '/chat', icon: <MessageCircle className="h-5 w-5" />, label: 'Chat' },
-  { href: '/agents/new', icon: <PlusSquare className="h-5 w-5" />, label: 'Criar Agente' },
-];
+  {
+    href: '/agents/new',
+    icon: <PlusSquare className="h-5 w-5" />,
+    label: 'Criar Agente',
+  },
+]
 
 const agentManagementItems: NavItem[] = [
-  { href: '/agents', icon: <Users className="h-5 w-5" />, label: 'Meus Agentes' },
+  {
+    href: '/agents',
+    icon: <Users className="h-5 w-5" />,
+    label: 'Meus Agentes',
+  },
   { href: '/deploy', icon: <Rocket className="h-5 w-5" />, label: 'Deploy' },
-];
+]
 
 const resourcesItems: NavItem[] = [
-  { href: '/tools', icon: <Wrench className="h-5 w-5" />, label: 'Ferramentas' },
-  { href: '/memory', icon: <BrainCircuit className="h-5 w-5" />, label: 'Memória' },
-];
+  {
+    href: '/tools',
+    icon: <Wrench className="h-5 w-5" />,
+    label: 'Ferramentas',
+  },
+  {
+    href: '/memory',
+    icon: <BrainCircuit className="h-5 w-5" />,
+    label: 'Memória',
+  },
+]
 
 // Settings item - href is used in NavLink, icon and label for display
 // The existing account section links to '/configuracoes'
 // const settingsItem = { href: '/configuracoes', icon: Settings, label: 'Configurações' };
 // For clarity, settingsItem is not strictly needed as a variable if we adapt the existing structure directly.
 
-export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProps) {
-  const { user } = useAuthStore();
+export function Sidebar({
+  isCollapsed,
+  onMouseEnter,
+  onMouseLeave,
+}: SidebarProps) {
+  const { user } = useAuthStore()
 
   const renderNavLinks = (items: NavItem[]) =>
     items.map((item) => (
@@ -68,14 +92,16 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
             isActive
               ? 'bg-primary text-primary-foreground'
               : 'text-foreground hover:bg-primary hover:text-primary-foreground',
-            item.disabled && 'cursor-not-allowed opacity-50'
+            item.disabled && 'cursor-not-allowed opacity-50',
           )
         }
       >
-        <span className={cn("shrink-0", isCollapsed ? 'mr-0' : 'mr-3')}>{item.icon}</span>
+        <span className={cn('shrink-0', isCollapsed ? 'mr-0' : 'mr-3')}>
+          {item.icon}
+        </span>
         {!isCollapsed && <span>{item.label}</span>}
       </NavLink>
-    ));
+    ))
 
   return (
     <aside
@@ -83,7 +109,7 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
       onMouseLeave={onMouseLeave}
       className={cn(
         'flex h-full flex-col bg-card border-r border-border transition-all duration-300 ease-in-out',
-        isCollapsed ? 'w-20' : 'w-64'
+        isCollapsed ? 'w-20' : 'w-64',
       )}
     >
       {/* Sidebar Header */}
@@ -92,9 +118,11 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
           <Bot className="h-6 w-6 mx-auto" /> // Show Bot icon when collapsed and centered
         ) : (
           <div className="flex items-center gap-2">
-             {/* Original Logo */}
+            {/* Original Logo */}
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">N</span>
+              <span className="text-primary-foreground font-bold text-sm">
+                N
+              </span>
             </div>
             <h1 className="text-lg font-semibold text-foreground">Nexus</h1>
           </div>
@@ -103,9 +131,7 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
 
       {/* Navigation Links Area */}
       <nav className="flex-1 flex flex-col p-4">
-        <div className="space-y-1">
-          {renderNavLinks(navItems)}
-        </div>
+        <div className="space-y-1">{renderNavLinks(navItems)}</div>
 
         {/* Gerenciamento Section */}
         <div className="my-4">
@@ -126,9 +152,7 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
               Recursos
             </h2>
           )}
-          <div className="space-y-1">
-            {renderNavLinks(resourcesItems)}
-          </div>
+          <div className="space-y-1">{renderNavLinks(resourcesItems)}</div>
         </div>
 
         {/* Account Section - Pushed to bottom */}
@@ -141,13 +165,13 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
                 isCollapsed && 'justify-center',
                 isActive
                   ? 'bg-primary text-primary-foreground'
-                  : 'text-foreground hover:bg-primary hover:text-primary-foreground'
+                  : 'text-foreground hover:bg-primary hover:text-primary-foreground',
               )
             }
           >
             <Avatar className="h-8 w-8 shrink-0">
               <img
-                src={`https://api.dicebear.com/7.x/personas/svg?seed=${user?.name || 'user'}`}
+                src={generateAvatarUrl(user?.name || 'user')}
                 alt={user?.name || 'Usuário'}
                 className="rounded-full"
               />
@@ -160,10 +184,15 @@ export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProp
                 <p className="text-xs text-muted-foreground">Configurações</p>
               </div>
             )}
-            <Settings className={cn("h-5 w-5 shrink-0", !isCollapsed && "ml-3 opacity-75")} />
+            <Settings
+              className={cn(
+                'h-5 w-5 shrink-0',
+                !isCollapsed && 'ml-3 opacity-75',
+              )}
+            />
           </NavLink>
         </div>
       </nav>
     </aside>
-  );
+  )
 }

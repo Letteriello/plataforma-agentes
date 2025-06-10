@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LucideUsers, LucideCpu, LucideZap } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { LucideUsers, LucideCpu, LucideZap } from 'lucide-react'
+import { ComponentSkeleton } from '@/components/ui'
 
 interface StatCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  description?: string;
+  title: string
+  value: string | number
+  icon: React.ReactNode
+  description?: string
 }
 
 const StatCard = ({ title, value, icon, description }: StatCardProps) => (
@@ -14,20 +14,20 @@ const StatCard = ({ title, value, icon, description }: StatCardProps) => (
     <div>
       <p className="text-sm font-medium text-muted-foreground">{title}</p>
       <p className="text-2xl font-bold">{value}</p>
-      {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      {description && (
+        <p className="text-xs text-muted-foreground">{description}</p>
+      )}
     </div>
-    <div className="rounded-lg bg-primary/10 p-3 text-primary">
-      {icon}
-    </div>
+    <div className="rounded-lg bg-primary/10 p-3 text-primary">{icon}</div>
   </div>
-);
+)
 
 interface VisaoGeralCardProps {
-  activeAgents: number;
-  activeSessions: number;
-  totalSessions24h: number;
-  isLoading?: boolean;
-  error?: string | null;
+  activeAgents: number
+  activeSessions: number
+  totalSessions24h: number
+  isLoading?: boolean
+  error?: string | null
 }
 
 export function VisaoGeralCard({
@@ -46,11 +46,7 @@ export function VisaoGeralCard({
         {error ? (
           <p className="text-sm text-destructive">{error}</p>
         ) : isLoading ? (
-          <div className="space-y-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
+          <ComponentSkeleton lines={3} />
         ) : (
           <>
             <StatCard
@@ -74,5 +70,5 @@ export function VisaoGeralCard({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }
