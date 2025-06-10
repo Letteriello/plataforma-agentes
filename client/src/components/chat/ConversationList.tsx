@@ -2,16 +2,11 @@
 import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils'; // Import cn for conditional classes
-import { getConversationList } from './mockData';
+import { useChatStore } from '@/store/chatStore'; // Import useChatStore
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'; // Import Avatar components
 
-interface ConversationListProps {
-  activeConversationId: string | null;
-  onSelectConversation: (conversationId: string) => void;
-}
-
-const ConversationList: React.FC<ConversationListProps> = ({ activeConversationId, onSelectConversation }) => {
-  // Obter a lista de conversas do mockData
-  const conversations = getConversationList();
+const ConversationList: React.FC = () => {
+  const { conversations, selectedConversationId, setSelectedConversationId } = useChatStore();
 
   return (
     <div className="flex h-full flex-col border-r border-border bg-card">
@@ -23,13 +18,18 @@ const ConversationList: React.FC<ConversationListProps> = ({ activeConversationI
           <div
             key={convo.id}
             className={cn(
-              'mb-1 cursor-pointer rounded-md p-3 hover:bg-muted/50',
-              { 'bg-muted': convo.id === activeConversationId }
+              'flex items-center space-x-3 mb-1 cursor-pointer rounded-md p-3 hover:bg-muted/50',
+              { 'bg-accent': convo.id === selectedConversationId } // Updated to bg-accent
             )}
-            onClick={() => onSelectConversation(convo.id)}
+            onClick={() => setSelectedConversationId(convo.id)} // Use setSelectedConversationId from store
           >
-            <p className="font-medium text-foreground text-sm truncate">{convo.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{convo.lastMessagePreview || 'Nenhuma mensagem'}</p>
+            <Avatar className="h-10 w-10">
+              <AvatarFallback>{convo.agentName.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <p className="font-medium text-foreground text-sm truncate">{convo.agentName}</p>
+              <p className="text-xs text-muted-foreground truncate">{convo.lastMessage || 'Nenhuma mensagem'}</p>
+            </div>
           </div>
         ))}
         {conversations.length === 0 && (
