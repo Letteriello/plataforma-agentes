@@ -13,12 +13,12 @@ const ConversationList: React.FC = () => {
       <div className="p-4 border-b border-border">
         <h2 className="text-lg font-semibold text-foreground">Conversas</h2>
       </div>
-      <ScrollArea className="flex-1 p-2">
+      <ScrollArea className="flex-1 p-1">
         {conversations.map((convo) => (
           <div
             key={convo.id}
             className={cn(
-              'flex items-center space-x-3 mb-1 cursor-pointer rounded-md p-3 hover:bg-muted/50',
+              'flex items-center space-x-3 mb-[2px] cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/50',
               { 'bg-accent': convo.id === selectedConversationId } // Updated to bg-accent
             )}
             onClick={() => setSelectedConversationId(convo.id)} // Use setSelectedConversationId from store

@@ -68,7 +68,7 @@ export const ChatInterface = () => {
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={50} minSize={30}>
         <div className="flex h-full flex-col">
-          <header className="flex items-center gap-4 border-b p-4">
+          <header className="flex items-center gap-4 border-b px-3 py-2">
             <Avatar>
               {/* Ensure selectedAgent.name is not undefined before charAt */}
               <AvatarFallback>{selectedAgent.name ? selectedAgent.name.charAt(0).toUpperCase() : '?'}</AvatarFallback>

@@ -1,11 +1,11 @@
-import { useState } from 'react'; // Adicionar useState
+import { useState } from 'react';
 import { Outlet, useMatches } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { Topbar } from '@/components/navigation/Topbar';
-
- // Importar tipo
+import { cn } from '@/lib/utils';
 
 const MainLayout = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const matches = useMatches();
   const routeWithTitle = [...matches].reverse().find(match => typeof (match.handle as any)?.title === 'string');
   const dynamicTitle = routeWithTitle ? (routeWithTitle.handle as any).title : undefined;
@@ -26,11 +26,17 @@ const MainLayout = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
-      {/* Sidebar Panel - Removed redundant styling as Sidebar component handles its own styling */}
-      <Sidebar />
-
-      {/* Main Area Panel (contains Topbar, Context Panel, and Outlet) */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        onMouseEnter={() => setIsSidebarCollapsed(false)}
+        onMouseLeave={() => setIsSidebarCollapsed(true)}
+      />
+      <div
+        className={cn(
+          "flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out",
+          isSidebarCollapsed ? "ml-20" : "ml-64"
+        )}
+      >
         <Topbar
           pageTitle={dynamicTitle}
           agentsForSelector={allMockAgentsForSelector} // Updated to use new mock

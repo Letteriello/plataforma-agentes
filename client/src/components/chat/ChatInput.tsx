@@ -30,7 +30,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 border-t"> {/* Adjusted styling for the container */}
+    <div className="flex items-center gap-2 p-2 sm:p-3 border-t"> {/* Adjusted styling for the container */}
       <Textarea
         ref={textareaRef}
         value={message}

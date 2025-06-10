@@ -1,6 +1,6 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
-import { NavLink } from 'react-router-dom'
-import { cn } from '@/lib/utils'
+import { NavLink } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   Users, // Changed from Bot
@@ -8,18 +8,24 @@ import {
   Wrench,
   BrainCircuit, // New
   Settings,
-  Menu,
-  X,
+  // Menu, X removed as hover will control collapse
   MessageCircle, // Added
   PlusSquare, // Added
   // MessageCircle, FlaskConical, FileText, Database removed
-} from 'lucide-react'
-import { Avatar } from '@/components/ui/avatar'
-import { useAuthStore } from '@/store/authStore'
-import { useState } from 'react'
+} from 'lucide-react';
+import { Bot } from 'lucide-react'; // Using Bot icon as per plan
+import { Avatar } from '@/components/ui/avatar';
+import { useAuthStore } from '@/store/authStore';
+// useState removed
+
+interface SidebarProps {
+  isCollapsed: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}
 
 type NavItem = {
-  label: string; // Changed from title
+  label: string;
   href: string;
   icon: React.ReactNode; // Keep as React.ReactNode for direct icon components
   disabled?: boolean;
@@ -47,66 +53,63 @@ const resourcesItems: NavItem[] = [
 // const settingsItem = { href: '/configuracoes', icon: Settings, label: 'Configurações' };
 // For clarity, settingsItem is not strictly needed as a variable if we adapt the existing structure directly.
 
-export function Sidebar() {
+export function Sidebar({ isCollapsed, onMouseEnter, onMouseLeave }: SidebarProps) {
   const { user } = useAuthStore();
-  const [collapsed, setCollapsed] = useState(false)
 
-  // Updated to use item.label instead of item.title
   const renderNavLinks = (items: NavItem[]) =>
     items.map((item) => (
       <NavLink
-        key={item.href} // Using href as key is fine
+        key={item.href}
         to={item.disabled ? '#' : item.href}
         className={({ isActive }) =>
           cn(
             'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
+            isCollapsed && 'justify-center',
             isActive
               ? 'bg-primary text-primary-foreground'
-              : 'text-foreground hover:bg-primary hover:text-primary-foreground', // Changed hover:text-foreground to hover:text-primary as per new example style (though issue said keep current) - Reverting to keep current style for now.
+              : 'text-foreground hover:bg-primary hover:text-primary-foreground',
             item.disabled && 'cursor-not-allowed opacity-50'
           )
         }
       >
-        <span className="mr-3 shrink-0">{item.icon}</span>
-        {!collapsed && <span>{item.label}</span>} {/* Changed item.title to item.label */}
+        <span className={cn("shrink-0", isCollapsed ? 'mr-0' : 'mr-3')}>{item.icon}</span>
+        {!isCollapsed && <span>{item.label}</span>}
       </NavLink>
-    ))
+    ));
 
   return (
-    <div
+    <aside
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       className={cn(
-        'flex h-full flex-col bg-card border-r border-border transition-all',
-        collapsed ? 'w-16' : 'w-64'
+        'flex h-full flex-col bg-card border-r border-border transition-all duration-300 ease-in-out',
+        isCollapsed ? 'w-20' : 'w-64'
       )}
     >
       {/* Sidebar Header */}
       <div className="flex h-16 items-center border-b border-border px-4">
-        <button
-          className="mr-2 rounded-md p-1 hover:bg-muted sm:hidden"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
-        </button>
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">N</span>
-          </div>
-          {!collapsed && (
+        {isCollapsed ? (
+          <Bot className="h-6 w-6 mx-auto" /> // Show Bot icon when collapsed and centered
+        ) : (
+          <div className="flex items-center gap-2">
+             {/* Original Logo */}
+            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-sm">N</span>
+            </div>
             <h1 className="text-lg font-semibold text-foreground">Nexus</h1>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Navigation Links Area */}
-      <nav className="flex-1 flex flex-col p-4"> {/* Keeping existing overall nav classes */}
-        {/* Main Dashboard Link */}
+      <nav className="flex-1 flex flex-col p-4">
         <div className="space-y-1">
           {renderNavLinks(navItems)}
         </div>
 
         {/* Gerenciamento Section */}
         <div className="my-4">
-          {!collapsed && (
+          {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
               Gerenciamento
             </h2>
@@ -118,7 +121,7 @@ export function Sidebar() {
 
         {/* Recursos Section */}
         <div className="my-4">
-          {!collapsed && (
+          {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
               Recursos
             </h2>
@@ -135,9 +138,10 @@ export function Sidebar() {
             className={({ isActive }) =>
               cn(
                 'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
+                isCollapsed && 'justify-center',
                 isActive
                   ? 'bg-primary text-primary-foreground'
-                  : 'text-foreground hover:bg-primary hover:text-foreground'
+                  : 'text-foreground hover:bg-primary hover:text-primary-foreground'
               )
             }
           >
@@ -148,20 +152,18 @@ export function Sidebar() {
                 className="rounded-full"
               />
             </Avatar>
-            {!collapsed && (
+            {!isCollapsed && (
               <div className="ml-3 flex-grow">
                 <p className="text-sm font-semibold">
                   {user?.name || 'Usuário Admin'}
                 </p>
-                {/* Using "Configurações" as per settingsItem.label for consistency */}
                 <p className="text-xs text-muted-foreground">Configurações</p>
               </div>
             )}
-            {/* Icon is already Settings, ensure class is consistent if needed */}
-            <Settings className="h-5 w-5 ml-3 opacity-75" />
+            <Settings className={cn("h-5 w-5 shrink-0", !isCollapsed && "ml-3 opacity-75")} />
           </NavLink>
         </div>
       </nav>
-    </div>
+    </aside>
   );
 }
