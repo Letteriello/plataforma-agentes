@@ -1,4 +1,3 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useChatStore } from '@/store/chatStore';
 
 export function AgentWorkspace() {
@@ -17,20 +16,22 @@ export function AgentWorkspace() {
           </pre>
         );
       case 'table':
-        return <p>Renderização de Tabela aqui.</p>;
+        return <p>Renderização de Tabela aqui.</p>; // Placeholder
       case 'chart':
-        return <p>Renderização de Gráfico aqui.</p>;
+        return <p>Renderização de Gráfico aqui.</p>; // Placeholder
       default:
         return <p className="text-sm text-muted-foreground">Tipo de artefato não suportado.</p>;
     }
   };
 
   return (
-    <Card className="h-full border-0 rounded-none">
-      <CardHeader>
-        <CardTitle>Área de Trabalho</CardTitle>
-      </CardHeader>
-      <CardContent>{renderArtifact()}</CardContent>
-    </Card>
+    <div className="h-full flex flex-col">
+      <div className="p-3 border-b"> {/* Added border-b for separation like CardHeader */}
+        <h2 className="text-lg font-semibold">Área de Trabalho</h2>
+      </div>
+      <div className="p-3 flex-1 overflow-y-auto">
+        {renderArtifact()}
+      </div>
+    </div>
   );
 }

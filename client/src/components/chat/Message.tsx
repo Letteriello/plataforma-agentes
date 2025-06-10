@@ -54,7 +54,7 @@ const Message: React.FC<MessageProps> = ({ author, content, agentName, messageTy
   return (
     <div
       className={cn(
-        'mb-3 flex items-end gap-2',
+        'mb-3 flex items-end gap-1.5',
         isUser ? 'justify-end' : 'justify-start'
       )}
     >
@@ -65,7 +65,7 @@ const Message: React.FC<MessageProps> = ({ author, content, agentName, messageTy
       )}
       <div
         className={cn(
-          'max-w-xs rounded-lg px-3 py-2 md:max-w-md', // Common styling
+          'max-w-xs rounded-lg px-2.5 py-1.5 md:max-w-md', // Common styling
           isUser
             ? 'bg-primary text-primary-foreground' // User message specific styling
             : 'bg-muted' // Agent message specific styling
