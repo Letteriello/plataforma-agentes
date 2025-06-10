@@ -28,6 +28,7 @@ export const LLMAgentSchema = BaseAgentSchema.extend({
   presencePenalty: z.number().min(-2).max(2).default(0),
   instruction: z.string().default(''),
   systemPrompt: z.string().default(''),
+  avatarUrl: z.string().url({ message: "Invalid URL format" }).optional().nullable().default(null),
 });
 
 export type LLMAgent = z.infer<typeof LLMAgentSchema>;
@@ -134,6 +135,7 @@ export function createDefaultAgent<T extends Agent['type']>(
         presencePenalty: 0,
         instruction: '',
         systemPrompt: '',
+        avatarUrl: null,
       } as any;
       
     case 'sequential':
