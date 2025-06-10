@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-  DialogClose, // To allow closing the dialog
-} from '@/components/ui/dialog'; // Assuming shadcn/ui dialog is available
+} from '@/components/ui/dialog';
+import { Close as DialogClose } from '@radix-ui/react-dialog';
 import { Button } from '@/components/ui/button'; // For a close button
 
 interface CreateAgentDialogProps {
