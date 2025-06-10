@@ -3,13 +3,27 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { useAuthStore } from '@/store/authStore'
+import { storeSecret } from '@/api/secretService'
 
 export default function ConfiguracoesPage() {
   const { user, setUser } = useAuthStore()
   const [name, setName] = useState(user?.name ?? '')
+  const [apiKey, setApiKey] = useState('')
+  const [isSavingKey, setIsSavingKey] = useState(false)
 
   const handleSave = () => {
     if (user) setUser({ ...user, name })
+  }
+
+  const handleSaveKey = async () => {
+    if (!apiKey) return
+    setIsSavingKey(true)
+    try {
+      await storeSecret({ name: 'openai', value: apiKey })
+      setApiKey('')
+    } finally {
+      setIsSavingKey(false)
+    }
   }
 
   return (
@@ -20,9 +34,28 @@ export default function ConfiguracoesPage() {
         <label htmlFor="name" className="text-sm font-medium">
           Nome
         </label>
-        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <Button onClick={handleSave} className="mt-2">
           Salvar
+        </Button>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="api-key" className="text-sm font-medium">
+          Chave da API
+        </label>
+        <Input
+          id="api-key"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="Insira sua chave"
+        />
+        <Button onClick={handleSaveKey} disabled={isSavingKey} className="mt-2">
+          {isSavingKey ? 'Salvando...' : 'Salvar Chave'}
         </Button>
       </div>
 
