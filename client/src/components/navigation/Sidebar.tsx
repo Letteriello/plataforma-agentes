@@ -33,13 +33,8 @@ const sidebarNavItems: NavItem[] = [
   },
   {
     title: 'Agentes', // Translated (or kept as is, common in PT-BR tech)
-    href: '/agentes',
+    href: '/agents',
     icon: <Bot className="h-5 w-5" />,
-  },
-  {
-    title: 'Chat', // New Item
-    href: '/chat',
-    icon: <MessageCircle className="h-5 w-5" />,
   },
   {
     title: 'Sessões', // Translated
@@ -48,12 +43,12 @@ const sidebarNavItems: NavItem[] = [
   },
   {
     title: 'Ferramentas', // Translated (or kept as is)
-    href: '/ferramentas',
+    href: '/tools',
     icon: <Wrench className="h-5 w-5" />,
   },
   {
     title: 'Memória', // Novo item para o módulo de Memória
-    href: '/memoria',
+    href: '/memory',
     icon: <Database className="h-5 w-5" />,
   },
   {

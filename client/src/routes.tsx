@@ -87,18 +87,6 @@ const routes: AppRouteObject[] = [
         element: withSuspense(SettingsPage),
         handle: { title: 'Settings' }, // title changed
       },
-      {
-        path: 'chat',
-        element: withSuspense(ChatPage),
-        handle: { title: 'Chat' },
-      },
-      {
-        path: 'agent/:id',
-        lazy: () => import('@/pages/AgentWorkspace').then(module => ({
-          Component: () => withSuspense(module.default)
-        })), // Explicitly typing Component
-        handle: { title: 'Agent Workspace' }, // title changed
-      },
     ],
   },
   {
