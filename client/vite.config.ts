@@ -6,7 +6,15 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), visualizer({ filename: 'dist/bundle-analysis.html', open: false })],
+  plugins: [
+    react(),
+    visualizer({
+      open: true, // Automatically open the report in the browser
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'bundle-analysis.html', // Output file name
+    }),
+  ],
   resolve: {
     alias: [
       {

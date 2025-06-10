@@ -25,7 +25,7 @@ const withSuspense = (Component: React.ComponentType) => {
 
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-import AgentsPage from '@/pages/agents'; // Corrigido: aponta para o componente React default de agents
+const AgentsPage = lazy(() => import('@/pages/agents')); // Corrigido: aponta para o componente React default de agents
 const ToolsPage = lazy(() => import('./pages/Tools')); // Renamed from Ferramentas.tsx
 const MemoryPage = lazy(() => import('./pages/Memory')); // Renamed from Memoria.tsx
 const Deploy = lazy(() => import('./pages/Deploy'));
@@ -69,7 +69,7 @@ const routes: AppRouteObject[] = [
       },
       {
         path: 'agents', // path changed from 'agentes'
-        element: <AgentsPage />,
+        element: withSuspense(AgentsPage),
         handle: { title: 'Agents' }, // title changed
       },
       {
