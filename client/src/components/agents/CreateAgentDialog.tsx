@@ -1,16 +1,17 @@
 // client/src/components/agents/CreateAgentDialog.tsx
+import { Close as DialogClose } from '@radix-ui/react-dialog';
 import React from 'react';
+
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from '@/components/ui/dialog';
-import { Close as DialogClose } from '@radix-ui/react-dialog';
-import { Button } from '@/components/ui/button'; // For a close button
 
 interface CreateAgentDialogProps {
   children: React.ReactNode; // The trigger button
