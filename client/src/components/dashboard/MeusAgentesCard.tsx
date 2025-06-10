@@ -1,20 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Plus } from 'lucide-react';
-import type { Agent } from '@/store/dashboardStore';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { ComponentSkeleton } from '@/components/ui'
+import { Plus } from 'lucide-react'
+import type { Agent } from '@/store/dashboardStore'
 
 interface MeusAgentesCardProps {
-  agents: Agent[];
-  onCreateAgent: () => void;
-  onAgentClick: (agent: Agent) => void;
-  className?: string;
-  createButton?: React.ReactNode;
-  isLoading?: boolean;
-  error?: string | null;
+  agents: Agent[]
+  onCreateAgent: () => void
+  onAgentClick: (agent: Agent) => void
+  className?: string
+  createButton?: React.ReactNode
+  isLoading?: boolean
+  error?: string | null
 }
 
 const statusVariantMap = {
@@ -22,13 +22,13 @@ const statusVariantMap = {
   busy: 'warning',
   offline: 'outline',
   error: 'destructive',
-} as const;
+} as const
 
 const typeIconMap = {
   llm: '🤖',
   workflow: '⚙️',
   tool: '🛠️',
-} as const;
+} as const
 
 export function MeusAgentesCard({
   agents,
@@ -56,11 +56,7 @@ export function MeusAgentesCard({
         {error ? (
           <p className="text-sm text-destructive text-center py-4">{error}</p>
         ) : isLoading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
-          </div>
+          <ComponentSkeleton lines={3} />
         ) : agents.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <p className="text-sm text-muted-foreground mb-4">
@@ -83,9 +79,7 @@ export function MeusAgentesCard({
                   onClick={() => onAgentClick(agent)}
                 >
                   <Avatar className="h-9 w-9 mr-3">
-                    <AvatarFallback>
-                      {typeIconMap[agent.type]}
-                    </AvatarFallback>
+                    <AvatarFallback>{typeIconMap[agent.type]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -96,13 +90,18 @@ export function MeusAgentesCard({
                         variant={statusVariantMap[agent.status] as any}
                         className="text-xs"
                       >
-                        {agent.status === 'online' ? 'Online' :
-                         agent.status === 'busy' ? 'Ocupado' :
-                         agent.status === 'error' ? 'Erro' : 'Offline'}
+                        {agent.status === 'online'
+                          ? 'Online'
+                          : agent.status === 'busy'
+                            ? 'Ocupado'
+                            : agent.status === 'error'
+                              ? 'Erro'
+                              : 'Offline'}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
-                      Última atividade: {new Date(agent.lastActive).toLocaleTimeString()}
+                      Última atividade:{' '}
+                      {new Date(agent.lastActive).toLocaleTimeString()}
                     </p>
                   </div>
                 </div>
@@ -112,5 +111,5 @@ export function MeusAgentesCard({
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

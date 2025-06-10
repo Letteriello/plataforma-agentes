@@ -1,16 +1,24 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
-import eslintPluginReact from 'eslint-plugin-react';
-import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
+import eslintPluginReact from 'eslint-plugin-react'
+import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  {
+    ignores: ['dist'],
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+    },
+  },
   js.configs.recommended, // Global defaults
-  ...tseslint.configs.recommended, // TypeScript specific global defaults
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
 
   // React specific configurations for TSX files
   {
@@ -23,14 +31,15 @@ export default tseslint.config(
       ...eslintPluginReact.configs.flat.recommended.languageOptions, // Spread to ensure JSX features, etc.
       ...(jsxA11y.flatConfigs.recommended.languageOptions || {}),
       globals: {},
-      parserOptions: { // Ensure JSX is enabled
+      parserOptions: {
+        // Ensure JSX is enabled
         ecmaFeatures: {
           jsx: true,
         },
       },
     },
     plugins: {
-      'react': eslintPluginReact, // Make sure react plugin is explicitly available if not already by spread
+      react: eslintPluginReact, // Make sure react plugin is explicitly available if not already by spread
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       'jsx-a11y': jsxA11y,
@@ -47,7 +56,8 @@ export default tseslint.config(
       'react/react-in-jsx-scope': 'off', // Common for new JSX transform
       'react/prop-types': 'off', // Often turned off in TypeScript projects
     },
-    settings: { // Settings for react plugin, e.g. version
+    settings: {
+      // Settings for react plugin, e.g. version
       react: {
         version: 'detect',
       },
@@ -64,5 +74,5 @@ export default tseslint.config(
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
     },
-  }
-);
+  },
+)

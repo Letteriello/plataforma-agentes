@@ -1,4 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  LoadingSpinner,
+} from '@/components/ui'
 import { Progress } from '@/components/ui/progress'
 
 interface ResourceConsumptionCardProps {
@@ -24,9 +30,9 @@ export function ResourceConsumptionCard({
         {error ? (
           <p className="text-sm text-destructive text-center py-4">{error}</p>
         ) : isLoading ? (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            Carregando...
-          </p>
+          <div className="flex justify-center py-4">
+            <LoadingSpinner />
+          </div>
         ) : (
           <>
             <div className="flex justify-between text-sm font-medium">
