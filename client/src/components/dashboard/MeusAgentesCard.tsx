@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { ComponentSkeleton } from '@/components/ui'
+import { ComponentSkeleton, Skeleton } from '@/components/ui'
 import { Plus } from 'lucide-react'
 import type { Agent } from '@/store/dashboardStore'
 
@@ -39,6 +39,10 @@ export function MeusAgentesCard({
   isLoading,
   error,
 }: MeusAgentesCardProps) {
+  if (isLoading) {
+    return <MeusAgentesCardSkeleton />
+  }
+
   return (
     <Card className={`h-full flex flex-col ${className || ''}`.trim()}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -55,8 +59,6 @@ export function MeusAgentesCard({
       <CardContent className="flex-1">
         {error ? (
           <p className="text-sm text-destructive text-center py-4">{error}</p>
-        ) : isLoading ? (
-          <ComponentSkeleton lines={3} />
         ) : agents.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <p className="text-sm text-muted-foreground mb-4">
@@ -109,6 +111,38 @@ export function MeusAgentesCard({
             </div>
           </ScrollArea>
         )}
+      </CardContent>
+    </Card>
+  )
+}
+
+export const MeusAgentesCardSkeleton = () => {
+  return (
+    <Card className="h-full flex flex-col">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Skeleton className="h-6 w-[150px]" /> {/* Title Skeleton */}
+        <Skeleton className="h-8 w-[120px]" /> {/* Button Skeleton */}
+      </CardHeader>
+      <CardContent className="flex-1">
+        <ScrollArea className="h-72 pr-4">
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center p-3 rounded-lg"
+              >
+                <Skeleton className="h-9 w-9 rounded-full mr-3" /> {/* Avatar Skeleton */}
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-[100px]" /> {/* Name Skeleton */}
+                    <Skeleton className="h-4 w-[60px]" /> {/* Badge Skeleton */}
+                  </div>
+                  <Skeleton className="h-3 w-[150px]" /> {/* Description/Last Active Skeleton */}
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   )

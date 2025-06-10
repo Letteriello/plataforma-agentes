@@ -12,15 +12,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { LLMAgentForm } from './forms/LLMAgentForm';
 import { BaseAgentForm } from './forms/BaseAgentForm'; // This should provide useForm methods
 import { LLMAgent, createDefaultAgent, LLMAgentSchema } from '@/types/agents';
-import AgentDeployTab from './AgentDeployTab';
+// import AgentDeployTab from './AgentDeployTab'; // AgentDeployTab removed as per new tab structure
 
-const WIZARD_STEPS = ['identidade', 'instrucoes', 'ferramentas', 'revisao', 'deploy'];
+const WIZARD_STEPS = ['identidade', 'instrucoes', 'modelo_geracao', 'ferramentas', 'memoria'];
 const STEP_LABELS: { [key: string]: string } = {
   identidade: 'Identidade',
   instrucoes: 'Instruções',
+  modelo_geracao: 'Modelo & Geração',
   ferramentas: 'Ferramentas',
-  revisao: 'Revisão',
-  deploy: 'Deploy',
+  memoria: 'Memória',
 };
 
 // Mock data - replace with actual API calls
@@ -96,10 +96,17 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast({
-        title: 'Sucesso',
-        description: `Agente ${mode === 'create' ? 'criado' : 'atualizado'} com sucesso`,
-      });
+      if (mode === 'create') {
+        toast({
+          title: "Agente Criado!",
+          description: "Novo agente configurado com sucesso."
+        });
+      } else {
+        toast({
+          title: "Agente Atualizado!",
+          description: "Configurações do agente atualizadas com sucesso."
+        });
+      }
       
       // Navigate back to agents list or to the new agent's edit page
       navigate('/agents');
@@ -127,48 +134,8 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
     return <div>Agent not found</div>;
   }
 
-  // Component to display review, needs access to form context
-  const ReviewStep = () => {
-    const { watch } = useFormContext<LLMAgent>();
-    const watchedAgentData = watch(); // Watch all fields
-
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Revise Seu Agente</CardTitle>
-          <CardDescription>Por favor, revise a configuração do agente antes de prosseguir.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div>
-            <h4 className="font-semibold">Nome:</h4>
-            <p>{watchedAgentData.name || 'Não definido'}</p>
-          </div>
-          <div>
-            <h4 className="font-semibold">Descrição:</h4>
-            <p>{watchedAgentData.description || 'Não definido'}</p>
-          </div>
-          <div>
-            <h4 className="font-semibold">URL do Avatar:</h4>
-            <p>{watchedAgentData.avatarUrl || 'Não definido'}</p>
-          </div>
-          <div>
-            <h4 className="font-semibold">Instruções:</h4>
-            <pre className="whitespace-pre-wrap p-2 bg-gray-100 dark:bg-gray-900 rounded-md">
-              {watchedAgentData.instruction || 'Não definido'}
-            </pre>
-          </div>
-          {watchedAgentData.systemPrompt && (
-            <div>
-              <h4 className="font-semibold">Prompt de Sistema:</h4>
-              <pre className="whitespace-pre-wrap p-2 bg-gray-100 dark:bg-gray-900 rounded-md">
-                {watchedAgentData.systemPrompt}
-              </pre>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
+  // ReviewStep component is removed as "Modelo & Geração" is now a dedicated settings tab.
+  // The data previously shown in ReviewStep is editable in other tabs.
 
   return (
     <div className="container mx-auto py-8">
@@ -292,34 +259,40 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
             </Card>
           </TabsContent>
 
+          <TabsContent value="modelo_geracao">
+            {/* LLMAgentForm is now part of this tab */}
+            <LLMAgentForm />
+          </TabsContent>
+
           <TabsContent value="ferramentas">
             <Card>
-              <CardHeader><CardTitle>Ferramentas</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>Ferramentas</CardTitle>
+                <CardDescription>Configure as ferramentas e capacidades do seu agente.</CardDescription>
+              </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Em breve: Configure ferramentas e capacidades para o seu agente.</p>
+                <p className="text-muted-foreground">Em breve: Funcionalidade de configuração de ferramentas.</p>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="revisao">
-            <ReviewStep />
-          </TabsContent>
-
-          <TabsContent value="deploy">
-            <AgentDeployTab />
+          <TabsContent value="memoria">
+            <Card>
+              <CardHeader>
+                <CardTitle>Memória</CardTitle>
+                <CardDescription>Defina as configurações de memória do seu agente.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Em breve: Funcionalidade de configuração de memória.</p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 
-        {/* LLMAgentForm for model settings, hidden from wizard steps but part of the form */}
-        {/* This ensures these fields are submitted. We might move them into a wizard step later. */}
-        {/* For now, they are not directly part of the wizard UI but are part of the form */}
-        <div className={activeTab === 'identidade' || activeTab === 'instrucoes' ? 'block mt-6' : 'hidden'}>
-           {/* Show Model config only on first two steps or a dedicated step later */}
-          <LLMAgentForm />
-        </div>
+        {/* LLMAgentForm was moved into the 'modelo_geracao' tab. The conditional div wrapper is removed. */}
 
-        {/* Navigation buttons are now OUTSIDE Tabs but INSIDE BaseAgentForm */}
-        <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        {/* Navigation buttons are OUTSIDE Tabs but INSIDE BaseAgentForm */}
+        <div className="flex justify-between items-center mt-8 pt-6 border-t">
           <div>
             <Button
               variant="outline"
