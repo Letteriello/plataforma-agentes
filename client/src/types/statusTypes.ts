@@ -1,0 +1,19 @@
+// client/src/types/statusTypes.ts
+import type {
+  AGENT_STATUS_ACTIVE,
+  AGENT_STATUS_PENDING,
+  AGENT_STATUS_ERROR,
+  AGENT_STATUS_UNKNOWN,
+  AGENT_STATUS_DEPLOYING,
+  AGENT_STATUS_IDLE,
+  AGENT_STATUS_DEFAULT,
+} from '../constants/agentStatus';
+
+export type AgentStatus =
+  | typeof AGENT_STATUS_ACTIVE
+  | typeof AGENT_STATUS_PENDING
+  | typeof AGENT_STATUS_ERROR
+  | typeof AGENT_STATUS_UNKNOWN
+  | typeof AGENT_STATUS_DEPLOYING
+  | typeof AGENT_STATUS_IDLE
+  | typeof AGENT_STATUS_DEFAULT;

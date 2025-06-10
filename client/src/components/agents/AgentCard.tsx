@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { cn } from '@/lib/utils';
+import { AVATAR_FALLBACK_TEXT, STATUS_LABEL_FALLBACK_TEXT } from '../../constants/uiConstants';
 
 // Props para o AgentCard, incluindo a possibilidade de um callback onClick
 export interface AgentCardProps {
@@ -53,7 +54,7 @@ export function AgentCard({ agent, onClick, className, isSelected }: AgentCardPr
       <CardHeader className="flex flex-row items-center gap-4 p-4">
         <Avatar className="h-12 w-12">
           <AvatarImage src={imageUrl} alt={title} />
-          <AvatarFallback>{title?.substring(0, 2).toUpperCase() || 'AG'}</AvatarFallback>
+          <AvatarFallback>{title?.substring(0, 2).toUpperCase() || AVATAR_FALLBACK_TEXT}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <CardTitle className="text-lg font-semibold leading-tight">{title}</CardTitle>
@@ -63,7 +64,7 @@ export function AgentCard({ agent, onClick, className, isSelected }: AgentCardPr
       <CardContent className="p-4 pt-0">
         {/* Seção de Status */}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{status.label || 'Status'}</span>
+          <span className="text-sm text-muted-foreground">{status.label || STATUS_LABEL_FALLBACK_TEXT}</span>
           <StatusBadge status={status.text} label={status.label} />
         </div>
         
