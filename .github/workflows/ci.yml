@@ -17,6 +17,10 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - name: Run npm audit
+        run: npm audit --audit-level=high
       - run: npm run lint
       - run: npm run test -- --run
+      - name: Analyze code complexity
+        run: npm run analyze:complexity
       - run: npm run build
