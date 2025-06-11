@@ -1,7 +1,6 @@
 // Em client/src/components/chat/ChatInterface.tsx
 import React, { useEffect } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { ConversationList } from './ConversationList';
 import { AgentWorkspace } from './AgentWorkspace';
 import type { ComponentType } from 'react';
 import { useChatStore } from '@/store/chatStore';
@@ -22,10 +21,11 @@ const mockAgentsForSelector = [
 ];
 
 interface ChatInterfaceProps {
+  LeftPanelComponent?: ComponentType; // Added
   RightPanelComponent?: ComponentType;
 }
 
-export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInterfaceProps) => {
+export const ChatInterface = ({ LeftPanelComponent, RightPanelComponent = AgentWorkspace }: ChatInterfaceProps) => {
   const {
     loadConversations,
     setSelectedConversationId,
@@ -66,16 +66,29 @@ export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInte
     addMessage(newMessage);
 
     // Simulate agent response
+    // Se a mensagem do usuário contiver "error", simule uma resposta de erro
+    const simulateError = text.toLowerCase().includes('error');
+
     setTimeout(() => {
-      const agentResponse: ChatMessage = {
-        id: Date.now().toString(),
-        text: "Esta \u00e9 uma resposta simulada do agente.",
-        sender: 'agent',
-        // Ensure agentDisplayName is available here or use a fallback
-        senderName: conversations.find(c => c.id === selectedConversationId)?.agentName || "Agente",
-        timestamp: new Date().toISOString(),
-        // type: 'error' // Uncomment to test error styling
-      };
+      let agentResponse: ChatMessage;
+      if (simulateError) {
+        agentResponse = {
+          id: Date.now().toString(),
+          text: "Ocorreu um erro simulado ao processar sua mensagem.",
+          sender: 'agent',
+          senderName: conversations.find(c => c.id === selectedConversationId)?.agentName || "Agente",
+          timestamp: new Date().toISOString(),
+          type: 'error', // Definir o tipo como erro
+        };
+      } else {
+        agentResponse = {
+          id: Date.now().toString(),
+          text: "Esta é uma resposta simulada do agente.",
+          sender: 'agent',
+          senderName: conversations.find(c => c.id === selectedConversationId)?.agentName || "Agente",
+          timestamp: new Date().toISOString(),
+        };
+      }
       addMessage(agentResponse);
       setIsAgentReplying(false); // Stop loading
     }, 2000);
@@ -103,9 +116,11 @@ export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInte
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1 rounded-lg border">
-      <ResizablePanel defaultSize={20} minSize={15}> {/* Adjusted defaultSize */}
-        <ConversationList />
-      </ResizablePanel>
+      {LeftPanelComponent && (
+        <ResizablePanel defaultSize={20} minSize={15}>
+          <LeftPanelComponent />
+        </ResizablePanel>
+      )}
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={55} minSize={30}> {/* Adjusted defaultSize */}
         <div className="flex h-full flex-col">
