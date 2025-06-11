@@ -1,17 +1,50 @@
 // client/src/components/chat/ConversationList.tsx
 import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils'; // Import cn for conditional classes
-import { useChatStore } from '@/store/chatStore'; // Import useChatStore
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'; // Import Avatar components
+import { cn } from '@/lib/utils';
+import { useChatStore } from '@/store/chatStore';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Plus, MoreVertical } from 'lucide-react';
 
 const ConversationList: React.FC = () => {
-  const { conversations, selectedConversationId, setSelectedConversationId } = useChatStore();
+  const {
+    conversations,
+    selectedConversationId,
+    setSelectedConversationId,
+    addConversation,
+    renameConversation,
+    deleteConversation,
+  } = useChatStore();
+
+  const handleNewConversation = () => {
+    const id = Date.now().toString();
+    addConversation({ id, agentName: 'Nova Conversa', lastMessage: '' });
+    setSelectedConversationId(id);
+  };
+
+  const handleRename = (id: string) => {
+    const newName = prompt('Novo nome da conversa');
+    if (newName) renameConversation(id, newName);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('Excluir esta conversa?')) deleteConversation(id);
+  };
 
   return (
     <div className="flex h-full flex-col border-r border-border bg-card">
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-semibold text-foreground">Conversas</h2>
+      <div className="flex items-center justify-between p-4 border-b border-border">
+        <h2 className="text-lg font-semibold text-foreground">Sessões</h2>
+        <Button variant="outline" size="icon" onClick={handleNewConversation} aria-label="Nova Conversa">
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
       <ScrollArea className="flex-1 p-1">
         {conversations.map((convo) => (
@@ -30,10 +63,26 @@ const ConversationList: React.FC = () => {
               <p className="font-medium text-foreground text-sm truncate">{convo.agentName}</p>
               <p className="text-xs text-muted-foreground truncate">{convo.lastMessage || 'Nenhuma mensagem'}</p>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Ações" onClick={(e) => e.stopPropagation()}>
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right">
+                <DropdownMenuItem onSelect={() => handleRename(convo.id)}>Renomear</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleDelete(convo.id)}>Excluir</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ))}
         {conversations.length === 0 && (
-          <p className="p-3 text-sm text-muted-foreground">Nenhuma conversa ativa.</p>
+          <div className="flex flex-col items-center gap-2 p-3 text-sm text-muted-foreground">
+            <p>Inicie uma nova conversa para testar seu agente</p>
+            <Button variant="outline" size="sm" onClick={handleNewConversation}>
+              <Plus className="mr-2 h-4 w-4" /> Nova Conversa
+            </Button>
+          </div>
         )}
       </ScrollArea>
     </div>

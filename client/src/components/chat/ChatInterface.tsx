@@ -10,6 +10,7 @@ import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from './types'; // Import ChatMessage for constructing new messages
 
 interface ChatInterfaceProps {
@@ -67,7 +68,7 @@ export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInte
 
   return (
     <ResizablePanelGroup direction="horizontal" className="flex-1 rounded-lg border">
-      <ResizablePanel defaultSize={20} minSize={15}>
+      <ResizablePanel defaultSize={25} minSize={15}>
         <ConversationList />
       </ResizablePanel>
       <ResizableHandle withHandle />
@@ -90,9 +91,9 @@ export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInte
             </div>
           </header>
 
-          <div className="flex-1 overflow-y-auto"> {/* Removed p-4, MessageList now has it */}
-            <MessageList messages={messages} /> {/* Pass messages from store */}
-          </div>
+          <ScrollArea className="flex-1">
+            <MessageList messages={messages} />
+          </ScrollArea>
 
           <div className="border-t"> {/* Removed p-4, ChatInput now has it */}
             <ChatInput onSendMessage={handleSendMessage} /> {/* Pass handler to ChatInput */}
@@ -100,7 +101,7 @@ export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInte
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={30} minSize={25}>
+      <ResizablePanel defaultSize={25} minSize={25}>
         <RightPanelComponent />
       </ResizablePanel>
     </ResizablePanelGroup>
