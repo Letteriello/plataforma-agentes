@@ -5,7 +5,8 @@ import {
 } from '../components/governance/AutonomySpectrumSelector'
 import { ApprovalInbox } from '../components/governance/ApprovalInbox'
 import { ApprovalHistoryModal } from '../components/governance/ApprovalHistoryModal'
-import { ApprovalItem, HistoryItem } from '@/types/governance'
+import { AuditLogTable } from '@/components/governance/AuditLogTable' // Import the new component
+import { ApprovalItem, HistoryItem, AuditLog } from '@/types/governance'
 import { useToast } from '@/components/ui/use-toast'
 import {
   getAutonomyLevel,
@@ -14,6 +15,7 @@ import {
   approveAction,
   rejectAction,
   getApprovalHistory,
+  getAuditLogs, // Import the new service function
 } from '@/api/governanceService'
 
 const GovernancePage: React.FC = () => {
@@ -22,6 +24,7 @@ const GovernancePage: React.FC = () => {
     useState<AutonomyLevel>('Semi-Autônomo')
   const [approvals, setApprovals] = useState<ApprovalItem[]>([])
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]) // Add state for audit logs
   const [isHistoryModalOpen, setHistoryModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -29,14 +32,16 @@ const GovernancePage: React.FC = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true)
-      const [autonomyData, approvalsData, historyData] = await Promise.all([
+      const [autonomyData, approvalsData, historyData, auditLogsData] = await Promise.all([
         getAutonomyLevel(),
         getPendingApprovals(),
         getApprovalHistory(),
+        getAuditLogs(), // Fetch audit logs
       ])
       setAutonomyLevel(autonomyData.autonomyLevel)
       setApprovals(approvalsData)
       setHistory(historyData)
+      setAuditLogs(auditLogsData) // Set audit logs state
       setError(null)
     } catch (err) {
       setError('Falha ao carregar os dados de governança.')
@@ -146,6 +151,26 @@ const GovernancePage: React.FC = () => {
         onClose={() => setHistoryModalOpen(false)}
         history={history}
       />
+
+      <section>
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold tracking-tight">
+            Painel de Logs de Auditoria
+          </h3>
+          <p className="text-muted-foreground">
+            Visualize todas as ações importantes realizadas por usuários e agentes na plataforma.
+          </p>
+        </div>
+        <div className="mt-4">
+        {isLoading ? (
+            <p>Carregando logs de auditoria...</p>
+          ) : error ? (
+            <p className="text-destructive">{error}</p>
+          ) : (
+            <AuditLogTable logs={auditLogs} />
+          )}
+        </div>
+      </section>
     </div>
   )
 }

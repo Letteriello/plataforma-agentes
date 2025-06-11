@@ -1,22 +1,42 @@
 // src/types/governance.ts
 
+export type AutonomyLevel =
+  | 'Nenhum'
+  | 'Apenas Ferramentas Seguras'
+  | 'Semi-Autônomo'
+  | 'Totalmente Autônomo'
+
 export interface ApprovalItem {
-  id: string;
-  agentName: string;
-  action: string;
-  context: string;
-  status: 'pending' | 'approved' | 'rejected';
-  createdAt: string; // Consider using Date type if appropriate for application logic
+  id: string
+  agentName: string
+  action: string
+  context: string
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
 }
 
 export interface HistoryItem {
-  id: string; // Can be the original approval item's ID or a new unique ID for the history entry
-  agentName: string;
-  action: string; // e.g., 'Tool Usage', 'Configuration Change', 'Message Review'
-  status: 'approved' | 'rejected' | 'auto-approved' | 'pending' | 'escalated'; // Expanded status
-  timestamp: string; // ISO date string of when the decision/event occurred
-  actor: string; // User ID, system identifier (e.g., 'System:AutoApprovalRule'), or agent ID
-  reason?: string; // Optional reason for approval/rejection, or note
-  context?: string; // Original context of the approval request, if needed for history view
-  changes?: Record<string, { oldValue: any; newValue: any }>; // For config changes
+  id: string
+  agentName: string
+  action: string
+  status: 'approved' | 'rejected'
+  timestamp: string
+  actor: string
+  reason?: string
 }
+
+export interface AuditLogActor {
+  type: 'user' | 'agent'
+  id: string
+  name: string
+}
+
+export interface AuditLog {
+  id: string
+  timestamp: string
+  actor: AuditLogActor
+  action: string
+  details: Record<string, any>
+  ipAddress?: string
+}
+

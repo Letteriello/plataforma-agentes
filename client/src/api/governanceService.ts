@@ -1,5 +1,5 @@
 import api from './api';
-import { ApprovalItem, HistoryItem } from '@/types/governance';
+import { ApprovalItem, HistoryItem, AuditLog } from '@/types/governance';
 import { AutonomyLevel } from '@/components/governance/AutonomySpectrumSelector';
 
 export const getAutonomyLevel = async (): Promise<{ autonomyLevel: AutonomyLevel }> => {
@@ -26,5 +26,10 @@ export const rejectAction = async (id: string, reason: string): Promise<void> =>
 
 export const getApprovalHistory = async (): Promise<HistoryItem[]> => {
   const response = await api.get('/approvals/history');
+  return response.data;
+};
+
+export const getAuditLogs = async (): Promise<AuditLog[]> => {
+  const response = await api.get('/audit-logs');
   return response.data;
 };
