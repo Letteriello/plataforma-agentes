@@ -9,8 +9,8 @@ export const BaseAgentSchema = z.object({
   version: z.string().default('1.0.0'),
   isPublic: z.boolean().default(false),
   tags: z.array(z.string()).default([]),
-  createdAt: z.string().default(() => new Date().toISO()),
-  updatedAt: z.string().default(() => new Date().toISO()),
+  createdAt: z.string().default(() => new Date().toISOString()),
+  updatedAt: z.string().default(() => new Date().toISOString()),
 });
 
 export type BaseAgent = z.infer<typeof BaseAgentSchema>;
@@ -29,6 +29,7 @@ export const LLMAgentSchema = BaseAgentSchema.extend({
   instruction: z.string().default(''),
   systemPrompt: z.string().default(''),
   avatarUrl: z.string().url({ message: "Invalid URL format" }).optional().nullable().default(null),
+  tools: z.array(z.string()).default([]),
 });
 
 export type LLMAgent = z.infer<typeof LLMAgentSchema>;
@@ -136,6 +137,7 @@ export function createDefaultAgent<T extends Agent['type']>(
         instruction: '',
         systemPrompt: '',
         avatarUrl: null,
+        tools: [],
       } as any;
       
     case 'sequential':

@@ -29,3 +29,11 @@ export const updateAgent = async (
 export const deleteAgent = async (id: string): Promise<void> => {
   await apiClient.delete(`/agents/${id}`)
 }
+
+export default {
+  fetchAgents,
+  fetchAgentById,
+  createAgent,
+  updateAgent,
+  deleteAgent,
+}
