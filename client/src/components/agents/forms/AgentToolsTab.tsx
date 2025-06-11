@@ -1,28 +1,26 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Tool } from '@/types'
-import toolService from '@/api/toolService'
+import { fetchTools, ToolDTO } from '@/api/toolService'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
-import { LLMAgent } from '@/types/agents'
 
-export function AgentToolsTab() {
-  const { control } = useFormContext<LLMAgent>()
-  const [tools, setTools] = useState<Tool[]>([])
+const AgentToolsTab: React.FC = () => {
+  const { control } = useFormContext()
+  const [tools, setTools] = useState<ToolDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const loadTools = async () => {
       try {
-        const fetched = await toolService.fetchTools()
+        const fetched = await fetchTools()
         setTools(fetched)
       } catch (err) {
         setError('Failed to load tools')

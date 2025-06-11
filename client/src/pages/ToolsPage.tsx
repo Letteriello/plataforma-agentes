@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { toolService } from '@/api/toolService'
+import {
+  fetchTools,
+  createTool,
+  updateTool,
+  deleteTool,
+  ToolDTO,
+  CreateToolDTO,
+} from '@/api/toolService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { PlusCircle, Edit, Trash2 } from 'lucide-react'
+import { PageTitle } from '@/components/ui/page-title'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
@@ -22,52 +31,76 @@ import {
   TableCell,
 } from '@/components/ui/table'
 
-import { Tool } from '@/types'
-export default function FerramentasPage() {
-  const [tools, setTools] = useState<Tool[]>([])
+const ToolsPage: React.FC = () => {
+  const [tools, setTools] = useState<ToolDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingTool, setEditingTool] = useState<ToolDTO | null>(null)
   const [search, setSearch] = useState('')
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [newTool, setNewTool] = useState<{ name: string; description: string }>(
-    {
-      name: '',
-      description: '',
-    },
-  )
+
+  const loadTools = async () => {
+    try {
+      setIsLoading(true)
+      const fetchedTools = await fetchTools()
+      setTools(fetchedTools)
+    } catch (err) {
+      setError('Failed to fetch tools.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchTools = async () => {
+    loadTools()
+  }, [])
+
+  const handleAddNew = () => {
+    setEditingTool(null)
+    setIsFormOpen(true)
+  }
+
+  const handleEdit = (tool: ToolDTO) => {
+    setEditingTool(tool)
+    setIsFormOpen(true)
+  }
+
+  const handleDelete = async (toolId: string) => {
+    if (window.confirm('Are you sure you want to delete this tool?')) {
       try {
-        setIsLoading(true)
-        const fetchedTools = await toolService.fetchTools()
-        setTools(fetchedTools)
-        setError(null)
-      } catch (err) {
-        setError('Failed to fetch tools.')
-        console.error(err)
-      } finally {
-        setIsLoading(false)
+        await deleteTool(toolId)
+        setTools(tools.filter((t) => t.id !== toolId))
+      } catch (error) {
+        setError('Failed to delete tool.')
       }
     }
+  }
 
-    fetchTools()
-  }, [])
+  const handleFormClose = () => {
+    setIsFormOpen(false)
+    setEditingTool(null)
+  }
+
+  const handleSave = async (toolData: CreateToolDTO) => {
+    try {
+      if (editingTool) {
+        await updateTool(editingTool.id, toolData)
+      } else {
+        await createTool(toolData)
+      }
+      handleFormClose()
+      loadTools() // Refresh the list
+    } catch (error) {
+      setError('Failed to save tool.')
+    }
+  }
 
   const filteredTools = tools.filter((tool) =>
     tool.name.toLowerCase().includes(search.toLowerCase()),
   )
 
-  const handleSave = () => {
-    if (!newTool.name.trim()) return
-    const id = `${newTool.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
-    setTools([
-      ...tools,
-      { id, name: newTool.name, description: newTool.description },
-    ])
-    setNewTool({ name: '', description: '' })
-    setDialogOpen(false)
-  }
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div className="text-destructive">{error}</div>
 
   return (
     <div className="p-6 space-y-4">
@@ -80,44 +113,10 @@ export default function FerramentasPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-xs"
           />
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Nova Ferramenta</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Nova Ferramenta</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="tool-name">Nome</Label>
-                  <Input
-                    id="tool-name"
-                    value={newTool.name}
-                    onChange={(e) =>
-                      setNewTool({ ...newTool, name: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="tool-desc">Descrição</Label>
-                  <Textarea
-                    id="tool-desc"
-                    value={newTool.description}
-                    onChange={(e) =>
-                      setNewTool({ ...newTool, description: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <DialogFooter className="pt-4">
-                <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleSave}>Salvar</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button onClick={handleAddNew}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Adicionar Ferramenta
+          </Button>
         </div>
       </div>
       <Card>

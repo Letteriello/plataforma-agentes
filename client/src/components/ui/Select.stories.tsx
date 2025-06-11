@@ -17,7 +17,7 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
+
   argTypes: {
     // Args for the Select (Root) component itself
     disabled: { control: 'boolean' },

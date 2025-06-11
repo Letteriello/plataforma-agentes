@@ -1,17 +1,16 @@
 import { create } from 'zustand'
-import { Tool } from '@/types'
-import { toolService } from '@/api/toolService'
+import { fetchTools, ToolDTO } from '@/api/toolService'
 
 interface ToolState {
-  tools: Tool[]
+  tools: ToolDTO[]
   isLoading: boolean
   error: string | null
 }
 
 interface ToolActions {
   fetchTools: () => Promise<void>
-  addTool: (tool: Tool) => void
-  updateTool: (tool: Tool) => void
+  addTool: (tool: ToolDTO) => void
+  updateTool: (tool: ToolDTO) => void
   removeTool: (toolId: string) => void
 }
 
@@ -22,18 +21,23 @@ export const useToolStore = create<ToolState & ToolActions>((set) => ({
   fetchTools: async () => {
     set({ isLoading: true, error: null })
     try {
-      const tools = await toolService.fetchTools()
+      const tools = await fetchTools()
       set({ tools, isLoading: false })
     } catch (error) {
       console.error('Failed to fetch tools:', error)
       set({ error: 'Failed to fetch tools.', isLoading: false })
     }
   },
-  addTool: (tool) => set((state) => ({ tools: [...state.tools, tool] })),
-  updateTool: (tool) =>
+  addTool: (tool: ToolDTO) =>
+    set((state) => ({ tools: [...state.tools, tool] })),
+  updateTool: (updatedTool: ToolDTO) =>
     set((state) => ({
-      tools: state.tools.map((t) => (t.id === tool.id ? tool : t)),
+      tools: state.tools.map((tool) =>
+        tool.id === updatedTool.id ? updatedTool : tool,
+      ),
     })),
-  removeTool: (toolId) =>
-    set((state) => ({ tools: state.tools.filter((t) => t.id !== toolId) })),
+  removeTool: (toolId: string) =>
+    set((state) => ({
+      tools: state.tools.filter((tool) => tool.id !== toolId),
+    })),
 }))

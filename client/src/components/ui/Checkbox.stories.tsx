@@ -10,7 +10,7 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
+
   argTypes: {
     checked: { control: 'boolean' },
     disabled: { control: 'boolean' },

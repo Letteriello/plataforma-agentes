@@ -1,23 +1,57 @@
-import { Tool } from '@/types'
+import apiClient from '@/api/apiClient'
+import type { ToolDefinition } from '@/types'
 
-export interface IToolService {
-  fetchTools(): Promise<Tool[]>
-  // Future methods for a real API service:
-  // addTool(tool: Tool): Promise<Tool>;
-  // updateTool(tool: Tool): Promise<Tool>;
-  // deleteTool(toolId: string): Promise<void>;
+/**
+ * Data Transfer Object for a Tool, omitting the 'execute' function.
+ * The backend will not send the implementation of the function.
+ */
+export interface ToolDTO extends Omit<ToolDefinition, 'execute'> {
+  id: string
 }
 
-export const toolService: IToolService = {
-  async fetchTools(): Promise<Tool[]> {
-    // This is a mock implementation.
-    // In a real application, this would make an API call.
-    console.log('Fetching tools from mock service...')
-    // Simulate an API call with a delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    // Return an empty array to simulate no tools being available initially.
-    return []
-  },
+/**
+ * DTO for creating a new Tool.
+ */
+export type CreateToolDTO = Omit<ToolDTO, 'id'>
+
+/**
+ * DTO for updating a Tool.
+ */
+export type UpdateToolDTO = Partial<CreateToolDTO>
+
+export const fetchTools = async (): Promise<ToolDTO[]> => {
+  const { data } = await apiClient.get<ToolDTO[]>('/tools')
+  return data
+}
+
+export const fetchToolById = async (id: string): Promise<ToolDTO> => {
+  const { data } = await apiClient.get<ToolDTO>(`/tools/${id}`)
+  return data
+}
+
+export const createTool = async (payload: CreateToolDTO): Promise<ToolDTO> => {
+  const { data } = await apiClient.post<ToolDTO>('/tools', payload)
+  return data
+}
+
+export const updateTool = async (
+  id: string,
+  payload: UpdateToolDTO,
+): Promise<ToolDTO> => {
+  const { data } = await apiClient.put<ToolDTO>(`/tools/${id}`, payload)
+  return data
+}
+
+export const deleteTool = async (id: string): Promise<void> => {
+  await apiClient.delete(`/tools/${id}`)
+}
+
+const toolService = {
+  fetchTools,
+  fetchToolById,
+  createTool,
+  updateTool,
+  deleteTool,
 }
 
 export default toolService

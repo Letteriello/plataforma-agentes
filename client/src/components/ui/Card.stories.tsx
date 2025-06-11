@@ -18,7 +18,7 @@ const meta = {
   parameters: {
     layout: 'padded', // Use padded to give some space around the card
   },
-  tags: ['autodocs'],
+
   // No specific args for the Card root usually, props are passed to children or are HTML attributes
   argTypes: {
     // children: { control: 'object' } // Content of the card

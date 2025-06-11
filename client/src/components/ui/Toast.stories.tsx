@@ -13,7 +13,7 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
+
   decorators: [
     // The ToastProvider and Toaster are already in preview.tsx,
     // so individual stories don't need to re-add them.

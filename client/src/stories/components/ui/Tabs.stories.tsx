@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 const meta: Meta<typeof Tabs> = {
   title: 'Components/UI/Tabs',
   component: Tabs,
-  tags: ['autodocs'],
+
   decorators: [
     (Story) => (
       <div className="w-[500px]">

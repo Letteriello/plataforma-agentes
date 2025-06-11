@@ -32,7 +32,7 @@ export function AgentActivityCard({
   isLoading = false,
   className = '',
 }: AgentActivityCardProps) {
-  // TODO: Implementar gráfico de atividade quando a biblioteca de gráficos estiver configurada
+
 
   return (
     <Card className={className}>

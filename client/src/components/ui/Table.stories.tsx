@@ -16,7 +16,7 @@ const meta = {
   parameters: {
     layout: 'padded', // Allow table to take space
   },
-  tags: ['autodocs'],
+
 } satisfies Meta<typeof Table>
 
 export default meta

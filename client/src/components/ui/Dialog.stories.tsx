@@ -19,7 +19,7 @@ const meta = {
   parameters: {
     layout: 'centered', // Dialogs are typically centered
   },
-  tags: ['autodocs'],
+
   // Args for the Dialog (Root) component itself might include `open`, `onOpenChange` for controlled dialogs
   argTypes: {
     // open: { control: 'boolean' },

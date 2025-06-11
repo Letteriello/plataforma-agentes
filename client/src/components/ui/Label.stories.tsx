@@ -9,7 +9,7 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
+
   argTypes: {
     children: { control: 'text' },
     htmlFor: { control: 'text' },

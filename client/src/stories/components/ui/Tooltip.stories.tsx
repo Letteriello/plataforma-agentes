@@ -21,7 +21,7 @@ const meta = {
       },
     },
   },
-  tags: ['autodocs'],
+
   decorators: [
     (Story) => (
       <TooltipProvider>

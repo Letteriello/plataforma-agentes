@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator'
 const meta: Meta<typeof Separator> = {
   title: 'Components/UI/Separator',
   component: Separator,
-  tags: ['autodocs'],
+
   decorators: [
     (Story) => (
       <div className="w-full max-w-2xl p-4">

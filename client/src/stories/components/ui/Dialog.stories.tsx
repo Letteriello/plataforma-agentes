@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label'
 const meta: Meta<typeof Dialog> = {
   title: 'Components/UI/Dialog',
   component: Dialog,
-  tags: ['autodocs'],
+
   parameters: {
     layout: 'centered',
   },

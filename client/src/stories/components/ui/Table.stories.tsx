@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 const meta: Meta<typeof Table> = {
   title: 'Components/UI/Table',
   component: Table,
-  tags: ['autodocs'],
+
   decorators: [
     (Story) => (
       <div className="w-full max-w-4xl">

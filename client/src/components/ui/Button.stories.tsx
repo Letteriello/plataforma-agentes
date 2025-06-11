@@ -10,8 +10,7 @@ const meta = {
   parameters: {
     layout: 'centered', // Center the component in the Canvas
   },
-  // Tags for autodocs
-  tags: ['autodocs'],
+
   // ArgTypes for better control in Storybook UI
   argTypes: {
     variant: {
