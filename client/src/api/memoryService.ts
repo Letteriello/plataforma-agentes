@@ -1,4 +1,4 @@
-import apiClient from '../apiClient';
+import apiClient from '@/api/apiClient';
 import { KnowledgeBase, Document, KnowledgeBaseType, KnowledgeBaseConfig } from '@/types/memory';
 
 // Interface for search results, assuming it might be used by a search function

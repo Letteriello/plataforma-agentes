@@ -2,14 +2,14 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAgents } from './useAgents';
-import { useAgentStore } from '@/components/features/agents-list/store/agentStore';
+import { useAgentStore } from '@/store/agentStore';
 import { AnyAgentConfig, AgentType } from '@/types/core/agent'; // Corrected path
 import { server } from '@/mocks/server'; // Import MSW server for specific handlers
 import { http, HttpResponse } from 'msw'; // Import msw utilities for dynamic handlers
 import { mockAgentsDB, resetMockAgentsDB } from '@/mocks/handlers'; // To access the mock DB
 
 // Mock the Zustand store
-vi.mock('@/components/features/agents-list/store/agentStore');
+vi.mock('@/store/agentStore');
 
 const mockLoadAgents = vi.fn();
 const mockAgentsSelector = vi.fn(); // For selecting agents from store

@@ -1,4 +1,4 @@
-import apiClient from '../apiClient';
+import apiClient from '@/api/apiClient';
 import { Session, ChatMessage, Attachment } from '@/types'; // Attachment might be part of ChatMessage
 
 export interface IChatService {

@@ -169,3 +169,14 @@ export {
   DialogTitle,
   DialogDescription,
 };
+
+// Export Props types as in dialog-new.tsx
+export type {
+  DialogPortalProps,
+  DialogOverlayProps,
+  DialogContentProps,
+  DialogHeaderProps,
+  DialogFooterProps,
+  DialogTitleProps,
+  DialogDescriptionProps,
+};

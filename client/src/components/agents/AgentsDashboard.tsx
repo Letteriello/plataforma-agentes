@@ -5,7 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusIcon, SearchIcon, Loader2, Trash2, Pencil, Play } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Agent, AgentType } from '@/types/agents';
+import { Agent, AgentType } from '@/types/agents'; // AgentType will be used by the filter
+import { mockAgents } from '@/data/mocks/mock-dashboard-agents'; // Import mockAgents
+import { agentTypeLabels } from '@/lib/agent-utils'; // Import centralized agentTypeLabels
 import { useToast } from '@/components/ui/use-toast';
 import {
   Tooltip,
@@ -16,68 +18,12 @@ import {
 import { AgentListItem } from './AgentListItem'; // Adjusted path if necessary
 import { useVirtualizer } from '@tanstack/react-virtual';
 
-// Mock data - replace with actual API calls
-const mockAgents: Agent[] = [
-  {
-    id: '1',
-    name: 'Customer Support Bot',
-    description: 'Handles customer inquiries and support tickets',
-    type: 'llm',
-    model: 'gemini-1.5-pro',
-    temperature: 0.7,
-    maxTokens: 1024,
-    topP: 1,
-    topK: 40,
-    stopSequences: [],
-    frequencyPenalty: 0,
-    presencePenalty: 0,
-    instruction: 'You are a helpful customer support assistant. Be polite and professional.',
-    systemPrompt: '## Guidelines\n- Always verify customer information\n- Escalate complex issues to a human agent\n- Provide clear next steps',
-    version: '1.0.0',
-    isPublic: false,
-    tags: ['support', 'customer-service'],
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-  },
-  {
-    id: '2',
-    name: 'Document Analysis Workflow',
-    description: 'Processes and analyzes documents in a sequential workflow',
-    type: 'sequential',
-    agents: ['1', '3'],
-    maxSteps: 5,
-    stopOnError: true,
-    version: '1.0.0',
-    isPublic: true,
-    tags: ['document', 'workflow', 'automation'],
-    createdAt: '2024-01-15T00:00:00Z',
-    updatedAt: '2024-01-15T00:00:00Z',
-  },
-  {
-    id: '3',
-    name: 'Data Processing Pipeline',
-    description: 'Processes data in parallel for better performance',
-    type: 'parallel',
-    agents: ['1', '4'],
-    maxConcurrent: 3,
-    timeoutMs: 30000,
-    version: '1.0.0',
-    isPublic: true,
-    tags: ['data', 'pipeline', 'performance'],
-    createdAt: '2024-02-01T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z',
-  },
-];
+// Removed mockAgents definition from here
 
-// Labels for dashboard filter buttons - AgentListItem has its own encapsulated version
-const dashboardAgentTypeLabels: Record<AgentType, string> = {
-  llm: 'LLM',
-  sequential: 'Sequential',
-  parallel: 'Parallel',
-  a2a: 'A2A',
-};
+// Removed dashboardAgentTypeLabels definition from here
+// It will be centralized in agent-utils.ts later
 
-type AgentFilter = 'all' | AgentType;
+type AgentFilter = 'all' | AgentType; // AgentType is imported
 
 export function AgentsDashboard() {
   const navigate = useNavigate();
@@ -204,14 +150,14 @@ export function AgentsDashboard() {
               >
                 All
               </Button>
-              {Object.entries(dashboardAgentTypeLabels).map(([type, label]) => (
+              {Object.entries(agentTypeLabels).map(([type, label]) => (
                 <Button
                   key={type}
                   variant={filter === type ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilter(type as AgentType)}
                 >
-                  {label}
+                  {label} {/* Now using the label from centralized agentTypeLabels */}
                 </Button>
               ))}
             </div>

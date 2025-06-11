@@ -1,6 +1,6 @@
 import { vi, describe, beforeEach, test, expect } from 'vitest';
 import agentService from './agentService';
-import apiClient from '../apiClient'; // Import apiClient to mock it
+import apiClient from '@/api/apiClient'; // Import apiClient to mock it
 import { AgentType, LlmAgentConfig } from '@/types/agent'; // Assuming AnyAgentConfig is not needed for these specific tests now
 
 // Remove store mocks as agentService directly uses apiClient, not the store's state-modifying functions.
@@ -8,7 +8,7 @@ import { AgentType, LlmAgentConfig } from '@/types/agent'; // Assuming AnyAgentC
 // const updateAgent = vi.fn();
 // const removeAgent = vi.fn();
 
-// vi.mock('@/components/features/agents-list/store/agentStore', () => ({
+// vi.mock('@/store/agentStore', () => ({
 //   useAgentStore: {
 //     getState: () => ({ addAgent, updateAgent, removeAgent }),
 //   },

@@ -1,4 +1,4 @@
-import apiClient from '../apiClient';
+import apiClient from '@/api/apiClient';
 // Assuming Agent and Activity types will be defined in a central place like @/types eventually.
 // For now, if they are only in dashboardStore, this import might need adjustment post-refactor of stores.
 // If these types are simple, they could also be defined here or imported from @/types if they exist there.

@@ -1,25 +1,19 @@
 import { describe, expect, test, vi } from 'vitest';
 import toolService from './toolService';
-import { useToolStore } from '@/store/toolStore';
-import { Tool } from '@/types';
+// Removed: import { useToolStore } from '@/store/toolStore';
+import { Tool } from '@/types'; // Tool might still be needed if mock-tools.json uses it
+import mockToolsData from '@/data/mock-tools.json'; // Import the actual mock data
 
-vi.mock('@/store/toolStore');
+// Removed: vi.mock('@/store/toolStore');
 
-const mockTools: Tool[] = [
-  { id: 't1', name: 'Tool 1', description: 'd1' },
-];
+// Removed: const mockTools: Tool[] = [ ... ];
 
-(useToolStore as unknown as vi.Mock).getState = vi.fn(() => ({
-  tools: mockTools,
-  loadTools: vi.fn(),
-  addTool: vi.fn(),
-  updateTool: vi.fn(),
-  removeTool: vi.fn(),
-}));
+// Removed: (useToolStore as unknown as vi.Mock).getState = vi.fn(...);
 
 describe('toolService', () => {
-  test('fetchTools returns tools', async () => {
+  test('fetchTools returns tools directly from mock JSON', async () => {
     const tools = await toolService.fetchTools();
-    expect(tools).toEqual(mockTools);
+    // Ensure the type casting if mockToolsData is not already Tool[]
+    expect(tools).toEqual(mockToolsData as Tool[]);
   });
 });

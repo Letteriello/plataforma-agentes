@@ -4,25 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Play, Pencil, Trash2, Loader2 } from 'lucide-react';
 import React from 'react'; // Import React
+import { agentTypeLabels, getAgentTypeColor } from '@/lib/agent-utils'; // Import centralized utilities
 
-// Define agentTypeLabels or import from AgentsDashboard if it's not too complex
-const agentTypeLabels: Record<AgentType, string> = { // Assuming AgentType is available
-  llm: 'LLM',
-  sequential: 'Sequential',
-  parallel: 'Parallel',
-  a2a: 'A2A',
-};
-
-// Define getAgentTypeColor or import from AgentsDashboard
- const getAgentTypeColor = (type: AgentType) => { // Assuming AgentType is available
-   const colors = {
-     llm: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-     sequential: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
-     parallel: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-     a2a: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-   };
-   return colors[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
- };
+// Removed local agentTypeLabels
+// Removed local getAgentTypeColor
 
 interface AgentListItemProps {
   agent: Agent;

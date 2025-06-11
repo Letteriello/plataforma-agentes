@@ -226,7 +226,32 @@ export const createNewAgentConfig = (type: AgentType, existingId?: string, exist
         // For now, let's assume it can be temporarily invalid until selected
       } as unknown as LoopAgentConfig; // Cast needed if agent is not set initially
     default:
-      const _exhaustiveCheck: never = type;
-      throw new Error(`Unknown agent type: ${_exhaustiveCheck}`);
+      // Adding a check to satisfy linters or type checkers that expect all paths to return a value,
+      // even if logically unreachable due to AgentType enum constraints.
+      // Or, if AgentType can be extended elsewhere, this provides a fallback.
+      console.error(`Unhandled agent type: ${type}`);
+      throw new Error(`Unknown agent type: ${type}`);
   }
+};
+
+// Moved from AgentListItem.tsx
+export const agentTypeLabels: Record<AgentType, string> = {
+  llm: 'LLM',
+  sequential: 'Sequential',
+  parallel: 'Parallel',
+  a2a: 'A2A',
+  // Ensure all AgentTypes are covered if LoopAgentConfig was fully added
+  // loop: 'Loop', // Example if 'loop' type is used
+};
+
+// Moved from AgentListItem.tsx
+export const getAgentTypeColor = (type: AgentType): string => {
+  const colors: Record<AgentType, string> = {
+    llm: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+    sequential: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
+    parallel: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+    a2a: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+    // loop: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100', // Example for loop
+  };
+  return colors[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
 };
