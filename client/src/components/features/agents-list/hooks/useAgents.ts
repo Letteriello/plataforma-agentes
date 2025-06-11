@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useAgentStore } from '@/components/features/agents-list/store/agentStore'
-import { fetchAgents, deleteAgent } from '@/api/agentService'
+import { useAgentStore } from '@/store/agentStore'
+import { fetchAgents, deleteAgent } from '@/api/agentService' // This line was correct
+import { agentsSelector, loadAgents } from '@/store/agentSelectors' // This line was correct
 import { AgentDTO } from '@/types/api'
 
 export interface UseAgentsReturn {

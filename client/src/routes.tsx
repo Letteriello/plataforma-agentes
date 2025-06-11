@@ -24,18 +24,21 @@ const withSuspense = (Component: React.ComponentType) => {
 };
 
 // Lazy load pages
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const AgentsPage = lazy(() => import('@/pages/agents')); // Corrigido: aponta para o componente React default de agents
-const ToolsPage = lazy(() => import('./pages/Tools')); // Renamed from Ferramentas.tsx
-const MemoryPage = lazy(() => import('./pages/Memory')); // Renamed from Memoria.tsx
-const Deploy = lazy(() => import('./pages/Deploy'));
-const SettingsPage = lazy(() => import('./pages/Settings')); // Renamed from Configuracoes.tsx
-const ChatPage = lazy(() => import('./pages/ChatPage'));
-const PlaygroundPage = lazy(() => import('./pages/Playground'));
-const SessionsPage = lazy(() => import('./pages/Sessions'));
-const AgentTemplatesPage = lazy(() => import('./pages/agents/templates'));
-const AgentAnalyticsPage = lazy(() => import('./pages/agents/analytics'));
-const AgentSettingsPage = lazy(() => import('./pages/agents/settings'));
+const Dashboard = lazy(() => import('./pages/DashboardPage'));
+const AgentsPage = lazy(() => import('@/pages/agents/AgentsIndexPage')); // Updated path
+const ToolsPage = lazy(() => import('./pages/ToolsPage'));
+const MemoryPage = lazy(() => import('./pages/MemoryPage'));
+const Deploy = lazy(() => import('./pages/DeployPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const ChatPage = lazy(() => import('./pages/ChatPage')); // Stays the same
+const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'));
+const SessionsPage = lazy(() => import('./pages/SessionsPage'));
+const AgentTemplatesPage = lazy(() => import('./pages/agents/AgentsTemplatesPage'));
+const AgentAnalyticsPage = lazy(() => import('./pages/agents/AgentsAnalyticsPage'));
+const AgentSettingsPage = lazy(() => import('./pages/agents/AgentsSettingsPage'));
+// Note: The dynamic route for agent editing client/src/pages/agents/edit/AgentsEditEntryPage.tsx
+// is not explicitly imported here. It's likely handled by the routing setup if it's a nested route
+// or needs to be added if it's a top-level route. This script assumes current explicit imports only.
 
 // Error boundary component
 // Ensure ErrorBoundary is defined before its usage or imported if defined elsewhere.

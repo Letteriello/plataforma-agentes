@@ -1,4 +1,4 @@
-import apiClient from '../apiClient'
+import apiClient from '@/api/apiClient'
 import { AgentDTO, CreateAgentDTO } from '@/types/api'
 
 export const fetchAgents = async (): Promise<AgentDTO[]> => {
