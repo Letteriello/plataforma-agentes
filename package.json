@@ -24,8 +24,10 @@
     "@types/uuid": "^10.0.0"
   },
   "dependencies": {
+    "@radix-ui/react-tooltip": "^1.2.7",
     "@tanstack/react-virtual": "^3.13.10",
     "chart.js": "^4.4.9",
+    "framer-motion": "^12.17.0",
     "react-chartjs-2": "^5.3.0",
     "uuid": "^11.1.0"
   }

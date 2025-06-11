@@ -31,6 +31,10 @@ const DialogPortal: React.FC<DialogPortalProps> = ({
 
 DialogPortal.displayName = 'DialogPortal';
 
+// Dialog Overlay Props
+interface DialogOverlayProps 
+  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> {}
+
 // Dialog Overlay
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -179,4 +183,4 @@ export type {
   DialogFooterProps,
   DialogTitleProps,
   DialogDescriptionProps,
-};
+}
