@@ -50,9 +50,11 @@ const AgentsPage = lazy(() => import('@/pages/agents/AgentsIndexPage')) // Updat
 const MemoryPage = lazy(() => import('./pages/MemoryPage'))
 const Deploy = lazy(() => import('./pages/DeployPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const CofrePage = lazy(() =>
+  import('./pages/Cofre').then((module) => ({ default: module.CofrePage }))
+)
 const ChatPage = lazy(() => import('./pages/ChatPage')) // Stays the same
 const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'))
-const CofrePage = lazy(() => import('./pages/Cofre'))
 const SessionsPage = lazy(() => import('./pages/SessionsPage'))
 const AgentTemplatesPage = lazy(
   () => import('./pages/agents/AgentsTemplatesPage'),
