@@ -1,54 +1,134 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { Topbar } from './Topbar'
 import { vi } from 'vitest'
+import { useAuthStore } from '@/store/authStore'
 
-// Mock the CreateAgentDialog to prevent its internal logic from running
+// Mock child components and hooks
 vi.mock('@/components/agents/CreateAgentDialog', () => ({
   CreateAgentDialog: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+    // Simplified mock: just renders children, assumes button is part of children
+    <div data-testid="create-agent-dialog-wrapper">{children}</div>
   ),
 }))
 
-// Mock the ThemeToggle as its implementation is not relevant to this test
 vi.mock('@/components/ui/theme-toggle', () => ({
   ThemeToggle: () => <button>Toggle theme</button>,
 }))
 
+vi.mock('@/store/authStore')
+vi.mock('lucide-react', async () => {
+  const actual = await vi.importActual('lucide-react')
+  return {
+    ...actual,
+    Bell: () => <div data-testid="icon-bell" />,
+    PlusCircle: () => <div data-testid="icon-plus-circle" />,
+    Search: () => <div data-testid="icon-search" />,
+    User: () => <div data-testid="icon-user" />,
+    Settings: () => <div data-testid="icon-settings" />,
+    HelpCircle: () => <div data-testid="icon-help-circle" />,
+    LogOut: () => <div data-testid="icon-logout" />,
+  }
+})
+
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
+
+
 describe('Topbar', () => {
-  it('should render the page title and default actions', () => {
-    render(
+  const mockUser = { name: 'Test User', email: 'test@example.com' }
+  const mockLogout = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Provide a mock implementation for the store
+    (useAuthStore as any).mockReturnValue({
+      user: mockUser,
+      logout: mockLogout,
+    })
+  })
+
+  const renderTopbar = (pageTitle?: string) => {
+    return render(
       <BrowserRouter>
-        <Topbar pageTitle="Meu Painel" />
+        <Topbar pageTitle={pageTitle} />
       </BrowserRouter>,
     )
+  }
 
-    // Check for the page title
+  it('should render the page title and default actions', () => {
+    renderTopbar('Meu Painel')
+
     expect(screen.getByText('Meu Painel')).toBeInTheDocument()
-
-    // Check for the "Criar Agente" button
-    expect(
-      screen.getByRole('button', { name: /Criar Agente/i }),
-    ).toBeInTheDocument()
-
-    // Check for the notification button
-    expect(
-      screen.getByRole('button', { name: /Notificações/i }),
-    ).toBeInTheDocument()
-
-    // Check for the theme toggle button
-    expect(
-      screen.getByRole('button', { name: /Toggle theme/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Criar Agente/i })).toBeInTheDocument()
+    // Notification button has an sr-only span, let's find by that or its icon
+    expect(screen.getByText('Notificações')).toBeInTheDocument() // Checks the sr-only text
+    expect(screen.getByTestId('icon-bell')).toBeInTheDocument() // Checks the icon
+    expect(screen.getByRole('button', { name: /Toggle theme/i })).toBeInTheDocument()
   })
 
   it('should render the default title if no pageTitle prop is provided', () => {
-    render(
-      <BrowserRouter>
-        <Topbar />
-      </BrowserRouter>,
-    )
-
+    renderTopbar()
     expect(screen.getByText('Painel')).toBeInTheDocument()
   })
+
+  it('should display user avatar and open dropdown menu on click', async () => {
+    renderTopbar()
+
+    // Check for user avatar/initials
+    // AvatarImage might not render if src is undefined or errors, so fallback is important
+    const avatarFallback = screen.getByText(mockUser.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2))
+    expect(avatarFallback).toBeInTheDocument()
+
+    // Find the button that triggers the dropdown (it contains the Avatar)
+    const avatarButton = avatarFallback.closest('button')
+    expect(avatarButton).toBeInTheDocument()
+
+    if (avatarButton) {
+      fireEvent.click(avatarButton)
+    }
+
+    // Check for dropdown items
+    // Use await findByText for items that appear asynchronously after click
+    expect(await screen.findByText('Perfil')).toBeInTheDocument()
+    expect(await screen.findByText('Configurações')).toBeInTheDocument()
+    expect(await screen.findByText('Ajuda')).toBeInTheDocument()
+    expect(await screen.findByText('Sair')).toBeInTheDocument()
+
+    // Check for icons within dropdown items
+    expect(screen.getByTestId('icon-user').closest('a')).toHaveAttribute('href', '/perfil')
+    expect(screen.getByTestId('icon-settings').closest('a')).toHaveAttribute('href', '/configuracoes')
+    expect(screen.getByTestId('icon-help-circle').closest('a')).toHaveAttribute('href', '/ajuda')
+  })
+
+  it('should call logout and navigate on clicking "Sair"', async () => {
+    renderTopbar()
+
+    const avatarFallback = screen.getByText(mockUser.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2))
+    const avatarButton = avatarFallback.closest('button')
+    if (avatarButton) {
+      fireEvent.click(avatarButton)
+    }
+
+    const logoutButton = await screen.findByText('Sair')
+    fireEvent.click(logoutButton)
+
+    expect(mockLogout).toHaveBeenCalledTimes(1)
+    expect(mockNavigate).toHaveBeenCalledWith('/login')
+  })
+
+  it('should render "U" as fallback if user is null', () => {
+    (useAuthStore as any).mockReturnValue({
+      user: null,
+      logout: mockLogout,
+    });
+    renderTopbar();
+    expect(screen.getByText('U')).toBeInTheDocument();
+  });
 })

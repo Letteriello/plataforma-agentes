@@ -2,9 +2,9 @@ import React from 'react'
 import { motion } from 'framer-motion'
 
 // Components
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout'
+// import { DashboardLayout } from '@/components/dashboard/DashboardLayout'; // Removed
 import { TokenUsageCard } from '@/components/dashboard/TokenUsageCard'
-import { AgentActivityCard } from '@/components/dashboard/AgentActivityCard'
+import { AgentActivityCard, AgentActivityData } from '@/components/dashboard/AgentActivityCard'
 import { StatsCard } from '@/components/dashboard/StatsCard'
 
 // Hooks
@@ -24,12 +24,31 @@ import { formatTokenNumber } from '@/utils/dashboardUtils'
 
 const Dashboard: React.FC = () => {
   const { stats, loading, error, refresh } = useDashboard('7d')
+  const [activityPeriod, setActivityPeriod] = React.useState('7d');
+
+  // Mock data for agents and token usage to pass to useDashboardMetrics
+  // TODO: Replace with actual data fetching logic
+  const mockAgentsData: import('@/types/dashboard.types').Agent[] = [
+    { id: '1', name: 'Agent Smith', description: 'Chatbot', status: 'online', type: 'chat', lastActive: '2024-07-30T10:00:00Z', usage: 'low', usageStatus: 'low', createdAt: '2024-07-01T10:00:00Z', updatedAt: '2024-07-30T10:00:00Z', createdBy: 'admin' },
+    { id: '2', name: 'Agent Jones', description: 'Assistant', status: 'offline', type: 'assistant', lastActive: '2024-07-29T10:00:00Z', usage: 'medium', usageStatus: 'medium', createdAt: '2024-07-01T11:00:00Z', updatedAt: '2024-07-29T10:00:00Z', createdBy: 'admin' },
+  ];
+
+  const mockTokenUsageData: import('@/types/dashboard').TokenUsage[] = [
+    { date: '2024-07-01', tokens: 1500 },
+    { date: '2024-07-02', tokens: 2200 },
+  ];
+
+  const mockAgentActivityData: import('@/components/dashboard/AgentActivityCard').AgentActivityData[] = [
+    { date: '2024-07-01', activeAgents: 5, interactions: 120 },
+    { date: '2024-07-02', activeAgents: 7, interactions: 150 },
+    { date: '2024-07-03', activeAgents: 6, interactions: 135 },
+  ];
 
   const {
     stats: metricsStats,
     tokenMetrics,
     agentMetrics,
-  } = useDashboardMetrics()
+  } = useDashboardMetrics(mockAgentsData, mockTokenUsageData)
 
   // Combina os dados de stats vindos dos hooks
   const combinedStats: DashboardStats = React.useMemo(
@@ -48,13 +67,6 @@ const Dashboard: React.FC = () => {
     [stats, metricsStats],
   )
 
-  // Mock user data - in a real app, this would come from auth context
-  const user = {
-    name: 'Admin',
-    email: 'admin@example.com',
-    avatarUrl: '/path/to/avatar.jpg',
-  }
-
   const handleRefresh = React.useCallback(() => {
     refresh()
   }, [refresh])
@@ -68,7 +80,8 @@ const Dashboard: React.FC = () => {
   // Se necessário, pode-se filtrar agentMetrics.agents diretamente
 
   return (
-    <DashboardLayout user={user}>
+    <>
+      {/* <DashboardLayout user={user}> */}
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col space-y-2">
@@ -136,18 +149,21 @@ const Dashboard: React.FC = () => {
         {/* Token Usage and Activity Cards */}
         <div className="grid gap-4 md:grid-cols-2">
           <TokenUsageCard
-            data={tokenMetrics.tokenUsageData}
-            onRefresh={handleRefresh}
+            data={mockTokenUsageData} // Corrected: Pass mockTokenUsageData directly
+            // onRefresh prop removed as it's not expected by TokenUsageCard
             loading={loading}
           />
           <AgentActivityCard
-            agents={agentMetrics.agents}
+            data={mockAgentActivityData} // Using new mock data
+            period={activityPeriod}
+            onPeriodChange={setActivityPeriod}
             onRefresh={handleRefresh}
             loading={loading}
           />
         </div>
       </div>
-    </DashboardLayout>
+    {/* </DashboardLayout> */}
+    </>
   )
 }
 

@@ -1,22 +1,20 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
-import { NavLink } from 'react-router-dom'
-import { cn, generateAvatarUrl } from '@/lib/utils'
 import {
-  LayoutDashboard,
-  Users, // Changed from Bot
-  Rocket, // New
-  Wrench,
-  BrainCircuit, // New
-  Settings,
-  // Menu, X removed as hover will control collapse
-  MessageCircle, // Added
-  PlusSquare, // Added
+  Bot,
+  BrainCircuit,
   FlaskConical,
   History,
-  // MessageCircle, FileText, Database removed
+  LayoutDashboard,
+  MessageCircle,
+  Rocket,
+  Settings,
+  Users,
+  Wrench,
 } from 'lucide-react'
-import { Bot } from 'lucide-react' // Using Bot icon as per plan
+import { NavLink } from 'react-router-dom'
+
 import { Avatar } from '@/components/ui/avatar'
+import { cn, generateAvatarUrl } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 // useState removed
 
@@ -45,11 +43,6 @@ const navItems: NavItem[] = [
     href: '/playground',
     icon: <FlaskConical className="h-5 w-5" />,
     label: 'Playground',
-  },
-  {
-    href: '/agents/new',
-    icon: <PlusSquare className="h-5 w-5" />,
-    label: 'Criar Agente',
   },
 ]
 

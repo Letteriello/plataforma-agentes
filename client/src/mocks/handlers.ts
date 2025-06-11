@@ -1,4 +1,4 @@
-// import { http, HttpResponse, delay } from 'msw';
+import { http, HttpResponse, delay } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 import { AnyAgentConfig, AgentType, LlmAgentConfig } from '@/types/core/agent'; // Using core types
 
@@ -71,33 +71,33 @@ export const resetMockDocumentsDB = () => {
 };
 
 
-// export const handlers = [
-//   // Fetch all agents
-//   http.get('/api/agents', async () => {
-//     await delay(100);
-//     return HttpResponse.json(mockAgentsDB);
-//   }),
-//
-//   // Fetch agent by ID
-//   http.get('/api/agents/:id', async ({ params }) => {
-//     await delay(100);
-//     const agent = mockAgentsDB.find(a => a.id === params.id);
-//     if (agent) {
-//       return HttpResponse.json(agent);
-//     }
-//     return new HttpResponse(null, { status: 404, statusText: 'Agent not found' });
-//   }),
+export const handlers = [
+  // Fetch all agents
+  http.get('/api/agents', async () => {
+    await delay(100);
+    return HttpResponse.json(mockAgentsDB);
+  }),
+
+  // Fetch agent by ID
+  http.get('/api/agents/:id', async ({ params }) => {
+    await delay(100);
+    const agent = mockAgentsDB.find(a => a.id === params.id);
+    if (agent) {
+      return HttpResponse.json(agent);
+    }
+    return new HttpResponse(null, { status: 404, statusText: 'Agent not found' });
+  }),
 //
 //   // Save agent (Create or Update)
-//   http.post('/api/agents', async ({ request }) => {
-//     await delay(150);
-//     const newAgentData = await request.json() as Partial<AnyAgentConfig>;
-//
-//     if (!newAgentData.name || !newAgentData.type) {
-//         return HttpResponse.json({ message: 'Name and type are required' }, { status: 400 });
-//     }
-//
-//     if (newAgentData.id) { // Update
+  http.post('/api/agents', async ({ request }) => {
+    await delay(150);
+    const newAgentData = await request.json() as Partial<AnyAgentConfig>;
+
+    if (!newAgentData || !newAgentData.name || !newAgentData.type) { // Added check for newAgentData itself
+        return HttpResponse.json({ message: 'Invalid agent data: Name and type are required' }, { status: 400 });
+    }
+
+    if (newAgentData.id) { // Update
       const index = mockAgentsDB.findIndex(a => a.id === newAgentData.id);
       if (index !== -1) {
         // Ensure all required fields are present for the specific agent type after merge

@@ -7,7 +7,7 @@ import { ApprovalInbox } from '../components/governance/ApprovalInbox'
 import { ApprovalHistoryModal } from '../components/governance/ApprovalHistoryModal'
 import { ApprovalItem, HistoryItem } from '@/types/governance'
 
-export const GovernancePage: React.FC = () => {
+const GovernancePage: React.FC = () => {
   const [autonomyLevel, setAutonomyLevel] =
     useState<AutonomyLevel>('Semi-Autônomo')
   const [approvals, setApprovals] = useState<ApprovalItem[]>([])
@@ -78,3 +78,5 @@ export const GovernancePage: React.FC = () => {
     </div>
   )
 }
+
+export default GovernancePage;

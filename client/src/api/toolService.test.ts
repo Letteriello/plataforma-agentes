@@ -1,9 +1,18 @@
 import { describe, expect, test, vi, afterEach } from 'vitest'
-import { toolService } from './toolService' // Use named import
-import { Tool } from '@/types'
+import apiClient from './apiClient'
+import {
+  fetchTools,
+  createTool,
+  updateTool,
+  deleteTool,
+  ToolDTO,
+  CreateToolDTO,
+} from './toolService'
 
-// Define mock data directly in the test file
-const mockTools: Tool[] = [
+// Mock o apiClient
+vi.mock('./apiClient')
+
+const mockTools: ToolDTO[] = [
   {
     id: '1',
     name: 'Test Tool 1',
@@ -17,24 +26,66 @@ const mockTools: Tool[] = [
 ]
 
 describe('toolService', () => {
-  // Restore mocks after each test
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  test('fetchTools returns a list of tools from the service', async () => {
-    // Spy on the fetchTools method and mock its implementation
-    const fetchToolsSpy = vi
-      .spyOn(toolService, 'fetchTools')
-      .mockResolvedValue(mockTools)
+  describe('fetchTools', () => {
+    test('should fetch tools successfully', async () => {
+      // Mock da resposta do apiClient.get
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockTools })
 
-    const tools = await toolService.fetchTools()
+      const tools = await fetchTools()
 
-    // Expect the spy to have been called
-    expect(fetchToolsSpy).toHaveBeenCalled()
+      expect(apiClient.get).toHaveBeenCalledWith('/tools')
+      expect(tools).toEqual(mockTools)
+      expect(tools.length).toBe(2)
+    })
+  })
 
-    // Expect the result to match the mock data
-    expect(tools).toEqual(mockTools)
-    expect(tools.length).toBe(2)
+  describe('createTool', () => {
+    test('should create a new tool successfully', async () => {
+      const newToolData: CreateToolDTO = {
+        name: 'New Tool',
+        description: 'A brand new tool.',
+      }
+      const createdTool: ToolDTO = { id: '3', ...newToolData }
+
+      vi.mocked(apiClient.post).mockResolvedValue({ data: createdTool })
+
+      const result = await createTool(newToolData)
+
+      expect(apiClient.post).toHaveBeenCalledWith('/tools', newToolData)
+      expect(result).toEqual(createdTool)
+    })
+  })
+
+  describe('updateTool', () => {
+    test('should update an existing tool successfully', async () => {
+      const toolId = '1'
+      const updateData: Partial<CreateToolDTO> = {
+        name: 'Updated Test Tool 1',
+      }
+      const updatedTool: ToolDTO = { ...mockTools[0], ...updateData }
+
+      vi.mocked(apiClient.put).mockResolvedValue({ data: updatedTool })
+
+      const result = await updateTool(toolId, updateData)
+
+      expect(apiClient.put).toHaveBeenCalledWith(`/tools/${toolId}`, updateData)
+      expect(result).toEqual(updatedTool)
+    })
+  })
+
+  describe('deleteTool', () => {
+    test('should delete a tool successfully', async () => {
+      const toolId = '1'
+      // Mock para uma resposta sem conteúdo (204 No Content)
+      vi.mocked(apiClient.delete).mockResolvedValue({ data: null })
+
+      await deleteTool(toolId)
+
+      expect(apiClient.delete).toHaveBeenCalledWith(`/tools/${toolId}`)
+    })
   })
 })

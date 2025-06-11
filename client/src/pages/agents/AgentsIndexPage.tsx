@@ -1,12 +1,13 @@
-import { AgentsDashboard } from '@/components/agents/AgentsDashboard'
-import { AgentsLayout } from '@/components/agents/AgentsLayout'
+import { AgentsDashboard } from '@/components/agents/AgentsDashboard';
+import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
 
 export function AgentsPage() {
   return (
-    <AgentsLayout>
+    <>
+      <AgentSubNav /> {/* Added */}
       <AgentsDashboard />
-    </AgentsLayout>
-  )
+    </>
+  );
 }
 
-export default AgentsPage
+export default AgentsPage;

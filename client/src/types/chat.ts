@@ -1,8 +1,8 @@
 export interface Artifact {
-  type: 'code' | 'table' | 'chart' | string
-  language?: string
-  content?: string
-  data?: any
+  type: 'code' | 'table' | 'chart';
+  language?: string;
+  content?: string;
+  data?: unknown;
 }
 
 export interface ChatMessage {
@@ -12,7 +12,7 @@ export interface ChatMessage {
   timestamp: string
   senderName?: string
   avatarSeed?: string
-  type?: 'text' | 'agent_thought' | 'artifact' | string
+  type?: 'text' | 'agent_thought' | 'artifact';
   artifact?: Artifact
 }
 
@@ -20,4 +20,15 @@ export interface Session {
   id: string
   agentId: string
   createdAt: string
+}
+
+/**
+ * Represents a file attached to a message.
+ */
+export interface Attachment {
+  id: string;
+  fileName: string;
+  fileType: string; // e.g., 'image/png', 'application/pdf'
+  size: number; // in bytes
+  url: string; // URL to access the file
 }

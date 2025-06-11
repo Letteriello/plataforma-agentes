@@ -1,25 +1,34 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { Bell, PlusCircle } from 'lucide-react' // Added PlusCircle
-import type { ContextPanelData } from '@/components/context/types'
-import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog' // Added CreateAgentDialog
+import { Bell, PlusCircle, Search, User, Settings, HelpCircle, LogOut } from 'lucide-react'; // Added Search & User Menu Icons
+import { Input } from '@/components/ui/input'; // Added Input
+import { Link, useNavigate } from 'react-router-dom'; // Added Link and useNavigate
+import { useAuthStore } from '@/store/authStore'; // Added useAuthStore
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'; // Added Avatar components
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator, // Corrected to DropdownMenuSeparator if that's the intended component
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'; // Added DropdownMenu components
+import { generateAvatarUrl } from '@/lib/utils'; // Added generateAvatarUrl
+
+import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface TopbarProps {
-  pageTitle?: string
-  agentsForSelector?: Pick<ContextPanelData, 'id' | 'title'>[]
-  selectedAgentIdForSelector?: string | null
-  onSelectAgentForSelector?: (agentId: string | null) => void
+  pageTitle?: string;
 }
 
-export function Topbar({
-  pageTitle,
-  agentsForSelector,
-  selectedAgentIdForSelector,
-  onSelectAgentForSelector,
-}: TopbarProps) {
-  // const { user } = useAuthStore(); // No longer needed in Topbar
+export function Topbar({ pageTitle }: TopbarProps) {
+  const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login'); // Or your desired logout destination
+  };
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
@@ -35,6 +44,17 @@ export function Topbar({
 
       {/* Right section - User Actions */}
       <div className="flex items-center gap-x-2 sm:gap-x-4">
+        {/* Search Input - Added from DashboardHeader */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Pesquisar..."
+            className="w-48 sm:w-64 pl-9 h-9 bg-background/80 focus-visible:ring-offset-0 focus-visible:ring-0"
+            // onChange={handleSearch} // TODO: Implement search handler
+          />
+        </div>
+
         {/* NEW "Criar Agente" Button */}
         <CreateAgentDialog>
           <Button size="sm" className="gap-1">
@@ -47,10 +67,56 @@ export function Topbar({
 
         {/* Existing ThemeToggle and Bell Button */}
         <ThemeToggle />
-        <Button variant="outline" size="icon" className="rounded-full shrink-0">
-          <Bell className="h-4 w-4 text-muted-foreground" />
+        {/* Updated Bell Button from DashboardHeader */}
+        <Button variant="ghost" size="icon" className="rounded-full shrink-0 relative">
+          <Bell className="h-5 w-5" />
+          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
           <span className="sr-only">Notificações</span>
         </Button>
+
+        {/* User Dropdown Menu - Added from DashboardHeader */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-9 w-9 rounded-full p-0">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user ? generateAvatarUrl(user.name) : undefined} alt={user?.name || 'User'} />
+                <AvatarFallback>
+                  {user?.name
+                    ?.split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2) || 'U'}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem asChild>
+              <Link to="/perfil">
+                <User className="mr-2 h-4 w-4" />
+                <span>Perfil</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/configuracoes">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Configurações</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/ajuda">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                <span>Ajuda</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sair</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )

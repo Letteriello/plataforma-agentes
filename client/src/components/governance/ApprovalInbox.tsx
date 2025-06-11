@@ -1,13 +1,5 @@
 import React from 'react'
-
-interface ApprovalItem {
-  id: string
-  agentName: string
-  action: string
-  context: string
-  status: 'pending' | 'approved' | 'rejected'
-  createdAt: string
-}
+import { ApprovalItem } from '../../types/governance'
 
 interface ApprovalInboxProps {
   items: ApprovalItem[]

@@ -1,51 +1,100 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { BrowserRouter } from 'react-router-dom'
-import { Topbar } from './Topbar'
-import { vi } from 'vitest'
+import type { Meta, StoryObj } from '@storybook/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom'; // Updated imports
+import { Topbar } from './Topbar';
+import { vi } from 'vitest';
+import { useAuthStore } from '@/store/authStore'; // Added
 
-// Mock child components that are not the focus of this story
+// Mock child components and hooks
 vi.mock('@/components/agents/CreateAgentDialog', () => ({
   CreateAgentDialog: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+    // Simplified mock: just renders children, assumes button is part of children
+    <div data-testid="create-agent-dialog-wrapper">{children}</div>
   ),
-}))
+}));
 
 vi.mock('@/components/ui/theme-toggle', () => ({
   ThemeToggle: () => <button>Toggle Theme</button>,
-}))
+}));
+
+// Mock useAuthStore
+vi.mock('@/store/authStore');
+const mockUser = { name: 'Storybook User', email: 'storybook@example.com' };
+const mockLogout = () => console.log('Logout action triggered in Storybook');
+
+// Mock useNavigate
+const mockNavigateFn = () => console.log('Navigate action triggered');
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigateFn,
+  };
+});
+
 
 const meta: Meta<typeof Topbar> = {
   title: 'Navigation/Topbar',
   component: Topbar,
-  decorators: [
-    (Story) => (
-      <BrowserRouter>
-        <Story />
-      </BrowserRouter>
-    ),
-  ],
   parameters: {
-    layout: 'fullscreen',
+    layout: 'fullscreen', // Ensures the component uses the full space
   },
-}
+  tags: ['autodocs'],
+  // argTypes for controlling props in Storybook UI if needed
+  argTypes: {
+    pageTitle: { control: 'text' },
+  },
+};
 
-export default meta
-type Story = StoryObj<typeof Topbar>
+export default meta;
+type Story = StoryObj<typeof Topbar>;
 
-export const Default: Story = {
+// Decorator to wrap stories with necessary providers
+const TopbarDecorator = (StoryComponent: React.ElementType) => {
+  // Setup the mock return value before each story that needs it
+  (useAuthStore as any).mockReturnValue({
+    user: mockUser,
+    logout: mockLogout,
+  });
+  return (
+    <MemoryRouter initialEntries={['/']}>
+      <Routes>
+        <Route path="/*" element={<StoryComponent />} />
+      </Routes>
+    </MemoryRouter>
+  );
+};
+
+export const DefaultWithUser: Story = {
   args: {
-    pageTitle: 'Dashboard',
+    pageTitle: 'Dashboard Principal',
   },
-}
+  decorators: [TopbarDecorator],
+};
 
-export const WithAgentSelector: Story = {
+export const NoTitleWithUser: Story = {
   args: {
-    pageTitle: 'Chat',
-    agentsForSelector: [
-      { id: '1', title: 'Agent 1' },
-      { id: '2', title: 'Agent 2' },
-    ],
-    selectedAgentIdForSelector: '1',
-    onSelectAgentForSelector: (id) => console.log('Selected agent:', id),
+    // pageTitle is undefined, should default to "Painel"
   },
-}
+  decorators: [TopbarDecorator],
+};
+
+export const WithAnonymousUser: Story = {
+  args: {
+    pageTitle: 'Página Pública',
+  },
+  decorators: [
+    (StoryComponent) => {
+      (useAuthStore as any).mockReturnValue({
+        user: null, // Simulate anonymous user
+        logout: mockLogout,
+      });
+      return (
+        <MemoryRouter initialEntries={['/']}>
+           <Routes>
+            <Route path="/*" element={<StoryComponent />} />
+          </Routes>
+        </MemoryRouter>
+      );
+    },
+  ],
+};

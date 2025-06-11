@@ -1,9 +1,10 @@
-import { AgentsLayout } from '@/components/agents/AgentsLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AgentTemplatesPage() {
   return (
-    <AgentsLayout>
+    <>
+      <AgentSubNav /> {/* Added */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
@@ -16,6 +17,6 @@ export default function AgentTemplatesPage() {
           </CardContent>
         </Card>
       </div>
-    </AgentsLayout>
-  )
+    </>
+  );
 }

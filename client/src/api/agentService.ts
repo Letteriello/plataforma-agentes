@@ -1,39 +1,67 @@
 import apiClient from '@/api/apiClient'
-export interface AgentDTO {
+import type { LlmAgentConfig } from '@/types/adk'
+
+/**
+ * DTO for an agent in a list view (summary).
+ */
+export interface AgentSummaryDTO {
   id: string
   name: string
   description?: string
-  type: string
+  type: 'LLM' | 'Workflow' | 'Custom' // Example agent types
 }
 
-export interface CreateAgentDTO {
-  name: string
-  description?: string
-  type: string
+/**
+ * DTO for the detailed view of an agent, including its full configuration.
+ */
+export interface AgentDetailDTO extends LlmAgentConfig {
+  id: string
 }
 
-export const fetchAgents = async (): Promise<AgentDTO[]> => {
-  const { data } = await apiClient.get<AgentDTO[]>('/agents')
+/**
+ * DTO for creating a new agent.
+ */
+export type CreateAgentDTO = LlmAgentConfig
+
+/**
+ * DTO for updating an agent.
+ */
+export type UpdateAgentDTO = Partial<CreateAgentDTO>
+
+/**
+ * Fetches a list of all agents (summary view).
+ */
+export const fetchAgents = async (): Promise<AgentSummaryDTO[]> => {
+  const { data } = await apiClient.get<AgentSummaryDTO[]>('/agents')
   return data
 }
 
-export const fetchAgentById = async (id: string): Promise<AgentDTO> => {
-  const { data } = await apiClient.get<AgentDTO>(`/agents/${id}`)
+/**
+ * Fetches the detailed configuration of a single agent by its ID.
+ */
+export const fetchAgentById = async (id: string): Promise<AgentDetailDTO> => {
+  const { data } = await apiClient.get<AgentDetailDTO>(`/agents/${id}`)
   return data
 }
 
+/**
+ * Creates a new agent with the given configuration.
+ */
 export const createAgent = async (
   payload: CreateAgentDTO,
-): Promise<AgentDTO> => {
-  const { data } = await apiClient.post<AgentDTO>('/agents', payload)
+): Promise<AgentDetailDTO> => {
+  const { data } = await apiClient.post<AgentDetailDTO>('/agents', payload)
   return data
 }
 
+/**
+ * Updates an existing agent's configuration.
+ */
 export const updateAgent = async (
   id: string,
-  payload: CreateAgentDTO,
-): Promise<AgentDTO> => {
-  const { data } = await apiClient.put<AgentDTO>(`/agents/${id}`, payload)
+  payload: UpdateAgentDTO,
+): Promise<AgentDetailDTO> => {
+  const { data } = await apiClient.put<AgentDetailDTO>(`/agents/${id}`, payload)
   return data
 }
 

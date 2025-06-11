@@ -1,51 +1,46 @@
-export type AgentStatus = 'online' | 'offline' | 'idle' | 'busy'
+import type { AgentSummaryDTO } from '@/api/agentService';
 
-export interface Agent {
-  id: string
-  name: string
-  description: string
-  status: AgentStatus
-  type: 'chat' | 'assistant' | 'automation'
-  lastActive: string
-  usage: 'low' | 'medium' | 'high'
-  usageStatus: 'low' | 'medium' | 'high'
-  createdAt: string
-  updatedAt: string
-  createdBy: string
+/**
+ * Defines the operational status of an agent.
+ */
+export type AgentStatus = 'online' | 'offline' | 'busy' | 'error';
+
+/**
+ * Extends the basic agent summary with dashboard-specific details.
+ */
+export interface DashboardAgent extends AgentSummaryDTO {
+  status: AgentStatus;
+  lastActive: string;
 }
 
-export interface DashboardStats {
-  totalAgents: number
-  totalInteractions: number
-  successRate: number
-  avgResponseTime: string
-  tokenUsage: number
-  activeAgents: number
-  activeSessions: number
-  [key: string]: string | number
-}
+/**
+ * Defines the type of a dashboard activity/log entry.
+ */
+export type ActivityType = 'info' | 'success' | 'warning' | 'error';
 
-export interface DashboardState {
-  stats: DashboardStats | null
-  loading: boolean
-  error: Error | null
-}
-
+/**
+ * Represents a single activity log entry on the dashboard.
+ */
 export interface Activity {
-  id: string
-  type: string
-  message: string
-  timestamp: string
-  user: string
+  id: string;
+  type: ActivityType;
+  message: string;
+  timestamp: string;
 }
 
-export interface TokenUsageData {
-  date: string
-  tokens: number
+/**
+ * Represents a data point for token usage metrics.
+ */
+export interface TokenUsage {
+  date: string;
+  tokens: number;
 }
 
-export interface AgentActivityData {
-  date: string
-  activeAgents: number
-  interactions: number
+/**
+ * Represents the main statistics for the dashboard.
+ */
+export interface DashboardStats {
+  activeAgentsCount: number;
+  activeSessions: number;
+  totalSessions24h: number;
 }

@@ -1,12 +1,13 @@
-import { AgentEditor } from '@/components/agents/AgentEditor'
-import { AgentsLayout } from '@/components/agents/AgentsLayout'
+import { AgentEditor } from '@/components/agents/AgentEditor';
+import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
 
 export function NewAgentPage() {
   return (
-    <AgentsLayout>
+    <>
+      <AgentSubNav /> {/* Added */}
       <AgentEditor mode="create" />
-    </AgentsLayout>
-  )
+    </>
+  );
 }
 
-export default NewAgentPage
+export default NewAgentPage;

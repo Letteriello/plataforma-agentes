@@ -1,7 +1,6 @@
 import {
   createBrowserRouter,
   Navigate,
-  RouteObject as DefaultRouteObject,
 } from 'react-router-dom'
 import MainLayout from '@/components/layouts/MainLayout'
 import { lazy, Suspense } from 'react'
@@ -12,12 +11,29 @@ interface CustomRouteHandle {
   // Add other potential properties if observed or anticipated
 }
 
-interface AppRouteObject
-  extends Omit<DefaultRouteObject, 'handle' | 'children'> {
-  handle?: CustomRouteHandle
-  children?: AppRouteObject[]
-  lazy?: () => Promise<{ Component: React.ComponentType }> // Ensure lazy is correctly typed
+// Define custom handle and AppRouteObject types
+interface CustomRouteHandle {
+  title: string;
+  // Add other potential properties if observed or anticipated
 }
+
+// Base for routes that are NOT index routes (have path, can have children)
+interface AppNonIndexRouteProps extends Omit<import('react-router-dom').NonIndexRouteObject, 'handle' | 'children' | 'lazy'> {
+  handle?: CustomRouteHandle;
+  children?: AppRouteObject[]; // Recursive definition using the final union type
+  // We are using React.lazy with element, so route.lazy is not used here.
+}
+
+// Base for routes that ARE index routes (index: true)
+interface AppIndexRouteProps extends Omit<import('react-router-dom').IndexRouteObject, 'handle' | 'lazy'> {
+  handle?: CustomRouteHandle;
+  // We are using React.lazy with element, so route.lazy is not used here.
+  // Element is part of IndexRouteObject, ensure it's used with withSuspense
+}
+
+// Union type for all application routes
+type AppRouteObject = AppNonIndexRouteProps | AppIndexRouteProps;
+
 
 // Lazy load components with proper error boundaries
 const withSuspense = (Component: React.ComponentType) => {
@@ -31,7 +47,6 @@ const withSuspense = (Component: React.ComponentType) => {
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AgentsPage = lazy(() => import('@/pages/agents/AgentsIndexPage')) // Updated path
-const ToolsPage = lazy(() => import('./pages/ToolsPage'))
 const MemoryPage = lazy(() => import('./pages/MemoryPage'))
 const Deploy = lazy(() => import('./pages/DeployPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
@@ -171,11 +186,6 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Marketplace' },
       },
       {
-        path: 'tools', // path changed from 'ferramentas'
-        element: withSuspense(ToolsPage),
-        handle: { title: 'Tools' }, // title changed
-      },
-      {
         path: 'memory', // path changed from 'memoria'
         element: withSuspense(MemoryPage),
         handle: { title: 'Memory' }, // title changed
@@ -198,4 +208,4 @@ const routes: AppRouteObject[] = [
   },
 ]
 
-export const router = createBrowserRouter(routes)
+export const router = createBrowserRouter(routes as import('react-router-dom').RouteObject[]);

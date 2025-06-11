@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { fetchTools, ToolDTO } from '@/api/toolService'
+import { ToolDTO, fetchTools as apiFetchTools } from '@/api/toolService'
 
 interface ToolState {
   tools: ToolDTO[]
@@ -21,7 +21,7 @@ export const useToolStore = create<ToolState & ToolActions>((set) => ({
   fetchTools: async () => {
     set({ isLoading: true, error: null })
     try {
-      const tools = await fetchTools()
+      const tools = await apiFetchTools()
       set({ tools, isLoading: false })
     } catch (error) {
       console.error('Failed to fetch tools:', error)
@@ -29,15 +29,13 @@ export const useToolStore = create<ToolState & ToolActions>((set) => ({
     }
   },
   addTool: (tool: ToolDTO) =>
-    set((state) => ({ tools: [...state.tools, tool] })),
+    set((state: ToolState) => ({ tools: [...state.tools, tool] })),
   updateTool: (updatedTool: ToolDTO) =>
-    set((state) => ({
-      tools: state.tools.map((tool) =>
-        tool.id === updatedTool.id ? updatedTool : tool,
-      ),
+    set((state: ToolState) => ({
+      tools: state.tools.map((t) => (t.id === updatedTool.id ? updatedTool : t)),
     })),
   removeTool: (toolId: string) =>
-    set((state) => ({
-      tools: state.tools.filter((tool) => tool.id !== toolId),
+    set((state: ToolState) => ({
+      tools: state.tools.filter((t) => t.id !== toolId),
     })),
 }))
