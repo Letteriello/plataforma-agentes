@@ -15,6 +15,7 @@ export function useMemoryModule() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedKnowledgeBase, setSelectedKnowledgeBase] = useState<KnowledgeBase | null>(null);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
+  const [isUploadingDocuments, setIsUploadingDocuments] = useState(false); // Novo estado para upload
   
   // Estado para diálogos
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -143,29 +144,72 @@ export function useMemoryModule() {
 
   // Fazer upload de documentos
   const uploadDocuments = useCallback(async (files: File[]) => {
-    if (!selectedKnowledgeBase) return;
-    
+    if (!selectedKnowledgeBase) {
+      toast({
+        title: 'Aviso',
+        description: 'Nenhuma base de conhecimento selecionada.',
+        variant: 'default',
+      });
+      return;
+    }
+
+    setIsUploadingDocuments(true);
+    let successfulUploads = 0;
+    let failedUploads = 0;
+
     try {
-      for (const file of files) {
-        const newDocument = await memoryService.uploadDocument(selectedKnowledgeBase.id, file);
-        setDocuments(prev => [...prev, newDocument]);
+      // Upload files em paralelo
+      await Promise.all(files.map(async (file) => {
+        try {
+          // Não estamos mais adicionando o documento diretamente ao estado aqui.
+          // A lista será atualizada pelo loadDocuments no finally.
+          await memoryService.uploadDocument(selectedKnowledgeBase.id, file);
+          successfulUploads++;
+        } catch (error) {
+          console.error(`Erro ao fazer upload do arquivo ${file.name}:`, error);
+          failedUploads++;
+        }
+      }));
+
+      if (failedUploads > 0) {
+        toast({
+          title: 'Erro no Upload',
+          description: `${failedUploads} de ${files.length} documento(s) falharam ao enviar. Verifique o console para mais detalhes.`,
+          variant: 'destructive',
+        });
       }
       
-      setUploadDialogOpen(false);
-      toast({
-        title: 'Sucesso',
-        description: `${files.length} documento(s) enviado(s) com sucesso.`,
-      });
+      if (successfulUploads > 0 && failedUploads === 0) {
+        toast({
+          title: 'Sucesso',
+          description: `${successfulUploads} documento(s) enviado(s) com sucesso.`,
+        });
+      } else if (successfulUploads > 0 && failedUploads > 0) {
+        toast({
+          title: 'Upload Parcial',
+          description: `${successfulUploads} documento(s) enviado(s) com sucesso, mas ${failedUploads} falharam.`,
+          variant: 'default', // ou 'warning' se tiver essa variante
+        });
+      }
       
-      // Recarregar a lista de documentos após o upload
-      await loadDocuments(selectedKnowledgeBase.id);
-    } catch (error) {
-      console.error('Erro ao fazer upload de documentos:', error);
+      setUploadDialogOpen(false); // Fechar o diálogo após todas as tentativas
+
+    } catch (batchError) {
+      // Este catch é para erros inesperados no processo de batch em si,
+      // não erros de upload de arquivos individuais (já tratados acima).
+      console.error('Erro inesperado durante o processo de upload em lote:', batchError);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível fazer o upload dos documentos.',
+        title: 'Erro Crítico no Upload',
+        description: 'Ocorreu um erro inesperado ao tentar enviar os documentos.',
         variant: 'destructive',
       });
+    } finally {
+      // Recarregar a lista de documentos após todas as tentativas de upload,
+      // independentemente de sucesso ou falha, para refletir o estado atual do servidor.
+      if (selectedKnowledgeBase) { // Verificar novamente, caso algo mude o estado
+        await loadDocuments(selectedKnowledgeBase.id);
+      }
+      setIsUploadingDocuments(false);
     }
   }, [selectedKnowledgeBase, toast, loadDocuments]);
 
@@ -202,6 +246,7 @@ export function useMemoryModule() {
     selectedKnowledgeBase,
     isLoading,
     isLoadingDocuments,
+    isUploadingDocuments, // Expor o novo estado
     searchTerm,
     selectedType,
     createDialogOpen,
