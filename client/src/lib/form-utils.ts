@@ -27,6 +27,7 @@ export const llmAgentSchema = z.object({
   topK: z.number().min(1).max(100).default(40),
   instruction: z.string().min(1, 'Instructions are required'),
   systemPrompt: z.string().optional(),
+  tools: z.array(z.string()).default([]),
   stopSequences: z.array(z.string()).default([]),
   frequencyPenalty: z.number().min(-2).max(2).default(0),
   presencePenalty: z.number().min(-2).max(2).default(0),

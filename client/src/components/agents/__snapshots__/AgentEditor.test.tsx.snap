@@ -61,6 +61,20 @@ exports[`AgentEditor > should match snapshot for create mode 1`] = `
               Instruções
             </button>
             <button
+              aria-controls="radix-:r0:-content-modelo_geracao"
+              aria-selected="false"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              data-orientation="horizontal"
+              data-radix-collection-item=""
+              data-state="inactive"
+              id="radix-:r0:-trigger-modelo_geracao"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              Modelo & Geração
+            </button>
+            <button
               aria-controls="radix-:r0:-content-ferramentas"
               aria-selected="false"
               class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
@@ -75,32 +89,18 @@ exports[`AgentEditor > should match snapshot for create mode 1`] = `
               Ferramentas
             </button>
             <button
-              aria-controls="radix-:r0:-content-revisao"
+              aria-controls="radix-:r0:-content-memoria"
               aria-selected="false"
               class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="inactive"
-              id="radix-:r0:-trigger-revisao"
+              id="radix-:r0:-trigger-memoria"
               role="tab"
               tabindex="-1"
               type="button"
             >
-              Revisão
-            </button>
-            <button
-              aria-controls="radix-:r0:-content-deploy"
-              aria-selected="false"
-              class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-              data-orientation="horizontal"
-              data-radix-collection-item=""
-              data-state="inactive"
-              id="radix-:r0:-trigger-deploy"
-              role="tab"
-              tabindex="-1"
-              type="button"
-            >
-              Deploy
+              Memória
             </button>
           </div>
           <div
@@ -204,6 +204,16 @@ exports[`AgentEditor > should match snapshot for create mode 1`] = `
             tabindex="0"
           />
           <div
+            aria-labelledby="radix-:r0:-trigger-modelo_geracao"
+            class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            data-orientation="horizontal"
+            data-state="inactive"
+            hidden=""
+            id="radix-:r0:-content-modelo_geracao"
+            role="tabpanel"
+            tabindex="0"
+          />
+          <div
             aria-labelledby="radix-:r0:-trigger-ferramentas"
             class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             data-orientation="horizontal"
@@ -214,37 +224,18 @@ exports[`AgentEditor > should match snapshot for create mode 1`] = `
             tabindex="0"
           />
           <div
-            aria-labelledby="radix-:r0:-trigger-revisao"
+            aria-labelledby="radix-:r0:-trigger-memoria"
             class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             data-orientation="horizontal"
             data-state="inactive"
             hidden=""
-            id="radix-:r0:-content-revisao"
-            role="tabpanel"
-            tabindex="0"
-          />
-          <div
-            aria-labelledby="radix-:r0:-trigger-deploy"
-            class="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            data-orientation="horizontal"
-            data-state="inactive"
-            hidden=""
-            id="radix-:r0:-content-deploy"
+            id="radix-:r0:-content-memoria"
             role="tabpanel"
             tabindex="0"
           />
         </div>
         <div
-          class="block mt-6"
-        >
-          <div
-            data-testid="mock-llm-agent-form"
-          >
-            LLMAgentForm Mock
-          </div>
-        </div>
-        <div
-          class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700"
+          class="flex justify-between items-center mt-8 pt-6 border-t"
         >
           <div>
             <button
@@ -289,6 +280,6 @@ exports[`AgentEditor > should match snapshot for create mode 1`] = `
       </div>
     </form>
   </div>
-
+   
 </div>
 `;

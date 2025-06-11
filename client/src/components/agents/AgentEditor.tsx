@@ -10,6 +10,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescripti
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 import { LLMAgentForm } from './forms/LLMAgentForm';
+import { AgentToolsTab } from './forms/AgentToolsTab';
 import { BaseAgentForm } from './forms/BaseAgentForm'; // This should provide useForm methods
 import { LLMAgent, createDefaultAgent, LLMAgentSchema } from '@/types/agents';
 // import AgentDeployTab from './AgentDeployTab'; // AgentDeployTab removed as per new tab structure
@@ -271,7 +272,7 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
                 <CardDescription>Configure as ferramentas e capacidades do seu agente.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Em breve: Funcionalidade de configuração de ferramentas.</p>
+                <AgentToolsTab />
               </CardContent>
             </Card>
           </TabsContent>
