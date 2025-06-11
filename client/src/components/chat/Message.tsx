@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Bot, Zap, Wrench, Check } from 'lucide-react';
+import { Bot, Zap, Wrench, Check, AlertTriangle } from 'lucide-react'; // Added AlertTriangle
 
 // Corresponds to ChatMessage.sender but narrowed for this component's direct use
 type MessageAuthor = 'user' | 'agent';
@@ -21,11 +21,12 @@ interface MessageProps {
 
 const Message: React.FC<MessageProps> = ({ author, content, agentName, messageType }) => {
   const isUser = author === 'user';
+  const isError = messageType === 'error';
 
   // Determine avatar initials
   const avatarInitial = agentName ? agentName.charAt(0).toUpperCase() : 'A';
 
-  if (messageType === 'agent_thought') {
+  if (messageType === 'agent_thought' && !isError) { // Ensure error messages don't use thought styling
     return (
       <div className="my-2">
         <Accordion type="single" collapsible className="w-full">
@@ -68,10 +69,19 @@ const Message: React.FC<MessageProps> = ({ author, content, agentName, messageTy
           'max-w-xs rounded-lg px-2.5 py-1.5 md:max-w-md', // Common styling
           isUser
             ? 'bg-primary text-primary-foreground' // User message specific styling
-            : 'bg-muted' // Agent message specific styling
+            : 'bg-muted', // Agent message specific styling
+          { 'bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700': isError && !isUser }, // Error styling for agent
+          { 'bg-red-200 dark:bg-red-800/50 border border-red-400 dark:border-red-600 text-red-900 dark:text-red-100': isError && isUser } // Error styling for user (though less common)
         )}
       >
-        <p className="text-sm">{content}</p>
+        {agentName && author === 'agent' && !isError && <p className="mb-0.5 text-xs font-semibold">{agentName}</p>}
+        {isError && (
+          <div className="flex items-center gap-2">
+            <AlertTriangle className={cn("h-5 w-5", isUser ? "text-red-700 dark:text-red-300" : "text-red-600 dark:text-red-400")} />
+            <span className={cn("text-sm", isUser ? "text-red-800 dark:text-red-200" : "text-red-700 dark:text-red-300")}>{content}</span>
+          </div>
+        )}
+        {!isError && <p className="whitespace-pre-wrap text-sm">{content}</p>}
       </div>
     </div>
   );

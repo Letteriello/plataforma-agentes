@@ -5,10 +5,10 @@ import ToolSelector from './ToolSelector';
 
 interface ChatInputProps {
   onSendMessage: (messageText: string) => void;
-  // isLoading?: boolean; // Will be added later
+  isLoading?: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -38,10 +38,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         onKeyDown={handleKeyDown} // Changed from onKeyPress
         placeholder="Digite sua mensagem aqui..." // Updated placeholder
         className="flex-1 resize-none border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-2.5 min-h-[40px]" // Styling from example
-        // disabled={isLoading} // Will be re-enabled when isLoading is implemented
+        disabled={isLoading}
       />
       <ToolSelector />
-      <Button onClick={handleSendMessage} disabled={!message.trim()}> {/* Updated disabled logic */}
+      <Button onClick={handleSendMessage} disabled={!message.trim() || isLoading}> {/* Updated disabled logic */}
         Send
       </Button>
     </div>
