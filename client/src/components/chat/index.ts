@@ -8,3 +8,4 @@ export { default as ConversationList } from './ConversationList';
 export * from './types';
 export * from './mockData';
 export { AgentWorkspace } from './AgentWorkspace';
+export { default as ReasoningPanel } from './ReasoningPanel';

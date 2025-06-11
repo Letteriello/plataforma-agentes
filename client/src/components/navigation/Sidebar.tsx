@@ -11,7 +11,9 @@ import {
   // Menu, X removed as hover will control collapse
   MessageCircle, // Added
   PlusSquare, // Added
-  // MessageCircle, FlaskConical, FileText, Database removed
+  FlaskConical,
+  History,
+  // MessageCircle, FileText, Database removed
 } from 'lucide-react'
 import { Bot } from 'lucide-react' // Using Bot icon as per plan
 import { Avatar } from '@/components/ui/avatar'
@@ -40,6 +42,11 @@ const navItems: NavItem[] = [
   },
   { href: '/chat', icon: <MessageCircle className="h-5 w-5" />, label: 'Chat' },
   {
+    href: '/playground',
+    icon: <FlaskConical className="h-5 w-5" />,
+    label: 'Playground',
+  },
+  {
     href: '/agents/new',
     icon: <PlusSquare className="h-5 w-5" />,
     label: 'Criar Agente',
@@ -51,6 +58,11 @@ const agentManagementItems: NavItem[] = [
     href: '/agents',
     icon: <Users className="h-5 w-5" />,
     label: 'Meus Agentes',
+  },
+  {
+    href: '/sessions',
+    icon: <History className="h-5 w-5" />,
+    label: 'Sessões',
   },
   { href: '/deploy', icon: <Rocket className="h-5 w-5" />, label: 'Deploy' },
 ]

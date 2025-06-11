@@ -31,6 +31,11 @@ const MemoryPage = lazy(() => import('./pages/Memory')); // Renamed from Memoria
 const Deploy = lazy(() => import('./pages/Deploy'));
 const SettingsPage = lazy(() => import('./pages/Settings')); // Renamed from Configuracoes.tsx
 const ChatPage = lazy(() => import('./pages/ChatPage'));
+const PlaygroundPage = lazy(() => import('./pages/Playground'));
+const SessionsPage = lazy(() => import('./pages/Sessions'));
+const AgentTemplatesPage = lazy(() => import('./pages/agents/templates'));
+const AgentAnalyticsPage = lazy(() => import('./pages/agents/analytics'));
+const AgentSettingsPage = lazy(() => import('./pages/agents/settings'));
 
 // Error boundary component
 // Ensure ErrorBoundary is defined before its usage or imported if defined elsewhere.
@@ -68,9 +73,34 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Chat' },
       },
       {
+        path: 'playground',
+        element: withSuspense(PlaygroundPage),
+        handle: { title: 'Playground' },
+      },
+      {
+        path: 'sessions',
+        element: withSuspense(SessionsPage),
+        handle: { title: 'Sessions' },
+      },
+      {
         path: 'agents', // path changed from 'agentes'
         element: withSuspense(AgentsPage),
         handle: { title: 'Agents' }, // title changed
+      },
+      {
+        path: 'agents/templates',
+        element: withSuspense(AgentTemplatesPage),
+        handle: { title: 'Agent Templates' },
+      },
+      {
+        path: 'agents/analytics',
+        element: withSuspense(AgentAnalyticsPage),
+        handle: { title: 'Agent Analytics' },
+      },
+      {
+        path: 'agents/settings',
+        element: withSuspense(AgentSettingsPage),
+        handle: { title: 'Agent Settings' },
       },
       {
         path: 'tools', // path changed from 'ferramentas'
