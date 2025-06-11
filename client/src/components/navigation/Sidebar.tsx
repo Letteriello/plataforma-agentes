@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Rocket,
   Settings,
+  ShieldCheck, // Adicionado
   Users,
   Wrench,
 } from 'lucide-react'
@@ -70,6 +71,11 @@ const resourcesItems: NavItem[] = [
     href: '/memory',
     icon: <BrainCircuit className="h-5 w-5" />,
     label: 'Memória',
+  },
+  {
+    href: '/cofre',
+    icon: <ShieldCheck className="h-5 w-5" />,
+    label: 'Cofre',
   },
 ]
 

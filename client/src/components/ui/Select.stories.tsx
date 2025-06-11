@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Select,
   SelectContent,
@@ -9,153 +8,132 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from './select' // Import all necessary Select components
+} from './select';
 
-const meta = {
+/**
+ * A compositional component for selecting a value from a list.
+ * Built on Radix UI's Select primitive for accessibility.
+ *
+ * It consists of several parts:
+ * - `Select`: The root container.
+ * - `SelectTrigger`: The button that opens the dropdown.
+ * - `SelectValue`: Displays the selected value, or a placeholder.
+ * - `SelectContent`: The dropdown panel that contains the options.
+ * - `SelectGroup`: Used to group related options.
+ * - `SelectLabel`: A title for a `SelectGroup`.
+ * - `SelectItem`: A single option in the list.
+ * - `SelectSeparator`: A visual separator between groups.
+ */
+const meta: Meta<typeof Select> = {
   title: 'UI/Select',
-  component: Select, // The main root component
+  component: Select,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-
-  argTypes: {
-    // Args for the Select (Root) component itself
-    disabled: { control: 'boolean' },
-    // value: { control: 'text' }, // Controlled value
-    // onValueChange: { action: 'value changed' },
+  subcomponents: {
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectGroup,
+    SelectLabel,
+    SelectItem,
+    SelectSeparator,
   },
-  args: {
-    disabled: false,
-    // onValueChange: fn(),
-  },
-} satisfies Meta<typeof Select>
+};
 
-export default meta
+export default meta;
+type Story = StoryObj<typeof Select>;
 
-// Define a base Story type that uses the render function for complex components
-type Story = StoryObj<typeof meta>
-
-// Helper function to create a common Select structure for stories
-const renderSelect = (
-  args: React.ComponentProps<typeof Select> & {
-    placeholder?: string
-    items: { value: string; label: string; disabled?: boolean }[]
-    withLabel?: string
-    withSeparator?: boolean
-  },
-) => (
-  <Select {...args} onValueChange={fn(args.onValueChange || (() => {}))}>
-    <SelectTrigger className="w-[280px]">
-      <SelectValue placeholder={args.placeholder || 'Select an option'} />
-    </SelectTrigger>
-    <SelectContent>
-      {args.withLabel && <SelectLabel>{args.withLabel}</SelectLabel>}
-      <SelectGroup>
-        {args.items
-          .slice(
-            0,
-            args.withSeparator
-              ? Math.ceil(args.items.length / 2)
-              : args.items.length,
-          )
-          .map((item) => (
-            <SelectItem
-              key={item.value}
-              value={item.value}
-              disabled={item.disabled}
-            >
-              {item.label}
-            </SelectItem>
-          ))}
-        {args.withSeparator && <SelectSeparator />}
-        {args.withSeparator &&
-          args.items.slice(Math.ceil(args.items.length / 2)).map((item) => (
-            <SelectItem
-              key={item.value}
-              value={item.value}
-              disabled={item.disabled}
-            >
-              {item.label}
-            </SelectItem>
-          ))}
-      </SelectGroup>
-    </SelectContent>
-  </Select>
-)
-
-const fruitItems = [
-  { value: 'apple', label: 'Apple' },
-  { value: 'banana', label: 'Banana' },
-  { value: 'blueberry', label: 'Blueberry' },
-  { value: 'grapes', label: 'Grapes' },
-  { value: 'pineapple', label: 'Pineapple' },
-]
-
-const timeZoneItems = [
-  { value: 'est', label: 'Eastern Standard Time (EST)' },
-  { value: 'cst', label: 'Central Standard Time (CST)' },
-  { value: 'mst', label: 'Mountain Standard Time (MST)' },
-  { value: 'pst', label: 'Pacific Standard Time (PST)' },
-  { value: 'akst', label: 'Alaska Standard Time (AKST)', disabled: true },
-  { value: 'hst', label: 'Hawaii Standard Time (HST)' },
-]
-
+/**
+ * The default select component. It includes a trigger with a placeholder and a list of items.
+ */
 export const Default: Story = {
-  render: renderSelect,
-  args: {
-    placeholder: 'Select a fruit',
-    items: fruitItems,
-  },
-}
+  render: (args) => (
+    <Select {...args}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+        <SelectItem value="blueberry">Blueberry</SelectItem>
+        <SelectItem value="grapes">Grapes</SelectItem>
+        <SelectItem value="pineapple">Pineapple</SelectItem>
+      </SelectContent>
+    </Select>
+  ),
+};
 
-export const WithLabelAndSeparator: Story = {
-  render: renderSelect,
-  args: {
-    placeholder: 'Select a timezone',
-    items: timeZoneItems,
-    withLabel: 'Timezones',
-    withSeparator: true,
-  },
-}
+/**
+ * Use `SelectGroup`, `SelectLabel`, and `SelectSeparator` to organize long lists of items.
+ */
+export const WithGroupsAndLabels: Story = {
+  render: (args) => (
+    <Select {...args}>
+      <SelectTrigger className="w-[280px]">
+        <SelectValue placeholder="Select a timezone" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>North America</SelectLabel>
+          <SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
+          <SelectItem value="cst">Central Standard Time (CST)</SelectItem>
+          <SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
+          <SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
+          <SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
+          <SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
+        </SelectGroup>
+        <SelectSeparator />
+        <SelectGroup>
+          <SelectLabel>Europe & Africa</SelectLabel>
+          <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
+          <SelectItem value="cet">Central European Time (CET)</SelectItem>
+          <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
+          <SelectItem value="wat">West Africa Time (WAT)</SelectItem>
+          <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
+          <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  ),
+};
 
-export const DisabledSelect: Story = {
-  render: renderSelect,
-  args: {
-    placeholder: 'Select a fruit (disabled)',
-    items: fruitItems,
-    disabled: true,
-  },
-}
-
-export const WithDefaultValue: Story = {
-  render: (args) => renderSelect({ ...args, defaultValue: 'banana' }), // defaultValue is a direct prop of Select
-  args: {
-    placeholder: 'Select a fruit',
-    items: fruitItems,
-  },
-}
-
-export const DisabledItem: Story = {
-  render: renderSelect,
-  args: {
-    placeholder: 'Select a timezone',
-    items: timeZoneItems.map((item) =>
-      item.value === 'akst' ? { ...item, disabled: true } : item,
-    ),
-    withLabel: 'Timezones (Alaska disabled)',
-  },
-}
-
-// Example for longer content in SelectContent to show scroll behavior
-const longItemList = Array.from({ length: 20 }, (_, i) => ({
-  value: `item-${i + 1}`,
-  label: `Item ${i + 1}`,
-}))
-
-export const WithScrollingContent: Story = {
-  render: renderSelect,
-  args: {
-    placeholder: 'Select an item',
-    items: longItemList,
-  },
-}
+/**
+ * The content area will automatically become scrollable if the number of items exceeds the available height.
+ */
+export const Scrollable: Story = {
+  render: (args) => (
+    <Select {...args}>
+      <SelectTrigger className="w-[280px]">
+        <SelectValue placeholder="Select a timezone" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>North America</SelectLabel>
+          <SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
+          <SelectItem value="cst">Central Standard Time (CST)</SelectItem>
+          <SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
+          <SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
+          <SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
+          <SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Europe & Africa</SelectLabel>
+          <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
+          <SelectItem value="cet">Central European Time (CET)</SelectItem>
+          <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
+          <SelectItem value="wat">West Africa Time (WAT)</SelectItem>
+          <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
+          <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Asia</SelectLabel>
+          <SelectItem value="ist">India Standard Time (IST)</SelectItem>
+          <SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
+          <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  ),
+};

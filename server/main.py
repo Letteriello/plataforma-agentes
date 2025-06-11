@@ -1,11 +1,43 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 from uuid import uuid4
+import os
+from cryptography.fernet import Fernet
 
-app = FastAPI(title="Plataforma Agentes API", version="0.1.0")
+# --- App Setup ---
+app = FastAPI(title="Plataforma Agentes API", version="0.2.0")
 
-# Pydantic models for Agent CRUD
+# --- Cryptography Setup ---
+KEY_FILE = "secret.key"
+
+# Em um ambiente de produção, esta chave DEVE ser gerenciada por um serviço de segredos (ex: AWS Secrets Manager, HashiCorp Vault)
+if not os.path.exists(KEY_FILE):
+    key = Fernet.generate_key()
+    with open(KEY_FILE, "wb") as key_file:
+        key_file.write(key)
+
+def load_key():
+    return open(KEY_FILE, "rb").read()
+
+key = load_key()
+fernet = Fernet(key)
+
+def encrypt_value(value: str) -> bytes:
+    return fernet.encrypt(value.encode())
+
+def decrypt_value(encrypted_value: bytes) -> str:
+    return fernet.decrypt(encrypted_value).decode()
+
+# --- In-Memory Storage (for simplicity) ---
+# Agent storage
+_agents: Dict[str, 'Agent'] = {}
+# Secret storage (stores encrypted values)
+_secrets: Dict[str, bytes] = {}
+
+# --- Pydantic Models ---
+
+# Agent Models
 class AgentBase(BaseModel):
     name: str
     description: str | None = None
@@ -17,49 +49,60 @@ class AgentCreate(AgentBase):
 class Agent(AgentBase):
     id: str
 
-# In-memory storage for simplicity
-_agents: dict[str, Agent] = {}
+# Secret Models
+class Secret(BaseModel):
+    name: str
+    # O valor não é exposto na listagem
+
+class SecretCreate(BaseModel):
+    name: str
+    value: str
+
+# --- Agent Endpoints ---
 
 @app.get("/agents", response_model=List[Agent])
 def list_agents():
     return list(_agents.values())
 
-@app.get("/agents/{agent_id}", response_model=Agent)
-def get_agent(agent_id: str):
-    agent = _agents.get(agent_id)
-    if not agent:
-        raise HTTPException(status_code=404, detail="Agent not found")
-    return agent
-
-@app.post("/agents", response_model=Agent, status_code=201)
+@app.post("/agents", response_model=Agent, status_code=status.HTTP_201_CREATED)
 def create_agent(agent_in: AgentCreate):
     agent = Agent(id=str(uuid4()), **agent_in.dict())
     _agents[agent.id] = agent
     return agent
 
-@app.put("/agents/{agent_id}", response_model=Agent)
-def update_agent(agent_id: str, agent_in: AgentCreate):
-    if agent_id not in _agents:
-        raise HTTPException(status_code=404, detail="Agent not found")
-    updated = Agent(id=agent_id, **agent_in.dict())
-    _agents[agent_id] = updated
-    return updated
+# --- Secrets Vault Endpoints ---
 
-@app.delete("/agents/{agent_id}", status_code=204)
-def delete_agent(agent_id: str):
-    if agent_id not in _agents:
-        raise HTTPException(status_code=404, detail="Agent not found")
-    del _agents[agent_id]
+@app.get("/secrets", response_model=List[Secret])
+def list_secrets():
+    """Lists the names of all stored secrets without exposing their values."""
+    return [Secret(name=name) for name in _secrets.keys()]
+
+@app.post("/secrets", response_model=Secret, status_code=status.HTTP_201_CREATED)
+def create_or_update_secret(secret_in: SecretCreate):
+    """Creates a new secret or updates an existing one.
+    The secret value is encrypted before being stored.
+    """
+    if not secret_in.name or not secret_in.value:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Name and value cannot be empty."
+        )
+    
+    encrypted_value = encrypt_value(secret_in.value)
+    _secrets[secret_in.name] = encrypted_value
+    return Secret(name=secret_in.name)
+
+@app.delete("/secrets/{secret_name}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_secret(secret_name: str):
+    """Deletes a secret by its name."""
+    if secret_name not in _secrets:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Secret not found"
+        )
+    del _secrets[secret_name]
     return None
 
-class SecretCreate(BaseModel):
-    key_name: str
-    value: str
-
-_secrets: set[str] = set()
-
-@app.post("/secrets", status_code=201)
-def store_secret(secret: SecretCreate):
-    # In real implementation, store hashed/encrypted
-    _secrets.add(secret.key_name)
-    return {"name": secret.key_name}
+# Exemplo de como usar o uvicorn para rodar a aplicação
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,49 +1,55 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Label } from './label'
-import { Input } from './input' // To demonstrate `htmlFor`
-import { Checkbox } from './checkbox' // To demonstrate with checkbox
+import type { Meta, StoryObj } from '@storybook/react';
+import { Checkbox } from './checkbox';
+import { Input } from './input';
+import { Label } from './label';
 
-const meta = {
+/**
+ * Renders an accessible label associated with a form control.
+ * Built on Radix UI's Label primitive, it provides crucial accessibility
+ * by connecting the label text to a specific input field via the `htmlFor` prop.
+ * Clicking the label focuses the corresponding input.
+ */
+const meta: Meta<typeof Label> = {
   title: 'UI/Label',
   component: Label,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-
   argTypes: {
-    children: { control: 'text' },
-    htmlFor: { control: 'text' },
+    children: { control: 'text', description: 'The content of the label.' },
+    htmlFor: {
+      control: 'text',
+      description: 'The id of the element the label is associated with.',
+    },
   },
-  args: {
-    children: 'This is a label',
-  },
-} satisfies Meta<typeof Label>
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof Label>;
 
+/**
+ * The default usage of a Label associated with an Input field.
+ * This is the most common and recommended pattern.
+ */
 export const Default: Story = {
-  args: {
-    children: 'Default Label Text',
-  },
-}
-
-export const AssociatedWithInput: Story = {
   render: (args) => (
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Label {...args} htmlFor="email-input">
-        Email Address
+        Email
       </Label>
       <Input type="email" id="email-input" placeholder="user@example.com" />
     </div>
   ),
   args: {
-    children: 'Email Address', // This will be overridden by render function's Label content
-    htmlFor: 'email-input', // This arg is passed to the Label in render
+    htmlFor: 'email-input',
   },
-}
+};
 
-export const AssociatedWithCheckbox: Story = {
+/**
+ * A Label can also be associated with other form elements, like a Checkbox.
+ */
+export const WithCheckbox: Story = {
   render: (args) => (
     <div className="flex items-center space-x-2">
       <Checkbox id="terms-checkbox" />
@@ -53,52 +59,24 @@ export const AssociatedWithCheckbox: Story = {
     </div>
   ),
   args: {
-    children: 'Accept terms and conditions',
     htmlFor: 'terms-checkbox',
   },
-}
+};
 
-export const RequiredMarker: Story = {
+/**
+ * The Label automatically appears disabled when the associated input is disabled.
+ * This is achieved using the `peer-disabled` utility class in the component's styling.
+ */
+export const Disabled: Story = {
   render: (args) => (
     <div className="grid w-full max-w-sm items-center gap-1.5">
-      <Label {...args} htmlFor="name-input">
-        Full Name <span className="text-destructive">*</span>
+      <Label {...args} htmlFor="disabled-input">
+        Name (disabled)
       </Label>
-      <Input type="text" id="name-input" placeholder="Your full name" />
+      <Input type="text" id="disabled-input" disabled placeholder="Cannot edit" />
     </div>
   ),
   args: {
-    // Children is provided within the render function for this complex example
-    htmlFor: 'name-input',
+    htmlFor: 'disabled-input',
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates a common pattern for indicating required fields. The asterisk is not part of the Label component itself.',
-      },
-    },
-  },
-}
-
-// The Label component itself doesn't have disabled styling tied to an input's disabled state directly through its own props.
-// The `peer-disabled` styles apply if the Label is associated with a disabled input element via `htmlFor`.
-export const WithDisabledPeerInput: Story = {
-  render: (args) => (
-    <div className="grid w-full max-w-sm items-center gap-1.5">
-      <Label {...args} htmlFor="disabled-input-example">
-        Your Name (disabled input)
-      </Label>
-      <Input
-        type="text"
-        id="disabled-input-example"
-        placeholder="Cannot type here"
-        disabled
-      />
-    </div>
-  ),
-  args: {
-    children: 'Your Name (disabled input)', // This will be overridden
-    htmlFor: 'disabled-input-example',
-  },
-}
+};

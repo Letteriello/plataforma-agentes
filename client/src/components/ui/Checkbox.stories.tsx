@@ -1,59 +1,61 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import { Checkbox } from './checkbox'
-import { Label } from './label' // To demonstrate with a label
-import React from 'react' // For JSX
+import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
+import { Checkbox } from './checkbox';
+import { Label } from './label';
 
-const meta = {
+/**
+ * A control that allows the user to toggle between checked and not checked.
+ * It is built on top of a native `input[type="checkbox"]` element and supports
+ * all of its props.
+ */
+const meta: Meta<typeof Checkbox> = {
   title: 'UI/Checkbox',
   component: Checkbox,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-
   argTypes: {
-    checked: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    // id: { control: 'text' }, // Useful for pairing with Label
-    onChange: { action: 'changed' },
+    checked: {
+      control: 'select',
+      options: [true, false, 'indeterminate'],
+      description: 'The state of the checkbox.',
+    },
+    disabled: { control: 'boolean', description: 'Disables the checkbox.' },
   },
-  args: {
-    checked: false,
-    disabled: false,
-    onChange: fn(),
-  },
-} satisfies Meta<typeof Checkbox>
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof Checkbox>;
 
-export const Default: Story = {
-  args: {
-    // No specific args, will use defaults (unchecked)
-  },
-}
+/**
+ * This story shows the basic states of the Checkbox: unchecked, checked, and disabled.
+ */
+export const BasicStates: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-2">
+        <Checkbox id="state-unchecked" />
+        <Label htmlFor="state-unchecked">Unchecked</Label>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Checkbox id="state-checked" checked />
+        <Label htmlFor="state-checked">Checked</Label>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Checkbox id="state-disabled" disabled />
+        <Label htmlFor="state-disabled" className="text-muted-foreground">
+          Disabled
+        </Label>
+      </div>
+    </div>
+  ),
+};
 
-export const Checked: Story = {
-  args: {
-    checked: true,
-  },
-}
-
-export const DisabledUnchecked: Story = {
-  args: {
-    disabled: true,
-    checked: false,
-  },
-}
-
-export const DisabledChecked: Story = {
-  args: {
-    disabled: true,
-    checked: true,
-  },
-}
-
-// Story to demonstrate usage with a Label component
+/**
+ * For accessibility, it's crucial to pair the `Checkbox` with a `Label`.
+ * Use the `id` prop on the Checkbox and the `htmlFor` prop on the Label.
+ */
 export const WithLabel: Story = {
   render: (args) => (
     <div className="flex items-center space-x-2">
@@ -61,39 +63,38 @@ export const WithLabel: Story = {
       <Label htmlFor="terms">Accept terms and conditions</Label>
     </div>
   ),
-  args: {
-    id: 'terms-checkbox', // ensure id matches label's htmlFor
-  },
-}
+};
 
-export const WithLabelChecked: Story = {
-  render: (args) => (
-    <div className="flex items-center space-x-2">
-      <Checkbox id="subscribe" {...args} />
-      <Label htmlFor="subscribe">Subscribe to newsletter</Label>
-    </div>
-  ),
-  args: {
-    id: 'subscribe-checkbox',
-    checked: true,
-  },
-}
+/**
+ * The indeterminate state is useful for "select all" functionality in lists.
+ * It must be controlled via JavaScript by setting the `indeterminate` property on the input element.
+ */
+export const Indeterminate: Story = {
+  render: () => {
+    const [checked, setChecked] = React.useState<boolean | 'indeterminate'>(
+      'indeterminate',
+    );
+    const ref = React.useRef<HTMLInputElement>(null);
 
-export const WithLabelDisabled: Story = {
-  render: (args) => (
-    <div className="flex items-center space-x-2">
-      <Checkbox id="feature" {...args} />
-      <Label
-        htmlFor="feature"
-        className={args.disabled ? 'text-muted-foreground' : ''}
-      >
-        Enable experimental feature (disabled)
-      </Label>
-    </div>
-  ),
-  args: {
-    id: 'feature-checkbox',
-    disabled: true,
-    checked: false,
+    React.useEffect(() => {
+      if (ref.current) {
+        ref.current.indeterminate = checked === 'indeterminate';
+      }
+    }, [checked]);
+
+    return (
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          ref={ref}
+          id="indeterminate-checkbox"
+          checked={checked === true}
+          onCheckedChange={(isChecked) =>
+            setChecked(isChecked ? true : false)
+          }
+        />
+        <Label htmlFor="indeterminate-checkbox">Indeterminate State</Label>
+      </div>
+    );
   },
-}
+};
+

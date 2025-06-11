@@ -2,7 +2,6 @@ import { useFormContext } from 'react-hook-form'
 import { LLMAgent } from '@/types/agents'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Select,
@@ -12,7 +11,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { Switch } from '@/components/ui/switch'
 import {
   FormControl,
   FormDescription,
@@ -22,9 +20,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useCallback, useMemo } from 'react'
-// import { useAgentForm } from '../AgentForm'; // Replaced with useFormContext
-import { useFormContext } from 'react-hook-form'
-import { LLMAgent } from '@/types/agents' // Added LLMAgent type
 import {
   Card,
   CardContent,
@@ -40,7 +35,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-// Available models with their details
+// Modelos disponíveis com seus detalhes
 const AVAILABLE_MODELS = [
   { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', maxTokens: 8192 },
   { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', maxTokens: 8192 },
@@ -64,113 +59,62 @@ export function LLMAgentForm({
   const { control, watch, setValue } = useFormContext<LLMAgent>()
 
   const modelValue = watch('model')
-  const maxTokensValue = watch('maxTokens')
-  const stopSequencesValue = watch('stopSequences', [])
-  const temperatureValue = watch('temperature', 0.7)
-  // const maxTokensForDisplay = watch('maxTokens', 2048); // Already have maxTokensValue
+  // Alinhado com a nova estrutura aninhada do ADK
+  const temperatureValue = watch('generateContentConfig.temperature', 0.7)
+  const maxTokensValue = watch('generateContentConfig.maxOutputTokens')
+  const stopSequencesValue = watch('generateContentConfig.stopSequences', [])
 
   const selectedModel = useMemo(
-    () =>
-      AVAILABLE_MODELS.find((m) => m.id === modelValue) || AVAILABLE_MODELS[0],
+    () => AVAILABLE_MODELS.find((m) => m.id === modelValue),
     [modelValue],
   )
 
   const handleModelChange = useCallback(
-    (value: string) => {
-      setValue('model', value, { shouldValidate: true })
-      const model = AVAILABLE_MODELS.find((m) => m.id === value)
-      if (model && maxTokensValue > model.maxTokens) {
-        setValue('maxTokens', model.maxTokens, { shouldValidate: true })
+    (newModelId: string) => {
+      const model = AVAILABLE_MODELS.find((m) => m.id === newModelId)
+      if (model) {
+        setValue('model', newModelId)
+        // Alinhado com a nova estrutura aninhada do ADK
+        setValue('generateContentConfig.maxOutputTokens', model.maxTokens)
       }
     },
-    [setValue, maxTokensValue],
-  )
-
-  const handleTemperatureChange = useCallback(
-    (value: number[]) => {
-      setValue('temperature', value[0], { shouldValidate: true })
-    },
     [setValue],
-  )
-
-  const handleMaxTokensChange = useCallback(
-    (value: number[]) => {
-      const val = value[0]
-      if (val > 0 && val <= selectedModel.maxTokens) {
-        setValue('maxTokens', val, { shouldValidate: true })
-      } else if (val > selectedModel.maxTokens) {
-        setValue('maxTokens', selectedModel.maxTokens, { shouldValidate: true })
-      }
-    },
-    [selectedModel.maxTokens, setValue],
-  )
-
-  const handleTopPChange = useCallback(
-    (value: number[]) => {
-      setValue('topP', value[0], { shouldValidate: true })
-    },
-    [setValue],
-  )
-
-  const handleTopKChange = useCallback(
-    (value: number[]) => {
-      setValue('topK', value[0], { shouldValidate: true })
-    },
-    [setValue],
-  )
-
-  const handleStopSequenceAdd = useCallback(() => {
-    const newSequence = prompt('Enter a stop sequence:')
-    if (newSequence) {
-      const currentSequences = stopSequencesValue || []
-      if (!currentSequences.includes(newSequence)) {
-        setValue('stopSequences', [...currentSequences, newSequence], {
-          shouldValidate: true,
-        })
-      }
-    }
-  }, [setValue, stopSequencesValue])
-
-  const handleStopSequenceRemove = useCallback(
-    (index: number) => {
-      const newSequences = [...(stopSequencesValue || [])]
-      newSequences.splice(index, 1)
-      setValue('stopSequences', newSequences, { shouldValidate: true })
-    },
-    [setValue, stopSequencesValue],
   )
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Name and Description FormFields removed */}
       <Card>
         <CardHeader>
-          <CardTitle>Model Configuration</CardTitle>
+          <CardTitle>Modelo</CardTitle>
           <CardDescription>
-            Select the base LLM model and its core parameters.
+            Selecione o modelo de linguagem e configure seus parâmetros de
+            geração.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <FormField
             control={control}
             name="model"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Model</FormLabel>
+                <FormLabel>Modelo Base</FormLabel>
                 <Select
-                  onValueChange={handleModelChange}
-                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    handleModelChange(value)
+                  }}
+                  defaultValue={field.value}
                   disabled={disabled}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a model" />
+                      <SelectValue placeholder="Selecione um modelo" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {AVAILABLE_MODELS.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.name} (Max Tokens: {m.maxTokens})
+                    {AVAILABLE_MODELS.map((model) => (
+                      <SelectItem key={model.id} value={model.id}>
+                        {model.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -179,178 +123,44 @@ export function LLMAgentForm({
               </FormItem>
             )}
           />
-          {/* Model Settings are now part of this card's content */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <div className="space-y-4">
-              <FormField
-                control={control}
-                name="temperature"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex justify-between items-center">
-                      <FormLabel>
-                        Temperature: {field.value?.toFixed(1)}
-                      </FormLabel>
-                      <span className="text-sm text-muted-foreground">
-                        {field.value < 0.3
-                          ? 'Deterministic'
-                          : field.value < 0.7
-                            ? 'Balanced'
-                            : 'Creative'}
-                      </span>
-                    </div>
-                    <FormControl>
-                      <Slider
-                        min={0}
-                        max={2}
-                        step={0.1}
-                        value={[field.value]}
-                        onValueChange={handleTemperatureChange}
-                        disabled={disabled}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Lower values make the output more focused and
-                      deterministic.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={control}
-                name="maxTokens"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Max Tokens: {field.value}</FormLabel>
-                    <FormControl>
-                      <Slider
-                        min={1}
-                        max={selectedModel.maxTokens}
-                        step={1}
-                        value={[field.value]}
-                        onValueChange={handleMaxTokensChange}
-                        disabled={disabled}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Max for {selectedModel.name}: {selectedModel.maxTokens}.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="space-y-4">
-              <FormField
-                control={control}
-                name="topP"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Top-P: {field.value?.toFixed(1)}</FormLabel>
-                    <FormControl>
-                      <Slider
-                        min={0.1}
-                        max={1}
-                        step={0.1}
-                        value={[field.value]}
-                        onValueChange={handleTopPChange}
-                        disabled={disabled}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Controls diversity via nucleus sampling.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="topK"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Top-K: {field.value}</FormLabel>
-                    <FormControl>
-                      <Slider
-                        min={1}
-                        max={100}
-                        step={1}
-                        value={[field.value]}
-                        onValueChange={handleTopKChange}
-                        disabled={disabled}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Limits selection to top K likely tokens.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Instructions section removed */}
-
-      {/* Advanced Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Advanced Settings</CardTitle>
-          <CardDescription>Fine-tune other model behaviors.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
           <FormField
             control={control}
-            name="stopSequences"
+            name="generateContentConfig.temperature"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Stop Sequences</FormLabel>
-                <div className="flex items-center gap-2">
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., ###, ---"
-                      value={field.value?.join(', ') || ''}
-                      onChange={(e) => {
-                        const newSequences = e.target.value
-                          .split(',')
-                          .map((s) => s.trim())
-                          .filter(Boolean)
-                        field.onChange(newSequences)
-                      }}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                </div>
-                {field.value && field.value.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {field.value.map((seq, index) => (
-                      <span
-                        key={index}
-                        className="flex items-center gap-1 px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm"
-                      >
-                        {seq}
-                        <button
-                          type="button"
-                          onClick={() => handleStopSequenceRemove(index)}
-                          className="text-red-500 hover:text-red-700"
-                          disabled={disabled}
-                        >
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <FormDescription>
-                  Sequences where the model will stop generating. Separate by
-                  comma.
-                </FormDescription>
+                <FormLabel>Temperatura: {temperatureValue.toFixed(1)}</FormLabel>
+                <FormControl>
+                  <Slider
+                    min={0}
+                    max={2}
+                    step={0.1}
+                    value={[field.value || 0.7]} // Default value if undefined
+                    onValueChange={(value) => field.onChange(value[0])}
+                    disabled={disabled}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="generateContentConfig.maxOutputTokens"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max Tokens: {maxTokensValue}</FormLabel>
+                <FormControl>
+                  <Slider
+                    min={1}
+                    max={selectedModel?.maxTokens || 8192}
+                    step={1}
+                    value={[field.value || 2048]} // Default value if undefined
+                    onValueChange={(value) => field.onChange(value[0])}
+                    disabled={disabled}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -359,26 +169,20 @@ export function LLMAgentForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={control}
-              name="frequencyPenalty"
+              name="generateContentConfig.topP"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Frequency Penalty: {field.value?.toFixed(1)}
-                  </FormLabel>
+                  <FormLabel>Top P: {field.value?.toFixed(1)}</FormLabel>
                   <FormControl>
                     <Slider
-                      min={-2}
-                      max={2}
+                      min={0}
+                      max={1}
                       step={0.1}
-                      value={[field.value]}
+                      value={[field.value || 1]} // Default value if undefined
                       onValueChange={(value) => field.onChange(value[0])}
                       disabled={disabled}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Positive values penalize new tokens based on their existing
-                    frequency.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -386,31 +190,78 @@ export function LLMAgentForm({
 
             <FormField
               control={control}
-              name="presencePenalty"
+              name="generateContentConfig.topK"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Presence Penalty: {field.value?.toFixed(1)}
-                  </FormLabel>
+                  <FormLabel>Top K: {field.value}</FormLabel>
                   <FormControl>
                     <Slider
-                      min={-2}
-                      max={2}
-                      step={0.1}
-                      value={[field.value]}
+                      min={1}
+                      max={100}
+                      step={1}
+                      value={[field.value || 40]} // Default value if undefined
                       onValueChange={(value) => field.onChange(value[0])}
                       disabled={disabled}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Positive values penalize new tokens if they appear in the
-                    text so far.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
+
+          <FormField
+            control={control}
+            name="generateContentConfig.stopSequences"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sequências de Parada</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Digite uma sequência e pressione Enter"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        const newValue = e.currentTarget.value.trim()
+                        if (newValue && !field.value?.includes(newValue)) {
+                          field.onChange([...(field.value || []), newValue])
+                          e.currentTarget.value = ''
+                        }
+                      }
+                    }}
+                    disabled={disabled}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Adicione sequências de texto que farão o modelo parar de
+                  gerar.
+                </FormDescription>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {stopSequencesValue.map((seq, index) => (
+                    <ToggleGroup
+                      type="single"
+                      key={index}
+                      variant="outline"
+                      className="p-1 bg-gray-100 rounded-md"
+                    >
+                      <ToggleGroupItem
+                        value={seq}
+                        onClick={() => {
+                          const newSequences = [...stopSequencesValue]
+                          newSequences.splice(index, 1)
+                          field.onChange(newSequences)
+                        }}
+                      >
+                        {seq} &times;
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Campos de Frequency e Presence Penalty removidos para alinhar com o Google ADK */}
         </CardContent>
       </Card>
     </div>

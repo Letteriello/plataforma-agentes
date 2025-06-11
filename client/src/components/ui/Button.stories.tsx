@@ -1,188 +1,119 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import { Button } from './button'
-import { PlusCircle, Mail } from 'lucide-react' // Example icons
+import type { Meta, StoryObj } from '@storybook/react';
+import { Mail, PlusCircle } from 'lucide-react';
+import { Button, buttonVariants } from './button';
 
-// Default metadata for the Button component stories
-const meta = {
+/**
+ * A clickable button component with various styles, sizes, and states.
+ * It can include icons and supports loading and disabled states.
+ */
+const meta: Meta<typeof Button> = {
   title: 'UI/Button',
   component: Button,
+  tags: ['autodocs'],
   parameters: {
-    layout: 'centered', // Center the component in the Canvas
+    layout: 'centered',
   },
-
-  // ArgTypes for better control in Storybook UI
   argTypes: {
     variant: {
       control: 'select',
-      options: [
-        'primary',
-        'secondary',
-        'destructive',
-        'outline',
-        'ghost',
-        'link',
-        'success',
-        'warning',
-        'info',
-      ],
+      options: Object.keys(buttonVariants.variants.variant),
+      description: 'The visual style of the button.',
     },
     size: {
       control: 'select',
       options: ['default', 'sm', 'lg', 'icon'],
+      description: 'The size of the button.',
     },
-    isLoading: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    asChild: { control: 'boolean' },
-    children: { control: 'text' },
-    onClick: { action: 'clicked' }, // Use Storybook's action addon for onClick
+    isLoading: { control: 'boolean', description: 'Shows a loading spinner.' },
+    disabled: { control: 'boolean', description: 'Disables the button.' },
+    children: { control: 'text', description: 'The content of the button.' },
+    leftIcon: { control: false, description: 'Icon to display on the left.' },
+    rightIcon: { control: false, description: 'Icon to display on the right.' },
   },
-  // Default args
-  args: {
-    children: 'Button Text',
-    isLoading: false,
-    disabled: false,
-    asChild: false,
-    onClick: fn(), // Mock function for onClick
-  },
-} satisfies Meta<typeof Button>
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof Button>;
 
-// Basic stories
-export const Default: Story = {
-  args: {
-    variant: 'primary',
-    children: 'Primary Button',
-  },
-}
+const variants = Object.keys(
+  buttonVariants.variants.variant,
+) as (keyof typeof buttonVariants.variants.variant)[];
 
-export const Secondary: Story = {
-  args: {
-    variant: 'secondary',
-    children: 'Secondary Button',
-  },
-}
+/**
+ * This story showcases all available style variants of the Button.
+ * Each variant is designed for a different semantic purpose.
+ */
+export const AllVariants: Story = {
+  render: () => (
+    <div className="grid grid-cols-3 gap-4">
+      {variants.map((variant) => (
+        <Button key={variant} variant={variant} className="capitalize">
+          {variant}
+        </Button>
+      ))}
+    </div>
+  ),
+};
 
-export const Destructive: Story = {
-  args: {
-    variant: 'destructive',
-    children: 'Destructive Button',
-  },
-}
+/**
+ * Buttons are available in three main sizes: `sm`, `default`, and `lg`.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <Button size="sm">Small</Button>
+      <Button size="default">Default</Button>
+      <Button size="lg">Large</Button>
+    </div>
+  ),
+};
 
-export const Outline: Story = {
-  args: {
-    variant: 'outline',
-    children: 'Outline Button',
-  },
-}
+/**
+ * The `leftIcon` and `rightIcon` props can be used to add icons to the button.
+ * The loader will automatically replace icons when `isLoading` is true.
+ */
+export const WithIcons: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Button leftIcon={<Mail className="h-4 w-4" />}>Email</Button>
+      <Button rightIcon={<PlusCircle className="h-4 w-4" />}>Add New</Button>
+      <Button isLoading leftIcon={<Mail className="h-4 w-4" />}>
+        Submitting
+      </Button>
+    </div>
+  ),
+};
 
-export const Ghost: Story = {
-  args: {
-    variant: 'ghost',
-    children: 'Ghost Button',
-  },
-}
+/**
+ * The `icon` size is perfect for creating buttons that only contain an icon.
+ * Remember to provide an `aria-label` for accessibility.
+ */
+export const IconButton: Story = {
+  render: () => (
+    <Button size="icon" aria-label="Add to favorites">
+      <PlusCircle className="h-4 w-4" />
+    </Button>
+  ),
+};
 
-export const Link: Story = {
-  args: {
-    variant: 'link',
-    children: 'Link Button',
-  },
-}
+/**
+ * The button supports `disabled` and `isLoading` states.
+ * The `isLoading` state will also disable the button and show a spinner.
+ */
+export const States: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <Button disabled>Disabled</Button>
+      <Button isLoading>Loading</Button>
+    </div>
+  ),
+};
 
-export const Success: Story = {
-  args: {
-    variant: 'success',
-    children: 'Success Button',
-  },
-}
+/**
+ * The `link` variant styles the button to look like a hyperlink.
+ * It's useful for actions that should appear less prominent.
+ */
+export const AsLink: Story = {
+  render: () => <Button variant="link">Click me</Button>,
+};
 
-export const Warning: Story = {
-  args: {
-    variant: 'warning',
-    children: 'Warning Button',
-  },
-}
-
-export const Info: Story = {
-  args: {
-    variant: 'info',
-    children: 'Info Button',
-  },
-}
-
-// Size stories
-export const Small: Story = {
-  args: {
-    size: 'sm',
-    children: 'Small Button',
-  },
-}
-
-export const Large: Story = {
-  args: {
-    size: 'lg',
-    children: 'Large Button',
-  },
-}
-
-export const Icon: Story = {
-  args: {
-    variant: 'outline', // Icon buttons often use outline or ghost
-    size: 'icon',
-    children: <PlusCircle className="h-4 w-4" />, // Pass icon as children
-    'aria-label': 'Add Item', // Important for accessibility
-  },
-}
-
-// State stories
-export const IsLoading: Story = {
-  args: {
-    isLoading: true,
-    children: 'Loading...',
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    children: 'Disabled Button',
-  },
-}
-
-// With Icons
-export const WithLeftIcon: Story = {
-  args: {
-    variant: 'primary',
-    leftIcon: <Mail className="h-4 w-4" />,
-    children: 'Email',
-  },
-}
-
-export const WithRightIcon: Story = {
-  args: {
-    variant: 'primary',
-    rightIcon: <PlusCircle className="h-4 w-4" />,
-    children: 'Add New',
-  },
-}
-
-export const LoadingWithIcons: Story = {
-  args: {
-    variant: 'primary',
-    isLoading: true,
-    leftIcon: <Mail className="h-4 w-4" />, // Icon should be hidden by loader
-    children: 'Submitting',
-  },
-}
-
-// Example of asChild (though it's harder to demonstrate visually in Storybook without a child component)
-// export const AsChild: Story = {
-//   args: {
-//     asChild: true,
-//     children: <a href="#">Link wrapped by Button styles</a>, // This won't work directly, would need a real child component
-//   },
-// };

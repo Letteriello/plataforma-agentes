@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useFormContext, FormProvider } from 'react-hook-form' // Added FormProvider
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -24,9 +23,8 @@ import {
 
 import { LLMAgentForm } from './forms/LLMAgentForm'
 import { AgentToolsTab } from './forms/AgentToolsTab'
-import { BaseAgentForm } from './forms/BaseAgentForm' // This should provide useForm methods
+import { BaseAgentForm } from './forms/BaseAgentForm'
 import { LLMAgent, createDefaultAgent, LLMAgentSchema } from '@/types/agents'
-// import AgentDeployTab from './AgentDeployTab'; // AgentDeployTab removed as per new tab structure
 
 const WIZARD_STEPS = [
   'identidade',
@@ -43,7 +41,7 @@ const STEP_LABELS: { [key: string]: string } = {
   memoria: 'Memória',
 }
 
-// Mock data - replace with actual API calls
+// Dados mock atualizados para refletir a nova estrutura aninhada do ADK
 const mockAgents: LLMAgent[] = [
   {
     id: '1',
@@ -51,96 +49,68 @@ const mockAgents: LLMAgent[] = [
     description: 'Handles customer inquiries and support tickets',
     type: 'llm',
     model: 'gemini-1.5-pro',
-    temperature: 0.7,
-    maxTokens: 1024,
-    topP: 1,
-    topK: 40,
-    stopSequences: [],
-    frequencyPenalty: 0,
-    presencePenalty: 0,
     instruction:
       'You are a helpful customer support assistant. Be polite and professional.',
-    systemPrompt:
-      '## Guidelines\n- Always verify customer information\n- Escalate complex issues to a human agent\n- Provide clear next steps',
+    generateContentConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 1024,
+      topP: 1,
+      topK: 40,
+      stopSequences: [],
+    },
+    tools: ['tool-1', 'tool-2'],
+    // Propriedades base
     version: '1.0.0',
-    isPublic: false,
-    tags: ['support', 'customer-service'],
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
+    isPublic: true,
+    tags: ['support', 'gemini'],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ]
 
-type AgentEditorProps = {
-  mode?: 'create' | 'edit'
-}
-
-export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
+export function AgentEditor() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(true)
-  const [agent, setAgent] = useState<LLMAgent | null>(null)
-  const [activeTab, setActiveTab] = useState(WIZARD_STEPS[0])
+  const [mode, setMode] = useState<'create' | 'edit'>('create')
+  const [agent, setAgent] = useState<LLMAgent | undefined>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
-  // Load agent data in edit mode
   useEffect(() => {
-    if (mode === 'edit' && id) {
-      // In a real app, this would be an API call
-      const foundAgent = mockAgents.find((a) => a.id === id) || null
-      setAgent(foundAgent)
-      setIsLoading(false)
-    } else if (mode === 'create') {
+    if (id) {
+      setMode('edit')
+      // Simula o carregamento de um agente existente
+      const existingAgent = mockAgents.find((a) => a.id === id)
+      if (existingAgent) {
+        setAgent(existingAgent)
+      } else {
+        toast({ variant: 'destructive', title: 'Agente não encontrado' })
+        navigate('/agents')
+      }
+    } else {
+      setMode('create')
+      // Cria um novo agente com a estrutura padrão correta
       setAgent(createDefaultAgent('llm'))
-      setIsLoading(false)
     }
-  }, [id, mode])
-
-  const currentStepIndex = WIZARD_STEPS.indexOf(activeTab)
+  }, [id, navigate, toast])
 
   const handleNextStep = () => {
     if (currentStepIndex < WIZARD_STEPS.length - 1) {
-      setActiveTab(WIZARD_STEPS[currentStepIndex + 1])
+      setCurrentStepIndex(currentStepIndex + 1)
     }
   }
 
   const handlePreviousStep = () => {
     if (currentStepIndex > 0) {
-      setActiveTab(WIZARD_STEPS[currentStepIndex - 1])
+      setCurrentStepIndex(currentStepIndex - 1)
     }
   }
 
-  const handleSubmit = async (values: LLMAgent) => {
-    try {
-      setIsLoading(true)
-      // In a real app, this would be an API call
-      console.log('Saving agent:', values)
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      if (mode === 'create') {
-        toast({
-          title: 'Agente Criado!',
-          description: 'Novo agente configurado com sucesso.',
-        })
-      } else {
-        toast({
-          title: 'Agente Atualizado!',
-          description: 'Configurações do agente atualizadas com sucesso.',
-        })
-      }
-
-      // Navigate back to agents list or to the new agent's edit page
-      navigate('/agents')
-    } catch (error) {
-      console.error('Error saving agent:', error)
-      toast({
-        title: 'Erro',
-        description: `Falha ao ${mode === 'create' ? 'criar' : 'atualizar'} o agente. Por favor, tente novamente.`,
-        variant: 'destructive',
-      })
-    } finally {
-      setIsLoading(false)
+  const handleTabChange = (value: string) => {
+    const stepIndex = WIZARD_STEPS.indexOf(value)
+    if (stepIndex !== -1) {
+      setCurrentStepIndex(stepIndex)
     }
   }
 
@@ -148,40 +118,49 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
     navigate('/agents')
   }
 
-  if (isLoading) {
-    return <div>Loading...</div>
+  const handleSubmit = async (values: LLMAgent) => {
+    setIsLoading(true)
+    console.log('Submitting Agent Data:', values)
+
+    // Simula uma chamada de API
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    toast({
+      title: `Agente ${mode === 'create' ? 'criado' : 'salvo'} com sucesso!`,
+      description: `O agente "${values.name}" foi salvo.`,
+    })
+
+    setIsLoading(false)
+    navigate('/agents')
   }
 
-  if (!agent && mode === 'edit') {
-    return <div>Agent not found</div>
+  if (!agent) {
+    return <div>Carregando...</div> // Ou um componente de esqueleto
   }
-
-  // ReviewStep component is removed as "Modelo & Geração" is now a dedicated settings tab.
-  // The data previously shown in ReviewStep is editable in other tabs.
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">
-          {mode === 'create'
-            ? 'Criar Novo Agente'
-            : `Editar Agente: ${agent?.name}`}
+    <div className="container mx-auto p-6">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold">
+          {mode === 'create' ? 'Criar Novo Agente' : `Editar Agente: ${agent.name}`}
         </h1>
-      </div>
+        <p className="text-muted-foreground mt-2">
+          Siga os passos para configurar seu agente LLM.
+        </p>
+      </header>
 
       <BaseAgentForm
-        id="agent-form"
+        schema={LLMAgentSchema}
         defaultValues={agent}
         onSubmit={handleSubmit}
-        schema={LLMAgentSchema}
-        className="space-y-6"
+        onCancel={handleCancel}
       >
         <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          // className="space-y-6" // Moved to BaseAgentForm or manage spacing internally
+          value={WIZARD_STEPS[currentStepIndex]}
+          onValueChange={handleTabChange}
+          className="w-full"
         >
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             {WIZARD_STEPS.map((step) => (
               <TabsTrigger key={step} value={step}>
                 {STEP_LABELS[step]}
@@ -194,59 +173,34 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
               <CardHeader>
                 <CardTitle>Identidade do Agente</CardTitle>
                 <CardDescription>
-                  Defina o nome, a descrição e o avatar do seu agente.
+                  Dê um nome e uma descrição para identificar seu agente.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
                   name="name"
-                  render={(
-                    { field, formState }, // control is implicitly from BaseAgentForm's FormProvider
-                  ) => (
+                  render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nome do Agente</FormLabel>
+                      <FormLabel>Nome</FormLabel>
                       <FormControl>
-                        <Input placeholder="Meu Agente Incrível" {...field} />
+                        <Input {...field} placeholder="Ex: Agente de Vendas" />
                       </FormControl>
-                      <FormMessage>
-                        {formState.errors.name?.message?.toString()}
-                      </FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
                   name="description"
-                  render={({ field, formState }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Descrição</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Descreva o que seu agente faz."
                           {...field}
-                          rows={3}
+                          placeholder="Ex: Responsável por qualificar leads e agendar reuniões."
                         />
                       </FormControl>
-                      <FormMessage>
-                        {formState.errors.description?.message?.toString()}
-                      </FormMessage>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  name="avatarUrl"
-                  render={({ field, formState }) => (
-                    <FormItem>
-                      <FormLabel>URL do Avatar (Opcional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://example.com/avatar.png"
-                          {...field}
-                          value={field.value ?? ''}
-                        />
-                      </FormControl>
-                      <FormMessage>
-                        {formState.errors.avatarUrl?.message?.toString()}
-                      </FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -257,56 +211,24 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
           <TabsContent value="instrucoes">
             <Card>
               <CardHeader>
-                <CardTitle>Instruções do Agente</CardTitle>
+                <CardTitle>Instruções</CardTitle>
                 <CardDescription>
-                  Forneça as instruções e o prompt do sistema para guiar o
-                  comportamento do agente.
+                  Defina o comportamento e a personalidade do seu agente.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent>
                 <FormField
                   name="instruction"
-                  render={({ field, formState }) => (
+                  render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Instruções</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Você é um assistente útil que..."
                           {...field}
-                          rows={6}
-                          className="font-mono text-sm"
+                          rows={12}
+                          placeholder="Você é um assistente prestativo..."
                         />
                       </FormControl>
-                      <FormDescription>
-                        Instruções de sistema que guiam o comportamento do
-                        agente.
-                      </FormDescription>
-                      <FormMessage>
-                        {formState.errors.instruction?.message?.toString()}
-                      </FormMessage>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  name="systemPrompt"
-                  render={({ field, formState }) => (
-                    <FormItem>
-                      <FormLabel>Prompt de Sistema (Opcional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="## Contexto\n- ...\n## Regras\n- ..."
-                          {...field}
-                          rows={6}
-                          className="font-mono text-sm"
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Instruções adicionais de nível de sistema, ex: em
-                        Markdown.
-                      </FormDescription>
-                      <FormMessage>
-                        {formState.errors.systemPrompt?.message?.toString()}
-                      </FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -315,22 +237,11 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
           </TabsContent>
 
           <TabsContent value="modelo_geracao">
-            {/* LLMAgentForm is now part of this tab */}
-            <LLMAgentForm />
+            <LLMAgentForm disabled={isLoading} />
           </TabsContent>
 
           <TabsContent value="ferramentas">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ferramentas</CardTitle>
-                <CardDescription>
-                  Configure as ferramentas e capacidades do seu agente.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AgentToolsTab />
-              </CardContent>
-            </Card>
+            <AgentToolsTab />
           </TabsContent>
 
           <TabsContent value="memoria">
@@ -350,9 +261,6 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
           </TabsContent>
         </Tabs>
 
-        {/* LLMAgentForm was moved into the 'modelo_geracao' tab. The conditional div wrapper is removed. */}
-
-        {/* Navigation buttons are OUTSIDE Tabs but INSIDE BaseAgentForm */}
         <div className="flex justify-between items-center mt-8 pt-6 border-t">
           <div>
             <Button
@@ -373,7 +281,7 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
               Cancelar
             </Button>
             {currentStepIndex === WIZARD_STEPS.length - 1 ? (
-              <Button form="agent-form" type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading}>
                 {isLoading
                   ? mode === 'create'
                     ? 'Criando...'
@@ -386,9 +294,7 @@ export function AgentEditor({ mode = 'create' }: AgentEditorProps) {
               <Button
                 type="button"
                 onClick={handleNextStep}
-                disabled={
-                  currentStepIndex === WIZARD_STEPS.length - 1 || isLoading
-                }
+                disabled={currentStepIndex === WIZARD_STEPS.length - 1 || isLoading}
               >
                 Próximo
               </Button>

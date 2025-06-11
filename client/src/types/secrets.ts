@@ -1,7 +1,14 @@
 /**
- * Data Transfer Object for a secret.
+ * Represents a secret returned by the API (value is not exposed).
  */
-export interface SecretDTO {
+export interface Secret {
+  name: string;
+}
+
+/**
+ * Data Transfer Object for creating or updating a secret.
+ */
+export interface SecretCreate {
   name: string;
   value: string;
 }

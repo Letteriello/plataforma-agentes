@@ -52,6 +52,7 @@ const Deploy = lazy(() => import('./pages/DeployPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const ChatPage = lazy(() => import('./pages/ChatPage')) // Stays the same
 const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'))
+const CofrePage = lazy(() => import('./pages/Cofre'))
 const SessionsPage = lazy(() => import('./pages/SessionsPage'))
 const AgentTemplatesPage = lazy(
   () => import('./pages/agents/AgentsTemplatesPage'),
@@ -199,6 +200,11 @@ const routes: AppRouteObject[] = [
         path: 'settings', // path changed from 'configuracoes'
         element: withSuspense(SettingsPage),
         handle: { title: 'Settings' }, // title changed
+      },
+      {
+        path: 'cofre',
+        element: withSuspense(CofrePage),
+        handle: { title: 'Cofre' },
       },
     ],
   },

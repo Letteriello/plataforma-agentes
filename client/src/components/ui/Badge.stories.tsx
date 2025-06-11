@@ -1,182 +1,97 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Badge } from './badge'
-import {
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Info,
-  Power,
-  PowerOff,
-  Clock,
-  Rocket,
-  Brain,
-  Wrench,
-  UserCircle,
-} from 'lucide-react' // Example icons
+import type { Meta, StoryObj } from '@storybook/react';
+import { Badge, badgeVariants } from './badge';
+import { Brain, CheckCircle, Rocket, Wrench } from 'lucide-react';
 
-const meta = {
+/**
+ * A versatile badge component with multiple visual styles (variants), sizes,
+ * and optional icon support. Used to display status, categories, or short info.
+ */
+const meta: Meta<typeof Badge> = {
   title: 'UI/Badge',
   component: Badge,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-
   argTypes: {
     variant: {
       control: 'select',
-      options: [
-        'default',
-        'secondary',
-        'destructive',
-        'outline',
-        'success',
-        'error',
-        'warning',
-        'info',
-        'online',
-        'offline',
-        'pending',
-        'deployed',
-        'llm',
-        'tool',
-        'user',
-      ],
+      options: Object.keys(badgeVariants.variants.variant),
+      description: 'The visual style of the badge.',
     },
     size: {
       control: 'select',
       options: ['default', 'sm', 'lg'],
+      description: 'The size of the badge.',
     },
-    children: { control: 'text' },
-    // icon: { control: 'object' } // Icons are harder to control directly in Storybook args
+    children: {
+      control: 'text',
+      description: 'The content displayed inside the badge.',
+    },
+    icon: {
+      control: false, // Icons are passed as React nodes, not easily controlled
+      description: 'An optional icon to display before the text.',
+    },
   },
-  args: {
-    children: 'Badge Text',
-    size: 'default',
-  },
-} satisfies Meta<typeof Badge>
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof Badge>;
 
-export const Default: Story = {
-  args: { variant: 'default', children: 'Default' },
-}
-export const Secondary: Story = {
-  args: { variant: 'secondary', children: 'Secondary' },
-}
-export const Destructive: Story = {
-  args: { variant: 'destructive', children: 'Destructive' },
-}
-export const Outline: Story = {
-  args: { variant: 'outline', children: 'Outline' },
-}
+const variants = Object.keys(
+  badgeVariants.variants.variant,
+) as (keyof typeof badgeVariants.variants.variant)[];
 
-// Status Variants
-export const Success: Story = {
-  args: {
-    variant: 'success',
-    children: 'Success',
-    icon: <CheckCircle className="h-3 w-3" />,
-  },
-}
-export const ErrorBadge: Story = {
-  args: {
-    variant: 'error',
-    children: 'Error',
-    icon: <XCircle className="h-3 w-3" />,
-  },
-} // Renamed to avoid conflict with Storybook error type
-export const Warning: Story = {
-  args: {
-    variant: 'warning',
-    children: 'Warning',
-    icon: <AlertTriangle className="h-3 w-3" />,
-  },
-}
-export const Info: Story = {
-  args: {
-    variant: 'info',
-    children: 'Info',
-    icon: <Info className="h-3 w-3" />,
-  },
-}
+/**
+ * This story showcases all available color variants of the Badge component.
+ * Use these variants to convey meaning, such as status or category.
+ */
+export const AllVariants: Story = {
+  render: () => (
+    <div className="grid grid-cols-4 gap-4">
+      {variants.map((variant) => (
+        <Badge key={variant} variant={variant} className="capitalize">
+          {variant}
+        </Badge>
+      ))}
+    </div>
+  ),
+};
 
-// Agent Status Variants
-export const Online: Story = {
-  args: {
-    variant: 'online',
-    children: 'Online',
-    icon: <Power className="h-3 w-3" />,
-  },
-}
-export const Offline: Story = {
-  args: {
-    variant: 'offline',
-    children: 'Offline',
-    icon: <PowerOff className="h-3 w-3" />,
-  },
-}
-export const Pending: Story = {
-  args: {
-    variant: 'pending',
-    children: 'Pending',
-    icon: <Clock className="h-3 w-3" />,
-  },
-}
-export const Deployed: Story = {
-  args: {
-    variant: 'deployed',
-    children: 'Deployed',
-    icon: <Rocket className="h-3 w-3" />,
-  },
-}
+/**
+ * Badges come in three different sizes: `sm`, `default`, and `lg`.
+ * Choose the size that best fits the surrounding UI elements.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <Badge size="sm">Small</Badge>
+      <Badge size="default">Default</Badge>
+      <Badge size="lg">Large</Badge>
+    </div>
+  ),
+};
 
-// LLM Specific Variants
-export const LLMBadge: Story = {
-  args: {
-    variant: 'llm',
-    children: 'LLM',
-    icon: <Brain className="h-3 w-3" />,
-  },
-} // Renamed
-export const ToolBadge: Story = {
-  args: {
-    variant: 'tool',
-    children: 'Tool',
-    icon: <Wrench className="h-3 w-3" />,
-  },
-} // Renamed
-export const UserBadge: Story = {
-  args: {
-    variant: 'user',
-    children: 'User',
-    icon: <UserCircle className="h-3 w-3" />,
-  },
-} // Renamed
+/**
+ * An optional `icon` prop can be passed to include a `lucide-react` icon (or any React node)
+ * before the badge text, providing additional visual context.
+ */
+export const WithIcons: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Badge variant="success" icon={<CheckCircle className="h-3 w-3" />}>
+        Success
+      </Badge>
+      <Badge variant="deployed" icon={<Rocket className="h-3 w-3" />}>
+        Deployed
+      </Badge>
+      <Badge variant="llm" icon={<Brain className="h-3 w-3" />}>
+        LLM Agent
+      </Badge>
+      <Badge variant="tool" icon={<Wrench className="h-3 w-3" />}>
+        Tool Enabled
+      </Badge>
+    </div>
+  ),
+};
 
-// Size Variants
-export const Small: Story = {
-  args: { variant: 'default', size: 'sm', children: 'Small Badge' },
-}
-export const Large: Story = {
-  args: { variant: 'default', size: 'lg', children: 'Large Badge' },
-}
-
-// With Icon Only (using size 'default' which might be small for just an icon)
-export const IconOnly: Story = {
-  args: {
-    variant: 'success',
-    size: 'default', // Or 'icon' if such a size was defined for fitting icons better
-    children: <CheckCircle className="h-4 w-4" />, // Pass icon as children, remove text
-    // For true icon-only badges, ensure padding/size is appropriate.
-    // The current Badge component wraps children in a span, so this will render the icon.
-  },
-}
-
-export const OutlineWithIcon: Story = {
-  args: {
-    variant: 'outline',
-    icon: <Info className="h-3 w-3" />,
-    children: 'More Details',
-  },
-}

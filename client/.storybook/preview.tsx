@@ -1,14 +1,17 @@
-import React from 'react'; // Import React
+import React from 'react';
 import type { Preview } from '@storybook/react';
 import { withThemeByDataAttribute } from '@storybook/addon-styling';
+import { initialize, mswLoader } from 'msw-storybook-addon';
+
+// Initialize MSW
+initialize();
 
 // Import global styles
-import '../src/index.css'; // Assuming global styles are in index.css or App.css
-// import '../src/App.css'; // If you have App.css
+import '../src/index.css';
 
 // Import ToastProvider
-import { ToastProvider } from '../src/components/ui/use-toast'; // Adjusted path
-import { Toaster } from '../src/components/ui/toaster'; // Toaster needs to be rendered
+import { ToastProvider } from '../src/components/ui/use-toast';
+import { Toaster } from '../src/components/ui/toaster';
 
 // Configure viewports for responsive testing
 const customViewports = {
@@ -36,6 +39,7 @@ const customViewports = {
 };
 
 const preview: Preview = {
+  loaders: [mswLoader],
   parameters: {
     // Disable automatic docs generation for now
     docs: { 
