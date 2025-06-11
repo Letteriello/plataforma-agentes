@@ -1,18 +1,18 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { PlusIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Agents', href: '/agents' },
   { name: 'Templates', href: '/agents/templates' },
   { name: 'Analytics', href: '/agents/analytics' },
   { name: 'Settings', href: '/agents/settings' },
-];
+]
 
 export function AgentsLayout() {
-  const location = useLocation();
-  
+  const location = useLocation()
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
@@ -30,7 +30,7 @@ export function AgentsLayout() {
                     'text-sm font-medium transition-colors hover:text-primary',
                     location.pathname === item.href
                       ? 'text-primary bg-accent'
-                      : 'text-muted-foreground hover:bg-transparent hover:underline'
+                      : 'text-muted-foreground hover:bg-transparent hover:underline',
                   )}
                 >
                   <Link to={item.href}>{item.name}</Link>
@@ -61,18 +61,33 @@ export function AgentsLayout() {
             © {new Date().getFullYear()} Agent Platform. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
-            <Button variant="link" size="sm" className="text-muted-foreground" asChild>
+            <Button
+              variant="link"
+              size="sm"
+              className="text-muted-foreground"
+              asChild
+            >
               <Link to="/privacy">Privacy</Link>
             </Button>
-            <Button variant="link" size="sm" className="text-muted-foreground" asChild>
+            <Button
+              variant="link"
+              size="sm"
+              className="text-muted-foreground"
+              asChild
+            >
               <Link to="/terms">Terms</Link>
             </Button>
-            <Button variant="link" size="sm" className="text-muted-foreground" asChild>
+            <Button
+              variant="link"
+              size="sm"
+              className="text-muted-foreground"
+              asChild
+            >
               <Link to="/docs">Documentation</Link>
             </Button>
           </div>
         </div>
       </footer>
     </div>
-  );
+  )
 }

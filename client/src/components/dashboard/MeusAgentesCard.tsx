@@ -127,17 +127,16 @@ export const MeusAgentesCardSkeleton = () => {
         <ScrollArea className="h-72 pr-4">
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div
-                key={index}
-                className="flex items-center p-3 rounded-lg"
-              >
-                <Skeleton className="h-9 w-9 rounded-full mr-3" /> {/* Avatar Skeleton */}
+              <div key={index} className="flex items-center p-3 rounded-lg">
+                <Skeleton className="h-9 w-9 rounded-full mr-3" />{' '}
+                {/* Avatar Skeleton */}
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <Skeleton className="h-4 w-[100px]" /> {/* Name Skeleton */}
                     <Skeleton className="h-4 w-[60px]" /> {/* Badge Skeleton */}
                   </div>
-                  <Skeleton className="h-3 w-[150px]" /> {/* Description/Last Active Skeleton */}
+                  <Skeleton className="h-3 w-[150px]" />{' '}
+                  {/* Description/Last Active Skeleton */}
                 </div>
               </div>
             ))}

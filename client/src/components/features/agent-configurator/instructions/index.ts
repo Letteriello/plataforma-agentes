@@ -1,2 +1,2 @@
-export * from './AgentInstructions';
-export * from './EditInstructionDialog';
+export * from './AgentInstructions'
+export * from './EditInstructionDialog'

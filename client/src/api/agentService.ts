@@ -1,5 +1,16 @@
 import apiClient from '@/api/apiClient'
-import { AgentDTO, CreateAgentDTO } from '@/types/api'
+export interface AgentDTO {
+  id: string
+  name: string
+  description?: string
+  type: string
+}
+
+export interface CreateAgentDTO {
+  name: string
+  description?: string
+  type: string
+}
 
 export const fetchAgents = async (): Promise<AgentDTO[]> => {
   const { data } = await apiClient.get<AgentDTO[]>('/agents')

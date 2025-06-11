@@ -1,42 +1,55 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Trash2, FileText, FileCode, FileImage } from 'lucide-react';
-import { Document, DocumentStatus } from '@/types/memory';
+import React from 'react'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Trash2, FileText, FileCode, FileImage } from 'lucide-react'
+import { Document, DocumentStatus } from '@/api/memoryService'
 
 interface DocumentsTableProps {
-  documents: Document[];
-  onDeleteDocument?: (documentId: string) => void;
+  documents: Document[]
+  onDeleteDocument?: (documentId: string) => void
 }
 
-export function DocumentsTable({ documents, onDeleteDocument }: DocumentsTableProps) {
+export function DocumentsTable({
+  documents,
+  onDeleteDocument,
+}: DocumentsTableProps) {
   // Função para determinar o ícone com base no tipo de conteúdo
   const getFileIcon = (contentType?: string) => {
-    if (!contentType) return <FileText className="h-4 w-4" />;
-    
+    if (!contentType) return <FileText className="h-4 w-4" />
+
     if (contentType.includes('image')) {
-      return <FileImage className="h-4 w-4" />;
-    } else if (contentType.includes('application/json') || contentType.includes('text/html')) {
-      return <FileCode className="h-4 w-4" />;
+      return <FileImage className="h-4 w-4" />
+    } else if (
+      contentType.includes('application/json') ||
+      contentType.includes('text/html')
+    ) {
+      return <FileCode className="h-4 w-4" />
     } else {
-      return <FileText className="h-4 w-4" />;
+      return <FileText className="h-4 w-4" />
     }
-  };
+  }
 
   // Função para determinar a variante do badge com base no status
   const getStatusVariant = (status: DocumentStatus) => {
     switch (status) {
       case 'Processando':
-        return 'outline';
+        return 'outline'
       case 'Processado':
-        return 'default';
+        return 'default'
       case 'Erro':
-        return 'destructive';
+        return 'destructive'
       default:
-        return 'secondary';
+        return 'secondary'
     }
-  };
+  }
 
   return (
     <div className="rounded-md border">
@@ -53,7 +66,10 @@ export function DocumentsTable({ documents, onDeleteDocument }: DocumentsTablePr
         <TableBody>
           {documents.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+              <TableCell
+                colSpan={5}
+                className="text-center py-6 text-muted-foreground"
+              >
                 Nenhum documento encontrado
               </TableCell>
             </TableRow>
@@ -75,7 +91,9 @@ export function DocumentsTable({ documents, onDeleteDocument }: DocumentsTablePr
                   })}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={getStatusVariant(doc.status as DocumentStatus)}>
+                  <Badge
+                    variant={getStatusVariant(doc.status as DocumentStatus)}
+                  >
                     {doc.status}
                   </Badge>
                 </TableCell>
@@ -98,5 +116,5 @@ export function DocumentsTable({ documents, onDeleteDocument }: DocumentsTablePr
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

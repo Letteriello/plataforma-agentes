@@ -1,13 +1,19 @@
-import { StatsCard } from '@/components/dashboard/StatsCard';
-import { Bot, MessageSquare, Clock, TrendingUp } from 'lucide-react';
-import { DashboardStats } from '@/types/dashboard';
+import { StatsCard } from '@/components/dashboard/StatsCard'
+import { Bot, MessageSquare, Clock, TrendingUp } from 'lucide-react'
+import { DashboardStats } from '@/types/dashboard'
 
-interface DashboardStatsGridProps {
-  stats: DashboardStats;
-  loading?: boolean;
-}
+import type { DashboardStatsGridProps } from '@/types/dashboard/components/cards'
 
-export const DashboardStatsGrid = ({ stats, loading = false }: DashboardStatsGridProps) => {
+/**
+ * Grid de estatísticas do dashboard
+ * @param stats - Estatísticas consolidadas
+ * @param loading - Estado de carregamento
+ */
+
+export const DashboardStatsGrid = ({
+  stats,
+  loading = false,
+}: DashboardStatsGridProps) => {
   if (loading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -15,7 +21,7 @@ export const DashboardStatsGrid = ({ stats, loading = false }: DashboardStatsGri
           <div key={i} className="h-32 bg-muted/30 rounded-lg animate-pulse" />
         ))}
       </div>
-    );
+    )
   }
 
   return (
@@ -53,5 +59,5 @@ export const DashboardStatsGrid = ({ stats, loading = false }: DashboardStatsGri
         trendValue="-0.5s"
       />
     </div>
-  );
-};
+  )
+}

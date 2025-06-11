@@ -1,30 +1,30 @@
 // client/src/components/chat/ChatHeader.tsx
-import React from 'react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React from 'react'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { AgentSelector } from '@/components/debug/AgentSelector'; // Corrected path
-import { MoreVertical } from 'lucide-react'; // Or another icon for the trigger
+} from '@/components/ui/dropdown-menu'
+import { AgentSelector } from '@/components/debug/AgentSelector' // Corrected path
+import { MoreVertical } from 'lucide-react' // Or another icon for the trigger
 
 // Define types for agent and props for AgentSelector
 interface AgentInfo {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 
 interface ChatHeaderProps {
-  agentName: string;
-  agentStatus: string;
-  agentAvatarFallback: string;
-  agents: AgentInfo[]; // For AgentSelector
-  selectedAgentId: string | null;
-  onSelectAgent: (agentId: string | null) => void;
+  agentName: string
+  agentStatus: string
+  agentAvatarFallback: string
+  agents: AgentInfo[] // For AgentSelector
+  selectedAgentId: string | null
+  onSelectAgent: (agentId: string | null) => void
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -45,7 +45,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <p className="font-semibold">{agentName}</p>
           {agentName !== 'Nenhum Agente' && ( // Only show status if a real agent is selected
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-green-500 text-green-500">
+              <Badge
+                variant="outline"
+                className="border-green-500 text-green-500"
+              >
                 {agentStatus}
               </Badge>
             </div>
@@ -73,5 +76,5 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
-  );
-};
+  )
+}

@@ -1,2 +1,2 @@
-export * from './AgentIdentity';
-export * from './EditDescriptionDialog';
+export * from './AgentIdentity'
+export * from './EditDescriptionDialog'

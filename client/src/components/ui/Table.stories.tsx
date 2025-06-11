@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react'
 import {
   Table,
   TableHeader,
@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableCaption,
-} from './table'; // Import all necessary Table components
+} from './table' // Import all necessary Table components
 
 const meta = {
   title: 'UI/Table',
@@ -17,10 +17,10 @@ const meta = {
     layout: 'padded', // Allow table to take space
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Table>;
+} satisfies Meta<typeof Table>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 const invoices = [
   {
@@ -65,7 +65,7 @@ const invoices = [
     totalAmount: '$300.00',
     paymentMethod: 'Credit Card',
   },
-];
+]
 
 export const Default: Story = {
   render: (args) => (
@@ -98,7 +98,7 @@ export const Default: Story = {
     </Table>
   ),
   args: {},
-};
+}
 
 export const Striped: Story = {
   render: (args) => (
@@ -114,12 +114,37 @@ export const Striped: Story = {
       </TableHeader>
       <TableBody>
         {[
-          { id: 'USR001', name: 'Alice Wonderland', email: 'alice@example.com', role: 'Admin' },
-          { id: 'USR002', name: 'Bob The Builder', email: 'bob@example.com', role: 'Editor' },
-          { id: 'USR003', name: 'Charlie Brown', email: 'charlie@example.com', role: 'Viewer' },
-          { id: 'USR004', name: 'Diana Prince', email: 'diana@example.com', role: 'Editor' },
+          {
+            id: 'USR001',
+            name: 'Alice Wonderland',
+            email: 'alice@example.com',
+            role: 'Admin',
+          },
+          {
+            id: 'USR002',
+            name: 'Bob The Builder',
+            email: 'bob@example.com',
+            role: 'Editor',
+          },
+          {
+            id: 'USR003',
+            name: 'Charlie Brown',
+            email: 'charlie@example.com',
+            role: 'Viewer',
+          },
+          {
+            id: 'USR004',
+            name: 'Diana Prince',
+            email: 'diana@example.com',
+            role: 'Editor',
+          },
         ].map((user, index) => (
-          <TableRow key={user.id} className={index % 2 === 0 ? '' : 'bg-muted/25'}> {/* Example striping */}
+          <TableRow
+            key={user.id}
+            className={index % 2 === 0 ? '' : 'bg-muted/25'}
+          >
+            {' '}
+            {/* Example striping */}
             <TableCell className="font-medium">{user.id}</TableCell>
             <TableCell>{user.name}</TableCell>
             <TableCell>{user.email}</TableCell>
@@ -130,7 +155,7 @@ export const Striped: Story = {
     </Table>
   ),
   args: {},
-};
+}
 
 export const NoFooterOrCaption: Story = {
   render: (args) => (
@@ -158,7 +183,7 @@ export const NoFooterOrCaption: Story = {
     </Table>
   ),
   args: {},
-};
+}
 
 export const EmptyTable: Story = {
   render: (args) => (
@@ -173,7 +198,10 @@ export const EmptyTable: Story = {
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
+          <TableCell
+            colSpan={3}
+            className="text-center text-muted-foreground h-24"
+          >
             No results found.
           </TableCell>
         </TableRow>
@@ -181,4 +209,4 @@ export const EmptyTable: Story = {
     </Table>
   ),
   args: {},
-};
+}

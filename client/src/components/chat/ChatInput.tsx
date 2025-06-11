@@ -1,36 +1,38 @@
-import React, { useState, useRef, KeyboardEvent } from 'react';
-import { Textarea } from '@/components/ui/textarea'; // Changed from Input to Textarea
-import { Button } from '@/components/ui/button';
-import ToolSelector from './ToolSelector';
+import React, { useState, useRef, KeyboardEvent } from 'react'
+import { Textarea } from '@/components/ui/textarea' // Changed from Input to Textarea
+import { Button } from '@/components/ui/button'
+import ToolSelector from './ToolSelector'
 
 interface ChatInputProps {
-  onSendMessage: (messageText: string) => void;
-  isLoading?: boolean;
+  onSendMessage: (messageText: string) => void
+  isLoading?: boolean
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
-  const [message, setMessage] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [message, setMessage] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSendMessage = () => {
-    const trimmedMessage = message.trim();
+    const trimmedMessage = message.trim()
     if (trimmedMessage) {
-      onSendMessage(trimmedMessage);
-      setMessage('');
-      textareaRef.current?.focus(); // Re-focus the textarea
+      onSendMessage(trimmedMessage)
+      setMessage('')
+      textareaRef.current?.focus() // Re-focus the textarea
     }
-  };
+  }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); // Prevent default Enter behavior (new line)
-      handleSendMessage();
+      event.preventDefault() // Prevent default Enter behavior (new line)
+      handleSendMessage()
     }
     // If Shift + Enter is pressed, default behavior (new line) is allowed
-  };
+  }
 
   return (
-    <div className="flex items-center gap-2 p-2 sm:p-3 border-t"> {/* Adjusted styling for the container */}
+    <div className="flex items-center gap-2 p-2 sm:p-3 border-t">
+      {' '}
+      {/* Adjusted styling for the container */}
       <Textarea
         ref={textareaRef}
         value={message}
@@ -41,13 +43,16 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
         disabled={isLoading}
       />
       <ToolSelector />
-      <Button onClick={handleSendMessage} disabled={!message.trim() || isLoading}> {/* Updated disabled logic */}
+      <Button
+        onClick={handleSendMessage}
+        disabled={!message.trim() || isLoading}
+      >
+        {' '}
+        {/* Updated disabled logic */}
         Send
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export { ChatInput };
-
-
+export { ChatInput }

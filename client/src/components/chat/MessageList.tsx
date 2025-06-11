@@ -1,9 +1,9 @@
-import React from 'react';
-import Message from './Message';
-import { ChatMessage as MessageType } from './types';
+import React from 'react'
+import Message from './Message'
+import { ChatMessage as MessageType } from './types'
 
 interface MessageListProps {
-  messages: MessageType[];
+  messages: MessageType[]
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {
@@ -12,14 +12,16 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
       {messages.map((msg) => (
         <Message
           key={msg.id}
-          author={(msg.sender === 'user' ? 'user' : 'agent') as 'user' | 'agent'}
+          author={
+            (msg.sender === 'user' ? 'user' : 'agent') as 'user' | 'agent'
+          }
           content={msg.text}
           agentName={msg.senderName}
           messageType={msg.type}
         />
       ))}
     </div>
-  );
-};
+  )
+}
 
-export { MessageList };
+export { MessageList }

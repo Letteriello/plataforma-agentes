@@ -1,41 +1,47 @@
-import React, { useState } from 'react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { KnowledgeBaseType } from '@/types/memory';
+import React, { useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { KnowledgeBaseType } from '@/api/memoryService'
 
 interface CreateKnowledgeBaseDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { 
-    name: string; 
-    description: string; 
-    type: KnowledgeBaseType;
-    baseModel?: string;
-  }) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSubmit: (data: {
+    name: string
+    description: string
+    type: KnowledgeBaseType
+    baseModel?: string
+  }) => void
 }
 
-export function CreateKnowledgeBaseDialog({ 
-  open, 
-  onOpenChange, 
-  onSubmit 
+export function CreateKnowledgeBaseDialog({
+  open,
+  onOpenChange,
+  onSubmit,
 }: CreateKnowledgeBaseDialogProps) {
   // Estado do formulário
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [type, setType] = useState<KnowledgeBaseType>(KnowledgeBaseType.RAG);
-  const [baseModel, setBaseModel] = useState('Gemini Pro');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [type, setType] = useState<KnowledgeBaseType>(KnowledgeBaseType.RAG)
+  const [baseModel, setBaseModel] = useState('Gemini Pro')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Opções de modelos para fine-tuning
   const modelOptions = [
@@ -44,35 +50,35 @@ export function CreateKnowledgeBaseDialog({
     'Claude 3 Sonnet',
     'GPT-3.5 Turbo',
     'GPT-4o',
-    'Llama 3'
-  ];
+    'Llama 3',
+  ]
 
   // Resetar o formulário quando o diálogo é fechado
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      setName('');
-      setDescription('');
-      setType(KnowledgeBaseType.RAG);
-      setBaseModel('Gemini Pro');
-      setIsSubmitting(false);
+      setName('')
+      setDescription('')
+      setType(KnowledgeBaseType.RAG)
+      setBaseModel('Gemini Pro')
+      setIsSubmitting(false)
     }
-    onOpenChange(open);
-  };
+    onOpenChange(open)
+  }
 
   // Enviar o formulário
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
+    e.preventDefault()
+    setIsSubmitting(true)
+
     onSubmit({
       name,
       description,
       type,
-      baseModel: type === KnowledgeBaseType.FINE_TUNING ? baseModel : undefined
-    });
-    
+      baseModel: type === KnowledgeBaseType.FINE_TUNING ? baseModel : undefined,
+    })
+
     // Nota: O diálogo será fechado pelo componente pai após a conclusão da operação
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -81,10 +87,11 @@ export function CreateKnowledgeBaseDialog({
           <DialogHeader>
             <DialogTitle>Criar Base de Conhecimento</DialogTitle>
             <DialogDescription>
-              Crie uma nova base de conhecimento para armazenar e processar documentos.
+              Crie uma nova base de conhecimento para armazenar e processar
+              documentos.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
@@ -98,7 +105,7 @@ export function CreateKnowledgeBaseDialog({
                 required
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">
                 Descrição
@@ -111,7 +118,7 @@ export function CreateKnowledgeBaseDialog({
                 rows={3}
               />
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="type" className="text-right">
                 Tipo
@@ -124,21 +131,22 @@ export function CreateKnowledgeBaseDialog({
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={KnowledgeBaseType.RAG}>RAG (Retrieval Augmented Generation)</SelectItem>
-                  <SelectItem value={KnowledgeBaseType.FINE_TUNING}>Fine-Tuning</SelectItem>
+                  <SelectItem value={KnowledgeBaseType.RAG}>
+                    RAG (Retrieval Augmented Generation)
+                  </SelectItem>
+                  <SelectItem value={KnowledgeBaseType.FINE_TUNING}>
+                    Fine-Tuning
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
+
             {type === KnowledgeBaseType.FINE_TUNING && (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="baseModel" className="text-right">
                   Modelo Base
                 </Label>
-                <Select
-                  value={baseModel}
-                  onValueChange={setBaseModel}
-                >
+                <Select value={baseModel} onValueChange={setBaseModel}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Selecione o modelo base" />
                   </SelectTrigger>
@@ -153,11 +161,11 @@ export function CreateKnowledgeBaseDialog({
               </div>
             )}
           </div>
-          
+
           <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isSubmitting}
             >
@@ -170,5 +178,5 @@ export function CreateKnowledgeBaseDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

@@ -1,26 +1,33 @@
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Bell, Search, User, Settings, HelpCircle, LogOut, Menu } from 'lucide-react';
+} from '@/components/ui/dropdown-menu'
+import {
+  Bell,
+  Search,
+  User,
+  Settings,
+  HelpCircle,
+  LogOut,
+  Menu,
+} from 'lucide-react'
 
-interface DashboardHeaderProps {
-  onMenuClick?: () => void;
-  onSearch?: (query: string) => void;
-  onNotificationClick?: () => void;
-  user: {
-    name: string;
-    email: string;
-    avatarUrl?: string;
-  };
-  className?: string;
-}
+import type { DashboardHeaderProps } from '@/types/dashboard/components/header'
+
+/**
+ * Cabeçalho do Dashboard
+ * @param onMenuClick - Callback para clique no menu
+ * @param onSearch - Callback para busca
+ * @param onNotificationClick - Callback para notificações
+ * @param user - Informações do usuário logado
+ * @param className - Classe CSS opcional
+ */
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onMenuClick,
@@ -31,9 +38,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 }) => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onSearch) {
-      onSearch(e.target.value);
+      onSearch(e.target.value)
     }
-  };
+  }
 
   return (
     <header className={`bg-card border-b border-border/40 ${className}`}>
@@ -47,9 +54,11 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-bold text-foreground">Painel de Controle</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            Painel de Controle
+          </h1>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -60,17 +69,17 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               onChange={handleSearch}
             />
           </div>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
+
+          <Button
+            variant="ghost"
+            size="icon"
             className="relative"
             onClick={onNotificationClick}
           >
             <Bell className="h-5 w-5" />
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-9 w-9 rounded-full p-0">
@@ -79,7 +88,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   <AvatarFallback>
                     {user.name
                       .split(' ')
-                      .map(n => n[0])
+                      .map((n) => n[0])
                       .join('')
                       .toUpperCase()
                       .substring(0, 2)}
@@ -110,5 +119,5 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         </div>
       </div>
     </header>
-  );
-};
+  )
+}

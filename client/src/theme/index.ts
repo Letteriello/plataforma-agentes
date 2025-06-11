@@ -5,7 +5,7 @@ export const theme = {
     sans: ['Inter', 'sans-serif'],
     mono: ['JetBrains Mono', 'monospace'],
   },
-  
+
   // Border radius
   borderRadius: {
     none: '0px',
@@ -18,7 +18,7 @@ export const theme = {
     '3xl': '1.5rem',
     full: '9999px',
   },
-  
+
   // Shadows
   boxShadow: {
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -30,7 +30,7 @@ export const theme = {
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
     none: 'none',
   },
-  
+
   // Z-index
   zIndex: {
     auto: 'auto',
@@ -41,12 +41,12 @@ export const theme = {
     '40': '40',
     '50': '50',
   },
-  
+
   // Animation
   transitionTimingFunction: {
     'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
-    'in': 'cubic-bezier(0.4, 0, 1, 1)',
-    'out': 'cubic-bezier(0, 0, 0.2, 1)',
+    in: 'cubic-bezier(0.4, 0, 1, 1)',
+    out: 'cubic-bezier(0, 0, 0.2, 1)',
   },
   transitionDuration: {
     '75': '75ms',

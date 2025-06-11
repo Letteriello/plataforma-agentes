@@ -1,37 +1,37 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import React from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
-export type TrendType = 'up' | 'down' | 'neutral';
+export type TrendType = 'up' | 'down' | 'neutral'
 
 export interface StatsCardProps {
   /** Título do card */
-  title: string;
+  title: string
   /** Valor principal a ser exibido */
-  value: string | number;
+  value: string | number
   /** Descrição adicional (opcional) */
-  description?: string;
+  description?: string
   /** Ícone a ser exibido no canto superior direito */
-  icon: React.ReactNode;
+  icon: React.ReactNode
   /** Tendência (seta para cima/baixo/neutro) */
-  trend?: TrendType;
+  trend?: TrendType
   /** Valor da tendência (ex: "12%" ou "+5") */
-  trendValue?: string;
+  trendValue?: string
   /** Valor total para exibição de fração (opcional) */
-  total?: number | string;
+  total?: number | string
   /** Classe CSS adicional */
-  className?: string;
+  className?: string
   /** Cor de destaque para a tendência */
   trendColor?: {
-    up?: string;
-    down?: string;
-    neutral?: string;
-  };
+    up?: string
+    down?: string
+    neutral?: string
+  }
 }
 
 /**
  * Componente de card de estatísticas reutilizável
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -63,15 +63,15 @@ const StatsCard: React.FC<StatsCardProps> = ({
   const getTrendIcon = () => {
     switch (trend) {
       case 'up':
-        return '↑';
+        return '↑'
       case 'down':
-        return '↓';
+        return '↓'
       default:
-        return '';
+        return ''
     }
-  };
+  }
 
-  const trendClass = trendColor[trend] || '';
+  const trendClass = trendColor[trend] || ''
 
   return (
     <Card className={cn('h-full transition-all hover:shadow-md', className)}>
@@ -79,37 +79,32 @@ const StatsCard: React.FC<StatsCardProps> = ({
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <div className="h-4 w-4 text-muted-foreground">
-          {icon}
-        </div>
+        <div className="h-4 w-4 text-muted-foreground">{icon}</div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
           {value}
           {total !== undefined && (
-            <span className="ml-2 text-sm text-muted-foreground">/ {total}</span>
+            <span className="ml-2 text-sm text-muted-foreground">
+              / {total}
+            </span>
           )}
         </div>
-        
+
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>
         )}
-        
+
         {trend !== 'neutral' && trendValue && (
-          <div 
-            className={cn(
-              'mt-2 flex items-center text-xs',
-              trendClass
-            )}
-          >
+          <div className={cn('mt-2 flex items-center text-xs', trendClass)}>
             {getTrendIcon()} {trendValue}
           </div>
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export { StatsCard };
+export { StatsCard }
 
-export default StatsCard;
+export default StatsCard

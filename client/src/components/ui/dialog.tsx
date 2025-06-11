@@ -1,15 +1,16 @@
-import * as React from 'react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from 'react'
+import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 // Base Dialog Components
-const Dialog = DialogPrimitive.Root;
-const DialogTrigger = DialogPrimitive.Trigger;
+const Dialog = DialogPrimitive.Root
+const DialogTrigger = DialogPrimitive.Trigger
 
-interface DialogPortalProps extends React.ComponentProps<typeof DialogPrimitive.Portal> {
-  children: React.ReactNode;
-  className?: string;
+interface DialogPortalProps
+  extends React.ComponentProps<typeof DialogPrimitive.Portal> {
+  children: React.ReactNode
+  className?: string
 }
 
 const DialogPortal: React.FC<DialogPortalProps> = ({
@@ -18,21 +19,21 @@ const DialogPortal: React.FC<DialogPortalProps> = ({
   ...props
 }) => (
   <DialogPrimitive.Portal {...props}>
-    <div 
+    <div
       className={cn(
-        'fixed inset-0 z-50 flex items-start justify-center sm:items-center', 
-        className
+        'fixed inset-0 z-50 flex items-start justify-center sm:items-center',
+        className,
       )}
     >
       {children}
     </div>
   </DialogPrimitive.Portal>
-);
+)
 
-DialogPortal.displayName = 'DialogPortal';
+DialogPortal.displayName = 'DialogPortal'
 
 // Dialog Overlay Props
-interface DialogOverlayProps 
+interface DialogOverlayProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> {}
 
 // Dialog Overlay
@@ -46,16 +47,16 @@ const DialogOverlay = React.forwardRef<
       'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm',
       'data-[state=open]:animate-in data-[state=closed]:animate-out',
       'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-      className
+      className,
     )}
     {...props}
   />
-));
+))
 
-DialogOverlay.displayName = 'DialogOverlay';
+DialogOverlay.displayName = 'DialogOverlay'
 
 // Dialog Content
-interface DialogContentProps 
+interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {}
 
 const DialogContent = React.forwardRef<
@@ -74,7 +75,7 @@ const DialogContent = React.forwardRef<
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
         'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
-        className
+        className,
       )}
       {...props}
     >
@@ -85,48 +86,42 @@ const DialogContent = React.forwardRef<
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
-));
+))
 
-DialogContent.displayName = 'DialogContent';
+DialogContent.displayName = 'DialogContent'
 
 // Dialog Header
 interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-const DialogHeader: React.FC<DialogHeaderProps> = ({
-  className,
-  ...props
-}) => (
+const DialogHeader: React.FC<DialogHeaderProps> = ({ className, ...props }) => (
   <div
     className={cn(
       'flex flex-col space-y-1.5 text-center sm:text-left',
-      className
+      className,
     )}
     {...props}
   />
-);
+)
 
-DialogHeader.displayName = 'DialogHeader';
+DialogHeader.displayName = 'DialogHeader'
 
 // Dialog Footer
 interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-const DialogFooter: React.FC<DialogFooterProps> = ({
-  className,
-  ...props
-}) => (
+const DialogFooter: React.FC<DialogFooterProps> = ({ className, ...props }) => (
   <div
     className={cn(
       'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-      className
+      className,
     )}
     {...props}
   />
-);
+)
 
-DialogFooter.displayName = 'DialogFooter';
+DialogFooter.displayName = 'DialogFooter'
 
 // Dialog Title
-interface DialogTitleProps 
+interface DialogTitleProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title> {}
 
 const DialogTitle = React.forwardRef<
@@ -137,16 +132,16 @@ const DialogTitle = React.forwardRef<
     ref={ref}
     className={cn(
       'text-lg font-semibold leading-none tracking-tight',
-      className
+      className,
     )}
     {...props}
   />
-));
+))
 
-DialogTitle.displayName = 'DialogTitle';
+DialogTitle.displayName = 'DialogTitle'
 
 // Dialog Description
-interface DialogDescriptionProps 
+interface DialogDescriptionProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description> {}
 
 const DialogDescription = React.forwardRef<
@@ -158,9 +153,9 @@ const DialogDescription = React.forwardRef<
     className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
-));
+))
 
-DialogDescription.displayName = 'DialogDescription';
+DialogDescription.displayName = 'DialogDescription'
 
 export {
   Dialog,
@@ -172,7 +167,7 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-};
+}
 
 // Export Props types as in dialog-new.tsx
 export type {

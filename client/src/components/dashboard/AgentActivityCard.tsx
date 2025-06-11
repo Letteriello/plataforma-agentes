@@ -1,21 +1,27 @@
-import { RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RefreshCw } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface AgentActivityData {
-  date: string;
-  activeAgents: number;
-  interactions: number;
+  date: string
+  activeAgents: number
+  interactions: number
 }
 
 interface AgentActivityCardProps {
-  data: AgentActivityData[];
-  period: string;
-  onPeriodChange: (period: string) => void;
-  onRefresh: () => void;
-  isLoading?: boolean;
-  className?: string;
+  data: AgentActivityData[]
+  period: string
+  onPeriodChange: (period: string) => void
+  onRefresh: () => void
+  isLoading?: boolean
+  className?: string
 }
 
 export function AgentActivityCard({
@@ -24,10 +30,10 @@ export function AgentActivityCard({
   onPeriodChange,
   onRefresh,
   isLoading = false,
-  className = ''
+  className = '',
 }: AgentActivityCardProps) {
   // TODO: Implementar gráfico de atividade quando a biblioteca de gráficos estiver configurada
-  
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -44,14 +50,16 @@ export function AgentActivityCard({
                 <SelectItem value="1m">Último mês</SelectItem>
               </SelectContent>
             </Select>
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               className="h-8 w-8"
               onClick={onRefresh}
               disabled={isLoading}
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`}
+              />
             </Button>
           </div>
         </div>
@@ -59,19 +67,25 @@ export function AgentActivityCard({
       <CardContent>
         <div className="h-[300px] flex items-center justify-center bg-muted/30 rounded-lg">
           {isLoading ? (
-            <div className="text-muted-foreground text-sm">Carregando dados...</div>
+            <div className="text-muted-foreground text-sm">
+              Carregando dados...
+            </div>
           ) : data.length > 0 ? (
             <div className="text-center p-4">
-              <p className="text-muted-foreground text-sm">Gráfico de atividade dos agentes</p>
+              <p className="text-muted-foreground text-sm">
+                Gráfico de atividade dos agentes
+              </p>
               <p className="text-xs text-muted-foreground/70 mt-2">
                 {data.length} registros no período selecionado
               </p>
             </div>
           ) : (
-            <p className="text-muted-foreground text-sm">Nenhum dado disponível</p>
+            <p className="text-muted-foreground text-sm">
+              Nenhum dado disponível
+            </p>
           )}
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

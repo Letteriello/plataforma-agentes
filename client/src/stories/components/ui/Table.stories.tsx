@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from '@storybook/react'
 import {
   Table,
   TableBody,
@@ -7,14 +7,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 const meta: Meta<typeof Table> = {
-  title: "Components/UI/Table",
+  title: 'Components/UI/Table',
   component: Table,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <div className="w-full max-w-4xl">
@@ -29,47 +29,47 @@ type Story = StoryObj<typeof Table>
 
 const invoices = [
   {
-    invoice: "INV001",
-    paymentStatus: "Pago",
-    totalAmount: "R$ 2.500,00",
-    paymentMethod: "Cartão de Crédito",
-    status: "success",
+    invoice: 'INV001',
+    paymentStatus: 'Pago',
+    totalAmount: 'R$ 2.500,00',
+    paymentMethod: 'Cartão de Crédito',
+    status: 'success',
   },
   {
-    invoice: "INV002",
-    paymentStatus: "Pendente",
-    totalAmount: "R$ 1.200,00",
-    paymentMethod: "Boleto",
-    status: "pending",
+    invoice: 'INV002',
+    paymentStatus: 'Pendente',
+    totalAmount: 'R$ 1.200,00',
+    paymentMethod: 'Boleto',
+    status: 'pending',
   },
   {
-    invoice: "INV003",
-    paymentStatus: "Não Pago",
-    totalAmount: "R$ 3.200,00",
-    paymentMethod: "Transferência",
-    status: "error",
+    invoice: 'INV003',
+    paymentStatus: 'Não Pago',
+    totalAmount: 'R$ 3.200,00',
+    paymentMethod: 'Transferência',
+    status: 'error',
   },
   {
-    invoice: "INV004",
-    paymentStatus: "Pago",
-    totalAmount: "R$ 4.600,00",
-    paymentMethod: "PIX",
-    status: "success",
+    invoice: 'INV004',
+    paymentStatus: 'Pago',
+    totalAmount: 'R$ 4.600,00',
+    paymentMethod: 'PIX',
+    status: 'success',
   },
   {
-    invoice: "INV005",
-    paymentStatus: "Reembolsado",
-    totalAmount: "R$ 1.800,00",
-    paymentMethod: "Cartão de Crédito",
-    status: "warning",
+    invoice: 'INV005',
+    paymentStatus: 'Reembolsado',
+    totalAmount: 'R$ 1.800,00',
+    paymentMethod: 'Cartão de Crédito',
+    status: 'warning',
   },
 ]
 
 const statusVariantMap = {
-  success: "success",
-  pending: "warning",
-  error: "destructive",
-  warning: "outline",
+  success: 'success',
+  pending: 'warning',
+  error: 'destructive',
+  warning: 'outline',
 }
 
 export const Default: Story = {
@@ -92,16 +92,16 @@ export const Default: Story = {
             <TableCell>
               <Badge
                 variant={
-                  statusVariantMap[invoice.status as keyof typeof statusVariantMap]
+                  statusVariantMap[
+                    invoice.status as keyof typeof statusVariantMap
+                  ]
                 }
               >
                 {invoice.paymentStatus}
               </Badge>
             </TableCell>
             <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">
-              {invoice.totalAmount}
-            </TableCell>
+            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
             <TableCell className="text-right">
               <Button variant="ghost" size="sm">
                 Ver detalhes
@@ -134,9 +134,7 @@ export const WithHeader: Story = {
           <TableBody>
             {invoices.slice(0, 3).map((invoice) => (
               <TableRow key={invoice.invoice}>
-                <TableCell className="font-medium">
-                  {invoice.invoice}
-                </TableCell>
+                <TableCell className="font-medium">{invoice.invoice}</TableCell>
                 <TableCell>
                   <Badge
                     variant={

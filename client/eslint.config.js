@@ -9,7 +9,7 @@ import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
 
 export default tseslint.config(
   {
-    ignores: ['dist'],
+    ignores: ['dist', '.storybook/dist', 'node_modules_old'],
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json',

@@ -1,7 +1,6 @@
 // src/store/agentStore.ts
-import { create } from 'zustand';
-import { AnyAgentConfig } from '@/types/agent';
-import { mockInitialAgents } from '@/data/mocks/mock-initial-agents';
+import { create } from 'zustand'
+import { AnyAgentConfig } from '@/types/agent'
 
 /**
  * @interface AgentState
@@ -12,10 +11,10 @@ import { mockInitialAgents } from '@/data/mocks/mock-initial-agents';
  * @property {string | null} error - Mensagem de erro, caso ocorra.
  */
 interface AgentState {
-  agents: AnyAgentConfig[];
-  activeAgent: AnyAgentConfig | null;
-  isLoading: boolean;
-  error: string | null;
+  agents: AnyAgentConfig[]
+  activeAgent: AnyAgentConfig | null
+  isLoading: boolean
+  error: string | null
 }
 
 /**
@@ -23,11 +22,11 @@ interface AgentState {
  * @description Define as ações que podem ser executadas para modificar o estado dos agentes.
  */
 interface AgentActions {
-  loadAgents: (agents: AnyAgentConfig[]) => void;
-  addAgent: (agent: AnyAgentConfig) => void;
-  removeAgent: (agentId: string) => void;
-  updateAgent: (agent: AnyAgentConfig) => void;
-  setActiveAgent: (agent: AnyAgentConfig | string | null) => void;
+  loadAgents: (agents: AnyAgentConfig[]) => void
+  addAgent: (agent: AnyAgentConfig) => void
+  removeAgent: (agentId: string) => void
+  updateAgent: (agent: AnyAgentConfig) => void
+  setActiveAgent: (agent: AnyAgentConfig | string | null) => void
 }
 
 /**
@@ -46,38 +45,38 @@ export const useAgentStore = create<AgentState & AgentActions>((set, get) => ({
   loadAgents: (agentsToLoad) => set({ agents: agentsToLoad }),
 
   addAgent: (agent) => {
-    const newAgent = agent.id ? agent : { ...agent, id: crypto.randomUUID() };
-    set((state) => ({ agents: [...state.agents, newAgent] }));
+    const newAgent = agent.id ? agent : { ...agent, id: crypto.randomUUID() }
+    set((state) => ({ agents: [...state.agents, newAgent] }))
   },
 
   removeAgent: (agentId) => {
     if (get().activeAgent?.id === agentId) {
-      set({ activeAgent: null });
+      set({ activeAgent: null })
     }
     set((state) => ({
       agents: state.agents.filter((agent) => agent.id !== agentId),
-    }));
+    }))
   },
 
   updateAgent: (updatedAgent) =>
     set((state) => ({
       agents: state.agents.map((agent) =>
-        agent.id === updatedAgent.id ? updatedAgent : agent
+        agent.id === updatedAgent.id ? updatedAgent : agent,
       ),
-      activeAgent: state.activeAgent?.id === updatedAgent.id ? updatedAgent : state.activeAgent,
+      activeAgent:
+        state.activeAgent?.id === updatedAgent.id
+          ? updatedAgent
+          : state.activeAgent,
     })),
 
   setActiveAgent: (agentOrId) => {
     if (agentOrId === null) {
-      set({ activeAgent: null });
+      set({ activeAgent: null })
     } else if (typeof agentOrId === 'string') {
-      const agentToActivate = get().agents.find(a => a.id === agentOrId);
-      set({ activeAgent: agentToActivate || null });
+      const agentToActivate = get().agents.find((a) => a.id === agentOrId)
+      set({ activeAgent: agentToActivate || null })
     } else {
-      set({ activeAgent: agentOrId });
+      set({ activeAgent: agentOrId })
     }
   },
-}));
-
-// Carrega os dados mockados iniciais para popular o store na inicialização.
-useAgentStore.getState().loadAgents(mockInitialAgents);
+}))

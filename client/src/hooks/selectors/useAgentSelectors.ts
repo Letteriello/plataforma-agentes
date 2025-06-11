@@ -1,5 +1,5 @@
 import { useAgentStore } from '@/store/agentStore'
-import { AgentDTO } from '@/types/api'
+import { AgentDTO } from '@/api/agentService'
 
 export const useAgentsList = (): AgentDTO[] =>
   useAgentStore((state) => state.agents as unknown as AgentDTO[])

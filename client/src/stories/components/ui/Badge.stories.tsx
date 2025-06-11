@@ -1,6 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Badge } from '@/components/ui/badge';
-import { Check, X, AlertTriangle, Info, Zap, Workflow, User } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Badge } from '@/components/ui/badge'
+import {
+  Check,
+  X,
+  AlertTriangle,
+  Info,
+  Zap,
+  Workflow,
+  User,
+} from 'lucide-react'
 
 // Meta information for the component
 const meta = {
@@ -18,19 +26,33 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'secondary', 'destructive', 'outline', 'success', 'error', 'warning', 'info', 'active', 'inactive', 'pending', 'llm', 'workflow'],
+      options: [
+        'default',
+        'secondary',
+        'destructive',
+        'outline',
+        'success',
+        'error',
+        'warning',
+        'info',
+        'active',
+        'inactive',
+        'pending',
+        'llm',
+        'workflow',
+      ],
       description: 'The visual style of the badge',
     },
   },
-} satisfies Meta<typeof Badge>;
+} satisfies Meta<typeof Badge>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Default badge
 const Template: Story = {
   render: (args) => <Badge {...args}>Badge</Badge>,
-};
+}
 
 // Variants
 export const Default: Story = {
@@ -38,28 +60,28 @@ export const Default: Story = {
   args: {
     variant: 'default',
   },
-};
+}
 
 export const Secondary: Story = {
   ...Template,
   args: {
     variant: 'secondary',
   },
-};
+}
 
 export const Destructive: Story = {
   ...Template,
   args: {
     variant: 'destructive',
   },
-};
+}
 
 export const Outline: Story = {
   ...Template,
   args: {
     variant: 'outline',
   },
-};
+}
 
 // Status variants
 export const Success: Story = {
@@ -68,7 +90,7 @@ export const Success: Story = {
     variant: 'success',
     children: 'Success',
   },
-};
+}
 
 export const Error: Story = {
   ...Template,
@@ -76,7 +98,7 @@ export const Error: Story = {
     variant: 'error',
     children: 'Error',
   },
-};
+}
 
 export const Warning: Story = {
   ...Template,
@@ -84,7 +106,7 @@ export const Warning: Story = {
     variant: 'warning',
     children: 'Warning',
   },
-};
+}
 
 export const Info: Story = {
   ...Template,
@@ -92,7 +114,7 @@ export const Info: Story = {
     variant: 'info',
     children: 'Information',
   },
-};
+}
 
 // Agent status variants
 export const Active: Story = {
@@ -101,7 +123,7 @@ export const Active: Story = {
     variant: 'active',
     children: 'Active',
   },
-};
+}
 
 export const Inactive: Story = {
   ...Template,
@@ -109,7 +131,7 @@ export const Inactive: Story = {
     variant: 'inactive',
     children: 'Inactive',
   },
-};
+}
 
 export const Pending: Story = {
   ...Template,
@@ -117,7 +139,7 @@ export const Pending: Story = {
     variant: 'pending',
     children: 'Pending',
   },
-};
+}
 
 // Special type variants
 export const LLM: Story = {
@@ -126,7 +148,7 @@ export const LLM: Story = {
     variant: 'llm',
     children: 'LLM',
   },
-};
+}
 
 export const Workflow: Story = {
   ...Template,
@@ -134,7 +156,7 @@ export const Workflow: Story = {
     variant: 'workflow',
     children: 'Workflow',
   },
-};
+}
 
 // With Icons
 export const WithIcon: Story = {
@@ -176,7 +198,7 @@ export const WithIcon: Story = {
       </div>
     </div>
   ),
-};
+}
 
 // Usage examples
 export const UsageExamples: Story = {
@@ -191,7 +213,7 @@ export const UsageExamples: Story = {
           <Badge variant="inactive">Offline</Badge>
         </div>
       </div>
-      
+
       <div>
         <h3 className="mb-2 text-sm font-medium">Agent Types</h3>
         <div className="flex flex-wrap gap-2">
@@ -200,7 +222,7 @@ export const UsageExamples: Story = {
           <Badge variant="info">Integration</Badge>
         </div>
       </div>
-      
+
       <div>
         <h3 className="mb-2 text-sm font-medium">With Counters</h3>
         <div className="flex flex-wrap items-center gap-4">
@@ -220,4 +242,4 @@ export const UsageExamples: Story = {
       </div>
     </div>
   ),
-};
+}

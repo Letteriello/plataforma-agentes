@@ -1,62 +1,70 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import React from 'react'
+import { cn } from '@/lib/utils'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Bot, Zap, Wrench, Check, AlertTriangle } from 'lucide-react'; // Added AlertTriangle
+} from '@/components/ui/accordion'
+import { Bot, Zap, Wrench, Check, AlertTriangle } from 'lucide-react' // Added AlertTriangle
 
 // Corresponds to ChatMessage.sender but narrowed for this component's direct use
-type MessageAuthor = 'user' | 'agent';
+type MessageAuthor = 'user' | 'agent'
 
 interface MessageProps {
-  author: MessageAuthor;
-  content: string;
-  agentName?: string; // Optional, but should be provided if author is 'agent'
-  messageType?: string;
+  author: MessageAuthor
+  content: string
+  agentName?: string // Optional, but should be provided if author is 'agent'
+  messageType?: string
 }
 
-const Message: React.FC<MessageProps> = ({ author, content, agentName, messageType }) => {
-  const isUser = author === 'user';
-  const isError = messageType === 'error';
+const Message: React.FC<MessageProps> = ({
+  author,
+  content,
+  agentName,
+  messageType,
+}) => {
+  const isUser = author === 'user'
+  const isError = messageType === 'error'
 
   // Determine avatar initials
-  const avatarInitial = agentName ? agentName.charAt(0).toUpperCase() : 'A';
+  const avatarInitial = agentName ? agentName.charAt(0).toUpperCase() : 'A'
 
-  if (messageType === 'agent_thought' && !isError) { // Ensure error messages don't use thought styling
+  if (messageType === 'agent_thought' && !isError) {
+    // Ensure error messages don't use thought styling
     return (
       <div className="my-2">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-sm font-medium text-muted-foreground hover:no-underline">
-              <Bot className="mr-2 h-4 w-4" />
-              O agente está raciocinando...
+              <Bot className="mr-2 h-4 w-4" />O agente está raciocinando...
             </AccordionTrigger>
             <AccordionContent className="p-4 space-y-2 border-t bg-muted/50 rounded-b-md">
               <p className="text-xs flex items-center">
-                <Zap className="mr-2 h-3 w-3 text-yellow-500" />Iniciando a tarefa: Análise de Mercado
+                <Zap className="mr-2 h-3 w-3 text-yellow-500" />
+                Iniciando a tarefa: Análise de Mercado
               </p>
               <p className="text-xs flex items-center">
-                <Wrench className="mr-2 h-3 w-3 text-blue-500" />Usando ferramenta: 'Web Search'
+                <Wrench className="mr-2 h-3 w-3 text-blue-500" />
+                Usando ferramenta: 'Web Search'
               </p>
               <p className="text-xs flex items-center">
-                <Check className="mr-2 h-3 w-3 text-green-500" />Ferramenta executada com sucesso.
+                <Check className="mr-2 h-3 w-3 text-green-500" />
+                Ferramenta executada com sucesso.
               </p>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-    );
+    )
   }
 
   return (
     <div
       className={cn(
         'mb-3 flex items-end gap-1.5',
-        isUser ? 'justify-end' : 'justify-start'
+        isUser ? 'justify-end' : 'justify-start',
       )}
     >
       {!isUser && (
@@ -70,21 +78,45 @@ const Message: React.FC<MessageProps> = ({ author, content, agentName, messageTy
           isUser
             ? 'bg-primary text-primary-foreground' // User message specific styling
             : 'bg-muted', // Agent message specific styling
-          { 'bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700': isError && !isUser }, // Error styling for agent
-          { 'bg-red-200 dark:bg-red-800/50 border border-red-400 dark:border-red-600 text-red-900 dark:text-red-100': isError && isUser } // Error styling for user (though less common)
+          {
+            'bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700':
+              isError && !isUser,
+          }, // Error styling for agent
+          {
+            'bg-red-200 dark:bg-red-800/50 border border-red-400 dark:border-red-600 text-red-900 dark:text-red-100':
+              isError && isUser,
+          }, // Error styling for user (though less common)
         )}
       >
-        {agentName && author === 'agent' && !isError && <p className="mb-0.5 text-xs font-semibold">{agentName}</p>}
+        {agentName && author === 'agent' && !isError && (
+          <p className="mb-0.5 text-xs font-semibold">{agentName}</p>
+        )}
         {isError && (
           <div className="flex items-center gap-2">
-            <AlertTriangle className={cn("h-5 w-5", isUser ? "text-red-700 dark:text-red-300" : "text-red-600 dark:text-red-400")} />
-            <span className={cn("text-sm", isUser ? "text-red-800 dark:text-red-200" : "text-red-700 dark:text-red-300")}>{content}</span>
+            <AlertTriangle
+              className={cn(
+                'h-5 w-5',
+                isUser
+                  ? 'text-red-700 dark:text-red-300'
+                  : 'text-red-600 dark:text-red-400',
+              )}
+            />
+            <span
+              className={cn(
+                'text-sm',
+                isUser
+                  ? 'text-red-800 dark:text-red-200'
+                  : 'text-red-700 dark:text-red-300',
+              )}
+            >
+              {content}
+            </span>
           </div>
         )}
         {!isError && <p className="whitespace-pre-wrap text-sm">{content}</p>}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Message;
+export default Message

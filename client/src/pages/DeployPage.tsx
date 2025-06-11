@@ -5,5 +5,5 @@ export default function DeployPage() {
       <h1 className="text-2xl font-semibold">Página de Deploy</h1>
       <p>Conteúdo da página de Deploy.</p>
     </div>
-  );
+  )
 }

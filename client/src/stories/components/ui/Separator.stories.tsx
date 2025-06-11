@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { Separator } from "@/components/ui/separator"
+import type { Meta, StoryObj } from '@storybook/react'
+import { Separator } from '@/components/ui/separator'
 
 const meta: Meta<typeof Separator> = {
-  title: "Components/UI/Separator",
+  title: 'Components/UI/Separator',
   component: Separator,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <div className="w-full max-w-2xl p-4">
@@ -21,9 +21,12 @@ export const Default: Story = {
   render: () => (
     <div>
       <div className="space-y-1">
-        <h4 className="text-sm font-medium leading-none">Nexus Design System</h4>
+        <h4 className="text-sm font-medium leading-none">
+          Nexus Design System
+        </h4>
         <p className="text-sm text-muted-foreground">
-          Componentes acessíveis e personalizáveis para construir interfaces ricas.
+          Componentes acessíveis e personalizáveis para construir interfaces
+          ricas.
         </p>
       </div>
       <Separator className="my-4" />
@@ -69,7 +72,7 @@ export const InCard: Story = {
       </div>
       <Separator className="my-4" />
       <div className="grid gap-4">
-        {["Produto 1", "Produto 2", "Produto 3"].map((product, i) => (
+        {['Produto 1', 'Produto 2', 'Produto 3'].map((product, i) => (
           <div key={i} className="flex items-center justify-between">
             <span>{product}</span>
             <span className="font-medium">R$ 99,90</span>

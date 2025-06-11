@@ -1,9 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, MoreVertical, Star, MessageSquare, Share2 } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Check, MoreVertical, Star, MessageSquare, Share2 } from 'lucide-react'
 
 // Meta information for the component
 const meta = {
@@ -13,7 +20,8 @@ const meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A flexible container component for displaying content with an optional header and footer.',
+        component:
+          'A flexible container component for displaying content with an optional header and footer.',
       },
     },
   },
@@ -24,10 +32,10 @@ const meta = {
       description: 'Additional CSS classes to apply to the card',
     },
   },
-} satisfies Meta<typeof Card>;
+} satisfies Meta<typeof Card>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Default card
 const Template: Story = {
@@ -46,11 +54,11 @@ const Template: Story = {
       </CardFooter>
     </Card>
   ),
-};
+}
 
 export const Default: Story = {
   ...Template,
-};
+}
 
 // Card with image header
 export const WithImage: Story = {
@@ -63,7 +71,8 @@ export const WithImage: Story = {
       </CardHeader>
       <CardContent>
         <p className="mb-4">
-          This is a featured article with an image header. The content of the article would go here.
+          This is a featured article with an image header. The content of the
+          article would go here.
         </p>
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary">Technology</Badge>
@@ -81,7 +90,7 @@ export const WithImage: Story = {
       </CardFooter>
     </Card>
   ),
-};
+}
 
 // Card with user profile
 export const UserProfile: Story = {
@@ -99,7 +108,8 @@ export const UserProfile: Story = {
         <CardTitle className="text-xl">John Doe</CardTitle>
         <p className="text-muted-foreground">Product Designer</p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Creating beautiful user experiences and interfaces that people love to use.
+          Creating beautiful user experiences and interfaces that people love to
+          use.
         </p>
         <div className="mt-4 flex justify-center gap-4">
           <Button variant="outline" size="sm">
@@ -114,7 +124,7 @@ export const UserProfile: Story = {
       </CardContent>
     </Card>
   ),
-};
+}
 
 // Card with stats
 export const StatsCard: Story = {
@@ -151,7 +161,7 @@ export const StatsCard: Story = {
       </CardFooter>
     </Card>
   ),
-};
+}
 
 // Card with list
 export const ListCard: Story = {
@@ -162,7 +172,7 @@ export const ListCard: Story = {
       { id: 3, title: 'Update documentation', completed: false },
       { id: 4, title: 'Fix critical bugs', completed: false },
       { id: 5, title: 'Deploy to production', completed: false },
-    ];
+    ]
 
     return (
       <Card className="w-[350px]" {...args}>
@@ -209,9 +219,9 @@ export const ListCard: Story = {
           </Button>
         </CardFooter>
       </Card>
-    );
+    )
   },
-};
+}
 
 // Card with tabs
 export const WithTabs: Story = {
@@ -221,7 +231,10 @@ export const WithTabs: Story = {
         <CardHeader>
           <CardTitle>Analytics</CardTitle>
           <div className="flex border-b">
-            <Button variant="ghost" className="rounded-none border-b-2 border-primary">
+            <Button
+              variant="ghost"
+              className="rounded-none border-b-2 border-primary"
+            >
               Overview
             </Button>
             <Button variant="ghost" className="rounded-none">
@@ -234,10 +247,12 @@ export const WithTabs: Story = {
         </CardHeader>
         <CardContent>
           <div className="h-40 flex items-center justify-center bg-muted/50 rounded-md">
-            <p className="text-muted-foreground">Analytics content would go here</p>
+            <p className="text-muted-foreground">
+              Analytics content would go here
+            </p>
           </div>
         </CardContent>
       </Card>
-    );
+    )
   },
-};
+}

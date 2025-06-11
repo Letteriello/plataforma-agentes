@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Bell, PlusCircle } from 'lucide-react'; // Added PlusCircle
-import type { ContextPanelData } from '@/components/context/types';
-import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog'; // Added CreateAgentDialog
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { Bell, PlusCircle } from 'lucide-react' // Added PlusCircle
+import type { ContextPanelData } from '@/components/context/types'
+import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog' // Added CreateAgentDialog
 
 interface TopbarProps {
-  pageTitle?: string;
-  agentsForSelector?: Pick<ContextPanelData, 'id' | 'title'>[];
-  selectedAgentIdForSelector?: string | null;
-  onSelectAgentForSelector?: (agentId: string | null) => void;
+  pageTitle?: string
+  agentsForSelector?: Pick<ContextPanelData, 'id' | 'title'>[]
+  selectedAgentIdForSelector?: string | null
+  onSelectAgentForSelector?: (agentId: string | null) => void
 }
 
-export function Topbar({ 
-  pageTitle, 
-  agentsForSelector, 
-  selectedAgentIdForSelector, 
-  onSelectAgentForSelector 
+export function Topbar({
+  pageTitle,
+  agentsForSelector,
+  selectedAgentIdForSelector,
+  onSelectAgentForSelector,
 }: TopbarProps) {
   // const { user } = useAuthStore(); // No longer needed in Topbar
 
@@ -25,7 +25,9 @@ export function Topbar({
     <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
       {/* Left section - Title */}
       <div className="flex items-center">
-        <h2 className="text-lg font-medium text-foreground">{pageTitle || 'Painel'}</h2>
+        <h2 className="text-lg font-medium text-foreground">
+          {pageTitle || 'Painel'}
+        </h2>
         <Badge variant="info" size="sm" className="ml-3">
           Beta
         </Badge>
@@ -51,5 +53,5 @@ export function Topbar({
         </Button>
       </div>
     </header>
-  );
+  )
 }

@@ -7,7 +7,7 @@ import type {
   AGENT_STATUS_DEPLOYING,
   AGENT_STATUS_IDLE,
   AGENT_STATUS_DEFAULT,
-} from '../constants/agentStatus';
+} from '../constants/agentStatus'
 
 export type AgentStatus =
   | typeof AGENT_STATUS_ACTIVE
@@ -16,4 +16,4 @@ export type AgentStatus =
   | typeof AGENT_STATUS_UNKNOWN
   | typeof AGENT_STATUS_DEPLOYING
   | typeof AGENT_STATUS_IDLE
-  | typeof AGENT_STATUS_DEFAULT;
+  | typeof AGENT_STATUS_DEFAULT

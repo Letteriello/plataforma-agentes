@@ -1,6 +1,6 @@
-import { AgentsLayout } from '@/components/agents/AgentsLayout';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { AgentsLayout } from '@/components/agents/AgentsLayout'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export default function AgentSettingsPage() {
   return (
@@ -16,5 +16,5 @@ export default function AgentSettingsPage() {
         <Button>Salvar</Button>
       </div>
     </AgentsLayout>
-  );
+  )
 }

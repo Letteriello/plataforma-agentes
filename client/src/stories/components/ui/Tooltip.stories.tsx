@@ -1,7 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import { Info, HelpCircle, AlertCircle, CheckCircle2 } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
+import { Info, HelpCircle, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 // Meta information for the component
 const meta = {
@@ -11,7 +16,8 @@ const meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+        component:
+          'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
       },
     },
   },
@@ -23,10 +29,10 @@ const meta = {
       </TooltipProvider>
     ),
   ],
-} satisfies Meta<typeof Tooltip>;
+} satisfies Meta<typeof Tooltip>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Default tooltip
 const Template: Story = {
@@ -40,11 +46,11 @@ const Template: Story = {
       </TooltipContent>
     </Tooltip>
   ),
-};
+}
 
 export const Default: Story = {
   ...Template,
-};
+}
 
 // With different placements
 export const Placements: Story = {
@@ -60,7 +66,7 @@ export const Placements: Story = {
           </TooltipContent>
         </Tooltip>
       </div>
-      
+
       <div className="flex items-center justify-between w-full max-w-md">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -70,7 +76,7 @@ export const Placements: Story = {
             <p>Right tooltip</p>
           </TooltipContent>
         </Tooltip>
-        
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="outline">Left</Button>
@@ -80,7 +86,7 @@ export const Placements: Story = {
           </TooltipContent>
         </Tooltip>
       </div>
-      
+
       <div className="flex items-center justify-center gap-4">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -93,7 +99,7 @@ export const Placements: Story = {
       </div>
     </div>
   ),
-};
+}
 
 // With different content
 export const WithDifferentContent: Story = {
@@ -109,7 +115,7 @@ export const WithDifferentContent: Story = {
           <p>This is an informational tooltip</p>
         </TooltipContent>
       </Tooltip>
-      
+
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="outline" size="icon">
@@ -120,7 +126,7 @@ export const WithDifferentContent: Story = {
           <p>Need help with something?</p>
         </TooltipContent>
       </Tooltip>
-      
+
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="outline" size="icon">
@@ -136,7 +142,7 @@ export const WithDifferentContent: Story = {
       </Tooltip>
     </div>
   ),
-};
+}
 
 // With rich content
 export const WithRichContent: Story = {
@@ -152,13 +158,14 @@ export const WithRichContent: Story = {
             <h4 className="font-semibold">Feature Available</h4>
           </div>
           <p className="text-sm text-muted-foreground">
-            This feature is currently available in your plan. Upgrade to unlock even more powerful tools and capabilities.
+            This feature is currently available in your plan. Upgrade to unlock
+            even more powerful tools and capabilities.
           </p>
         </div>
       </TooltipContent>
     </Tooltip>
   ),
-};
+}
 
 // With delay
 export const WithDelay: Story = {
@@ -172,7 +179,7 @@ export const WithDelay: Story = {
       </TooltipContent>
     </Tooltip>
   ),
-};
+}
 
 // Disabled tooltip
 export const Disabled: Story = {
@@ -188,7 +195,7 @@ export const Disabled: Story = {
       </TooltipContent>
     </Tooltip>
   ),
-};
+}
 
 // Usage example with form field
 export const WithFormField: Story = {
@@ -201,7 +208,10 @@ export const WithFormField: Story = {
           </label>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" className="text-muted-foreground hover:text-foreground">
+              <button
+                type="button"
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <Info className="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
@@ -217,7 +227,7 @@ export const WithFormField: Story = {
           placeholder="Enter your username"
         />
       </div>
-      
+
       <div>
         <div className="flex items-center gap-2 mb-1">
           <label htmlFor="password" className="text-sm font-medium">
@@ -225,7 +235,10 @@ export const WithFormField: Story = {
           </label>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" className="text-muted-foreground hover:text-foreground">
+              <button
+                type="button"
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <Info className="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
@@ -251,4 +264,4 @@ export const WithFormField: Story = {
       </div>
     </div>
   ),
-};
+}

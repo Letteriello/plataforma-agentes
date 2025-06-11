@@ -2,7 +2,7 @@
  * @file EditInstructionDialog.tsx
  * @description Dialog para editar a instrução principal de um agente.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -10,15 +10,15 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 interface EditInstructionDialogProps {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-  initialInstruction: string;
-  onSave: (newInstruction: string) => void;
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
+  initialInstruction: string
+  onSave: (newInstruction: string) => void
 }
 
 export const EditInstructionDialog: React.FC<EditInstructionDialogProps> = ({
@@ -27,18 +27,18 @@ export const EditInstructionDialog: React.FC<EditInstructionDialogProps> = ({
   initialInstruction,
   onSave,
 }) => {
-  const [instruction, setInstruction] = useState(initialInstruction);
+  const [instruction, setInstruction] = useState(initialInstruction)
 
   useEffect(() => {
     if (isOpen) {
-      setInstruction(initialInstruction);
+      setInstruction(initialInstruction)
     }
-  }, [isOpen, initialInstruction]);
+  }, [isOpen, initialInstruction])
 
   const handleSave = () => {
-    onSave(instruction);
-    onOpenChange(false);
-  };
+    onSave(instruction)
+    onOpenChange(false)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -46,7 +46,8 @@ export const EditInstructionDialog: React.FC<EditInstructionDialogProps> = ({
         <DialogHeader>
           <DialogTitle>Editar Instrução Principal (Prompt)</DialogTitle>
           <DialogDescription>
-            Defina o comportamento central, a persona e as diretrizes operacionais para o seu agente.
+            Defina o comportamento central, a persona e as diretrizes
+            operacionais para o seu agente.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -67,5 +68,5 @@ export const EditInstructionDialog: React.FC<EditInstructionDialogProps> = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

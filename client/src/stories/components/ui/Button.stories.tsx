@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@/components/ui/button';
-import { Plus, Loader2 } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '@/components/ui/button'
+import { Plus, Loader2 } from 'lucide-react'
 
 // Meta information for the component
 const meta = {
@@ -10,7 +10,8 @@ const meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A customizable button component with various styles and states.',
+        component:
+          'A customizable button component with various styles and states.',
       },
     },
   },
@@ -18,7 +19,17 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'destructive', 'outline', 'ghost', 'link', 'success', 'warning', 'info'],
+      options: [
+        'primary',
+        'secondary',
+        'destructive',
+        'outline',
+        'ghost',
+        'link',
+        'success',
+        'warning',
+        'info',
+      ],
       description: 'The visual style of the button',
     },
     size: {
@@ -35,15 +46,15 @@ const meta = {
       description: 'Whether the button is in a loading state',
     },
   },
-} satisfies Meta<typeof Button>;
+} satisfies Meta<typeof Button>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Default button
 const Template: Story = {
   render: (args) => <Button {...args}>Button</Button>,
-};
+}
 
 // Variants
 export const Primary: Story = {
@@ -51,42 +62,42 @@ export const Primary: Story = {
   args: {
     variant: 'primary',
   },
-};
+}
 
 export const Secondary: Story = {
   ...Template,
   args: {
     variant: 'secondary',
   },
-};
+}
 
 export const Destructive: Story = {
   ...Template,
   args: {
     variant: 'destructive',
   },
-};
+}
 
 export const Outline: Story = {
   ...Template,
   args: {
     variant: 'outline',
   },
-};
+}
 
 export const Ghost: Story = {
   ...Template,
   args: {
     variant: 'ghost',
   },
-};
+}
 
 export const Link: Story = {
   ...Template,
   args: {
     variant: 'link',
   },
-};
+}
 
 // Status variants
 export const Success: Story = {
@@ -94,21 +105,21 @@ export const Success: Story = {
   args: {
     variant: 'success',
   },
-};
+}
 
 export const Warning: Story = {
   ...Template,
   args: {
     variant: 'warning',
   },
-};
+}
 
 export const Info: Story = {
   ...Template,
   args: {
     variant: 'info',
   },
-};
+}
 
 // Sizes
 export const Small: Story = {
@@ -116,14 +127,14 @@ export const Small: Story = {
   args: {
     size: 'sm',
   },
-};
+}
 
 export const Large: Story = {
   ...Template,
   args: {
     size: 'lg',
   },
-};
+}
 
 // States
 export const Disabled: Story = {
@@ -131,14 +142,14 @@ export const Disabled: Story = {
   args: {
     disabled: true,
   },
-};
+}
 
 export const Loading: Story = {
   ...Template,
   args: {
     isLoading: true,
   },
-};
+}
 
 // With Icons
 export const WithLeftIcon: Story = {
@@ -149,7 +160,7 @@ export const WithLeftIcon: Story = {
       Add Item
     </Button>
   ),
-};
+}
 
 export const WithRightIcon: Story = {
   ...Template,
@@ -159,7 +170,7 @@ export const WithRightIcon: Story = {
       <Plus className="ml-2 h-4 w-4" />
     </Button>
   ),
-};
+}
 
 // Icon Button
 export const IconOnly: Story = {
@@ -169,4 +180,4 @@ export const IconOnly: Story = {
     children: <Plus className="h-4 w-4" />,
     'aria-label': 'Add',
   },
-};
+}

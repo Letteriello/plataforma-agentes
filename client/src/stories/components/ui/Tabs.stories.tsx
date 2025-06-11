@@ -1,12 +1,19 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import type { Meta, StoryObj } from '@storybook/react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 const meta: Meta<typeof Tabs> = {
-  title: "Components/UI/Tabs",
+  title: 'Components/UI/Tabs',
   component: Tabs,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <div className="w-[500px]">
@@ -31,7 +38,8 @@ export const Default: Story = {
           <CardHeader>
             <CardTitle>Conta</CardTitle>
             <CardDescription>
-              Altere as configurações da sua conta aqui. Clique em salvar quando terminar.
+              Altere as configurações da sua conta aqui. Clique em salvar quando
+              terminar.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">

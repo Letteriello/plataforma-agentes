@@ -1,13 +1,19 @@
 // Tipos compartilhados para o Dashboard
-
-export * from './dashboard.types';
+export * from './dashboard.types'
 
 // Tipos para componentes específicos
-export * from './components/header';
-export * from './components/sidebar';
-export * from './components/cards';
+export * from './components'
 
 // Tipos para dados da API
-export * from './api/stats';
-export * from './api/activities';
-export * from './api/agents';
+export * from './api'
+
+// Re-exportar tipos comuns para facilitar a importação
+export type {
+  Agent,
+  AgentStatus,
+  AgentType,
+  DashboardStats,
+  Activity,
+  TokenUsage,
+  DashboardState,
+} from './dashboard.types'

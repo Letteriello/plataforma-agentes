@@ -1,9 +1,9 @@
-import * as React from "react"
-import { type VariantProps } from "class-variance-authority"
-import { Loader2 } from "lucide-react"
+import * as React from 'react'
+import { type VariantProps } from 'class-variance-authority'
+import { Loader2 } from 'lucide-react'
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "./button-variants"
+import { cn } from '@/lib/utils'
+import { buttonVariants } from './button-variants'
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -28,7 +28,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Removida dependência do Slot do Radix UI
     return (
@@ -52,8 +52,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </button>
     )
-  }
+  },
 )
-Button.displayName = "Button"
+Button.displayName = 'Button'
 
 export { Button, buttonVariants }

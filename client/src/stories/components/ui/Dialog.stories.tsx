@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { Button } from "@/components/ui/button"
+import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,16 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const meta: Meta<typeof Dialog> = {
-  title: "Components/UI/Dialog",
+  title: 'Components/UI/Dialog',
   component: Dialog,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
 }
 
@@ -34,7 +34,8 @@ export const Default: Story = {
         <DialogHeader>
           <DialogTitle>Editar Perfil</DialogTitle>
           <DialogDescription>
-            Faça alterações no seu perfil aqui. Clique em salvar quando terminar.
+            Faça alterações no seu perfil aqui. Clique em salvar quando
+            terminar.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -69,8 +70,8 @@ export const ConfirmationDialog: Story = {
         <DialogHeader>
           <DialogTitle>Você tem certeza?</DialogTitle>
           <DialogDescription>
-            Esta ação não pode ser desfeita. Isso irá excluir permanentemente seu
-            registro e remover seus dados de nossos servidores.
+            Esta ação não pode ser desfeita. Isso irá excluir permanentemente
+            seu registro e remover seus dados de nossos servidores.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

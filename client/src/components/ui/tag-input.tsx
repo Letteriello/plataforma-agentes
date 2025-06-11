@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { X, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from 'react'
+import { X, Plus } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export interface TagInputProps extends React.HTMLAttributes<HTMLDivElement> {
-  placeholder?: string;
-  tags: string[];
-  onTagsChange: (tags: string[]) => void;
-  maxTags?: number;
-  maxLength?: number;
-  disabled?: boolean;
-  className?: string;
-  inputClassName?: string;
-  tagClassName?: string;
+  placeholder?: string
+  tags: string[]
+  onTagsChange: (tags: string[]) => void
+  maxTags?: number
+  maxLength?: number
+  disabled?: boolean
+  className?: string
+  inputClassName?: string
+  tagClassName?: string
 }
 
 export function TagInput({
@@ -26,75 +26,75 @@ export function TagInput({
   tagClassName = '',
   ...props
 }: TagInputProps) {
-  const [inputValue, setInputValue] = React.useState('');
-  const [isFocused, setIsFocused] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [inputValue, setInputValue] = React.useState('')
+  const [isFocused, setIsFocused] = React.useState(false)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
+    setInputValue(e.target.value)
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (disabled) return;
+    if (disabled) return
 
     if (e.key === 'Enter' || e.key === 'Tab' || e.key === ',') {
-      e.preventDefault();
-      addTag();
+      e.preventDefault()
+      addTag()
     } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
       // Remove the last tag on backspace when input is empty
-      removeTag(tags.length - 1);
+      removeTag(tags.length - 1)
     }
-  };
+  }
 
   const handleBlur = () => {
-    setIsFocused(false);
+    setIsFocused(false)
     if (inputValue.trim()) {
-      addTag();
+      addTag()
     }
-  };
+  }
 
   const addTag = () => {
-    const trimmedValue = inputValue.trim();
-    
+    const trimmedValue = inputValue.trim()
+
     if (
-      !trimmedValue || 
-      (maxTags && tags.length >= maxTags) || 
+      !trimmedValue ||
+      (maxTags && tags.length >= maxTags) ||
       (maxLength && trimmedValue.length > maxLength)
     ) {
-      return;
+      return
     }
 
     // Check for duplicates
     if (!tags.includes(trimmedValue)) {
-      const newTags = [...tags, trimmedValue];
-      onTagsChange(newTags);
+      const newTags = [...tags, trimmedValue]
+      onTagsChange(newTags)
     }
-    
-    setInputValue('');
-  };
+
+    setInputValue('')
+  }
 
   const removeTag = (index: number) => {
-    if (disabled) return;
-    
-    const newTags = [...tags];
-    newTags.splice(index, 1);
-    onTagsChange(newTags);
-  };
+    if (disabled) return
+
+    const newTags = [...tags]
+    newTags.splice(index, 1)
+    onTagsChange(newTags)
+  }
 
   const containerClasses = cn(
     'flex flex-wrap gap-2 p-2 border rounded-md bg-background',
     'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
     disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
     isFocused ? 'border-primary' : 'border-input',
-    className
-  );
+    className,
+  )
 
   const inputClasses = cn(
     'flex-1 min-w-[100px] bg-transparent outline-none text-sm',
     'placeholder:text-muted-foreground',
     disabled && 'cursor-not-allowed',
-    inputClassName
-  );
+    inputClassName,
+  )
 
   const tagClasses = (index: number) =>
     cn(
@@ -102,8 +102,8 @@ export function TagInput({
       'bg-primary/10 text-primary',
       !disabled && 'hover:bg-primary/20',
       disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-      tagClassName
-    );
+      tagClassName,
+    )
 
   return (
     <div
@@ -130,7 +130,7 @@ export function TagInput({
           )}
         </div>
       ))}
-      
+
       {(!maxTags || tags.length < maxTags) && (
         <input
           ref={inputRef}
@@ -146,12 +146,12 @@ export function TagInput({
           maxLength={maxLength}
         />
       )}
-      
+
       {maxTags && (
         <div className="text-xs text-muted-foreground self-center ml-auto">
           {tags.length}/{maxTags}
         </div>
       )}
     </div>
-  );
+  )
 }

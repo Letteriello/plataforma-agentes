@@ -1,7 +1,7 @@
-import { vi, describe, beforeEach, test, expect } from 'vitest';
-import agentService from './agentService';
-import apiClient from '@/api/apiClient'; // Import apiClient to mock it
-import { AgentType, LlmAgentConfig } from '@/types/agent'; // Assuming AnyAgentConfig is not needed for these specific tests now
+import { vi, describe, beforeEach, test, expect } from 'vitest'
+import agentService from './agentService'
+import apiClient from '@/api/apiClient' // Import apiClient to mock it
+import { AgentType, LlmAgentConfig } from '@/types/agent' // Assuming AnyAgentConfig is not needed for these specific tests now
 
 // Remove store mocks as agentService directly uses apiClient, not the store's state-modifying functions.
 // const addAgent = vi.fn();
@@ -14,26 +14,26 @@ import { AgentType, LlmAgentConfig } from '@/types/agent'; // Assuming AnyAgentC
 //   },
 // }));
 
-vi.mock('../apiClient'); // Mock apiClient
+vi.mock('../apiClient') // Mock apiClient
 
 beforeEach(() => {
-  vi.clearAllMocks(); // Clears all mocks including apiClient if methods are mocked individually
-});
+  vi.clearAllMocks() // Clears all mocks including apiClient if methods are mocked individually
+})
 
 describe('agentService', () => {
   // Tests for saveAgent are removed as saveAgent does not exist on agentService.
   // Proper tests for createAgent and updateAgent would mock apiClient.post and apiClient.put.
 
   test('deleteAgent should call apiClient.delete with the correct URL', async () => {
-    const agentId = 'abc';
-    const mockDelete = vi.fn().mockResolvedValueOnce({}); // Mock apiClient.delete
-    (apiClient.delete as vi.Mock).mockImplementation(mockDelete);
+    const agentId = 'abc'
+    const mockDelete = vi.fn().mockResolvedValueOnce({}) // Mock apiClient.delete
+    ;(apiClient.delete as vi.Mock).mockImplementation(mockDelete)
 
-    await agentService.deleteAgent(agentId);
+    await agentService.deleteAgent(agentId)
 
-    expect(mockDelete).toHaveBeenCalledWith(`/agents/${agentId}`);
+    expect(mockDelete).toHaveBeenCalledWith(`/agents/${agentId}`)
     // We are not checking removeAgent from the store here, as the service doesn't call it.
-  });
+  })
 
   // Example test for createAgent (if time permitted, similar for updateAgent)
   test('createAgent should call apiClient.post with the correct config', async () => {
@@ -45,11 +45,13 @@ describe('agentService', () => {
       code_execution: false,
       planning_enabled: false,
       tools: [],
-    };
-    const mockPost = vi.fn().mockResolvedValueOnce({ data: { ...configWithoutId, id: 'newId' } });
-    (apiClient.post as vi.Mock).mockImplementation(mockPost);
+    }
+    const mockPost = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { ...configWithoutId, id: 'newId' } })
+    ;(apiClient.post as vi.Mock).mockImplementation(mockPost)
 
-    await agentService.createAgent(configWithoutId);
-    expect(mockPost).toHaveBeenCalledWith('/agents', configWithoutId);
-  });
-});
+    await agentService.createAgent(configWithoutId)
+    expect(mockPost).toHaveBeenCalledWith('/agents', configWithoutId)
+  })
+})

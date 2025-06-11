@@ -1,5 +1,5 @@
-import { AgentsLayout } from '@/components/agents/AgentsLayout';
-import { TokenUsageCard } from '@/components/dashboard/TokenUsageCard';
+import { AgentsLayout } from '@/components/agents/AgentsLayout'
+import { TokenUsageCard } from '@/components/dashboard/TokenUsageCard'
 
 export default function AgentAnalyticsPage() {
   return (
@@ -9,5 +9,5 @@ export default function AgentAnalyticsPage() {
         <TokenUsageCard data={[]} />
       </div>
     </AgentsLayout>
-  );
+  )
 }

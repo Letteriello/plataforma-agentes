@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-import { Button } from './button';
-import { PlusCircle, Mail } from 'lucide-react'; // Example icons
+import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { Button } from './button'
+import { PlusCircle, Mail } from 'lucide-react' // Example icons
 
 // Default metadata for the Button component stories
 const meta = {
@@ -16,7 +16,17 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'destructive', 'outline', 'ghost', 'link', 'success', 'warning', 'info'],
+      options: [
+        'primary',
+        'secondary',
+        'destructive',
+        'outline',
+        'ghost',
+        'link',
+        'success',
+        'warning',
+        'info',
+      ],
     },
     size: {
       control: 'select',
@@ -36,10 +46,10 @@ const meta = {
     asChild: false,
     onClick: fn(), // Mock function for onClick
   },
-} satisfies Meta<typeof Button>;
+} satisfies Meta<typeof Button>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Basic stories
 export const Default: Story = {
@@ -47,63 +57,63 @@ export const Default: Story = {
     variant: 'primary',
     children: 'Primary Button',
   },
-};
+}
 
 export const Secondary: Story = {
   args: {
     variant: 'secondary',
     children: 'Secondary Button',
   },
-};
+}
 
 export const Destructive: Story = {
   args: {
     variant: 'destructive',
     children: 'Destructive Button',
   },
-};
+}
 
 export const Outline: Story = {
   args: {
     variant: 'outline',
     children: 'Outline Button',
   },
-};
+}
 
 export const Ghost: Story = {
   args: {
     variant: 'ghost',
     children: 'Ghost Button',
   },
-};
+}
 
 export const Link: Story = {
   args: {
     variant: 'link',
     children: 'Link Button',
   },
-};
+}
 
 export const Success: Story = {
   args: {
     variant: 'success',
     children: 'Success Button',
   },
-};
+}
 
 export const Warning: Story = {
   args: {
     variant: 'warning',
     children: 'Warning Button',
   },
-};
+}
 
 export const Info: Story = {
   args: {
     variant: 'info',
     children: 'Info Button',
   },
-};
+}
 
 // Size stories
 export const Small: Story = {
@@ -111,14 +121,14 @@ export const Small: Story = {
     size: 'sm',
     children: 'Small Button',
   },
-};
+}
 
 export const Large: Story = {
   args: {
     size: 'lg',
     children: 'Large Button',
   },
-};
+}
 
 export const Icon: Story = {
   args: {
@@ -127,7 +137,7 @@ export const Icon: Story = {
     children: <PlusCircle className="h-4 w-4" />, // Pass icon as children
     'aria-label': 'Add Item', // Important for accessibility
   },
-};
+}
 
 // State stories
 export const IsLoading: Story = {
@@ -135,14 +145,14 @@ export const IsLoading: Story = {
     isLoading: true,
     children: 'Loading...',
   },
-};
+}
 
 export const Disabled: Story = {
   args: {
     disabled: true,
     children: 'Disabled Button',
   },
-};
+}
 
 // With Icons
 export const WithLeftIcon: Story = {
@@ -151,7 +161,7 @@ export const WithLeftIcon: Story = {
     leftIcon: <Mail className="h-4 w-4" />,
     children: 'Email',
   },
-};
+}
 
 export const WithRightIcon: Story = {
   args: {
@@ -159,7 +169,7 @@ export const WithRightIcon: Story = {
     rightIcon: <PlusCircle className="h-4 w-4" />,
     children: 'Add New',
   },
-};
+}
 
 export const LoadingWithIcons: Story = {
   args: {
@@ -168,7 +178,7 @@ export const LoadingWithIcons: Story = {
     leftIcon: <Mail className="h-4 w-4" />, // Icon should be hidden by loader
     children: 'Submitting',
   },
-};
+}
 
 // Example of asChild (though it's harder to demonstrate visually in Storybook without a child component)
 // export const AsChild: Story = {

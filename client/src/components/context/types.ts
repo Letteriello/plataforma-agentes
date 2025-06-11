@@ -1,22 +1,29 @@
 // client/src/components/context/types.ts
 
 export interface ContextPanelProperty {
-  label: string;
-  value: string | number | React.ReactNode; // Permitir ReactNode para valores mais ricos
+  label: string
+  value: string | number | React.ReactNode // Permitir ReactNode para valores mais ricos
 }
 
-export type ContextPanelStatus = 'active' | 'inactive' | 'pending' | 'error' | 'success' | 'warning' | 'info';
+export type ContextPanelStatus =
+  | 'active'
+  | 'inactive'
+  | 'pending'
+  | 'error'
+  | 'success'
+  | 'warning'
+  | 'info'
 
 export interface ContextPanelData {
-  id: string; // Um identificador único para o item em contexto
-  title: string;
-  description?: string;
-  imageUrl?: string; // URL para uma imagem (avatar, ícone do item)
+  id: string // Um identificador único para o item em contexto
+  title: string
+  description?: string
+  imageUrl?: string // URL para uma imagem (avatar, ícone do item)
   status?: {
-    text: ContextPanelStatus;
-    label?: string; // Ex: "Status", "Disponibilidade"
-  };
-  properties?: ContextPanelProperty[];
+    text: ContextPanelStatus
+    label?: string // Ex: "Status", "Disponibilidade"
+  }
+  properties?: ContextPanelProperty[]
   // Poderíamos adicionar mais campos conforme necessário, como ações (botões)
   // actions?: Array<{ label: string; onClick: () => void; variant?: string }>;
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from '@/components/ui/button'; // Optional: use shadcn button
+import React from 'react'
+import { Button } from '@/components/ui/button' // Optional: use shadcn button
 
 const ToolSelector: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const ToolSelector: React.FC = () => {
         TS
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default ToolSelector;
+export default ToolSelector

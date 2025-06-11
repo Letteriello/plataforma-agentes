@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-import { Checkbox } from './checkbox';
-import { Label } from './label'; // To demonstrate with a label
-import React from 'react'; // For JSX
+import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { Checkbox } from './checkbox'
+import { Label } from './label' // To demonstrate with a label
+import React from 'react' // For JSX
 
 const meta = {
   title: 'UI/Checkbox',
@@ -22,36 +22,36 @@ const meta = {
     disabled: false,
     onChange: fn(),
   },
-} satisfies Meta<typeof Checkbox>;
+} satisfies Meta<typeof Checkbox>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     // No specific args, will use defaults (unchecked)
   },
-};
+}
 
 export const Checked: Story = {
   args: {
     checked: true,
   },
-};
+}
 
 export const DisabledUnchecked: Story = {
   args: {
     disabled: true,
     checked: false,
   },
-};
+}
 
 export const DisabledChecked: Story = {
   args: {
     disabled: true,
     checked: true,
   },
-};
+}
 
 // Story to demonstrate usage with a Label component
 export const WithLabel: Story = {
@@ -64,7 +64,7 @@ export const WithLabel: Story = {
   args: {
     id: 'terms-checkbox', // ensure id matches label's htmlFor
   },
-};
+}
 
 export const WithLabelChecked: Story = {
   render: (args) => (
@@ -77,13 +77,16 @@ export const WithLabelChecked: Story = {
     id: 'subscribe-checkbox',
     checked: true,
   },
-};
+}
 
 export const WithLabelDisabled: Story = {
   render: (args) => (
     <div className="flex items-center space-x-2">
       <Checkbox id="feature" {...args} />
-      <Label htmlFor="feature" className={args.disabled ? 'text-muted-foreground' : ''}>
+      <Label
+        htmlFor="feature"
+        className={args.disabled ? 'text-muted-foreground' : ''}
+      >
         Enable experimental feature (disabled)
       </Label>
     </div>
@@ -93,4 +96,4 @@ export const WithLabelDisabled: Story = {
     disabled: true,
     checked: false,
   },
-};
+}

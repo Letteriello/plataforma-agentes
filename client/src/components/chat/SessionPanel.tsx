@@ -1,20 +1,20 @@
 // client/src/components/chat/SessionPanel.tsx
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { ConversationList } from './ConversationList';
-import { useChatStore } from '@/store/chatStore';
+import React from 'react'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
+import { ConversationList } from './ConversationList'
+import { useChatStore } from '@/store/chatStore'
 
 export const SessionPanel: React.FC = () => {
-  const { addConversation, setSelectedConversationId } = useChatStore();
+  const { addConversation, setSelectedConversationId } = useChatStore()
 
   const handleNewSession = () => {
-    const id = Date.now().toString();
+    const id = Date.now().toString()
     // Ensure the agentName matches the expectation or adjust as needed.
     // The issue description for ConversationList implies "Nova Conversa" is acceptable.
-    addConversation({ id, agentName: 'Nova Sessão', lastMessage: '' });
-    setSelectedConversationId(id);
-  };
+    addConversation({ id, agentName: 'Nova Sessão', lastMessage: '' })
+    setSelectedConversationId(id)
+  }
 
   return (
     <div className="flex h-full flex-col border-r border-border bg-card">
@@ -27,5 +27,5 @@ export const SessionPanel: React.FC = () => {
       </div>
       <ConversationList />
     </div>
-  );
-};
+  )
+}

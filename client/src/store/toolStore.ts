@@ -1,31 +1,39 @@
-import { create } from 'zustand';
-import { Tool } from '@/types';
-import mockTools from '@/data/mock-tools.json';
+import { create } from 'zustand'
+import { Tool } from '@/types'
+import { toolService } from '@/api/toolService'
 
 interface ToolState {
-  tools: Tool[];
-  isLoading: boolean;
-  error: string | null;
+  tools: Tool[]
+  isLoading: boolean
+  error: string | null
 }
 
 interface ToolActions {
-  loadTools: (tools: Tool[]) => void;
-  addTool: (tool: Tool) => void;
-  updateTool: (tool: Tool) => void;
-  removeTool: (toolId: string) => void;
+  fetchTools: () => Promise<void>
+  addTool: (tool: Tool) => void
+  updateTool: (tool: Tool) => void
+  removeTool: (toolId: string) => void
 }
 
 export const useToolStore = create<ToolState & ToolActions>((set) => ({
   tools: [],
   isLoading: false,
   error: null,
-  loadTools: (tools) => set({ tools }),
+  fetchTools: async () => {
+    set({ isLoading: true, error: null })
+    try {
+      const tools = await toolService.fetchTools()
+      set({ tools, isLoading: false })
+    } catch (error) {
+      console.error('Failed to fetch tools:', error)
+      set({ error: 'Failed to fetch tools.', isLoading: false })
+    }
+  },
   addTool: (tool) => set((state) => ({ tools: [...state.tools, tool] })),
   updateTool: (tool) =>
-    set((state) => ({ tools: state.tools.map((t) => (t.id === tool.id ? tool : t)) })),
+    set((state) => ({
+      tools: state.tools.map((t) => (t.id === tool.id ? tool : t)),
+    })),
   removeTool: (toolId) =>
     set((state) => ({ tools: state.tools.filter((t) => t.id !== toolId) })),
-}));
-
-// Preload mock tools on init
-useToolStore.getState().loadTools(mockTools as Tool[]);
+}))

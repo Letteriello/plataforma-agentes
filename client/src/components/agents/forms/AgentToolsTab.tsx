@@ -1,38 +1,44 @@
-import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { Tool } from '@/types';
-import toolService from '@/api/toolService';
-import { Checkbox } from '@/components/ui/checkbox';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { LLMAgent } from '@/types/agents';
+import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { Tool } from '@/types'
+import toolService from '@/api/toolService'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
+import { LLMAgent } from '@/types/agents'
 
 export function AgentToolsTab() {
-  const { control } = useFormContext<LLMAgent>();
-  const [tools, setTools] = useState<Tool[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { control } = useFormContext<LLMAgent>()
+  const [tools, setTools] = useState<Tool[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const loadTools = async () => {
       try {
-        const fetched = await toolService.fetchTools();
-        setTools(fetched);
+        const fetched = await toolService.fetchTools()
+        setTools(fetched)
       } catch (err) {
-        setError('Failed to load tools');
+        setError('Failed to load tools')
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-    loadTools();
-  }, []);
+    }
+    loadTools()
+  }, [])
 
   if (isLoading) {
-    return <p>Loading tools...</p>;
+    return <p>Loading tools...</p>
   }
 
   if (error) {
-    return <p className="text-destructive">{error}</p>;
+    return <p className="text-destructive">{error}</p>
   }
 
   return (
@@ -45,15 +51,17 @@ export function AgentToolsTab() {
           <FormControl>
             <div className="space-y-3">
               {tools.map((tool) => {
-                const checked = field.value?.includes(tool.id);
+                const checked = field.value?.includes(tool.id)
                 const handleChange = (checked: boolean) => {
-                  const current = field.value || [];
+                  const current = field.value || []
                   if (checked) {
-                    field.onChange([...current, tool.id]);
+                    field.onChange([...current, tool.id])
                   } else {
-                    field.onChange(current.filter((id: string) => id !== tool.id));
+                    field.onChange(
+                      current.filter((id: string) => id !== tool.id),
+                    )
                   }
-                };
+                }
                 return (
                   <div key={tool.id} className="flex items-start gap-3">
                     <Checkbox
@@ -64,9 +72,11 @@ export function AgentToolsTab() {
                     <Label htmlFor={`tool-${tool.id}`} className="font-medium">
                       {tool.name}
                     </Label>
-                    <span className="text-sm text-muted-foreground">{tool.description}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {tool.description}
+                    </span>
                   </div>
-                );
+                )
               })}
             </div>
           </FormControl>
@@ -74,7 +84,7 @@ export function AgentToolsTab() {
         </FormItem>
       )}
     />
-  );
+  )
 }
 
-export default AgentToolsTab;
+export default AgentToolsTab

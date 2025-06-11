@@ -1,109 +1,131 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'; // Added React and useRef
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusIcon, SearchIcon, Loader2, Trash2, Pencil, Play } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Agent, AgentType } from '@/types/agents'; // AgentType will be used by the filter
-import { mockAgents } from '@/data/mocks/mock-dashboard-agents'; // Import mockAgents
-import { agentTypeLabels } from '@/lib/agent-utils'; // Import centralized agentTypeLabels
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState, useEffect, useCallback, useRef } from 'react' // Added React and useRef
+import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  PlusIcon,
+  SearchIcon,
+  Loader2,
+  Trash2,
+  Pencil,
+  Play,
+} from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Agent, AgentType } from '@/types/agents' // AgentType will be used by the filter
+
+import { agentTypeLabels } from '@/lib/agent-utils' // Import centralized agentTypeLabels
+import { useToast } from '@/components/ui/use-toast'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { AgentListItem } from './AgentListItem'; // Adjusted path if necessary
-import { useVirtualizer } from '@tanstack/react-virtual';
+} from '@/components/ui/tooltip'
+import { AgentListItem } from './AgentListItem' // Adjusted path if necessary
+import { useVirtualizer } from '@tanstack/react-virtual'
 
 // Removed mockAgents definition from here
 
 // Removed dashboardAgentTypeLabels definition from here
 // It will be centralized in agent-utils.ts later
 
-type AgentFilter = 'all' | AgentType; // AgentType is imported
+type AgentFilter = 'all' | AgentType // AgentType is imported
 
 export function AgentsDashboard() {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<AgentFilter>('all');
-  const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate()
+  const { toast } = useToast()
+  const [agents, setAgents] = useState<Agent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filter, setFilter] = useState<AgentFilter>('all')
+  const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({})
 
-  const parentRef = React.useRef<HTMLDivElement>(null);
+  const parentRef = React.useRef<HTMLDivElement>(null)
 
   const rowVirtualizer = useVirtualizer({
     count: filteredAgents.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 100, // Estimated height of an AgentListItem
     overscan: 5,
-  });
+  })
 
   // Load agents on component mount
   useEffect(() => {
     const loadAgents = async () => {
       try {
-        setIsLoading(true);
-        // In a real app, this would be an API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setAgents(mockAgents);
+        setIsLoading(true)
+        // TODO: Replace with actual API call to fetch agents
+        // For now, we'll just initialize with an empty list.
+        setAgents([])
       } catch (error) {
-        console.error('Failed to load agents:', error);
+        console.error('Failed to load agents:', error)
         toast({
           title: 'Error',
           description: 'Failed to load agents. Please try again later.',
           variant: 'destructive',
-        });
+        })
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-
-    loadAgents();
-  }, [toast]);
-
-  const navigateToEdit = useCallback((id: string) => {
-    navigate(`/agents/edit/${id}`);
-  }, [navigate]);
-
-  const navigateToRun = useCallback((id: string) => {
-    navigate(`/agents/run/${id}`);
-  }, [navigate]);
-
-  const memoizedHandleDeleteAgent = useCallback(async (agentId: string) => {
-    if (!window.confirm('Are you sure you want to delete this agent? This action cannot be undone.')) {
-      return;
     }
-    try {
-      setIsDeleting(prev => ({ ...prev, [agentId]: true }));
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-      setAgents(prev => prev.filter(agent => agent.id !== agentId));
-      toast({
-        title: 'Success',
-        description: 'Agent deleted successfully',
-      });
-    } catch (error) {
-      console.error('Failed to delete agent:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete agent. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsDeleting(prev => ({ ...prev, [agentId]: false }));
-    }
-  }, [toast]); // setAgents and setIsDeleting are stable from useState
 
-  const filteredAgents = agents.filter(agent => {
-    const matchesSearch = agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        (agent.description && agent.description.toLowerCase().includes(searchQuery.toLowerCase())); // Made description check safer
-    const matchesFilter = filter === 'all' || agent.type === filter;
-    return matchesSearch && matchesFilter;
-  });
+    loadAgents()
+  }, [toast])
+
+  const navigateToEdit = useCallback(
+    (id: string) => {
+      navigate(`/agents/edit/${id}`)
+    },
+    [navigate],
+  )
+
+  const navigateToRun = useCallback(
+    (id: string) => {
+      navigate(`/agents/run/${id}`)
+    },
+    [navigate],
+  )
+
+  const memoizedHandleDeleteAgent = useCallback(
+    async (agentId: string) => {
+      if (
+        !window.confirm(
+          'Are you sure you want to delete this agent? This action cannot be undone.',
+        )
+      ) {
+        return
+      }
+      try {
+        setIsDeleting((prev) => ({ ...prev, [agentId]: true }))
+        await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API call
+        setAgents((prev) => prev.filter((agent) => agent.id !== agentId))
+        toast({
+          title: 'Success',
+          description: 'Agent deleted successfully',
+        })
+      } catch (error) {
+        console.error('Failed to delete agent:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to delete agent. Please try again.',
+          variant: 'destructive',
+        })
+      } finally {
+        setIsDeleting((prev) => ({ ...prev, [agentId]: false }))
+      }
+    },
+    [toast],
+  ) // setAgents and setIsDeleting are stable from useState
+
+  const filteredAgents = agents.filter((agent) => {
+    const matchesSearch =
+      agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (agent.description &&
+        agent.description.toLowerCase().includes(searchQuery.toLowerCase())) // Made description check safer
+    const matchesFilter = filter === 'all' || agent.type === filter
+    return matchesSearch && matchesFilter
+  })
 
   // getAgentTypeColor is removed, as it's encapsulated in AgentListItem
 
@@ -112,7 +134,7 @@ export function AgentsDashboard() {
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
-    );
+    )
   }
 
   return (
@@ -157,7 +179,8 @@ export function AgentsDashboard() {
                   size="sm"
                   onClick={() => setFilter(type as AgentType)}
                 >
-                  {label} {/* Now using the label from centralized agentTypeLabels */}
+                  {label}{' '}
+                  {/* Now using the label from centralized agentTypeLabels */}
                 </Button>
               ))}
             </div>
@@ -167,13 +190,13 @@ export function AgentsDashboard() {
           {filteredAgents.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                {searchQuery 
+                {searchQuery
                   ? 'No agents match your search.'
                   : 'No agents found. Create your first agent to get started.'}
               </p>
               {!searchQuery && (
-                <Button 
-                  className="mt-4" 
+                <Button
+                  className="mt-4"
                   onClick={() => navigate('/agents/new')}
                 >
                   <PlusIcon className="mr-2 h-4 w-4" />
@@ -187,10 +210,16 @@ export function AgentsDashboard() {
               className="space-y-2 overflow-y-auto"
               style={{ maxHeight: '600px' /* Adjust height as needed */ }}
             >
-              <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+              <div
+                style={{
+                  height: `${rowVirtualizer.getTotalSize()}px`,
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
                 {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                  const agent = filteredAgents[virtualItem.index];
-                  if (!agent) return null; // Should not happen if count is correct
+                  const agent = filteredAgents[virtualItem.index]
+                  if (!agent) return null // Should not happen if count is correct
                   return (
                     <div
                       key={agent.id} // Using agent.id as key
@@ -210,7 +239,7 @@ export function AgentsDashboard() {
                         isDeleting={isDeleting[agent.id] || false}
                       />
                     </div>
-                  );
+                  )
                 })}
               </div>
             </div>
@@ -218,5 +247,5 @@ export function AgentsDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

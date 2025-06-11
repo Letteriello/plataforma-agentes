@@ -1,10 +1,10 @@
-import type { ChatMessage } from './types';
+import type { ChatMessage } from './types'
 
 export interface ConversationMock {
-  id: string;
-  name: string;
-  messages: ChatMessage[];
-  lastMessagePreview?: string;
+  id: string
+  name: string
+  messages: ChatMessage[]
+  lastMessagePreview?: string
 }
 
 export const mockConversationsData: Record<string, ConversationMock> = {
@@ -114,14 +114,14 @@ export const mockConversationsData: Record<string, ConversationMock> = {
       },
     ],
   },
-};
+}
 
-export const initialActiveConversationId = 'conv-alpha-01';
+export const initialActiveConversationId = 'conv-alpha-01'
 
 export const getInitialMessages = (conversationId: string): ChatMessage[] => {
-  return mockConversationsData[conversationId]?.messages || [];
-};
+  return mockConversationsData[conversationId]?.messages || []
+}
 
 export const getConversationList = (): ConversationMock[] => {
-  return Object.values(mockConversationsData);
-};
+  return Object.values(mockConversationsData)
+}

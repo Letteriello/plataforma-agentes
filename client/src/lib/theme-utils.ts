@@ -1,4 +1,4 @@
-import { theme } from '@/theme';
+import { theme } from '@/theme'
 
 /**
  * Get a value from the theme by path
@@ -8,15 +8,15 @@ import { theme } from '@/theme';
  */
 export const getThemeValue = <T = any>(
   path: string,
-  defaultValue?: T
+  defaultValue?: T,
 ): T | undefined => {
   // Split the path into parts and traverse the theme object
   const result = path.split('.').reduce((obj, key) => {
-    return obj && obj[key as keyof typeof obj];
-  }, theme as any);
+    return obj && obj[key as keyof typeof obj]
+  }, theme as any)
 
-  return result !== undefined ? result : defaultValue;
-};
+  return result !== undefined ? result : defaultValue
+}
 
 /**
  * Generate a CSS variable string for a theme value
@@ -25,8 +25,8 @@ export const getThemeValue = <T = any>(
  * @returns CSS variable string (e.g., 'var(--nexus-colors-primary)')
  */
 export const themeVar = (path: string, prefix = '--nexus'): string => {
-  return `var(${prefix}-${path.replace(/\./g, '-')})`;
-};
+  return `var(${prefix}-${path.replace(/\./g, '-')})`
+}
 
 /**
  * Generate a responsive style object based on breakpoints
@@ -36,7 +36,7 @@ export const themeVar = (path: string, prefix = '--nexus'): string => {
  */
 export const responsiveStyle = <T = any>(
   values: Record<string, T>,
-  property: string
+  property: string,
 ): Record<string, any> => {
   const breakpoints = {
     sm: '640px',
@@ -44,26 +44,28 @@ export const responsiveStyle = <T = any>(
     lg: '1024px',
     xl: '1280px',
     '2xl': '1536px',
-  };
+  }
 
-  const result: Record<string, any> = {};
-  
+  const result: Record<string, any> = {}
+
   // Add base styles (if 'base' is provided)
   if ('base' in values) {
-    result[property] = values.base;
+    result[property] = values.base
   }
 
   // Add responsive styles
   Object.entries(values).forEach(([key, value]) => {
     if (key !== 'base' && key in breakpoints) {
-      result[`@media (min-width: ${breakpoints[key as keyof typeof breakpoints]})`] = {
+      result[
+        `@media (min-width: ${breakpoints[key as keyof typeof breakpoints]})`
+      ] = {
         [property]: value,
-      };
+      }
     }
-  });
+  })
 
-  return result;
-};
+  return result
+}
 
 /**
  * Generate a consistent shadow style based on elevation level
@@ -78,7 +80,7 @@ export const elevation = (level: 0 | 1 | 2 | 3 | 4 | 5 = 0): string => {
     '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-  ];
+  ]
 
-  return shadows[Math.min(level, 5)];
-};
+  return shadows[Math.min(level, 5)]
+}

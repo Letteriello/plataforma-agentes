@@ -1,21 +1,32 @@
-import { motion } from 'framer-motion';
-import { LayoutDashboard, Bot, Cpu, BarChart2, FileText, ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { motion } from 'framer-motion'
+import {
+  LayoutDashboard,
+  Bot,
+  Cpu,
+  BarChart2,
+  FileText,
+  ChevronDown,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 interface SidebarProps {
-  isOpen: boolean;
-  onToggle: () => void;
+  isOpen: boolean
+  onToggle: () => void
   user?: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+    name: string
+    email: string
+    avatar?: string
+  }
 }
 
-export function Sidebar({ isOpen, onToggle, user = { name: 'Usuário', email: 'admin@exemplo.com' } }: SidebarProps) {
+export function Sidebar({
+  isOpen,
+  onToggle,
+  user = { name: 'Usuário', email: 'admin@exemplo.com' },
+}: SidebarProps) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ width: 280 }}
       animate={{ width: isOpen ? 280 : 80 }}
       className="h-full bg-card border-r border-border/40 flex flex-col transition-all duration-300 ease-in-out"
@@ -32,7 +43,7 @@ export function Sidebar({ isOpen, onToggle, user = { name: 'Usuário', email: 'a
           )}
         </div>
       </div>
-      
+
       <nav className="flex-1 p-3 space-y-1">
         {[
           { name: 'Dashboard', icon: LayoutDashboard, active: true },
@@ -44,8 +55,8 @@ export function Sidebar({ isOpen, onToggle, user = { name: 'Usuário', email: 'a
           <button
             key={item.name}
             className={`flex items-center w-full p-3 rounded-lg transition-colors ${
-              item.active 
-                ? 'bg-primary/10 text-primary font-medium' 
+              item.active
+                ? 'bg-primary/10 text-primary font-medium'
                 : 'text-muted-foreground hover:bg-muted/50'
             }`}
           >
@@ -54,17 +65,21 @@ export function Sidebar({ isOpen, onToggle, user = { name: 'Usuário', email: 'a
           </button>
         ))}
       </nav>
-      
+
       <div className="p-3 border-t border-border/40">
         <div className="flex items-center p-2 rounded-lg bg-muted/50">
           <Avatar className="h-8 w-8">
             <AvatarImage src={user.avatar} />
-            <AvatarFallback>{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarFallback>
+              {user.name.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           {isOpen && (
             <div className="ml-2 flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user.email}
+              </p>
             </div>
           )}
           <Button
@@ -73,10 +88,12 @@ export function Sidebar({ isOpen, onToggle, user = { name: 'Usuário', email: 'a
             className="h-8 w-8 ml-auto"
             onClick={onToggle}
           >
-            <ChevronDown className={`h-4 w-4 transition-transform ${!isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${!isOpen ? 'rotate-180' : ''}`}
+            />
           </Button>
         </div>
       </div>
     </motion.div>
-  );
+  )
 }

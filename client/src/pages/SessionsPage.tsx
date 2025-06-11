@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import mockSessions from '@/data/mock-sessions.json';
+import React, { useState } from 'react'
+import mockSessions from '@/data/mock-sessions.json'
 import {
   Table,
   TableBody,
@@ -7,33 +7,33 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-} from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/table'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface SessionRecord {
-  id: string;
-  agentName: string;
-  createdAt: string;
-  lastActivity: string;
+  id: string
+  agentName: string
+  createdAt: string
+  lastActivity: string
 }
 
 export default function SessionsPage() {
   const [sessions, setSessions] = useState<SessionRecord[]>(
     mockSessions as SessionRecord[],
-  );
+  )
 
   const handleDelete = (id: string) => {
-    setSessions((prev) => prev.filter((s) => s.id !== id));
-  };
+    setSessions((prev) => prev.filter((s) => s.id !== id))
+  }
 
   return (
     <div className="p-6 space-y-4">
@@ -103,5 +103,5 @@ export default function SessionsPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

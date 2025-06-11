@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-import { Textarea } from './textarea';
-import { Label } from './label'; // To demonstrate with a label
+import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { Textarea } from './textarea'
+import { Label } from './label' // To demonstrate with a label
 
 const meta = {
   title: 'UI/Textarea',
@@ -23,43 +23,44 @@ const meta = {
     rows: 3, // Default rows in story
     onChange: fn(),
   },
-} satisfies Meta<typeof Textarea>;
+} satisfies Meta<typeof Textarea>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     // Uses default args
   },
-};
+}
 
 export const WithPlaceholder: Story = {
   args: {
     placeholder: 'Your detailed feedback is appreciated!',
   },
-};
+}
 
 export const Disabled: Story = {
   args: {
-    value: "This content cannot be edited.",
+    value: 'This content cannot be edited.',
     disabled: true,
   },
-};
+}
 
 export const WithValue: Story = {
   args: {
-    value: "This is some pre-filled text in the textarea. \nIt can span multiple lines.",
+    value:
+      'This is some pre-filled text in the textarea. \nIt can span multiple lines.',
     rows: 5,
   },
-};
+}
 
 export const CustomRows: Story = {
   args: {
     placeholder: 'This textarea has more rows by default.',
     rows: 8,
   },
-};
+}
 
 export const WithLabel: Story = {
   render: (args) => (
@@ -75,4 +76,4 @@ export const WithLabel: Story = {
     id: 'message-textarea',
     placeholder: 'Type your message here.',
   },
-};
+}

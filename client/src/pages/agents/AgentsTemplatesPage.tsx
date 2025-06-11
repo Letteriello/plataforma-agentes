@@ -1,5 +1,5 @@
-import { AgentsLayout } from '@/components/agents/AgentsLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AgentsLayout } from '@/components/agents/AgentsLayout'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function AgentTemplatesPage() {
   return (
@@ -17,5 +17,5 @@ export default function AgentTemplatesPage() {
         </Card>
       </div>
     </AgentsLayout>
-  );
+  )
 }

@@ -1,58 +1,61 @@
-import { ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export interface Activity {
-  id: string;
-  type: string;
-  message: string;
-  timestamp: string;
-  user: string;
+  id: string
+  type: string
+  message: string
+  timestamp: string
+  user: string
 }
 
 interface RecentActivityCardProps {
-  activities: Activity[];
-  onViewAll?: () => void;
-  className?: string;
+  activities: Activity[]
+  onViewAll?: () => void
+  className?: string
 }
 
-export function RecentActivityCard({ 
-  activities, 
-  onViewAll, 
-  className = '' 
+export function RecentActivityCard({
+  activities,
+  onViewAll,
+  className = '',
 }: RecentActivityCardProps) {
   const formatTimeAgo = (timestamp: string) => {
-    const now = new Date();
-    const date = new Date(timestamp);
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) return 'Agora mesmo';
-    if (diffInSeconds < 3600) return `Há ${Math.floor(diffInSeconds / 60)} minutos`;
-    if (diffInSeconds < 86400) return `Há ${Math.floor(diffInSeconds / 3600)} horas`;
-    if (diffInSeconds < 604800) return `Há ${Math.floor(diffInSeconds / 86400)} dias`;
-    return date.toLocaleDateString('pt-BR');
-  };
+    const now = new Date()
+    const date = new Date(timestamp)
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+    if (diffInSeconds < 60) return 'Agora mesmo'
+    if (diffInSeconds < 3600)
+      return `Há ${Math.floor(diffInSeconds / 60)} minutos`
+    if (diffInSeconds < 86400)
+      return `Há ${Math.floor(diffInSeconds / 3600)} horas`
+    if (diffInSeconds < 604800)
+      return `Há ${Math.floor(diffInSeconds / 86400)} dias`
+    return date.toLocaleDateString('pt-BR')
+  }
 
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'agent_created':
-        return '🆕';
+        return '🆕'
       case 'agent_updated':
-        return '✏️';
+        return '✏️'
       case 'agent_deleted':
-        return '🗑️';
+        return '🗑️'
       default:
-        return 'ℹ️';
+        return 'ℹ️'
     }
-  };
+  }
 
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle>Atividade Recente</CardTitle>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="h-8 text-muted-foreground"
           onClick={onViewAll}
         >
@@ -82,5 +85,5 @@ export function RecentActivityCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

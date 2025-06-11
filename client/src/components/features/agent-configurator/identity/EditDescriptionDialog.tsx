@@ -2,7 +2,7 @@
  * @file EditDescriptionDialog.tsx
  * @description Dialog para editar a descrição de um agente.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -10,15 +10,15 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 interface EditDescriptionDialogProps {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-  initialDescription: string;
-  onSave: (newDescription: string) => void;
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
+  initialDescription: string
+  onSave: (newDescription: string) => void
 }
 
 export const EditDescriptionDialog: React.FC<EditDescriptionDialogProps> = ({
@@ -27,18 +27,18 @@ export const EditDescriptionDialog: React.FC<EditDescriptionDialogProps> = ({
   initialDescription,
   onSave,
 }) => {
-  const [description, setDescription] = useState(initialDescription);
+  const [description, setDescription] = useState(initialDescription)
 
   useEffect(() => {
     if (isOpen) {
-      setDescription(initialDescription);
+      setDescription(initialDescription)
     }
-  }, [isOpen, initialDescription]);
+  }, [isOpen, initialDescription])
 
   const handleSave = () => {
-    onSave(description);
-    onOpenChange(false);
-  };
+    onSave(description)
+    onOpenChange(false)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -46,7 +46,8 @@ export const EditDescriptionDialog: React.FC<EditDescriptionDialogProps> = ({
         <DialogHeader>
           <DialogTitle>Editar Descrição do Agente</DialogTitle>
           <DialogDescription>
-            Forneça uma descrição clara e concisa sobre o que seu agente faz, seus objetivos e suas capacidades.
+            Forneça uma descrição clara e concisa sobre o que seu agente faz,
+            seus objetivos e suas capacidades.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -67,5 +68,5 @@ export const EditDescriptionDialog: React.FC<EditDescriptionDialogProps> = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

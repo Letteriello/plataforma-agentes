@@ -7,26 +7,11 @@ import {
   getTokenUsageMetrics,
   type DashboardStats,
   type TokenUsage,
+  type Agent,
+  type Activity,
+  type AgentStatus,
+  type ActivityType,
 } from '@/api/dashboardService'
-
-export type AgentStatus = 'online' | 'offline' | 'busy' | 'error'
-
-export interface Agent {
-  id: string
-  name: string
-  status: AgentStatus
-  lastActive: string
-  type: 'llm' | 'workflow' | 'tool'
-}
-
-export type ActivityType = 'info' | 'success' | 'warning' | 'error'
-
-export interface Activity {
-  id: string
-  type: ActivityType
-  message: string
-  timestamp: string
-}
 
 interface DashboardState {
   stats: DashboardStats

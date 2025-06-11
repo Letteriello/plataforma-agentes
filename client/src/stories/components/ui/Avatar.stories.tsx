@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 // Meta information for the component
 const meta = {
@@ -9,7 +9,8 @@ const meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'An image element with a fallback for representing a user or entity.',
+        component:
+          'An image element with a fallback for representing a user or entity.',
       },
     },
   },
@@ -20,10 +21,10 @@ const meta = {
       description: 'Additional CSS classes to apply to the avatar',
     },
   },
-} satisfies Meta<typeof Avatar>;
+} satisfies Meta<typeof Avatar>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Default avatar
 const Template: Story = {
@@ -33,11 +34,11 @@ const Template: Story = {
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   ),
-};
+}
 
 export const Default: Story = {
   ...Template,
-};
+}
 
 // Different sizes
 export const Sizes: Story = {
@@ -61,7 +62,7 @@ export const Sizes: Story = {
       </Avatar>
     </div>
   ),
-};
+}
 
 // With fallback
 export const WithFallback: Story = {
@@ -81,7 +82,7 @@ export const WithFallback: Story = {
       </Avatar>
     </div>
   ),
-};
+}
 
 // With status indicator
 export const WithStatus: Story = {
@@ -94,7 +95,7 @@ export const WithStatus: Story = {
         </Avatar>
         <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-green-500" />
       </div>
-      
+
       <div className="relative">
         <Avatar className="h-16 w-16">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
@@ -102,7 +103,7 @@ export const WithStatus: Story = {
         </Avatar>
         <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-yellow-500" />
       </div>
-      
+
       <div className="relative">
         <Avatar className="h-16 w-16">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
@@ -112,7 +113,7 @@ export const WithStatus: Story = {
       </div>
     </div>
   ),
-};
+}
 
 // Avatar group
 export const Group: Story = {
@@ -127,7 +128,10 @@ export const Group: Story = {
         <AvatarFallback>VC</AvatarFallback>
       </Avatar>
       <Avatar className="h-10 w-10 border-2 border-background">
-        <AvatarImage src="https://github.com/tailwindlabs.png" alt="@tailwind" />
+        <AvatarImage
+          src="https://github.com/tailwindlabs.png"
+          alt="@tailwind"
+        />
         <AvatarFallback>TW</AvatarFallback>
       </Avatar>
       <Avatar className="h-10 w-10 border-2 border-background">
@@ -135,7 +139,7 @@ export const Group: Story = {
       </Avatar>
     </div>
   ),
-};
+}
 
 // With tooltip
 export const WithTooltip: Story = {
@@ -150,7 +154,7 @@ export const WithTooltip: Story = {
           @shadcn
         </div>
       </div>
-      
+
       <div className="group relative">
         <Avatar className="h-12 w-12">
           <AvatarImage src="https://github.com/vercel.png" alt="@vercel" />
@@ -162,16 +166,19 @@ export const WithTooltip: Story = {
       </div>
     </div>
   ),
-};
+}
 
 // Clickable avatar
 export const Clickable: Story = {
   render: () => (
-    <button type="button" className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring">
+    <button
+      type="button"
+      className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring"
+    >
       <Avatar className="h-12 w-12 transition-transform hover:scale-105">
         <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
     </button>
   ),
-};
+}

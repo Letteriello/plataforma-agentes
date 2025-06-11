@@ -1,5 +1,5 @@
-import React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import React from 'react'
+import { Meta, StoryObj } from '@storybook/react'
 
 const tailwindColors = {
   background: 'hsl(var(--background))',
@@ -27,7 +27,7 @@ const tailwindColors = {
   'warning-foreground': 'hsl(var(--warning-foreground))',
   info: 'hsl(var(--info))',
   'info-foreground': 'hsl(var(--info-foreground))',
-};
+}
 
 const ColorSwatch = ({ name, color }: { name: string; color: string }) => (
   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
@@ -45,24 +45,27 @@ const ColorSwatch = ({ name, color }: { name: string; color: string }) => (
       <div>{color}</div>
     </div>
   </div>
-);
+)
 
 const ColorPalette = () => (
   <div>
     <h1>Tailwind CSS Colors</h1>
-    <p>These colors are defined in <code>tailwind.config.js</code> using CSS variables.</p>
+    <p>
+      These colors are defined in <code>tailwind.config.js</code> using CSS
+      variables.
+    </p>
     {Object.entries(tailwindColors).map(([name, color]) => (
       <ColorSwatch key={name} name={name} color={color} />
     ))}
   </div>
-);
+)
 
 const meta: Meta<typeof ColorPalette> = {
   title: 'Tokens/Colors',
   component: ColorPalette,
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
-export const Default: Story = {};
+export const Default: Story = {}
