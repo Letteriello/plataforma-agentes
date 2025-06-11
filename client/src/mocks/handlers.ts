@@ -1,5 +1,20 @@
 import { http, HttpResponse, delay } from 'msw';
+import { v4 as uuidv4 } from 'uuid';
 import { AnyAgentConfig, AgentType, LlmAgentConfig } from '@/types/core/agent'; // Using core types
+
+// Define a simplified Document type for mock purposes
+interface MockDocument {
+  id: string;
+  name: string;
+  size: number;
+  uploadDate: string;
+  status: 'Processando' | 'Concluído' | 'Falhou';
+  // Add other relevant fields if necessary for your components
+  knowledgeBaseId?: string; // Optional: to associate document with KB
+}
+
+// In-memory store for documents, keyed by knowledgeBaseId
+let mockDocumentsDB = new Map<string, MockDocument[]>();
 
 let mockAgentsDB: AnyAgentConfig[] = [
   {
@@ -48,6 +63,11 @@ export const resetMockAgentsDB = (initialState?: AnyAgentConfig[]) => {
       id: 'agent-2', name: 'Sequential Agent 2', type: AgentType.SEQUENTIAL, agents: [], version: '1.0.0', description: 'Description for Sequential Agent 2', isPublic: false, tags: ['workflow'], workflowType: 'sequential', maxIterations: 10, stopCondition: '', continueOnError: false,
     },
   ];
+};
+
+// Helper to reset the mock Documents DB for tests
+export const resetMockDocumentsDB = () => {
+  mockDocumentsDB.clear();
 };
 
 
@@ -141,6 +161,55 @@ export const handlers = [
       return new HttpResponse(null, { status: 204 });
     }
     return new HttpResponse(null, { status: 404, statusText: 'Agent not found for deletion' });
+  }),
+
+  // Mock document upload
+  http.post('/api/knowledge-bases/:id/documents', async ({ request, params }) => {
+    await delay(500); // Simulate network latency
+
+    let fileName = 'mock-document.pdf';
+    let fileSize = Math.floor(Math.random() * 100000) + 10000; // Random size between 10KB and 1MB
+
+    try {
+      const formData = await request.formData();
+      const file = formData.get('file'); // Assuming the file input name is 'file'
+      if (file && typeof file === 'object' && 'name' in file) {
+        fileName = file.name;
+        if ('size' in file) {
+            fileSize = file.size;
+        }
+      }
+    } catch (e) {
+      // FormData might not be fully processed or available in all test environments for MSW
+      // Or the request might not actually contain FormData.
+      // We can ignore this for basic mock and use defaults.
+      console.warn('Could not process FormData in mock handler:', e);
+    }
+
+    const knowledgeBaseId = params.id as string;
+
+    const newDocument: MockDocument = {
+      id: uuidv4(),
+      name: fileName,
+      size: fileSize,
+      uploadDate: new Date().toISOString(),
+      status: 'Processando',
+      knowledgeBaseId: knowledgeBaseId, // Store KB ID with doc
+    };
+
+    // Add to our in-memory DB
+    const existingDocuments = mockDocumentsDB.get(knowledgeBaseId) || [];
+    mockDocumentsDB.set(knowledgeBaseId, [...existingDocuments, newDocument]);
+
+    return HttpResponse.json(newDocument, { status: 201 });
+  }),
+
+  // Mock get documents by Knowledge Base ID
+  http.get('/api/knowledge-bases/:id/documents', async ({ params }) => {
+    await delay(200);
+    const knowledgeBaseId = params.id as string;
+    const documents = mockDocumentsDB.get(knowledgeBaseId) || [];
+    return HttpResponse.json(documents);
   }),
 ];
 
