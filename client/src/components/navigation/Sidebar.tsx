@@ -2,12 +2,13 @@
 import {
   Bot,
   BrainCircuit,
-  ClipboardList, // Adicionado
+  ClipboardList,
   FlaskConical,
   History,
   LayoutDashboard,
   MessageCircle,
   Rocket,
+  Scale, // Adicionado
   Settings,
   ShieldCheck,
   Users,
@@ -72,6 +73,14 @@ const resourcesItems: NavItem[] = [
     href: '/memory',
     icon: <BrainCircuit className="h-5 w-5" />,
     label: 'Memória',
+  },
+]
+
+const governanceItems: NavItem[] = [
+  {
+    href: '/governance',
+    icon: <Scale className="h-5 w-5" />,
+    label: 'Governança',
   },
   {
     href: '/cofre',
@@ -170,6 +179,16 @@ export function Sidebar({
             </h2>
           )}
           <div className="space-y-1">{renderNavLinks(resourcesItems)}</div>
+        </div>
+
+        {/* Governance Section */}
+        <div className="my-4">
+          {!isCollapsed && (
+            <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
+              Governança
+            </h2>
+          )}
+          <div className="space-y-1">{renderNavLinks(governanceItems)}</div>
         </div>
 
         {/* Account Section - Pushed to bottom */}

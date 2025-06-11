@@ -38,17 +38,17 @@ export const AutonomySpectrumSelector: React.FC<
 > = ({ value, onChange }) => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-stretch gap-4">
         {LEVELS.map((level) => (
           <button
             key={level.label}
-            className={`flex flex-col items-center px-3 py-2 rounded border transition-colors focus:outline-none ${value === level.label ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-muted-foreground border-border'}`}
+            className={`flex-1 flex flex-col items-center text-center p-4 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${value === level.label ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'bg-card hover:bg-muted/50'}`}
             onClick={() => onChange(level.label)}
             type="button"
             aria-pressed={value === level.label}
           >
-            <span className="font-semibold">{level.label}</span>
-            <span className="text-xs text-muted-foreground mt-1">
+            <span className="font-semibold text-sm md:text-base">{level.label}</span>
+            <span className="text-xs text-muted-foreground mt-2 hidden md:block">
               {level.description}
             </span>
           </button>

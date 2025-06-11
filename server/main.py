@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Optional, Literal
 from uuid import uuid4
 import os
 from cryptography.fernet import Fernet
+from datetime import datetime, timedelta
 
 # --- App Setup ---
 app = FastAPI(title="Plataforma Agentes API", version="0.2.0")
@@ -160,7 +161,139 @@ def get_audit_logs():
     """Retrieve all audit logs."""
     return _audit_logs
 
+# --- Governance Models and DB ---
+AutonomyLevel = Literal['Manual', 'Assistido', 'Semi-Autônomo', 'Autônomo com Revisão', 'Totalmente Autônomo']
+
+class ApprovalItem(BaseModel):
+    id: str
+    agentName: str
+    action: str
+    context: str
+    status: Literal['pending', 'approved', 'rejected']
+    createdAt: datetime
+
+class HistoryItem(BaseModel):
+    id: str
+    agentName: str
+    action: str
+    status: Literal['approved', 'rejected']
+    timestamp: datetime
+    actor: str
+    reason: Optional[str] = None
+
+# In-memory storage for governance (mock data)
+governance_db = {
+    "autonomyLevel": "Semi-Autônomo",
+    "approvals": [
+        ApprovalItem(
+            id='approval-001',
+            agentName='Agente de Marketing',
+            action='Enviar Campanha de Email',
+            context='Enviar para a lista de \'early-adopters\' com o template \'lancamento-v2\'.',
+            status='pending',
+            createdAt=datetime.utcnow(),
+        ),
+        ApprovalItem(
+            id='approval-002',
+            agentName='Agente Financeiro',
+            action='Executar Pagamento',
+            context='Pagamento de fatura para fornecedor \'CloudServices Inc.\' no valor de $500.',
+            status='pending',
+            createdAt=datetime.utcnow() - timedelta(hours=2),
+        ),
+    ],
+    "history": [
+        HistoryItem(
+            id='hist-001',
+            agentName='Agente de Suporte',
+            action='Escalar Ticket',
+            status='approved',
+            timestamp=datetime.utcnow() - timedelta(days=1),
+            actor='Maria Silva',
+            reason='Cliente VIP, requer atenção imediata da equipe de engenharia.',
+        ),
+        HistoryItem(
+            id='hist-002',
+            agentName='Agente de Marketing',
+            action='Pausar Campanha',
+            status='rejected',
+            timestamp=datetime.utcnow() - timedelta(days=2),
+            actor='João Costa',
+            reason='Orçamento da campanha excedido. Rever custos antes de continuar.',
+        ),
+    ]
+}
+
+# --- Governance Endpoints ---
+
+@app.get("/governance/autonomy", response_model=Dict[str, AutonomyLevel])
+def get_autonomy_level():
+    return {"autonomyLevel": governance_db["autonomyLevel"]}
+
+class SetAutonomyLevelPayload(BaseModel):
+    autonomyLevel: AutonomyLevel
+
+@app.post("/governance/autonomy")
+def set_autonomy_level(level: SetAutonomyLevelPayload):
+    new_level = level.autonomyLevel
+    governance_db["autonomyLevel"] = new_level
+    return {"message": f"Autonomy level set to {new_level}"}
+
+@app.get("/approvals", response_model=List[ApprovalItem])
+def get_pending_approvals():
+    return [item for item in governance_db["approvals"] if item.status == 'pending']
+
+class RejectPayload(BaseModel):
+    reason: str
+
+@app.post("/approvals/{item_id}/approve")
+def approve_action(item_id: str, actor_name: str = "System Admin"):
+    item_index = next((i for i, item in enumerate(governance_db["approvals"]) if item.id == item_id), None)
+    if item_index is None:
+        raise HTTPException(status_code=404, detail="Approval item not found")
+    
+    item = governance_db["approvals"].pop(item_index)
+    item.status = 'approved'
+    
+    history_item = HistoryItem(
+        id=f"hist-{item.id}",
+        agentName=item.agentName,
+        action=item.action,
+        status='approved',
+        timestamp=datetime.utcnow(),
+        actor=actor_name
+    )
+    governance_db["history"].insert(0, history_item)
+    return {"message": "Action approved"}
+
+@app.post("/approvals/{item_id}/reject")
+def reject_action(item_id: str, payload: RejectPayload, actor_name: str = "System Admin"):
+    item_index = next((i for i, item in enumerate(governance_db["approvals"]) if item.id == item_id), None)
+    if item_index is None:
+        raise HTTPException(status_code=404, detail="Approval item not found")
+
+    item = governance_db["approvals"].pop(item_index)
+    item.status = 'rejected'
+
+    history_item = HistoryItem(
+        id=f"hist-{item.id}",
+        agentName=item.agentName,
+        action=item.action,
+        status='rejected',
+        timestamp=datetime.utcnow(),
+        actor=actor_name,
+        reason=payload.reason
+    )
+    governance_db["history"].insert(0, history_item)
+    return {"message": "Action rejected"}
+
+@app.get("/approvals/history", response_model=List[HistoryItem])
+def get_approval_history():
+    return governance_db["history"]
+
+
 # Exemplo de como usar o uvicorn para rodar a aplicação
 if __name__ == "__main__":
+
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

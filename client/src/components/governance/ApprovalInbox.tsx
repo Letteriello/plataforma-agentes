@@ -1,5 +1,6 @@
 import React from 'react'
 import { ApprovalItem } from '../../types/governance'
+import { Button } from '@/components/ui/button'
 
 interface ApprovalInboxProps {
   items: ApprovalItem[]
@@ -34,26 +35,25 @@ export const ApprovalInbox: React.FC<ApprovalInboxProps> = ({
                 Criado em: {new Date(item.createdAt).toLocaleString()}
               </div>
             </div>
-            <div className="flex gap-2 items-center">
-              <button
-                className="btn btn-success"
-                onClick={() => onApprove(item.id)}
-              >
+            <div className="flex gap-2 items-center flex-shrink-0">
+              <Button size="sm" onClick={() => onApprove(item.id)}>
                 Aprovar
-              </button>
-              <button
-                className="btn btn-destructive"
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
                 onClick={() => onReject(item.id)}
               >
                 Rejeitar
-              </button>
+              </Button>
               {onViewHistory && (
-                <button
-                  className="btn btn-outline"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => onViewHistory(item.id)}
                 >
                   Histórico
-                </button>
+                </Button>
               )}
             </div>
           </div>
