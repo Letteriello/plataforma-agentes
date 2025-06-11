@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { ConversationList } from './ConversationList';
 import { AgentWorkspace } from './AgentWorkspace';
+import type { ComponentType } from 'react';
 import { useChatStore } from '@/store/chatStore';
 import { getConversationList, initialActiveConversationId } from './mockData'; // Import initialActiveConversationId
 import { MessageList } from './MessageList';
@@ -11,7 +12,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from './types'; // Import ChatMessage for constructing new messages
 
-export const ChatInterface = () => {
+interface ChatInterfaceProps {
+  RightPanelComponent?: ComponentType;
+}
+
+export const ChatInterface = ({ RightPanelComponent = AgentWorkspace }: ChatInterfaceProps) => {
   const {
     loadConversations,
     setSelectedConversationId,
@@ -96,7 +101,7 @@ export const ChatInterface = () => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={30} minSize={25}>
-        <AgentWorkspace />
+        <RightPanelComponent />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
