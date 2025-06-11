@@ -10,3 +10,4 @@ export * from './mockData';
 export { AgentWorkspace } from './AgentWorkspace';
 export { default as ReasoningPanel } from './ReasoningPanel';
 export { ChatHeader } from './ChatHeader';
+export * from './SessionPanel';

@@ -5,13 +5,8 @@ import { cn } from '@/lib/utils';
 import { useChatStore } from '@/store/chatStore';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Plus, MoreVertical } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreVertical, Plus } from 'lucide-react';
 
 const ConversationList: React.FC = () => {
   const {
@@ -23,7 +18,9 @@ const ConversationList: React.FC = () => {
     deleteConversation,
   } = useChatStore();
 
-  const handleNewConversation = () => {
+  // handleNewConversation is now in SessionPanel.tsx
+  // This function is kept if the "Nova Conversa" button in the empty state is to remain functional here.
+  const handleNewConversationForEmptyState = () => {
     const id = Date.now().toString();
     addConversation({ id, agentName: 'Nova Conversa', lastMessage: '' });
     setSelectedConversationId(id);
@@ -39,14 +36,9 @@ const ConversationList: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full flex-col border-r border-border bg-card">
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h2 className="text-lg font-semibold text-foreground">Sessões</h2>
-        <Button variant="outline" size="icon" onClick={handleNewConversation} aria-label="Nova Conversa">
-          <Plus className="h-4 w-4" />
-        </Button>
-      </div>
-      <ScrollArea className="flex-1 p-1">
+    // The outer div and header are removed, SessionPanel will provide them.
+    // The ScrollArea now directly returns, assuming SessionPanel handles padding if needed for the list itself.
+    <ScrollArea className="flex-1 p-1">
         {conversations.map((convo) => (
           <div
             key={convo.id}
@@ -79,13 +71,12 @@ const ConversationList: React.FC = () => {
         {conversations.length === 0 && (
           <div className="flex flex-col items-center gap-2 p-3 text-sm text-muted-foreground">
             <p>Inicie uma nova conversa para testar seu agente</p>
-            <Button variant="outline" size="sm" onClick={handleNewConversation}>
+            <Button variant="outline" size="sm" onClick={handleNewConversationForEmptyState}>
               <Plus className="mr-2 h-4 w-4" /> Nova Conversa
             </Button>
           </div>
         )}
       </ScrollArea>
-    </div>
   );
 };
 

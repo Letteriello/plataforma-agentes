@@ -18,10 +18,22 @@ interface ReasoningPanelProps {
 
 // Sample logs for development
 const sampleLogs: LogEntry[] = [
-  { id: "log-1", title: "Pensamento Inicial", content: "O agente est\u00e1 come\u00e7ando a processar o pedido." },
-  { id: "log-2", title: "Uso de Ferramenta: Busca na Web", content: "A ferramenta 'web_search' foi chamada com os par\u00e2metros X, Y, Z." },
-  { id: "log-3", title: "Observa\u00e7\u00e3o da Ferramenta", content: "Resultado da busca: P\u00e1gina A cont\u00e9m informa\u00e7\u00f5es relevantes." },
-  { id: "log-4", title: "Pensamento Final", content: "O agente est\u00e1 compilando a resposta final." },
+  { id: "log-1", title: "Pensamento Inicial", content: "O agente está começando a processar o pedido.\nInput: Qual é a capital da França?" },
+  {
+    id: "log-2",
+    title: "Uso de Ferramenta: Busca na Web",
+    content: JSON.stringify(
+      {
+        tool: "web_search",
+        parameters: { query: "capital of France" },
+        reason: "Preciso encontrar a capital da França para responder ao usuário.",
+      },
+      null,
+      2
+    ),
+  },
+  { id: "log-3", title: "Observação da Ferramenta", content: "Resultado da busca:\nParis é a capital da França." },
+  { id: "log-4", title: "Pensamento Final", content: "A capital da França é Paris. Vou fornecer esta resposta." },
 ];
 
 export default function ReasoningPanel({ logEntries = sampleLogs }: ReasoningPanelProps) {
@@ -35,7 +47,11 @@ export default function ReasoningPanel({ logEntries = sampleLogs }: ReasoningPan
           {logEntries.map((log) => (
             <AccordionItem value={log.id} key={log.id}>
               <AccordionTrigger>{log.title}</AccordionTrigger>
-              <AccordionContent>{log.content}</AccordionContent>
+              <AccordionContent>
+                <pre className="whitespace-pre-wrap text-sm font-mono bg-muted/50 p-2 rounded-sm">
+                  <code>{log.content}</code>
+                </pre>
+              </AccordionContent>
             </AccordionItem>
           ))}
           {logEntries.length === 0 && <p className="text-sm text-muted-foreground p-4">Nenhum log de racioc\u00ednio dispon\u00edvel.</p>}
