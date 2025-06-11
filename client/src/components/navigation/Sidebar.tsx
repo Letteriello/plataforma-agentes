@@ -2,13 +2,14 @@
 import {
   Bot,
   BrainCircuit,
+  ClipboardList, // Adicionado
   FlaskConical,
   History,
   LayoutDashboard,
   MessageCircle,
   Rocket,
   Settings,
-  ShieldCheck, // Adicionado
+  ShieldCheck,
   Users,
   Wrench,
 } from 'lucide-react'
@@ -76,6 +77,11 @@ const resourcesItems: NavItem[] = [
     href: '/cofre',
     icon: <ShieldCheck className="h-5 w-5" />,
     label: 'Cofre',
+  },
+  {
+    href: '/audit-logs',
+    icon: <ClipboardList className="h-5 w-5" />,
+    label: 'Logs de Auditoria',
   },
 ]
 

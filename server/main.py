@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import Any, List, Dict, Optional
 from uuid import uuid4
 import os
 from cryptography.fernet import Fernet
@@ -34,6 +34,56 @@ def decrypt_value(encrypted_value: bytes) -> str:
 _agents: Dict[str, 'Agent'] = {}
 # Secret storage (stores encrypted values)
 _secrets: Dict[str, bytes] = {}
+
+# --- Audit Log Models and Storage ---
+class AuditLogActor(BaseModel):
+    type: str  # 'user' or 'agent'
+    id: str
+    name: str
+
+class AuditLog(BaseModel):
+    id: str
+    timestamp: str
+    actor: AuditLogActor
+    action: str
+    details: Dict[str, Any]
+    ipAddress: Optional[str] = None
+
+# In-memory storage for audit logs (mock data)
+_audit_logs: List[AuditLog] = [
+    AuditLog(
+        id='log-001',
+        timestamp='2024-05-22T10:00:00Z',
+        actor=AuditLogActor(type='user', id='user-123', name='Alice'),
+        action='AGENT_CREATE',
+        details={'agentId': 'agent-abc', 'name': 'Sales Assistant'},
+        ipAddress='192.168.1.1',
+    ),
+    AuditLog(
+        id='log-002',
+        timestamp='2024-05-22T10:05:00Z',
+        actor=AuditLogActor(type='agent', id='agent-abc', name='Sales Assistant'),
+        action='TASK_EXECUTE_SUCCESS',
+        details={'taskId': 'task-xyz', 'result': 'Lead qualified'},
+        ipAddress='10.0.0.5',
+    ),
+    AuditLog(
+        id='log-003',
+        timestamp='2024-05-22T10:10:00Z',
+        actor=AuditLogActor(type='user', id='user-456', name='Bob'),
+        action='SECRET_DELETE',
+        details={'secretName': 'STRIPE_API_KEY'},
+        ipAddress='203.0.113.25',
+    ),
+    AuditLog(
+        id='log-004',
+        timestamp='2024-05-22T10:15:00Z',
+        actor=AuditLogActor(type='user', id='user-123', name='Alice'),
+        action='AGENT_UPDATE_CONFIG',
+        details={'agentId': 'agent-abc', 'changes': {'temperature': 0.8}},
+        ipAddress='192.168.1.1',
+    ),
+]
 
 # --- Pydantic Models ---
 
@@ -101,6 +151,14 @@ def delete_secret(secret_name: str):
         )
     del _secrets[secret_name]
     return None
+
+
+# --- Audit Log Endpoints ---
+
+@app.get("/audit-logs", response_model=List[AuditLog])
+def get_audit_logs():
+    """Retrieve all audit logs."""
+    return _audit_logs
 
 # Exemplo de como usar o uvicorn para rodar a aplicação
 if __name__ == "__main__":
