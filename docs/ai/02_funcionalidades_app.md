@@ -6,7 +6,7 @@
 
 #### Introdução: Da Visão à Realidade
 
-Este documento traduz a filosofia e os pilares estratégicos da ai.da em capacidades tangíveis. Cada módulo e recurso aqui detalhado é uma manifestação direta do nosso compromisso em ser um Sistema Operacional Evolutivo, projetado para resolver os problemas mais difíceis da indústria de IA: a complexidade do desenvolvimento (DevEx), a falta de confiança (Trust by Design), a fragilidade arquitetural (Evolução) e a prova de valor (ROI as a Feature). Ilustramos o 'o quê' e o 'porquê' de cada decisão, para construir uma plataforma indispensável.
+Este documento traduz a filosofia e os pilares estratégicos da ai.da em capacidades tangíveis. Cada módulo e recurso aqui detalhado é uma manifestação direta do nosso compromisso em ser um Sistema Operacional Evolutivo, projetado para resolver os problemas mais difíceis da indústria de IA: a complexidade do desenvolvimento (DevEx), a falta de confiança (Trust by Design), a fragilidade arquitetural (Evolução) e a prova de valor (ROI as a Feature). **Buscamos também abraçar tendências emergentes como o 'vibe-coding' e as interações multimodais para oferecer uma experiência de usuário rica e intuitiva.** Ilustramos o 'o quê' e o 'porquê' de cada decisão, para construir uma plataforma indispensável.
 
 #### 1.0 O Coração da Plataforma: Módulos do Núcleo Estável
 
@@ -23,7 +23,7 @@ Estas funcionalidades representam o "Núcleo" da nossa arquitetura. São estáve
     
     - **1.2.1 Persistência de Tarefas e Mensagens:** Garante que nenhuma instrução ou resultado de agente seja perdido. Se um agente falhar no meio de um processo, a tarefa pode ser retomada exatamente de onde parou, garantindo a integridade de ponta a ponta.
     - **1.2.2 Gerenciamento de Sessão Desacoplado:** Armazena o estado e a memória de cada tarefa de forma independente, permitindo que os agentes sejam "stateless" e escalem horizontalmente para lidar com picos de carga de forma eficiente.
-        
+    - **1.2.3 Design Visual de Orquestração (Low-Code):** Interface gráfica intuitiva para conectar agentes, ferramentas e fontes de conhecimento, permitindo a criação de fluxos de trabalho complexos sem a necessidade de codificação profunda. Inclui validação em tempo real e sugestões inteligentes. **Vislumbramos evoluir esta funcionalidade para paradigmas de configuração ainda mais intuitivos, alinhados com os princípios do 'vibe-coding', onde a descrição em linguagem natural possa auxiliar na montagem de orquestrações.**
 
 #### 2.0 A Camada de Inteligência: Módulos do Shell Plugável
 
@@ -31,7 +31,7 @@ Estas funcionalidades representam o "Núcleo" da nossa arquitetura. São estáve
     
     - **2.1.1 Dashboard de Equipes de Agentes:** Visão centralizada de status, versão, custo médio por tarefa, taxa de sucesso e latência de todas as equipes de agentes.
     - **2.1.2 Construtor Visual de Orquestração (Low-Code):** Canvas infinito com nós de Agente, Orquestração (`Sequential`, `Parallel`, `Loop`) e Gerente (`LlmAgent(transfer=...)`) para mapear visualmente fluxos de trabalho complexos, com conectores lógicos condicionais.
-    - **2.1.3 Configuração de Agente Individual:** Com `Workbench de Engenharia de Prompt` (versionamento tipo Git, A/B testing, análise de prompt por IA), seleção de modelo com métricas de custo/desempenho, e anexação de ferramentas e memória.
+    - **2.1.3 Modo Especialista (Low-Code):** Acesso direto à configuração detalhada do agente (prompt, modelo, ferramentas) para desenvolvedores que desejam controle total e a capacidade de integrar lógica customizada. **Inclui suporte robusto a templates de agentes e prompts salvos/reutilizáveis para acelerar a criação e garantir consistência.**
     - **2.1.4 Assistente de Blueprint & Criação (No-Code):** Assistente conversacional que constrói e explica a arquitetura de uma equipe de agentes a partir de um objetivo em linguagem natural, fazendo a ponte entre as experiências no-code e low-code.
         
 - **2.2 Módulo: Memória & Conhecimento**
@@ -63,10 +63,31 @@ Estas funcionalidades representam o "Núcleo" da nossa arquitetura. São estáve
     
     - **3.3.1 Gerador de Proposta de Valor & Business Case:** Cria relatórios profissionais e compartilháveis com análise de custo-benefício, projeções de eficiência, análise de risco e ROI previsto, para auxiliar na defesa de projetos de inovação.
     - **3.3.2 Painel de ROI em Tempo Real:** Conecta métricas operacionais da Torre de Controle a resultados de negócio tangíveis (horas economizadas, leads qualificados, etc.).
-        
 
 #### 4.0 Módulo: Sandbox de Simulação & Depuração
 
-- **4.1 Interface de Simulação:** Interação via chat com injeção de cenários de teste estruturados para validação robusta.
+- **4.1 Interface de Chat Unificada:** Ponto central de interação com todos os agentes, projetado para uma **experiência de usuário rica e intuitiva**. Incluirá histórico de conversas, capacidade de alternar entre agentes e ferramentas de colaboração para equipes. **Evoluirá para suportar interações multimodais (texto, voz, imagem), explorando ativamente a assistência preditiva para antecipar necessidades do usuário e otimizar fluxos de trabalho.**
 - **4.2 Painel de Raciocínio (Live Trace):** Feed em tempo real do "pensamento" do agente, integrado diretamente com a Torre de Controle.
 - **4.3 Gerenciador de Cenários:** Salva e reproduz todo o "estado do mundo" de uma simulação (inputs, configurações, respostas) para reprodutibilidade perfeita de testes e depuração de bugs.
+
+#### 5.0 Abordagem aos Desafios Comuns e Evolução Contínua
+
+Reconhecendo o feedback da comunidade e a natureza dinâmica da IA, a plataforma ai.da está comprometida com a evolução contínua e a abordagem proativa dos desafios comuns:
+
+-   **5.1 Mitigação de Limitações de LLMs:**
+    -   **Gerenciamento de Contexto e Tokens:** Explorar e implementar técnicas avançadas para otimizar o uso de tokens e lidar com contextos longos de forma mais eficaz, como RAG (Retrieval Augmented Generation) e estratégias de sumarização dinâmica.
+    -   **Qualidade e Verbosidade do Código Gerado:** Integrar ferramentas de análise e refatoração de código, e oferecer opções para controlar a verbosidade e o estilo do código gerado por agentes focados em desenvolvimento.
+    -   **Raciocínio Complexo:** Investir em arquiteturas de múltiplos agentes e técnicas de planejamento que permitam decompor problemas complexos em etapas menores e mais gerenciáveis.
+
+-   **5.2 Equilíbrio entre Segurança e Funcionalidade:**
+    -   **Filtros de Segurança Configuráveis:** Além do "Espectro de Autonomia", permitir a personalização fina dos filtros de segurança para diferentes casos de uso, buscando um equilíbrio que proteja contra usos indevidos sem impedir a funcionalidade legítima.
+    -   **Transparência e Explicabilidade:** Fornecer maior clareza sobre por que certas saídas podem ser bloqueadas ou modificadas pelos mecanismos de segurança.
+
+-   **5.3 Adoção de Novas Tendências e Foco na Experiência do Usuário:**
+    -   **"Vibe-coding" e Desenvolvimento Assistido por IA:** Incorporar progressivamente capacidades onde a linguagem natural possa ser usada de forma mais direta para configurar, orquestrar e até mesmo gerar componentes da plataforma, simplificando o desenvolvimento.
+    -   **Multimodalidade:** Expandir o suporte nativo para interações e processamento de dados multimodais (texto, voz, imagem, áudio), enriquecendo as capacidades dos agentes e as interfaces de usuário.
+    -   **Personalização Avançada:** Oferecer mais opções para que os usuários adaptem o comportamento dos agentes, as interfaces e os fluxos de trabalho às suas necessidades e preferências específicas.
+    -   **Assistência Preditiva:** Integrar funcionalidades que antecipem as necessidades dos usuários, oferecendo sugestões e automatizando tarefas rotineiras para uma experiência mais fluida e eficiente.
+
+-   **5.4 Aplicações em Domínios Específicos:**
+    -   **Templates e Modelos Especializados:** Desenvolver e incentivar a criação de templates de agentes e fluxos de trabalho otimizados para domínios específicos, como educação, finanças, saúde e comércio eletrônico, acelerando a adoção e a geração de valor nesses setores.

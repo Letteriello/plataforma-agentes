@@ -9,7 +9,7 @@
 - **Comunicação em Tempo Real:** A escolha da tecnologia será orientada pelo caso de uso:
     
     - **WebSockets:** Para funcionalidades altamente interativas e bidirecionais, como uma sessão de co-edição de um agente ou depuração interativa na Torre de Controle.
-    - **Server-Sent Events (SSE):** Para comunicação unidirecional do servidor para o cliente, ideal para o streaming de logs no "Painel de Raciocínio (Live Trace)" e notificações da plataforma, por ser mais leve e simples que WebSockets para este fim.
+    - **Server-Sent Events (SSE):** Para comunicação unidirecional do servidor para o cliente, ideal para o streaming de logs no "Painel de Raciocínio (Live Trace)" e notificações da plataforma. Ambas as tecnologias (WebSockets e SSE) serão cruciais para suportar futuras interações multimodais e em tempo real, como streaming de áudio/vídeo ou legendas dinâmicas.
         
 - **Versionamento:** A API será versionada via URL (ex: `/api/v1/agents`) para garantir que mudanças futuras não quebrem as integrações existentes. Mudanças não-retrocompatíveis resultarão em um incremento da versão (ex: `/api/v2/`).
     
@@ -21,7 +21,9 @@
 - **Estado do Servidor (React Query / TanStack Query):** Esta será nossa principal ferramenta para buscar, armazenar em cache e atualizar dados do servidor. Ela simplifica radicalmente a lógica de dados, eliminando a necessidade de gerenciar manualmente estados de `isLoading`, `error`, `data`. Isso melhora a experiência do usuário com recursos como `stale-while-revalidate` (mostrando dados antigos enquanto busca novos) e `refetch-on-window-focus`. **Fluxo Típico:** Um componente chama um hook customizado (ex: `useGetAgents()`) que, por sua vez, usa `useQuery` para chamar o serviço de API correspondente.
     
 
-#### 3. Estratégia de Segurança e Permissões
+#### 3. Estratégia de Segurança
+
+- **Flexibilidade e Transparência:** Em linha com o feedback da comunidade, buscaremos um equilíbrio entre segurança robusta e funcionalidade. Isso inclui oferecer filtros de segurança configuráveis que possam ser adaptados a diferentes casos de uso e fornecer maior transparência sobre por que certas saídas ou ações podem ser restringidas, evitando frustrações desnecessárias e permitindo um uso mais eficaz da plataforma.
 
 - **Autenticação (JWT Flow):** O processo de login retornará um **access token** de curta duração (ex: 15 minutos) e um **refresh token** de longa duração (ex: 7 dias). O access token é enviado em cada requisição à API. Quando ele expira, a aplicação usa o refresh token (armazenado de forma segura, ex: cookie HttpOnly) para obter um novo access token silenciosamente, sem interromper o usuário.
     
@@ -35,7 +37,9 @@
 
 #### 4. Internacionalização (i18n) e Acessibilidade (a11y)
 
-- **i18n:** A plataforma será multilíngue usando `i18next` com `react-i18next`. As chaves de tradução serão estruturadas por funcionalidade para facilitar a manutenção (ex: `teamDesigner.buttons.addAgent`).
+- **i18n:** A plataforma será multilíngue usando `i18next` com `react-i18next`. As chaves de tradução seguirão uma nomenclatura lógica e aninhada, refletindo a estrutura da UI ou do domínio da funcionalidade para facilitar a manutenção (ex: `teamDesigner.buttons.addAgent`).
+- **Suporte a Pluralização e Gênero:** Usaremos bibliotecas que lidam corretamente com as complexidades da pluralização e concordância de gênero em diferentes idiomas.
+- **Conteúdo Multimodal:** A estratégia de i18n/l10n também considerará a adaptação de conteúdos e interações multimodais, como a tradução de legendas para vídeos, a transcrição de áudio em diferentes idiomas e o reconhecimento de voz localizado.
     
 - **a11y:** Acessibilidade é um requisito, não uma opção. Além de usar Radix UI, garantiremos que:
     
@@ -43,12 +47,13 @@
     - Imagens tenham atributos `alt` descritivos.
     - As cores do Design System tenham taxas de contraste que atendam aos padrões WCAG AA.
     - Usaremos landmarks HTML5 e atributos ARIA para melhorar a navegação para leitores de tela.
+- O Design System e a abordagem de UI/UX evoluirão continuamente para suportar interações multimodais (texto, voz, imagem, áudio) e personalização avançada, visando uma experiência de usuário cada vez mais rica, intuitiva e adaptável. Isso inclui explorar elementos de 'vibe-coding' e assistência preditiva para simplificar fluxos de trabalho.
         
 
 #### 5. Observabilidade e Monitoramento
 
 - **Frontend:** Usaremos o **Sentry** (ou similar) para capturar erros inesperados, mas também para monitorar a performance através dos Core Web Vitals e rastrear a "saúde" das releases, identificando regressões de performance.
-- **Backend:** Adotaremos **structured logging** (logs em formato JSON) para facilitar a busca e análise. Implementaremos **distributed tracing** com OpenTelemetry para seguir uma requisição desde o frontend, passando pelos serviços do backend até o banco de dados, o que é crucial para depurar problemas em nosso sistema distribuído. Esses traços serão a espinha dorsal dos dados exibidos na **Torre de Controle**.
+- **Backend:** Adotaremos **structured logging** (logs em formato JSON) para facilitar a busca e análise. Implementaremos **distributed tracing** com OpenTelemetry para seguir uma requisição desde o frontend, passando pelos serviços do backend até o banco de dados, o que é crucial para depurar problemas em nosso sistema distribuído. Esses traços serão a espinha dorsal dos dados exibidos na **Torre de Controle**. Este monitoramento detalhado será essencial para entender o consumo de tokens, a latência e o fluxo de dados em interações complexas com LLMs, permitindo otimizações e o gerenciamento eficiente de recursos, conforme as preocupações levantadas pela comunidade.
     
 
 #### 6. Evolução do Design System

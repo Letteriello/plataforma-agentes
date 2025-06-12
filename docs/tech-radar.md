@@ -35,13 +35,17 @@ Tecnologias e práticas que são bem-estabelecidas e recomendadas para uso neste
 *   **ADRs (Architecture Decision Records):** Para documentar decisões arquiteturais importantes.
 *   **RFCs (Request for Comments):** Para propor e discutir mudanças significativas.
 *   **Zod:** Para validação de schemas e tipos de dados.
+*   **APIs RESTful:** Para a comunicação padrão entre frontend e backend.
+*   **Mecanismos de Personalização de Agentes (Templates e Prompts Reutilizáveis):** Para permitir que os usuários criem, salvem e reutilizem configurações de agentes e prompts, aumentando a eficiência e adaptabilidade.
+*   **Monitoramento Básico de Uso de LLMs (e.g., contagem de tokens, logs de interações):** Para fornecer transparência sobre o consumo de recursos e custos associados à execução dos agentes.
 
 ## Testar (Trial)
 
-Tecnologias e práticas que acreditamos terem potencial e que estamos ativamente experimentando.
+Tecnologias e práticas que acreditamos terem potencial e que estamos ativamente experimentando para validar sua adequação antes de uma adoção mais ampla.
 
-*   **(Nenhum item atualmente em teste formal)**
-    *   *Exemplo: Poderíamos estar testando um novo framework backend aqui, ou uma biblioteca específica para uma nova funcionalidade complexa.*
+*   **Suporte Multimodal para Agentes (Processamento/Geração de Imagem, Áudio):** Integração de modelos e ferramentas que permitem aos agentes entender e gerar diferentes tipos de mídia, como imagens e áudio, para atender à demanda por interações mais ricas e casos de uso diversificados.
+*   **Assistência Preditiva na Configuração de Agentes (Sugestões baseadas em IA):** Desenvolvimento de funcionalidades que utilizam IA para sugerir configurações, ferramentas ou prompts durante a criação e edição de agentes, visando melhorar a experiência do usuário, acelerar o desenvolvimento e reduzir a curva de aprendizado.
+*   **Interfaces de "Vibe-coding" (Configuração de Agentes via Linguagem Natural):** Exploração de paradigmas de desenvolvimento onde os usuários podem configurar agentes ou seus comportamentos usando linguagem natural ou prompts de alto nível, tornando a criação de agentes mais intuitiva e acessível, especialmente para usuários menos técnicos.
 
 ## Avaliar (Assess)
 
@@ -49,8 +53,11 @@ Tecnologias e práticas que são promissoras e que merecem ser exploradas para u
 
 *   **tRPC ou GraphQL:** Para comunicação entre frontend e backend, como alternativas ao REST tradicional, visando melhorar a type safety e a eficiência das queries.
 *   **Server Components (React):** Para explorar a renderização de componentes no servidor e reduzir o JavaScript enviado ao cliente, melhorando a performance.
-*   **Ferramentas de Monitoramento e Observabilidade (e.g., Sentry, Datadog):** Para coletar métricas, rastrear erros e entender o comportamento da aplicação em produção.
-*   **Microsserviços para Módulos Específicos:** Avaliar se partes do sistema (e.g., processamento de documentos para Knowledge Base) se beneficiariam de serem extraídas para microsserviços independentes.
+*   **Ferramentas Avançadas de Monitoramento e Observabilidade (e.g., Sentry, Datadog, OpenTelemetry):** Para coletar métricas detalhadas de custo (uso de tokens), latência, e outros indicadores de desempenho dos LLMs, além de rastrear erros complexos e entender o comportamento da aplicação e dos agentes em produção.
+*   **Microsserviços para Módulos Específicos:** Avaliar se partes do sistema (e.g., processamento de documentos para Knowledge Base, execução de ferramentas complexas) se beneficiariam de serem extraídas para microsserviços independentes.
+*   **Frameworks para Filtros de Segurança Configuráveis e IA Responsável (e.g., NeMo Guardrails, ferramentas de análise de viés):** Para pesquisar e implementar soluções que permitam aos usuários definir seus próprios níveis de segurança e moderação de conteúdo, além de incorporar práticas de IA ética e mitigar vieses.
+*   **Bancos de Dados Vetoriais Dedicados (e.g., Pinecone, Weaviate, Milvus):** Para explorar soluções especializadas que possam oferecer melhor performance, escalabilidade e funcionalidades avançadas para RAG e busca semântica em grandes volumes de dados, complementando o `pgvector`.
+*   **Plataformas Avançadas de Orquestração de Agentes (e.g., Autogen, CrewAI):** Para investigar frameworks que permitam a construção de agentes mais complexos, colaborativos, com capacidades de planejamento sofisticadas e múltiplos agentes trabalhando em conjunto, complementando as capacidades do Langchain.
 
 ## Evitar (Hold/Deprecate)
 
