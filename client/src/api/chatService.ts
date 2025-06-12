@@ -1,54 +1,47 @@
+import axios from 'axios'
 import apiClient from '@/api/apiClient'
-import { Session, ChatMessage, Attachment } from '@/types' // Attachment might be part of ChatMessage
+import type { Session, ChatMessage, Attachment } from '@/types'
 
 export interface IChatService {
-  /** Lista as sess\u00f5es de um usu\u00e1rio */
   fetchSessions(userId: string): Promise<Session[]>
-  /** Carrega uma sess\u00e3o espec\u00edfica pelo ID */
   fetchSessionById(sessionId: string): Promise<Session | null>
-  /** Carrega mensagens de uma sess\u00e3o */
   fetchSessionMessages(sessionId: string): Promise<ChatMessage[]>
-  /** Envia uma mensagem */
   sendMessage(
     sessionId: string,
     messageContent: string,
     attachments?: Attachment[],
   ): Promise<ChatMessage>
-  /** Inicia uma nova sess\u00e3o */
   startNewSession(userId: string, agentId: string): Promise<Session>
-  /** Remove uma sess\u00e3o */
   deleteSession(sessionId: string): Promise<void>
-  /** Limpa o hist\u00f3rico de mensagens de uma sess\u00e3o */
   clearHistory(sessionId: string): Promise<void>
-  /** Atualiza dados de uma sess\u00e3o (ex: t\u00edtulo, metadados) */
   updateSession(sessionId: string, data: Partial<Session>): Promise<Session>
 }
 
 export const chatService: IChatService = {
   async fetchSessions(userId: string): Promise<Session[]> {
-    const response = await apiClient.get<Session[]>('/sessions', {
+    const { data } = await apiClient.get<Session[]>('/sessions', {
       params: { userId },
     })
-    return response.data
+    return data
   },
 
   async fetchSessionById(sessionId: string): Promise<Session | null> {
     try {
-      const response = await apiClient.get<Session>(`/sessions/${sessionId}`)
-      return response.data
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
-        return null
+      const { data } = await apiClient.get<Session>(`/sessions/${sessionId}`)
+      return data
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return null // Session not found, return null as per contract
       }
-      throw error
+      throw error // Re-throw other errors
     }
   },
 
   async fetchSessionMessages(sessionId: string): Promise<ChatMessage[]> {
-    const response = await apiClient.get<ChatMessage[]>(
+    const { data } = await apiClient.get<ChatMessage[]>(
       `/sessions/${sessionId}/messages`,
     )
-    return response.data
+    return data
   },
 
   async sendMessage(
@@ -56,26 +49,23 @@ export const chatService: IChatService = {
     messageContent: string,
     attachments?: Attachment[],
   ): Promise<ChatMessage> {
-    // Adapting to a more common sendMessage payload structure
-    const payload: { content: string; attachments?: Attachment[] } = {
+    const payload = {
       content: messageContent,
+      attachments,
     }
-    if (attachments) {
-      payload.attachments = attachments
-    }
-    const response = await apiClient.post<ChatMessage>(
+    const { data } = await apiClient.post<ChatMessage>(
       `/sessions/${sessionId}/messages`,
       payload,
     )
-    return response.data
+    return data
   },
 
   async startNewSession(userId: string, agentId: string): Promise<Session> {
-    const response = await apiClient.post<Session>('/sessions', {
+    const { data } = await apiClient.post<Session>('/sessions', {
       userId,
       agentId,
     })
-    return response.data
+    return data
   },
 
   async deleteSession(sessionId: string): Promise<void> {
@@ -83,7 +73,6 @@ export const chatService: IChatService = {
   },
 
   async clearHistory(sessionId: string): Promise<void> {
-    // This could also be a DELETE to /sessions/:sessionId/messages
     await apiClient.post(`/sessions/${sessionId}/clear-history`)
   },
 
@@ -91,11 +80,11 @@ export const chatService: IChatService = {
     sessionId: string,
     data: Partial<Session>,
   ): Promise<Session> {
-    const response = await apiClient.put<Session>(
+    const { data: responseData } = await apiClient.put<Session>(
       `/sessions/${sessionId}`,
       data,
     )
-    return response.data
+    return responseData
   },
 }
 

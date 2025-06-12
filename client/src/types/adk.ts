@@ -1,4 +1,18 @@
 /**
+ * Enum for different agent types based on Google ADK
+ */
+export enum AgentType {
+  LLM = 'llm',
+  SEQUENTIAL = 'sequential',
+  PARALLEL = 'parallel',
+  LOOP = 'loop',
+  DATA_ANALYSIS = 'data_analysis',
+  CODE_GENERATION = 'code_generation',
+  RESEARCH = 'research',
+  A2A = 'a2a',
+}
+
+/**
  * Esquema para parâmetros e tipos de retorno de ferramentas
  */
 export interface SchemaDefinition {
@@ -26,8 +40,8 @@ export interface SchemaDefinition {
   exclusiveMinimum?: number | boolean
   exclusiveMaximum?: number | boolean
   pattern?: string
-  default?: any
-  [key: string]: any // Para propriedades adicionais
+  default?: unknown
+  [key: string]: unknown // Para propriedades adicionais
 }
 
 /**
@@ -49,7 +63,7 @@ export interface ToolDefinition {
   }
 
   /** Função que será chamada quando a ferramenta for invocada */
-  execute: (params: Record<string, any>) => Promise<any>
+  execute: (params: Record<string, unknown>) => Promise<unknown>
 
   /** Esquema de saída da ferramenta (opcional) */
   outputSchema?: SchemaDefinition
@@ -95,13 +109,19 @@ export interface GenerateContentConfig {
 }
 
 /**
- * Configuração principal de um agente LLM no Google ADK
+ * Configuração para um agente LLM
  */
 export interface LlmAgentConfig {
   /** Identificador único do agente */
+  id: string
+
+  /** Tipo do agente */
+  type: AgentType
+
+  /** Nome amigável para o agente */
   name: string
 
-  /** Modelo de linguagem a ser usado (ex: "gemini-2.0-flash") */
+  /** Modelo de linguagem a ser usado (ex: "gemini-1.5-pro") */
   model: string
 
   /** Descrição clara do propósito e capacidades do agente */
@@ -118,6 +138,12 @@ export interface LlmAgentConfig {
 
   /** Configurações de geração de conteúdo */
   generateContentConfig?: GenerateContentConfig
+
+  /** Habilita a execução de código pelo agente */
+  codeExecution?: boolean
+
+  /** Habilita o planejamento para o agente */
+  planningEnabled?: boolean
 
   /** Esquema de entrada esperado pelo agente (opcional) */
   inputSchema?: SchemaDefinition
@@ -144,6 +170,9 @@ export interface LlmAgentConfig {
 export interface WorkflowAgentConfig {
   /** Identificador único do fluxo de trabalho */
   id: string
+
+  /** Tipo do agente */
+  type: AgentType
 
   /** Nome amigável do fluxo de trabalho */
   name: string

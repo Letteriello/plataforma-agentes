@@ -22,9 +22,9 @@ import {
 } from '@/components/ui/card'
 
 import { LLMAgentForm } from './forms/LLMAgentForm'
-import { AgentToolsTab } from './forms/AgentToolsTab'
+import AgentToolsTab from './forms/AgentToolsTab'
 import { BaseAgentForm } from './forms/BaseAgentForm'
-import { LLMAgent, createDefaultAgent, LLMAgentSchema } from '@/types/agents'
+import { LlmAgentConfig, createDefaultAgent, LlmAgentConfigSchema } from '@/types/agents'
 
 const WIZARD_STEPS = [
   'identidade',
@@ -42,12 +42,12 @@ const STEP_LABELS: { [key: string]: string } = {
 }
 
 // Dados mock atualizados para refletir a nova estrutura aninhada do ADK
-const mockAgents: LLMAgent[] = [
+const mockAgents: LlmAgentConfig[] = [
   {
     id: '1',
     name: 'Customer Support Bot',
     description: 'Handles customer inquiries and support tickets',
-    type: 'llm',
+    type: AgentType.LLM,
     model: 'gemini-1.5-pro',
     instruction:
       'You are a helpful customer support assistant. Be polite and professional.',
@@ -73,7 +73,7 @@ export function AgentEditor() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const [mode, setMode] = useState<'create' | 'edit'>('create')
-  const [agent, setAgent] = useState<LLMAgent | undefined>()
+  const [agent, setAgent] = useState<AnyAgentConfig | undefined>()
   const [isLoading, setIsLoading] = useState(false)
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
@@ -91,7 +91,7 @@ export function AgentEditor() {
     } else {
       setMode('create')
       // Cria um novo agente com a estrutura padrão correta
-      setAgent(createDefaultAgent('llm'))
+      setAgent(createDefaultAgent(AgentType.LLM))
     }
   }, [id, navigate, toast])
 
@@ -118,7 +118,7 @@ export function AgentEditor() {
     navigate('/agents')
   }
 
-  const handleSubmit = async (values: LLMAgent) => {
+  const handleSubmit = async (values: LlmAgentConfig) => {
     setIsLoading(true)
     console.log('Submitting Agent Data:', values)
 

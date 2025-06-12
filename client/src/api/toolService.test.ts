@@ -1,15 +1,14 @@
-import { describe, expect, test, vi, afterEach } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+
 import apiClient from './apiClient'
 import {
-  fetchTools,
   createTool,
-  updateTool,
   deleteTool,
-  ToolDTO,
-  CreateToolDTO,
+  fetchTools,
+  updateTool,
 } from './toolService'
+import type { CreateToolDTO, ToolDTO } from './toolService'
 
-// Mock o apiClient
 vi.mock('./apiClient')
 
 const mockTools: ToolDTO[] = [
@@ -17,11 +16,13 @@ const mockTools: ToolDTO[] = [
     id: '1',
     name: 'Test Tool 1',
     description: 'This is the first test tool.',
+    parameters: { type: 'object', properties: {} },
   },
   {
     id: '2',
     name: 'Test Tool 2',
     description: 'This is the second test tool.',
+    parameters: { type: 'object', properties: {} },
   },
 ]
 
@@ -32,7 +33,6 @@ describe('toolService', () => {
 
   describe('fetchTools', () => {
     test('should fetch tools successfully', async () => {
-      // Mock da resposta do apiClient.get
       vi.mocked(apiClient.get).mockResolvedValue({ data: mockTools })
 
       const tools = await fetchTools()
@@ -48,6 +48,7 @@ describe('toolService', () => {
       const newToolData: CreateToolDTO = {
         name: 'New Tool',
         description: 'A brand new tool.',
+        parameters: { type: 'object', properties: {} },
       }
       const createdTool: ToolDTO = { id: '3', ...newToolData }
 
@@ -66,7 +67,10 @@ describe('toolService', () => {
       const updateData: Partial<CreateToolDTO> = {
         name: 'Updated Test Tool 1',
       }
-      const updatedTool: ToolDTO = { ...mockTools[0], ...updateData }
+      const updatedTool: ToolDTO = {
+        ...mockTools[0],
+        ...updateData,
+      } as ToolDTO
 
       vi.mocked(apiClient.put).mockResolvedValue({ data: updatedTool })
 
@@ -80,7 +84,6 @@ describe('toolService', () => {
   describe('deleteTool', () => {
     test('should delete a tool successfully', async () => {
       const toolId = '1'
-      // Mock para uma resposta sem conteúdo (204 No Content)
       vi.mocked(apiClient.delete).mockResolvedValue({ data: null })
 
       await deleteTool(toolId)

@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Users,
   Wrench,
+  GitBranch,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
@@ -91,6 +92,15 @@ const governanceItems: NavItem[] = [
     href: '/audit-logs',
     icon: <ClipboardList className="h-5 w-5" />,
     label: 'Logs de Auditoria',
+  },
+]
+
+const orchestrationItems: NavItem[] = [
+  {
+    href: '/orchestration',
+    icon: <GitBranch className="h-5 w-5" />,
+    label: 'Orquestração',
+  }, Auditoria',
   },
 ]
 
@@ -189,6 +199,16 @@ export function Sidebar({
             </h2>
           )}
           <div className="space-y-1">{renderNavLinks(governanceItems)}</div>
+        </div>
+
+        {/* Orchestration Section */}
+        <div className="my-4">
+          {!isCollapsed && (
+            <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
+              Orquestração
+            </h2>
+          )}
+          <div className="space-y-1">{renderNavLinks(orchestrationItems)}</div>
         </div>
 
         {/* Account Section - Pushed to bottom */}

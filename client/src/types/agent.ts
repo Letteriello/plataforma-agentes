@@ -1,4 +1,6 @@
-export * from './core/agent'
+// A re-exportação de core/agent foi removida para evitar conflitos de tipo.
+// Os tipos devem ser importados diretamente de sua fonte (ex: adk.ts)
+// ou de arquivos de tipo específicos da UI.
 
 // client/src/components/agents/types.ts
 import type { AgentStatus } from './statusTypes'

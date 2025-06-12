@@ -1,3 +1,9 @@
+
+
+/**
+ * @file Gráfico de linhas para visualizar a análise de Custo vs. Benefício.
+ */
+
 import React from 'react'
 import {
   LineChart,
@@ -17,29 +23,36 @@ interface RoiChartProps {
 
 export const RoiChart: React.FC<RoiChartProps> = ({ data }) => {
   return (
-    <div className="h-80 w-full bg-card p-4 rounded-lg border">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="cost" stroke="#ef4444" name="Custo" />
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            stroke="#22c55e"
-            name="Receita"
-          />
-          <Line
-            type="monotone"
-            dataKey="savings"
-            stroke="#3b82f6"
-            name="Economia"
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart
+        data={data}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis tickFormatter={(value) => `R$${value}`} />
+        <Tooltip formatter={(value: number) => `R$${value.toFixed(2)}`} />
+        <Legend />
+        <Line
+          type="monotone"
+          dataKey="benefit"
+          stroke="#22c55e" // green-500
+          strokeWidth={2}
+          name="Benefício"
+        />
+        <Line
+          type="monotone"
+          dataKey="cost"
+          stroke="#ef4444" // red-500
+          strokeWidth={2}
+          name="Custo"
+        />
+      </LineChart>
+    </ResponsiveContainer>
   )
 }

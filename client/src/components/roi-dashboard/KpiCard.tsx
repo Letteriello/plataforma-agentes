@@ -1,27 +1,47 @@
+/**
+ * @file Card para exibir um único Indicador Chave de Desempenho (KPI).
+ */
+
 import React from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react'
 import { Kpi } from '@/types/roi'
 
-const getChangeColor = (changeType: 'increase' | 'decrease') => {
-  return changeType === 'increase' ? 'text-green-500' : 'text-red-500'
+interface KpiCardProps {
+  kpi: Kpi
 }
 
-const getChangeIcon = (changeType: 'increase' | 'decrease') => {
-  return changeType === 'increase' ? '▲' : '▼'
+const ICONS = {
+  increase: <ArrowUpRight className="h-4 w-4 text-green-500" />,
+  decrease: <ArrowDownRight className="h-4 w-4 text-red-500" />,
+  neutral: <Minus className="h-4 w-4 text-gray-500" />,
 }
 
-export const KpiCard: React.FC<{ kpi: Kpi }> = ({ kpi }) => {
+const CHANGE_COLORS = {
+  increase: 'text-green-500',
+  decrease: 'text-red-500',
+  neutral: 'text-gray-500',
+}
+
+export const KpiCard: React.FC<KpiCardProps> = ({ kpi }) => {
   return (
-    <div className="bg-card p-4 rounded-lg border">
-      <p className="text-sm font-medium text-muted-foreground">{kpi.title}</p>
-      <div className="flex items-baseline gap-2 mt-1">
-        <p className="text-2xl font-bold">{kpi.value}</p>
-        <span
-          className={`flex items-center text-sm font-semibold ${getChangeColor(kpi.changeType)}`}
-        >
-          {getChangeIcon(kpi.changeType)} {kpi.change}
-        </span>
-      </div>
-      <p className="text-xs text-muted-foreground mt-1">{kpi.description}</p>
-    </div>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+        {/* Icon can be placed here if needed */}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{kpi.value}</div>
+        <p className="text-xs text-muted-foreground flex items-center">
+          <span className={`mr-1 ${CHANGE_COLORS[kpi.changeType]}`}>
+            {ICONS[kpi.changeType]}
+          </span>
+          <span className={`mr-1 ${CHANGE_COLORS[kpi.changeType]}`}>
+            {kpi.change}
+          </span>
+          {kpi.description}
+        </p>
+      </CardContent>
+    </Card>
   )
 }

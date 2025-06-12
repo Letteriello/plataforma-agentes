@@ -18,8 +18,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite/client", "jest"]
+    "types": ["vite/client", "vitest/globals"]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.stories.ts", "**/*.stories.js", "**/*.stories.jsx"]
+  "include": ["src", "**/*.stories.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

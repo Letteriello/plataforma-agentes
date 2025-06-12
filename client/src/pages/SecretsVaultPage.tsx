@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { SecretList } from '@/components/secrets-vault/SecretList'
 import { SecretFormModal } from '@/components/secrets-vault/SecretFormModal'
+import { SecretList } from '@/components/secrets-vault/SecretList'
 import { Secret } from '@/types/secret'
 
 export const SecretsVaultPage: React.FC = () => {

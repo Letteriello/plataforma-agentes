@@ -1,24 +1,25 @@
-import '@testing-library/jest-dom'
-// import { toHaveNoViolations } from 'jest-axe';
-// import { server } from './mocks/server';
-import { resetMockAgentsDB } from './mocks/handlers' // Import the reset function
-import { vi } from 'vitest'
+import '@testing-library/jest-dom';
+import { toHaveNoViolations } from 'jest-axe';
+import { server } from './mocks/server';
+import { resetMockAgentsDB } from './mocks/handlers'; // Import the reset function
+import { vi } from 'vitest';
 
-// expect.extend(toHaveNoViolations);
+expect.extend(toHaveNoViolations);
 
 // Establish API mocking before all tests.
 // Using { onUnhandledRequest: 'error' } will make tests fail if a request is made that doesn't have a handler.
 // This is good for catching unexpected requests. You can change to 'warn' or 'bypass' if needed.
-// beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 
 // Reset any request handlers that run once and exist between tests.
 // Also, reset the mock database before each test to ensure test isolation.
 afterEach(() => {
-  resetMockAgentsDB() // Reset the in-memory DB to its initial state
-})
+  server.resetHandlers();
+  resetMockAgentsDB(); // Reset the in-memory DB to its initial state
+});
 
 // Clean up after the tests are finished.
-// afterAll(() => server.close());
+afterAll(() => server.close());
 
 // Mock matchMedia for components that might use it (e.g., responsive components in Radix UI)
 // This is a common setup item for testing environments.

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { rest } from 'msw';
-import { AgentToolsTab } from './AgentToolsTab';
+import { http } from 'msw';
+import AgentToolsTab from './AgentToolsTab';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ToolDTO } from '@/api/toolService';
 
@@ -106,7 +106,7 @@ export const Default: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get('/tools', (req, res, ctx) => {
+        http.get('/tools', (req, res, ctx) => {
           return res(ctx.json(mockTools));
         }),
       ],
@@ -126,7 +126,7 @@ export const MultipleToolsSelected: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get('/tools', (req, res, ctx) => {
+        http.get('/tools', (req, res, ctx) => {
           return res(ctx.json(mockTools));
         }),
       ],
@@ -141,7 +141,7 @@ export const Loading: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get('/tools', (req, res, ctx) => {
+        http.get('/tools', (req, res, ctx) => {
           return res(ctx.delay('infinite')); // Simula uma resposta de API pendente
         }),
       ],
@@ -156,7 +156,7 @@ export const Error: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get('/tools', (req, res, ctx) => {
+        http.get('/tools', (req, res, ctx) => {
           return res(ctx.status(500), ctx.json({ message: 'Falha ao buscar ferramentas' }));
         }),
       ],
@@ -171,7 +171,7 @@ export const NoToolsAvailable: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get('/tools', (req, res, ctx) => {
+        http.get('/tools', (req, res, ctx) => {
           return res(ctx.json([])); // Retorna um array vazio
         }),
       ],

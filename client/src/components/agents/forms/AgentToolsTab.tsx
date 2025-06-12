@@ -11,8 +11,8 @@ import {
 } from '@/components/ui/form'
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import ToolDefinitionForm from './ToolDefinitionForm';
-import type { UiToolDefinition } from '../../types/agents';
+import { ToolDefinitionForm } from './ToolDefinitionForm';
+import type { UiToolDefinition } from '@/types/agents';
 
 const AgentToolsTab: React.FC = () => {
   const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<ToolDTO | null>(null);
@@ -56,7 +56,7 @@ const AgentToolsTab: React.FC = () => {
             <div className="space-y-3">
               {tools.map((tool) => {
                 const checked = field.value?.includes(tool.id)
-                const handleChange = (checked: boolean) => {
+                const handleChange = (checked: boolean | 'indeterminate') => {
                   const current = field.value || []
                   if (checked) {
                     field.onChange([...current, tool.id])

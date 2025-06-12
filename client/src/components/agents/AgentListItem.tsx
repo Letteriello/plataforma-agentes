@@ -1,4 +1,4 @@
-import { Agent, AgentType } from '@/types/agents' // Or the correct path to Agent type
+import { AnyAgentConfig as Agent, AgentType } from '@/types/agents' // Or the correct path to Agent type
 import { Badge } from '@/components/ui/badge' // and other UI components
 import { Button } from '@/components/ui/button'
 import {

@@ -12,7 +12,7 @@ import {
   Play,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Agent, AgentType } from '@/types/agents' // AgentType will be used by the filter
+import { AnyAgentConfig, AgentType } from '@/types/agents' // AgentType will be used by the filter
 
 import { agentTypeLabels } from '@/lib/agent-utils' // Import centralized agentTypeLabels
 import { useToast } from '@/components/ui/use-toast'
@@ -35,13 +35,24 @@ type AgentFilter = 'all' | AgentType // AgentType is imported
 export function AgentsDashboard() {
   const navigate = useNavigate()
   const { toast } = useToast()
-  const [agents, setAgents] = useState<Agent[]>([])
+  const [agents, setAgents] = useState<AnyAgentConfig[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filter, setFilter] = useState<AgentFilter>('all')
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({})
 
   const parentRef = React.useRef<HTMLDivElement>(null)
+
+  const filteredAgents = agents.filter(
+    (agent) =>
+      (!searchQuery ||
+        agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (agent.description &&
+          agent.description
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()))) &&
+      (filter === 'all' || agent.type === filter),
+  )
 
   const rowVirtualizer = useVirtualizer({
     count: filteredAgents.length,

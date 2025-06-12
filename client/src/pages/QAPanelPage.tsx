@@ -1,7 +1,65 @@
 import React, { useState, useEffect } from 'react'
 import { TestRunList } from '@/components/qa-panel/TestRunList'
 import { TestRunDetailsModal } from '@/components/qa-panel/TestRunDetailsModal'
-import { TestRun, TestCase } from '@/types/qa'
+import { TestRun, TestCase, TestCaseStatus } from '@/types/qa'
+
+// Mock Data para simulação
+const mockTestCases: TestCase[] = [
+  {
+    id: 'tc-001',
+    description: 'Verifica a saudação inicial do agente',
+    input: { query: 'Olá' },
+    expectedOutput: 'Olá! Como posso ajudar?',
+    actualOutput: 'Olá! Como posso ajudar?',
+    status: TestCaseStatus.Passed,
+    duration: 120,
+  },
+  {
+    id: 'tc-002',
+    description: 'Testa a busca de informações sobre o produto X',
+    input: { query: 'Me fale sobre o produto X' },
+    expectedOutput: 'O produto X é uma solução inovadora para...',
+    actualOutput: 'O produto X é uma solução inovadora para...',
+    status: TestCaseStatus.Passed,
+    duration: 450,
+  },
+  {
+    id: 'tc-003',
+    description: 'Testa a resposta para uma pergunta fora de escopo',
+    input: { query: 'Qual a capital da Mongólia?' },
+    expectedOutput: 'Desculpe, não tenho essa informação.',
+    actualOutput: 'A capital da Mongólia é Ulaanbaatar.', // Falha
+    status: TestCaseStatus.Failed,
+    duration: 250,
+    error: 'O agente respondeu a uma pergunta fora do escopo definido.',
+  },
+]
+
+const mockTestRuns: TestRun[] = [
+  {
+    id: 'run-a4b1c8',
+    agentId: 'agent-001',
+    agentName: 'Agente de Vendas Pro',
+    timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // Ontem
+    totalTests: 3,
+    passed: 2,
+    failed: 1,
+    skipped: 0,
+    duration: 820,
+    testCases: mockTestCases,
+  },
+  {
+    id: 'run-d9e2f7',
+    agentId: 'agent-002',
+    agentName: 'Assistente de Suporte Técnico',
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Anteontem
+    totalTests: 5,
+    passed: 5,
+    failed: 0,
+    skipped: 0,
+    duration: 1540,
+  },
+]
 
 export const QAPanelPage: React.FC = () => {
   const [testRuns, setTestRuns] = useState<TestRun[]>([])
@@ -9,22 +67,23 @@ export const QAPanelPage: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState(false)
   const [selectedTestRun, setSelectedTestRun] = useState<TestRun | null>(null)
 
-  // TODO: Fetch test runs from API
+  // Simula o fetch dos dados da API
   useEffect(() => {
-    // setTestRuns(fetchedRuns);
+    setTestRuns(mockTestRuns)
   }, [])
 
   const handleViewDetails = (testRun: TestRun) => {
     setSelectedTestRun(testRun)
-    // TODO: Fetch test cases for the selected run from an API
-    // setTestCases(fetchedCasesForRun);
+    // Em um cenário real, aqui seria feito o fetch dos casos de teste para o `testRun.id`
+    // Para a simulação, usamos os dados já disponíveis no mock.
+    setTestCases(testRun.testCases || [])
     setModalOpen(true)
   }
 
   const handleCloseModal = () => {
     setModalOpen(false)
     setSelectedTestRun(null)
-    setTestCases([]) // Clear cases on modal close
+    setTestCases([]) // Limpa os casos de teste ao fechar o modal
   }
 
   return (

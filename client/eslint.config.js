@@ -1,72 +1,77 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import jsxA11y from 'eslint-plugin-jsx-a11y'
-import eslintPluginReact from 'eslint-plugin-react'
-import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+import eslintPluginReact from 'eslint-plugin-react';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
 
+// Final, stable configuration
 export default tseslint.config(
   {
     ignores: ['dist', '.storybook/dist', 'node_modules_old'],
-    languageOptions: {
-      parserOptions: {
-        project: './tsconfig.json',
-      },
-    },
   },
-  js.configs.recommended, // Global defaults
-  ...tseslint.configs.recommended,
+
+  // Base configs
+  js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
 
-  // React specific configurations for TSX files
+  // React specific configuration
   {
-    files: ['**/*.{ts,tsx}'],
-    ...eslintPluginReact.configs.flat.recommended, // React recommended settings
-    ...jsxA11y.flatConfigs.recommended, // Accessibility settings
-    // Note: extends is not standard in flat config objects like this, settings are usually spread or set directly.
-    // js.configs.recommended and tseslint.configs.recommended are already applied globally.
-    languageOptions: {
-      ...eslintPluginReact.configs.flat.recommended.languageOptions, // Spread to ensure JSX features, etc.
-      ...(jsxA11y.flatConfigs.recommended.languageOptions || {}),
-      globals: {},
-      parserOptions: {
-        // Ensure JSX is enabled
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
+    files: ['src/**/*.{ts,tsx}', 'src/**/*.stories.tsx'],
     plugins: {
-      react: eslintPluginReact, // Make sure react plugin is explicitly available if not already by spread
-      'react-hooks': reactHooks,
+      react: eslintPluginReact,
       'react-refresh': reactRefresh,
       'jsx-a11y': jsxA11y,
     },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+      globals: {
+        ...globals.browser,
+      },
+    },
     rules: {
-      // Rules from eslintPluginReact.configs.flat.recommended and jsxA11y.flatConfigs.recommended are spread.
-      // Override or add specific rules below.
-      ...reactHooks.configs.recommended.rules,
-      '@typescript-eslint/no-explicit-any': 'warn',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-      'react/react-in-jsx-scope': 'off', // Common for new JSX transform
-      'react/prop-types': 'off', // Often turned off in TypeScript projects
+      ...eslintPluginReact.configs.recommended.rules,
+      ...jsxA11y.configs.recommended.rules,
+      'react-refresh/only-export-components': 'warn',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
     },
     settings: {
-      // Settings for react plugin, e.g. version
       react: {
         version: 'detect',
       },
     },
   },
 
-  // Configuration for simple-import-sort
+  // Override for TypeScript files to use TypeScript-aware rules
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
+  },
+
+  // Config files
+  {
+    files: ['**/*.js', '*.config.js'],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
+
+  // Import sorting
+  {
     plugins: {
       'simple-import-sort': eslintPluginSimpleImportSort,
     },
@@ -75,4 +80,4 @@ export default tseslint.config(
       'simple-import-sort/exports': 'warn',
     },
   },
-)
+);

@@ -3,14 +3,55 @@ import { KpiCard } from '@/components/roi-dashboard/KpiCard'
 import { RoiChart } from '@/components/roi-dashboard/RoiChart'
 import { Kpi, RoiDataPoint } from '@/types/roi'
 
+// Mock Data para simulação
+const mockKpis: Kpi[] = [
+  {
+    title: 'Custo Total dos Agentes',
+    value: 'R$ 1.250,00',
+    change: '+5% vs. mês anterior',
+    changeType: 'increase',
+    description: 'Custo operacional total.',
+  },
+  {
+    title: 'Tarefas Automatizadas',
+    value: '1.830',
+    change: '+15% vs. mês anterior',
+    changeType: 'increase',
+    description: 'Interações concluídas por agentes.',
+  },
+  {
+    title: 'Economia de Tempo (Horas)',
+    value: '457,5',
+    change: '+15% vs. mês anterior',
+    changeType: 'increase',
+    description: 'Estimativa de horas de trabalho humano salvas.',
+  },
+  {
+    title: 'ROI Estimado',
+    value: '265%',
+    change: '+20 pontos percentuais',
+    changeType: 'increase',
+    description: 'Retorno sobre o investimento.',
+  },
+]
+
+const mockRoiData: RoiDataPoint[] = [
+  { date: 'Jan/24', cost: 800, benefit: 1500 },
+  { date: 'Fev/24', cost: 950, benefit: 2200 },
+  { date: 'Mar/24', cost: 1100, benefit: 2800 },
+  { date: 'Abr/24', cost: 1050, benefit: 3100 },
+  { date: 'Mai/24', cost: 1200, benefit: 3500 },
+  { date: 'Jun/24', cost: 1250, benefit: 4200 },
+]
+
 export const RoiDashboardPage: React.FC = () => {
   const [kpis, setKpis] = useState<Kpi[]>([])
   const [roiData, setRoiData] = useState<RoiDataPoint[]>([])
 
-  // TODO: Fetch data from API
+  // Simula o fetch dos dados da API
   useEffect(() => {
-    // setKpis(fetchedKpis);
-    // setRoiData(fetchedRoiData);
+    setKpis(mockKpis)
+    setRoiData(mockRoiData)
   }, [])
 
   return (

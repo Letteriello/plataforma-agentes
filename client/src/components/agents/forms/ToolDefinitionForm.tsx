@@ -25,7 +25,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import type { UiSchemaDefinition, UiToolDefinition } from '../../types/agents';
+import type { UiSchemaDefinition, UiToolDefinition } from '@/types/agents';
 
 // Internal form structure for a single parameter
 interface ParameterData {
@@ -68,7 +68,7 @@ export interface ToolDefinitionFormProps {
   onClose: () => void;
 }
 
-export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialData, onSave, onClose }) => {
+export export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialData, onSave, onClose }) => {
   const methods = useForm<ToolDefinitionFormData>({
     resolver: zodResolver(toolDefinitionFormSchema),
     defaultValues: {

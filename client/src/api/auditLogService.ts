@@ -1,6 +1,6 @@
 // src/api/auditLogService.ts
-import { apiClient } from './apiClient'
-import { AuditLog } from '@/types/auditLog'
+import apiClient from './apiClient'
+import { AuditLog } from '@/types/governance' // Corrected path
 
 /**
  * Fetches the list of audit logs from the API.
@@ -16,3 +16,4 @@ export const listAuditLogs = async (): Promise<AuditLog[]> => {
     throw error
   }
 }
+

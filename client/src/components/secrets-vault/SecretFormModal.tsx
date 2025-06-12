@@ -17,24 +17,33 @@ export const SecretFormModal: React.FC<SecretFormModalProps> = ({
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [value, setValue] = useState('')
+  const isEditing = !!secretToEdit
 
   useEffect(() => {
-    if (secretToEdit) {
+    if (isEditing) {
       setName(secretToEdit.name)
       setDescription(secretToEdit.description)
-      setValue('********') // Don't expose the real value
+      // Set value to empty to indicate it shouldn't be updated unless changed
+      setValue('')
     } else {
       setName('')
       setDescription('')
       setValue('')
     }
-  }, [secretToEdit, isOpen])
+  }, [secretToEdit, isOpen, isEditing])
 
   if (!isOpen) return null
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave({ name, description, value }) // In a real app, 'value' would be handled more securely
+    const secretPayload: Omit<Secret, 'id' | 'createdAt'> = { name, description }
+
+    // Only include the value if it has been explicitly set by the user
+    if (value) {
+      secretPayload.value = value
+    }
+
+    onSave(secretPayload)
     onClose()
   }
 
@@ -96,11 +105,14 @@ export const SecretFormModal: React.FC<SecretFormModalProps> = ({
               value={value}
               onChange={(e) => setValue(e.target.value)}
               className="input w-full"
-              required
+              // Value is not required when editing, only when creating
+              required={!isEditing}
+              placeholder={isEditing ? 'Deixe em branco para não alterar' : ''}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              O valor será armazenado de forma segura e não será exibido
-              novamente.
+              {isEditing
+                ? 'O valor não será alterado se o campo ficar em branco.'
+                : 'O valor será armazenado de forma segura e não será exibido novamente.'}
             </p>
           </div>
           <div className="flex justify-end gap-2 pt-4">

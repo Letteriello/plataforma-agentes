@@ -75,6 +75,7 @@ const SimulationSandboxPage = lazy(
 )
 const MultiAgentPage = lazy(() => import('./pages/MultiAgentPage'))
 const MarketplacePage = lazy(() => import('./pages/MarketplacePage'))
+const OrchestrationPage = lazy(() => import('./pages/OrchestrationPage'))
 // Note: The dynamic route for agent editing client/src/pages/agents/edit/AgentsEditEntryPage.tsx
 // is not explicitly imported here. It's likely handled by the routing setup if it's a nested route
 // or needs to be added if it's a top-level route. This script assumes current explicit imports only.
@@ -187,6 +188,11 @@ const routes: AppRouteObject[] = [
         path: 'marketplace',
         element: withSuspense(MarketplacePage),
         handle: { title: 'Marketplace' },
+      },
+      {
+        path: 'orchestration',
+        element: withSuspense(OrchestrationPage),
+        handle: { title: 'Orchestration' },
       },
       {
         path: 'memory', // path changed from 'memoria'

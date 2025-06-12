@@ -46,7 +46,7 @@ describe('AgentEditor', () => {
     await act(async () => {
       const rendered = render(
         <MemoryRouter>
-          <AgentEditor mode="create" />
+          <AgentEditor />
           <Toaster />{' '}
           {/* Include Toaster if toast messages can be triggered on render */}
         </MemoryRouter>,

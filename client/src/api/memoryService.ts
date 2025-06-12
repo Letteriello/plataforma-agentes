@@ -1,10 +1,11 @@
-import apiClient from '@/api/apiClient';
+import axios from 'axios'
+import apiClient from '@/api/apiClient'
 import type {
   KnowledgeBase,
   Document,
   SearchResult,
   KnowledgeBaseConfig,
-} from '@/types/memory';
+} from '@/types/memory'
 
 /**
  * Serviço para gerenciar operações relacionadas ao módulo de Memória
@@ -14,8 +15,8 @@ export const memoryService = {
    * Obtém todas as bases de conhecimento
    */
   async getKnowledgeBases(): Promise<KnowledgeBase[]> {
-    const response = await apiClient.get<KnowledgeBase[]>('/knowledge-bases')
-    return response.data
+    const { data } = await apiClient.get<KnowledgeBase[]>('/knowledge-bases')
+    return data
   },
 
   /**
@@ -23,12 +24,12 @@ export const memoryService = {
    */
   async getKnowledgeBaseById(id: string): Promise<KnowledgeBase | null> {
     try {
-      const response = await apiClient.get<KnowledgeBase>(
+      const { data } = await apiClient.get<KnowledgeBase>(
         `/knowledge-bases/${id}`,
       )
-      return response.data
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
+      return data
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
         return null
       }
       throw error
@@ -44,12 +45,11 @@ export const memoryService = {
       'id' | 'createdAt' | 'updatedAt' | 'documents'
     >,
   ): Promise<KnowledgeBase> {
-    // 'documents' count is usually managed by backend based on actual documents
-    const response = await apiClient.post<KnowledgeBase>(
+    const { data } = await apiClient.post<KnowledgeBase>(
       '/knowledge-bases',
       knowledgeBaseData,
     )
-    return response.data
+    return data
   },
 
   /**
@@ -61,15 +61,14 @@ export const memoryService = {
       Omit<KnowledgeBase, 'id' | 'createdAt' | 'updatedAt' | 'documents'>
     >,
   ): Promise<KnowledgeBase | null> {
-    // 'documents' count should not be directly updatable by client in this way
     try {
-      const response = await apiClient.put<KnowledgeBase>(
+      const { data } = await apiClient.put<KnowledgeBase>(
         `/knowledge-bases/${id}`,
         updates,
       )
-      return response.data
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
+      return data
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
         return null
       }
       throw error
@@ -86,11 +85,31 @@ export const memoryService = {
   /**
    * Obtém todos os documentos de uma base de conhecimento
    */
-  async fetchDocuments(knowledgeBaseId: string): Promise<Document[]> {
-    const response = await apiClient.get<Document[]>(
+  async getDocuments(knowledgeBaseId: string): Promise<Document[]> {
+    const { data } = await apiClient.get<Document[]>(
       `/knowledge-bases/${knowledgeBaseId}/documents`,
     )
-    return response.data
+    return data
+  },
+
+  /**
+   * Obtém um documento específico de uma base de conhecimento
+   */
+  async getDocumentById(
+    knowledgeBaseId: string,
+    documentId: string,
+  ): Promise<Document | null> {
+    try {
+      const { data } = await apiClient.get<Document>(
+        `/knowledge-bases/${knowledgeBaseId}/documents/${documentId}`,
+      )
+      return data
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return null
+      }
+      throw error
+    }
   },
 
   /**
@@ -107,16 +126,11 @@ export const memoryService = {
       formData.append('metadata', JSON.stringify(metadata))
     }
 
-    const response = await apiClient.post<Document>(
+    const { data } = await apiClient.post<Document>(
       `/knowledge-bases/${knowledgeBaseId}/documents`,
       formData,
-      {
-        headers: {
-          // 'Content-Type': 'multipart/form-data' is usually set automatically by browsers/axios with FormData
-        },
-      },
     )
-    return response.data
+    return data
   },
 
   /**
@@ -139,13 +153,13 @@ export const memoryService = {
     query: string,
     topK?: number,
   ): Promise<SearchResult[]> {
-    const response = await apiClient.get<SearchResult[]>(
+    const { data } = await apiClient.get<SearchResult[]>(
       `/knowledge-bases/${knowledgeBaseId}/search`,
       {
         params: { query, topK },
       },
     )
-    return response.data
+    return data
   },
 
   /**
@@ -155,12 +169,12 @@ export const memoryService = {
     knowledgeBaseId: string,
   ): Promise<KnowledgeBaseConfig | null> {
     try {
-      const response = await apiClient.get<KnowledgeBaseConfig>(
+      const { data } = await apiClient.get<KnowledgeBaseConfig>(
         `/knowledge-bases/${knowledgeBaseId}/config`,
       )
-      return response.data
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
+      return data
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
         return null
       }
       throw error
@@ -174,12 +188,10 @@ export const memoryService = {
     knowledgeBaseId: string,
     config: Partial<KnowledgeBaseConfig>,
   ): Promise<KnowledgeBaseConfig> {
-    // Config ID is usually the same as KB ID or managed by backend.
-    // Here, assuming config update is by KB ID and the payload is partial config.
-    const response = await apiClient.put<KnowledgeBaseConfig>(
+    const { data } = await apiClient.put<KnowledgeBaseConfig>(
       `/knowledge-bases/${knowledgeBaseId}/config`,
       config,
     )
-    return response.data
+    return data
   },
 }

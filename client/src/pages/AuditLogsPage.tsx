@@ -1,32 +1,48 @@
-import React, { useState, useEffect } from 'react'
 import { AuditLogList } from '@/components/audit-logs/AuditLogList'
-import { AuditLog } from '@/types/auditLog'
+import { useToast } from '@/components/ui/use-toast'
 import { listAuditLogs } from '@/api/auditLogService'
-import { toast } from '@/components/ui/use-toast'
+import { AuditLog } from '@/types/auditLog'
+import axios from 'axios'
+import React, { useState, useEffect } from 'react'
+
+interface ApiErrorResponse {
+  detail?: string
+}
 
 export const AuditLogsPage: React.FC = () => {
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     const fetchAuditLogs = async () => {
       try {
         setIsLoading(true)
+        setError(null)
         const data = await listAuditLogs()
         setLogs(data)
-        setError(null)
       } catch (err) {
-        const errorMessage = 'Falha ao carregar os logs de auditoria.'
+        let errorMessage = 'Falha ao carregar os logs de auditoria.'
+        if (axios.isAxiosError(err) && err.response) {
+          const errorData = err.response.data as ApiErrorResponse
+          errorMessage = `${errorMessage} Detalhes: ${
+            errorData.detail || err.message
+          }`
+        }
         setError(errorMessage)
-        toast({ variant: 'destructive', title: 'Erro', description: errorMessage })
+        toast({
+          variant: 'destructive',
+          title: 'Erro de Auditoria',
+          description: errorMessage,
+        })
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchAuditLogs()
-  }, [])
+    void fetchAuditLogs()
+  }, [toast])
 
   return (
     <div className="p-6 space-y-8">
