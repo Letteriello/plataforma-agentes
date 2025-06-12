@@ -99,7 +99,7 @@ const AgentMemoryTab: React.FC = () => {
                             {kb.name}
                           </FormLabel>
                         </FormItem>
-                      ))}
+                      )}
                     />
                   ))
                 ) : (

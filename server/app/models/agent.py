@@ -62,5 +62,31 @@ class AgentUpdate(BaseModel):
     planner_config: Optional[Dict[str, Any]] = None
     code_executor_config: Optional[Dict[str, Any]] = None
 
-    tools: Optional[List[ToolResponseSchema]] = None # Changed to ToolResponseSchema
+    tool_ids: Optional[List[str]] = None # Accepts a list of tool UUIDs for update
     knowledge_base_ids: Optional[List[str]] = None
+
+
+class AgentCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    model: str = "gemini-1.5-pro"
+    instruction: str
+    temperature: Optional[float] = Field(default=0.7, ge=0.0, le=2.0)
+    max_output_tokens: Optional[int] = Field(default=2048, gt=0)
+    top_p: Optional[float] = Field(default=1.0, ge=0.0, le=1.0)
+    top_k: Optional[int] = Field(default=40, ge=0)
+    input_schema: Optional[Dict[str, Any]] = None
+    output_schema: Optional[Dict[str, Any]] = None
+    output_key: Optional[str] = None
+    include_contents: Optional[str] = Field(default='default')
+    autonomy_level: Optional[Literal['auto', 'ask']] = Field(default='ask')
+    security_config: Optional[Dict[str, Any]] = None
+    planner_config: Optional[Dict[str, Any]] = None
+    code_executor_config: Optional[Dict[str, Any]] = None
+    tool_ids: Optional[List[str]] = Field(default_factory=list)
+    knowledge_base_ids: Optional[List[str]] = Field(default_factory=list)
+
+    class Config:
+        model_config = {
+            "populate_by_name": True,
+        }

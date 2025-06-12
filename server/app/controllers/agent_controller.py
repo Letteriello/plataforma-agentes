@@ -5,7 +5,7 @@ import uuid
 import json
 
 from app.models.user_model import User
-from ..models.agent import Agent, AgentUpdate
+from ..models.agent import Agent, AgentCreate, AgentUpdate
 from ..schemas.tool_schemas import ToolResponseSchema
 from ..supabase_client import create_supabase_client_with_jwt
 
@@ -44,13 +44,13 @@ def _construct_agent_response(agent_data: Dict[str, Any], jwt_token: str) -> Age
     agent_data['knowledge_base_ids'] = _get_knowledge_base_ids_for_agent(agent_id, jwt_token)
     return Agent.model_validate(agent_data)
 
-def create_agent(agent_payload: Agent, current_user: User, jwt_token: str) -> Agent:
+def create_agent(agent_payload: AgentCreate, current_user: User, jwt_token: str) -> Agent:
     user_supabase_client = create_supabase_client_with_jwt(jwt_token)
     
     agent_dict = agent_payload.model_dump(exclude_unset=True)
     agent_dict['user_id'] = str(current_user.id)
     
-    tools = agent_dict.pop('tools', [])
+    tool_ids_to_associate = agent_dict.pop('tool_ids', [])
     knowledge_base_ids = agent_dict.pop('knowledge_base_ids', [])
 
     for key in ['security_config', 'planner_config', 'code_executor_config', 'input_schema', 'output_schema']:
@@ -65,10 +65,9 @@ def create_agent(agent_payload: Agent, current_user: User, jwt_token: str) -> Ag
     created_agent_data = response.data[0]
     agent_id = str(created_agent_data['id'])
 
-    if tools:
-        tool_ids = [tool.id for tool in tools if tool.id]
-        for tool_id in tool_ids:
-            add_tool_to_agent(agent_id, tool_id, current_user, jwt_token)
+    if tool_ids_to_associate:
+        for tool_id in tool_ids_to_associate:
+            add_tool_to_agent(agent_id, str(tool_id), current_user, jwt_token)
 
     if knowledge_base_ids:
         for kb_id in knowledge_base_ids:
@@ -100,17 +99,25 @@ def get_agent_by_id(agent_id: str, current_user: User, jwt_token: str) -> Option
 def update_agent(agent_id: str, agent_update: AgentUpdate, current_user: User, jwt_token: str) -> Agent:
     user_supabase_client = create_supabase_client_with_jwt(jwt_token)
     
-    existing_agent = get_agent_by_id(agent_id, current_user, jwt_token)
-    if not existing_agent:
+    # First, verify the agent exists and belongs to the user
+    agent_check_response = user_supabase_client.table("agents").select("id, user_id").eq("id", agent_id).eq("user_id", current_user.id).maybe_single().execute()
+    if not agent_check_response.data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found or not authorized")
 
-    update_data = agent_update.model_dump(exclude_unset=True)
-
-    if 'tools' in update_data:
+    # Handle tool associations if tool_ids is provided in the payload
+    if agent_update.tool_ids is not None: # Check if tool_ids is explicitly provided
+        # First, remove all existing tool associations for this agent
         user_supabase_client.table("agent_tools").delete().eq("agent_id", agent_id).execute()
-        tool_ids = [tool.id for tool in update_data.pop('tools', []) if tool.id]
-        for tool_id in tool_ids:
-            add_tool_to_agent(agent_id, tool_id, current_user, jwt_token)
+        
+        # Then, add new associations based on the provided tool_ids
+        if agent_update.tool_ids: # If tool_ids is not an empty list
+            for tool_id in agent_update.tool_ids:
+                add_tool_to_agent(agent_id, str(tool_id), current_user, jwt_token)
+    
+    update_data = agent_update.model_dump(exclude_unset=True, exclude_none=True)
+    # Remove 'tool_ids' from update_data as it's handled separately and shouldn't be passed to agents table update
+    if 'tool_ids' in update_data:
+        del update_data['tool_ids']
 
     if 'knowledge_base_ids' in update_data:
         user_supabase_client.table("agent_knowledge_bases").delete().eq("agent_id", agent_id).execute()

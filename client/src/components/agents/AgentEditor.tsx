@@ -30,6 +30,7 @@ import type { LlmAgentConfig } from '@/types/agents';
 import { LlmAgentConfigSchema, createDefaultAgent } from '@/types/agents';
 import { ComponentSkeleton } from '@/components/ui/component-skeleton';
 import AgentMemoryTab from './forms/AgentMemoryTab';
+import { AdvancedAgentForm } from './forms/AdvancedAgentForm';
 
 interface AgentEditorProps {
   isWizardMode?: boolean;
@@ -53,6 +54,7 @@ export function AgentEditor({
     'instrucoes',
     'modelo_geracao',
     'ferramentas',
+    'avancado',
     'memoria',
   ];
   const STEP_LABELS: { [key: string]: string } = {
@@ -60,6 +62,7 @@ export function AgentEditor({
     instrucoes: 'Instruções',
     modelo_geracao: 'Modelo & Geração',
     ferramentas: 'Ferramentas',
+    avancado: 'Avançado',
     memoria: 'Memória',
   };
 
@@ -68,30 +71,29 @@ export function AgentEditor({
   useEffect(() => {
     if (id) {
       setMode('edit');
-      setIsLoading(true);
       agentService
-        .fetchAgentById(id)
+        .getAgentById(id)
         .then((data) => {
-          setAgentData(data);
+          const parsedData = LlmAgentConfigSchema.parse(data);
+          setAgentData(parsedData);
+          formMethods.reset(parsedData);
         })
-        .catch((error) => {
-          console.error('Failed to fetch agent:', error);
-          toast({
-            title: 'Erro ao carregar agente',
-            description: 'Não foi possível encontrar o agente solicitado.',
-            variant: 'destructive',
-          });
-          navigate('/agents');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+        .catch(() =>
+          toast({ variant: 'destructive', title: 'Erro ao carregar o agente' })
+        )
+        .finally(() => setIsLoading(false));
     } else {
       setMode('create');
-      setAgentData(createDefaultAgent());
+      formMethods.reset(createDefaultAgent());
       setIsLoading(false);
     }
-  }, [id, navigate, toast]);
+  }, [id, formMethods, toast]);
+
+  const handleTabChange = (newTab: string) => {
+    if (!isWizardMode) {
+      setActiveTab(newTab);
+    }
+  };
 
   const handleNextStep = () => {
     if (currentStepIndex < WIZARD_STEPS.length - 1) {
@@ -105,97 +107,46 @@ export function AgentEditor({
     }
   };
 
-  const handleCancel = () => {
-    navigate('/agents');
-  };
-
-  const onSubmit = async (formData: LlmAgentConfig) => {
-    setIsLoading(true);
-
-    const payload: LlmAgentConfig = {
-      ...formData,
-      tools: formData.tools || [],
-      knowledgeBaseIds: formData.knowledgeBaseIds || [],
-    };
-
-    try {
-      if (mode === 'create') {
-        const newAgent = await agentService.createAgent(payload);
-        toast({
-          title: 'Agente criado com sucesso!',
-          description: `O agente "${newAgent.name}" foi criado.`,
-        });
-        navigate(`/agents/edit/${newAgent.id}`);
-      } else if (id) {
-        const updatedAgent = await agentService.updateAgent(id, payload);
-        toast({
-          title: 'Agente atualizado com sucesso!',
-          description: `As alterações em "${updatedAgent.name}" foram salvas.`,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to save agent:', error);
-      toast({
-        title: 'Erro ao salvar agente',
-        description: 'Ocorreu um erro ao tentar salvar o agente. Tente novamente.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const handleCancel = () => navigate('/agents');
 
   if (isLoading) {
-    return <ComponentSkeleton />; // Show a loading skeleton
+    return <ComponentSkeleton />; // Use the new skeleton component
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {mode === 'create' ? 'Criar Novo Agente' : 'Editar Agente'}
-        </h1>
-        <p className="text-muted-foreground">
-          {isWizardMode
-            ? `Passo ${currentStepIndex + 1} de ${WIZARD_STEPS.length}: ${STEP_LABELS[activeTab]}`
-            : 'Configure os detalhes do seu agente.'}
-        </p>
-      </header>
-
-      <BaseAgentForm
-        schema={LlmAgentConfigSchema}
-        onSubmit={onSubmit}
-        onCancel={handleCancel}
-        defaultValues={agentData}
-      >
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
-          {!isWizardMode && (
-            <TabsList>
-              <TabsTrigger value="identidade">Identidade</TabsTrigger>
-              <TabsTrigger value="instrucoes">Instruções</TabsTrigger>
-              <TabsTrigger value="modelo_geracao">Modelo & Geração</TabsTrigger>
-              <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
-              <TabsTrigger value="memoria">Memória</TabsTrigger>
-            </TabsList>
-          )}
+    <div className="p-6">
+      <BaseAgentForm>
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="identidade">Identidade</TabsTrigger>
+            <TabsTrigger value="instrucoes">Instruções</TabsTrigger>
+            <TabsTrigger value="modelo_geracao">Modelo & Geração</TabsTrigger>
+            <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
+            <TabsTrigger value="avancado">Avançado</TabsTrigger>
+            <TabsTrigger value="memoria">Memória</TabsTrigger>
+          </TabsList>
 
           <TabsContent value="identidade" forceMount>
             <Card>
               <CardHeader>
                 <CardTitle>Identidade do Agente</CardTitle>
                 <CardDescription>
-                  Defina o nome, a descrição e o modelo base para o seu agente.
+                  Defina o nome, a descrição e a identidade visual do seu agente.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <FormField
                   control={formMethods.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nome</FormLabel>
+                      <FormLabel>Nome do Agente</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: Agente de Vendas" {...field} />
+                        <Input {...field} placeholder="Ex: Agente de Vendas" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -209,8 +160,8 @@ export function AgentEditor({
                       <FormLabel>Descrição</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Ex: Um agente inteligente para automatizar o processo de vendas."
                           {...field}
+                          placeholder="Descreva o que este agente faz."
                         />
                       </FormControl>
                       <FormMessage />
@@ -226,20 +177,19 @@ export function AgentEditor({
               <CardHeader>
                 <CardTitle>Instruções do Sistema</CardTitle>
                 <CardDescription>
-                  Forneça as diretrizes e o comportamento esperado para o agente.
+                  Forneça as diretrizes e o prompt principal para o agente.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <FormField
                   control={formMethods.control}
-                  name="system_prompt"
+                  name="instruction"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prompt do Sistema</FormLabel>
                       <FormControl>
                         <Textarea
-                          rows={10}
                           {...field}
+                          rows={12}
                           placeholder="Você é um assistente prestativo..."
                         />
                       </FormControl>
@@ -259,6 +209,10 @@ export function AgentEditor({
             <AgentToolsTab agentId={id} isWizardMode={isWizardMode} />
           </TabsContent>
 
+          <TabsContent value="avancado" forceMount>
+            <AdvancedAgentForm />
+          </TabsContent>
+
           <TabsContent value="memoria" forceMount>
             <AgentMemoryTab />
           </TabsContent>
@@ -267,14 +221,14 @@ export function AgentEditor({
         <div className="flex justify-between items-center mt-8 pt-6 border-t">
           <div>
             {isWizardMode && (
-               <Button
-                 variant="outline"
-                 onClick={handlePreviousStep}
-                 disabled={currentStepIndex === 0 || isLoading}
-                 className={currentStepIndex === 0 ? 'invisible' : ''}
-               >
-                 Anterior
-               </Button>
+              <Button
+                variant="outline"
+                onClick={handlePreviousStep}
+                disabled={currentStepIndex === 0 || isLoading}
+                className={currentStepIndex === 0 ? 'invisible' : ''}
+              >
+                Anterior
+              </Button>
             )}
           </div>
           <div className="space-x-3">

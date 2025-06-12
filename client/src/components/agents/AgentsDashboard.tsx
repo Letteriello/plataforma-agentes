@@ -38,20 +38,24 @@ export function AgentsDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [agentToDelete, setAgentToDelete] = useState<AgentSummaryDTO | null>(null);
+  const [filter, setFilter] = useState('all');
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 
-  const filteredAgents = React.useMemo(() => 
-    (fetchedAgentsData || []).filter(
-      (agent: AgentSummaryDTO) => 
-        (!searchQuery ||
-          agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (agent.description &&
-            agent.description
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()))) &&
-        (filter === 'all' /*|| (agent as AnyAgentConfig).type === filter*/)
-    ), [fetchedAgentsData, searchQuery, filter]);
+  const filteredAgents = React.useMemo(
+    () =>
+      (fetchedAgentsData || []).filter(
+        (agent: AgentSummaryDTO) =>
+          (!searchQuery ||
+            agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (agent.description &&
+              agent.description
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase()))) &&
+          (filter === 'all' /*|| (agent as AnyAgentConfig).type === filter*/)
+      ),
+    [fetchedAgentsData, searchQuery, filter]
+  );
 
   const rowVirtualizer = useVirtualizer({
     count: filteredAgents.length,

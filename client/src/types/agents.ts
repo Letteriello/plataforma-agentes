@@ -15,6 +15,7 @@ export interface UiSchemaDefinition {
 
 // UI-specific Tool Definition (for forms)
 export interface UiToolDefinition {
+  id?: string; // Added optional ID
   name: string;
   description?: string;
   parameters?: {
@@ -58,7 +59,7 @@ export interface LlmAgentConfig extends AgentConfig {
   model: string;
   instruction: string;
   generateContentConfig: GenerateContentConfig;
-  tools: UiToolDefinition[];
+  tool_ids?: string[];
   knowledgeBaseIds?: string[];
   autonomy_level?: 'auto' | 'ask';
   security_config?: { [key: string]: any };
@@ -116,7 +117,7 @@ export const LlmAgentConfigSchema = z.object({
   model: z.string().min(1, 'A seleção de um modelo é obrigatória'),
   instruction: z.string().min(1, 'As instruções são obrigatórias'),
   generateContentConfig: GenerateContentConfigSchema,
-  tools: z.array(z.any()), // Simplified for now
+  tool_ids: z.array(z.string()).optional(), // Align with backend
   knowledgeBaseIds: z.array(z.string()).optional(),
   autonomy_level: z.enum(['auto', 'ask']).default('ask').optional(),
   security_config: z.record(z.string(), z.any()).optional().default({}),
@@ -147,7 +148,7 @@ export function createDefaultAgent(type: AgentType): AnyAgentConfig {
           topK: 40,
           stopSequences: [],
         },
-        tools: [],
+        tool_ids: [],
         knowledgeBaseIds: [],
         autonomy_level: 'ask',
         security_config: {},

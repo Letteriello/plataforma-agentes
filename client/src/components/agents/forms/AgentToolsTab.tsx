@@ -1,216 +1,129 @@
-import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { getTools } from '@/api/toolService'; // Changed from fetchTools
-import type { ToolDTO } from '@/api/toolService'; // Ensured ToolDTO is imported as type
-import agentService from '@/api/agentService'; // Added agentService import
-import { useToast } from '@/components/ui/use-toast'; // Added useToast import
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Label } from '@/components/ui/label';
+import { useFormContext } from 'react-hook-form';
+import { LlmAgentConfig, UiToolDefinition } from '@/types/agents';
+import { getTools, PaginatedToolsDTO, ToolDTO } from '@/api/toolService';
+import { useQuery } from '@tanstack/react-query';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 import { ToolDefinitionForm } from './ToolDefinitionForm';
-import type { UiToolDefinition } from '@/types/agents';
+import { Settings } from 'lucide-react';
+
+// Helper to transform backend DTO to UI definition
+const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
+  const parameters: UiToolDefinition['parameters'] = {};
+  const required: string[] = [];
+
+  if (Array.isArray(toolDto.parameters)) {
+    toolDto.parameters.forEach(param => {
+      parameters[param.name] = {
+        type: param.type.toUpperCase() as 'STRING' | 'NUMBER' | 'BOOLEAN',
+        description: param.description || undefined,
+        default: param.default_value || undefined,
+        enum: undefined, // Note: enum is not in ToolParameterDTO, handle if needed
+      };
+      if (param.is_required) {
+        required.push(param.name);
+      }
+    });
+  }
+
+  return {
+    id: toolDto.id,
+    name: toolDto.name,
+    description: toolDto.description || '',
+    parameters: parameters,
+    required: required,
+  };
+};
 
 interface AgentToolsTabProps {
-  agentId?: string; // Agent ID for direct API calls in edit mode
-  isWizardMode?: boolean;
+  agentId?: string;
 }
 
-const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId, isWizardMode = false }) => {
-  const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<ToolDTO | null>(null);
+export function AgentToolsTab({ agentId }: AgentToolsTabProps) {
+  const form = useFormContext<LlmAgentConfig>();
+  const [searchTerm, setSearchTerm] = useState('');
   const [configuredToolsDetails, setConfiguredToolsDetails] = useState<Record<string, UiToolDefinition>>({});
-  const { control, setValue, getValues } = useFormContext(); // Added getValues
-  const { toast } = useToast(); // Initialize useToast
-  const [availableTools, setAvailableTools] = useState<ToolDTO[]>([]); // Renamed tools to availableTools
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<UiToolDefinition | null>(null);
 
-  useEffect(() => {
-    const loadTools = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        // Assuming getTools returns PaginatedToolsDTO, adjust if it returns ToolDTO[] directly
-        // Pass params if your getTools function expects them, e.g., for pagination or filtering
-        const paginatedResult = await getTools({ includeSystemTools: true }); 
-        setAvailableTools(paginatedResult.tools);
-      } catch (err: any) {
-        const errorMessage = err.message || 'Failed to load tools';
-        setError(errorMessage);
-        toast({ title: "Error", description: `Failed to load available tools: ${errorMessage}`, variant: "destructive" });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadTools();
-  }, [toast]);
+  const { data: paginatedResult, isLoading, error } = useQuery<PaginatedToolsDTO, Error>({
+    queryKey: ['tools', searchTerm],
+    queryFn: () => getTools({ query: searchTerm, page: 1, size: 50 }),
+    enabled: true,
+  });
 
-  const handleToolSelectionChange = async (toolId: string, isChecked: boolean) => {
-    const currentSelectedToolIds = getValues("tools") || [];
-    let newSelectedToolIds: string[];
+  const handleSelectTool = (toolId: string, checked: boolean | 'indeterminate') => {
+    if (typeof checked !== 'boolean') return;
 
-    if (isChecked) {
-      newSelectedToolIds = [...currentSelectedToolIds, toolId];
-    } else {
-      newSelectedToolIds = currentSelectedToolIds.filter((id: string) => id !== toolId);
-    }
-
-    // Optimistically update the form state first
-    setValue("tools", newSelectedToolIds, { shouldDirty: true, shouldValidate: true });
-
-    if (agentId) { // Only make API calls if agentId exists (editing mode)
-      // For a single operation, we can set a specific loading state if needed
-      // or rely on a global loading indicator if AgentEditor handles it.
-      // For simplicity here, we won't add another setIsLoading just for this operation
-      // but in a real app, you might want more granular loading states.
-      try {
-        if (isChecked) {
-          await agentService.associateToolWithAgent(agentId, toolId);
-          toast({ title: "Success", description: `Tool associated successfully.` });
-        } else {
-          await agentService.disassociateToolFromAgent(agentId, toolId);
-          toast({ title: "Success", description: `Tool disassociated successfully.` });
-        }
-      } catch (apiError: any) {
-        toast({
-          title: "API Error",
-          description: `Failed to update tool association: ${apiError.message || 'Unknown error'}`, 
-          variant: "destructive",
-        });
-        // Revert UI change on API error by setting form value back
-        setValue("tools", currentSelectedToolIds, { shouldDirty: true, shouldValidate: true });
-      }
-    }
+    const currentToolIds = form.getValues('tool_ids') || [];
+    const newToolIds = checked
+      ? [...currentToolIds, toolId]
+      : currentToolIds.filter((id) => id !== toolId);
+    form.setValue('tool_ids', newToolIds, { shouldDirty: true, shouldValidate: true });
   };
 
-  if (isLoading) {
-    return <p>Loading tools...</p>
-  }
+  const handleConfigureTool = (toolDto: ToolDTO) => {
+    const uiDef = transformToUiDefinition(toolDto);
+    const existingConfig = configuredToolsDetails[toolDto.id];
+    setSelectedToolForConfiguration(existingConfig || uiDef);
+  };
 
-  if (error) {
-    return <p className="text-destructive">{error}</p>
-  }
+  const handleSaveToolDefinition = (savedToolDef: UiToolDefinition) => {
+    if (savedToolDef.id) {
+      setConfiguredToolsDetails((prev) => ({ ...prev, [savedToolDef.id!]: savedToolDef }));
+    }
+    setSelectedToolForConfiguration(null);
+  };
 
-  if (isWizardMode) {
+  const allTools = paginatedResult?.items || [];
+
+  if (isLoading) return <p>Carregando ferramentas...</p>;
+  if (error) return <p>Erro ao carregar ferramentas: {error.message}</p>;
+
+  if (selectedToolForConfiguration) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Ferramentas</CardTitle>
-          <CardDescription>
-            Selecione as ferramentas que seu agente poderá utilizar.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FormField
-            control={control}
-            name="tools" // Este será um array de IDs de ferramentas selecionadas
-            render={() => (
-              <FormItem>
-                <div className="mb-4">
-                  <FormLabel className="text-base">Ferramentas Disponíveis</FormLabel>
-                  <FormDescription>
-                    Marque as ferramentas que o agente deve ter acesso.
-                  </FormDescription>
-                </div>
-                {availableTools.map((tool) => (
-                  <FormField
-                    key={tool.id}
-                    control={control}
-                    name="tools"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={tool.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 mb-4"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.some((t: UiToolDefinition) => t.name === tool.name)}
-                              onCheckedChange={(checked) => {
-                                const currentTools = getValues().tools || [];
-                                if (checked) {
-                                  // Adiciona a ferramenta inteira, não apenas o ID
-                                  const newToolDef: UiToolDefinition = {
-                                    name: tool.name,
-                                    description: tool.description,
-                                    parameters: tool.parameters?.properties || {},
-                                    required: tool.parameters?.required || [],
-                                  };
-                                  field.onChange([...currentTools, newToolDef]);
-                                } else {
-                                  field.onChange(
-                                    currentTools.filter((t: UiToolDefinition) => t.name !== tool.name)
-                                  );
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {tool.name}
-                            <p className="text-sm text-muted-foreground">
-                              {tool.description}
-                            </p>
-                          </FormLabel>
-                        </FormItem>
-                      )
-                    }}
-                  />
-                ))}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Renderização para o modo avançado (não-wizard)
+      <ToolDefinitionForm
+        key={selectedToolForConfiguration.id}
+        initialToolDefinition={selectedToolForConfiguration}
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ferramentas</CardTitle>
+        <CardTitle>Ferramentas do Agente</CardTitle>
         <CardDescription>
-          Selecione e configure as ferramentas que seu agente poderá utilizar.
+          Selecione e configure as ferramentas que este agente poderá utilizar.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        <Input
+          placeholder="Buscar ferramentas por nome..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         <FormField
-          control={control}
-          name="tools"
+          control={form.control}
+          name="tool_ids"
           render={({ field }) => (
             <FormItem>
-              <div className="space-y-4 pt-2">
-                {availableTools.map((tool) => {
-                  const isChecked = field.value?.some((t: UiToolDefinition) => t.name === tool.name);
-                  
-                  return (
-                    <div key={tool.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-muted/50">
-                      <div className="flex items-center space-x-4">
-                        <Checkbox
-                          id={`tool-${tool.id}`}
-                          checked={isChecked}
-                          onCheckedChange={(checked) => {
-                            const currentTools = getValues().tools || [];
-                            if (checked) {
-                              const newToolDef: UiToolDefinition = {
-                                name: tool.name,
-                                description: tool.description,
-                                parameters: tool.parameters?.properties || {},
-                                required: tool.parameters?.required || [],
-                              };
-                              field.onChange([...currentTools, newToolDef]);
-                            } else {
-                              field.onChange(
-                                currentTools.filter((t: UiToolDefinition) => t.name !== tool.name)
-                              );
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {allTools.map((tool) => (
+                  <FormItem key={tool.id} className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value?.includes(tool.id)}
+                        onCheckedChange={(checked) => {
+                          handleSelectTool(tool.id, checked);
+                        }}
+                      />
+                    </FormControl>
+                    <div className="space-y-1.5 leading-none flex-grow">
+                      <FormLabel className="font-semibold">{tool.name}</FormLabel>
+                      <FormDescription>{tool.description}</FormDescription>
                             }
+                            field.onChange(newSelectedIds);
                           }}
                         />
                         <Label htmlFor={`tool-${tool.id}`} className="font-medium">
@@ -237,18 +150,17 @@ const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId, isWizardMode = f
         />
       </CardContent>
       {selectedToolForConfiguration && (
-        <ToolDefinitionForm
+              <ToolDefinitionForm
           isOpen={!!selectedToolForConfiguration}
           initialToolDefinition={(() => {
             if (!selectedToolForConfiguration) return undefined;
-            const currentTools = getValues().tools || [];
-            const existingDetail = currentTools.find((t: UiToolDefinition) => t.name === selectedToolForConfiguration.name);
-            if (existingDetail) {
-              return existingDetail;
+            const existingConfig = configuredToolsDetails[selectedToolForConfiguration.id];
+            if (existingConfig) {
+              return existingConfig;
             }
-            // Fallback para criar a partir do DTO se não estiver na lista (não deveria acontecer se o botão estiver desabilitado)
             const toolDto = selectedToolForConfiguration;
             return {
+              id: toolDto.id, // Ensure UiToolDefinition includes id
               name: toolDto.name,
               description: toolDto.description,
               parameters: toolDto.parameters?.properties || {},
@@ -256,18 +168,13 @@ const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId, isWizardMode = f
             };
           })()}
           onClose={() => setSelectedToolForConfiguration(null)}
-          onSave={(savedToolDefinition) => {
-            if (!selectedToolForConfiguration) return;
-            const currentTools = getValues().tools || [];
-            const toolIndex = currentTools.findIndex((t: UiToolDefinition) => t.name === savedToolDefinition.name);
-            
-            if (toolIndex > -1) {
-              const updatedTools = [...currentTools];
-              updatedTools[toolIndex] = savedToolDefinition;
-              setValue('tools', updatedTools, { shouldValidate: true, shouldDirty: true });
-              toast({ title: 'Ferramenta configurada', description: `A ferramenta "${savedToolDefinition.name}" foi atualizada.` });
-            }
-            
+          onSave={(savedToolDef: UiToolDefinition) => {
+            if (!selectedToolForConfiguration || !savedToolDef.id) return;
+            setConfiguredToolsDetails(prevDetails => ({
+              ...prevDetails,
+              [savedToolDef.id]: savedToolDef,
+            }));
+            toast({ title: 'Ferramenta configurada', description: `A ferramenta "${savedToolDef.name}" foi atualizada.` });
             setSelectedToolForConfiguration(null);
           }}
         />
