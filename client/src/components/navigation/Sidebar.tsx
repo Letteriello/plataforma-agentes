@@ -18,6 +18,7 @@ import {
   GitBranch,
   FileText, // Added FileText for Auditoria item
   Library, // Added for Biblioteca
+  ChevronDownIcon, // Added for expandable sections
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom';
 import {
@@ -30,7 +31,7 @@ import {
 import { Avatar } from '@/components/ui/avatar'
 import { cn, generateAvatarUrl } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
-// useState removed
+import { useState } from 'react'; // Import useState
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -42,9 +43,10 @@ interface SidebarProps {
 
 type NavItem = {
   label: string
-  href: string
+  href?: string // Make href optional for parent items
   icon: React.ReactNode // Keep as React.ReactNode for direct icon components
   disabled?: boolean
+  subItems?: NavItem[] // Add subItems for nested navigation
 }
 
 // New navigation item structures
@@ -79,14 +81,26 @@ const agentManagementItems: NavItem[] = [
 
 const resourcesItems: NavItem[] = [
   {
+    label: 'Recursos',
+    icon: <Library className="h-5 w-5" />, // Using Library as a generic icon for Recursos
+    // No href, this item will just expand/collapse to show subItems
+    subItems: [
+      {
+        href: '/tools',
+        icon: <Wrench className="h-5 w-5" />,
+        label: 'Ferramentas',
+      },
+      {
+        href: '/memory',
+        icon: <BrainCircuit className="h-5 w-5" />,
+        label: 'Memória',
+      },
+    ],
+  },
+  {
     href: '/biblioteca',
     icon: <Library className="h-5 w-5" />,
     label: 'Biblioteca',
-  },
-  {
-    href: '/tools',
-    icon: <Wrench className="h-5 w-5" />,
-    label: 'Ferramentas',
   },
   {
     href: '/simulation-sandbox',
@@ -144,42 +158,106 @@ export const Sidebar = ({
   onMouseLeave,
 }: SidebarProps) => {
   const { user } = useAuthStore()
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
-  const renderNavLinks = (items: NavItem[], isCollapsed: boolean) => {
+  const toggleSection = (label: string) => {
+    setOpenSections(prev => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  const renderNavLinks = (items: NavItem[], isCollapsed: boolean, isSubItem = false) => {
     return items.map((item) => {
-      const linkContent = (
-        <NavLink
-          to={item.href}
-          className={({ isActive }) =>
-            cn(
-              'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
-              isCollapsed && 'justify-center',
-              isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'text-foreground hover:bg-primary hover:text-primary-foreground',
-              item.disabled && 'pointer-events-none opacity-50',
-            )
-          }
-        >
+      const isSectionOpen = openSections[item.label] || false;
+
+      // Content for both NavLink and button-like div for parent items
+      const itemContent = (
+        <>
           {item.icon}
-          {!isCollapsed && <span className="ml-3">{item.label}</span>}
-        </NavLink>
+          {!isCollapsed && <span className={cn("ml-3", isSubItem && "ml-4")}>{item.label}</span>}
+        </>
       );
+
+      // Clickable element: NavLink if href, otherwise a div/button to toggle subItems
+      let clickableElement;
+      if (item.href) {
+        clickableElement = (
+          <NavLink
+            to={item.href}
+            className={({ isActive }) =>
+              cn(
+                'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
+                isCollapsed && 'justify-center',
+                isSubItem && !isCollapsed && 'pl-7', // Indent sub-items
+                isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-foreground hover:bg-primary hover:text-primary-foreground',
+                item.disabled && 'pointer-events-none opacity-50',
+              )
+            }
+            onClick={() => item.subItems && !isCollapsed && toggleSection(item.label)}
+          >
+            {itemContent}
+            {item.subItems && !isCollapsed && (
+              <ChevronDownIcon
+                className={cn(
+                  'ml-auto h-4 w-4 transition-transform duration-200',
+                  isSectionOpen ? 'rotate-180' : ''
+                )}
+              />
+            )}
+          </NavLink>
+        );
+      } else if (item.subItems) {
+        // Parent item that only expands/collapses
+        clickableElement = (
+          <button
+            onClick={() => toggleSection(item.label)}
+            className={cn(
+              'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full text-foreground hover:bg-primary hover:text-primary-foreground',
+              isCollapsed && 'justify-center',
+            )}
+          >
+            {itemContent}
+            {!isCollapsed && (
+               <ChevronDownIcon
+                className={cn(
+                  'ml-auto h-4 w-4 transition-transform duration-200',
+                  isSectionOpen ? 'rotate-180' : ''
+                )}
+              />
+            )}
+          </button>
+        );
+      } else {
+        // Fallback for items without href and without subItems (should not happen based on current structure)
+        clickableElement = <div className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-foreground">{itemContent}</div>;
+      }
+
+      const key = item.href || item.label; // Ensure unique key
 
       if (isCollapsed) {
         return (
-          <TooltipProvider key={item.href} delayDuration={100}>
+          <TooltipProvider key={key} delayDuration={100}>
             <Tooltip>
-              <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+              <TooltipTrigger asChild>{clickableElement}</TooltipTrigger>
               <TooltipContent side="right">
                 <p>{item.label}</p>
+                {/* Optionally, list sub-item labels in tooltip if needed, but keeping it simple for now */}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         );
       }
 
-      return <div key={item.href}>{linkContent}</div>;
+      return (
+        <div key={key}>
+          {clickableElement}
+          {!isCollapsed && item.subItems && isSectionOpen && (
+            <div className="mt-1 space-y-1">
+              {renderNavLinks(item.subItems, isCollapsed, true)}
+            </div>
+          )}
+        </div>
+      );
     });
   };
 
@@ -215,11 +293,11 @@ export const Sidebar = ({
         </div>
 
       {/* Navigation Links Area */}
-      <nav className="flex-1 flex flex-col p-4">
+      <nav className="flex-1 flex flex-col p-2 overflow-y-auto">
         <div className="space-y-1">{renderNavLinks(navItems, isCollapsed)}</div>
 
         {/* Gerenciamento Section */}
-        <div className="my-4">
+        <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
               Gerenciamento
@@ -231,7 +309,7 @@ export const Sidebar = ({
         </div>
 
         {/* Recursos Section */}
-        <div className="my-4">
+        <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
               Recursos
@@ -241,7 +319,7 @@ export const Sidebar = ({
         </div>
 
         {/* Governance Section */}
-        <div className="my-4">
+        <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
               Governança
@@ -251,7 +329,7 @@ export const Sidebar = ({
         </div>
 
         {/* Orchestration Section */}
-        <div className="my-4">
+        <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
               Orquestração
