@@ -145,12 +145,16 @@ export function useMemoryModule() {
         const newKnowledgeBase = await memoryService.createKnowledgeBase(
           knowledgeBaseData,
         )
-        setKnowledgeBases((prev) => [...prev, newKnowledgeBase])
-        setFilteredKnowledgeBases((prev) => [...prev, newKnowledgeBase]) // Adiciona também aos filtrados
+        setKnowledgeBases((prev) => [...prev, newKnowledgeBase]);
+        setFilteredKnowledgeBases((prev) => [...prev, newKnowledgeBase]); // Adiciona também aos filtrados
+        setCreateDialogOpen(false); // Fechar o diálogo após o sucesso
+
         toast({
-          title: 'Sucesso',
-          description: 'Base de conhecimento criada com sucesso.',
-        })
+          title: 'Sucesso!',
+          description: `A base de conhecimento "${newKnowledgeBase.name}" foi criada.`,
+        });
+
+        return newKnowledgeBase;
       } catch (error) {
         console.error('Erro ao criar base de conhecimento:', error)
         toast({

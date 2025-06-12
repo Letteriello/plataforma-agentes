@@ -9,6 +9,7 @@ import {
   Loader2,
   AlertTriangle, 
   RefreshCw, 
+  Users,
 } from 'lucide-react';
 import { AnyAgentConfig, AgentType } from '@/types/agents'; 
 import { AgentSummaryDTO } from '@/api/agentService'; 
@@ -63,12 +64,13 @@ export function AgentsDashboard() {
     async (id: string) => {
       setIsDeleting((prev) => ({ ...prev, [id]: true }));
       try {
-        await agentService.deleteAgent(id); 
-        toast({
-          title: 'Agent Deleted',
-          description: `Agent ${id} has been successfully deleted.`,
+        await agentService.deleteAgent(id);
+        refetchAgents();
+        toast({ 
+          title: 'Agente excluído',
+          description: 'O agente foi excluído com sucesso.',
+          variant: 'success',
         });
-        refetchAgents(); 
       } catch (err) {
         console.error('Failed to delete agent:', err);
         toast({
@@ -109,8 +111,9 @@ export function AgentsDashboard() {
     <div className="p-4 md:p-6 lg:p-8">
       <Card>
         <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <CardTitle className="text-2xl font-bold mb-4 md:mb-0">
-            Agents Dashboard
+          <CardTitle className="text-2xl flex items-center">
+            <Users className="mr-3 h-6 w-6" />
+            Meus Agentes
           </CardTitle>
           <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
             <div className="relative">
@@ -135,12 +138,11 @@ export function AgentsDashboard() {
           {filteredAgents.length === 0 ? (
              <div className="text-center py-10">
                <SearchIcon className="mx-auto h-12 w-12 text-gray-400" />
-               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                 {searchQuery || filter !== 'all'
-                   ? 'No agents match your criteria.'
-                   : fetchedAgentsData && fetchedAgentsData.length === 0 
-                     ? 'No agents found. Create your first agent to get started.'
-                     : 'Your current filters resulted in no agents.' 
+               <h3 className="text-center text-muted-foreground">
+                 { 
+                   (searchQuery || filter !== 'all') 
+                   ? 'Nenhum agente corresponde aos seus critérios.' 
+                   : 'Nenhum agente encontrado. Crie um para começar.' 
                  }
                </h3>
                {!(searchQuery || filter !== 'all') && fetchedAgentsData && fetchedAgentsData.length === 0 && (

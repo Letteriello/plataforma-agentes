@@ -42,12 +42,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <AvatarFallback>{agentAvatarFallback}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-semibold">{agentName}</p>
+          <p className="text-lg font-semibold">{agentName}</p>
           {agentName !== 'Nenhum Agente' && ( // Only show status if a real agent is selected
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"
-                className="border-green-500 text-green-500"
+                className="border-green-500 text-green-500 text-xs font-medium"
               >
                 {agentStatus}
               </Badge>

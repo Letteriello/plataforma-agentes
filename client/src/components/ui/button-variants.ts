@@ -17,8 +17,8 @@ export const buttonVariants = cva(
         link: 'underline-offset-4 hover:underline text-primary',
 
         // Custom variants for Nexus
-        success: 'bg-green-600 text-white hover:bg-green-700',
-        warning: 'bg-amber-500 text-white hover:bg-amber-600',
+        success: 'bg-success text-success-foreground hover:bg-success/90',
+        warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
         info: 'bg-blue-500 text-white hover:bg-blue-600',
       },
       size: {

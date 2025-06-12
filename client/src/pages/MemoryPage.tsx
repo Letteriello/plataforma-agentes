@@ -37,9 +37,10 @@ export default function MemoriaPage() {
   } = useMemoryModule()
 
   const handleCreateKnowledgeBase = async (data: {
-    name: string
-    description: string
-    type: KnowledgeBaseType
+    name: string;
+    description?: string | undefined;
+    type: KnowledgeBaseType;
+    baseModel?: string | undefined;
   }) => {
     setIsCreating(true)
     try {
@@ -70,8 +71,8 @@ export default function MemoriaPage() {
         <CreateKnowledgeBaseDialog
           open={createDialogOpen}
           onOpenChange={setCreateDialogOpen}
-          onCreate={handleCreateKnowledgeBase}
-          isCreating={isCreating}
+          onSubmit={(data) => handleCreateKnowledgeBase(data)}
+          isSubmitting={isCreating}
         />
         <UploadDocumentDialog
           open={uploadDialogOpen}

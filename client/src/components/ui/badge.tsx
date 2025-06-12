@@ -18,11 +18,11 @@ const badgeVariants = cva(
 
         // Status variants with modern styling
         success:
-          'border-transparent bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400',
+          'border-transparent bg-success/10 text-success-foreground hover:bg-success/20 dark:bg-success/20 dark:text-success-foreground',
         error:
-          'border-transparent bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400',
+          'border-transparent bg-destructive/10 text-destructive hover:bg-destructive/20 dark:bg-destructive/20 dark:text-destructive-foreground',
         warning:
-          'border-transparent bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400',
+          'border-transparent bg-warning/10 text-warning-foreground hover:bg-warning/20 dark:bg-warning/20 dark:text-warning-foreground',
         info: 'border-transparent bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
 
         // Agent status variants

@@ -46,12 +46,21 @@ export interface AgentConfig {
   type: AgentType
 }
 
+export interface GenerateContentConfig {
+  temperature: number;
+  maxOutputTokens?: number;
+  topP?: number;
+  topK?: number;
+  stopSequences?: string[];
+}
+
 export interface LlmAgentConfig extends AgentConfig {
-  type: AgentType.LLM
-  model: string
-  instruction: string
-  temperature: number
-  tools: UiToolDefinition[]
+  type: AgentType.LLM;
+  model: string;
+  instruction: string;
+  generateContentConfig: GenerateContentConfig;
+  tools: UiToolDefinition[];
+  knowledgeBaseIds?: string[];
 }
 
 export interface SequentialAgentConfig extends AgentConfig {
@@ -87,16 +96,25 @@ export type AnyAgentConfig = LlmAgentConfig | SequentialAgentConfig | ParallelAg
 
 export type Agent = AnyAgentConfig
 
+export const GenerateContentConfigSchema = z.object({
+  temperature: z.number().min(0).max(2),
+  maxOutputTokens: z.number().int().positive().optional(),
+  topP: z.number().min(0).max(1).optional(),
+  topK: z.number().int().nonnegative().optional(),
+  stopSequences: z.array(z.string()).optional(),
+});
+
 export const LlmAgentConfigSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'O nome é obrigatório'),
   description: z.string(),
   version: z.string(),
   type: z.literal(AgentType.LLM),
-  model: z.string(),
-  instruction: z.string(),
-  temperature: z.number(),
+  model: z.string().min(1, 'A seleção de um modelo é obrigatória'),
+  instruction: z.string().min(1, 'As instruções são obrigatórias'),
+  generateContentConfig: GenerateContentConfigSchema,
   tools: z.array(z.any()), // Simplified for now
+  knowledgeBaseIds: z.array(z.string()).optional(),
 })
 
 export function createDefaultAgent(type: AgentType): AnyAgentConfig {
@@ -115,8 +133,15 @@ export function createDefaultAgent(type: AgentType): AnyAgentConfig {
         type: AgentType.LLM,
         model: 'gemini-1.5-pro',
         instruction: 'Você é um assistente útil.',
-        temperature: 0.7,
+        generateContentConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 2048,
+          topP: 1.0,
+          topK: 40,
+          stopSequences: [],
+        },
         tools: [],
+        knowledgeBaseIds: [],
       } as LlmAgentConfig
     // Add other agent types here later
     default:

@@ -17,8 +17,15 @@ import {
   Wrench,
   GitBranch,
   FileText, // Added FileText for Auditoria item
+  Library, // Added for Biblioteca
 } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { Avatar } from '@/components/ui/avatar'
 import { cn, generateAvatarUrl } from '@/lib/utils'
@@ -26,9 +33,11 @@ import { useAuthStore } from '@/store/authStore'
 // useState removed
 
 interface SidebarProps {
-  isCollapsed: boolean
-  onMouseEnter: () => void
-  onMouseLeave: () => void
+  isCollapsed: boolean;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
 type NavItem = {
@@ -45,7 +54,7 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard className="h-5 w-5" />,
     label: 'Painel',
   },
-  { href: '/chat', icon: <MessageCircle className="h-5 w-5" />, label: 'Chat' },
+
   {
     href: '/playground',
     icon: <FlaskConical className="h-5 w-5" />,
@@ -64,24 +73,15 @@ const agentManagementItems: NavItem[] = [
     icon: <Users className="h-5 w-5" />,
     label: 'Meus Agentes',
   },
-  {
-    href: '/sessions',
-    icon: <History className="h-5 w-5" />,
-    label: 'Sessões',
-  },
+
   { href: '/deploy', icon: <Rocket className="h-5 w-5" />, label: 'Deploy' },
 ]
 
 const resourcesItems: NavItem[] = [
   {
-    href: '/tools',
-    icon: <Wrench className="h-5 w-5" />,
-    label: 'Ferramentas',
-  },
-  {
-    href: '/memory',
-    icon: <BrainCircuit className="h-5 w-5" />,
-    label: 'Memória',
+    href: '/biblioteca',
+    icon: <Library className="h-5 w-5" />,
+    label: 'Biblioteca',
   },
   {
     href: '/simulation-sandbox',
@@ -131,65 +131,87 @@ const orchestrationItems: NavItem[] = [
 // const settingsItem = { href: '/configuracoes', icon: Settings, label: 'Configurações' };
 // For clarity, settingsItem is not strictly needed as a variable if we adapt the existing structure directly.
 
-export function Sidebar({
+export const Sidebar = ({
   isCollapsed,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen,
   onMouseEnter,
   onMouseLeave,
-}: SidebarProps) {
+}: SidebarProps) => {
   const { user } = useAuthStore()
 
-  const renderNavLinks = (items: NavItem[]) =>
-    items.map((item) => (
-      <NavLink
-        key={item.href}
-        to={item.disabled ? '#' : item.href}
-        className={({ isActive }) =>
-          cn(
-            'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
-            isCollapsed && 'justify-center',
-            isActive
-              ? 'bg-primary text-primary-foreground'
-              : 'text-foreground hover:bg-primary hover:text-primary-foreground',
-            item.disabled && 'cursor-not-allowed opacity-50',
-          )
-        }
-      >
-        <span className={cn('shrink-0', isCollapsed ? 'mr-0' : 'mr-3')}>
+  const renderNavLinks = (items: NavItem[], isCollapsed: boolean) => {
+    return items.map((item) => {
+      const linkContent = (
+        <NavLink
+          to={item.href}
+          className={({ isActive }) =>
+            cn(
+              'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
+              isCollapsed && 'justify-center',
+              isActive
+                ? 'bg-primary text-primary-foreground'
+                : 'text-foreground hover:bg-primary hover:text-primary-foreground',
+              item.disabled && 'pointer-events-none opacity-50',
+            )
+          }
+        >
           {item.icon}
-        </span>
-        {!isCollapsed && <span>{item.label}</span>}
-      </NavLink>
-    ))
+          {!isCollapsed && <span className="ml-3">{item.label}</span>}
+        </NavLink>
+      );
+
+      if (isCollapsed) {
+        return (
+          <TooltipProvider key={item.href} delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{item.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      }
+
+      return <div key={item.href}>{linkContent}</div>;
+    });
+  };
 
   return (
-    <aside
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={cn(
-        'flex h-full flex-col bg-card border-r border-border transition-all duration-300 ease-in-out',
-        isCollapsed ? 'w-20' : 'w-64',
+    <>
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
       )}
-    >
-      {/* Sidebar Header */}
-      <div className="flex h-16 items-center border-b border-border px-4">
-        {isCollapsed ? (
-          <Bot className="h-6 w-6 mx-auto" /> // Show Bot icon when collapsed and centered
-        ) : (
-          <div className="flex items-center gap-2">
-            {/* Original Logo */}
-            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">
-                N
-              </span>
-            </div>
-            <h1 className="text-lg font-semibold text-foreground">Nexus</h1>
-          </div>
+
+      <aside
+        className={cn(
+          'fixed left-0 top-0 h-full bg-background border-r z-40 transition-all duration-300 ease-in-out flex flex-col',
+          // Mobile view: controlled by isMobileMenuOpen
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full',
+          // Desktop view: controlled by isCollapsed
+          'md:translate-x-0',
+          isCollapsed ? 'md:w-20' : 'md:w-64',
+          // Base width for mobile
+          'w-64'
         )}
-      </div>
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <div className="flex h-16 items-center border-b px-4">
+          <NavLink to="/" className="flex items-center gap-2 font-semibold">
+            <Bot className="h-6 w-6" />
+            {!isCollapsed && <span className="">Nexus</span>}
+          </NavLink>
+        </div>
 
       {/* Navigation Links Area */}
       <nav className="flex-1 flex flex-col p-4">
-        <div className="space-y-1">{renderNavLinks(navItems)}</div>
+        <div className="space-y-1">{renderNavLinks(navItems, isCollapsed)}</div>
 
         {/* Gerenciamento Section */}
         <div className="my-4">
@@ -199,7 +221,7 @@ export function Sidebar({
             </h2>
           )}
           <div className="space-y-1">
-            {renderNavLinks(agentManagementItems)}
+            {renderNavLinks(agentManagementItems, isCollapsed)}
           </div>
         </div>
 
@@ -210,7 +232,7 @@ export function Sidebar({
               Recursos
             </h2>
           )}
-          <div className="space-y-1">{renderNavLinks(resourcesItems)}</div>
+          <div className="space-y-1">{renderNavLinks(resourcesItems, isCollapsed)}</div>
         </div>
 
         {/* Governance Section */}
@@ -220,7 +242,7 @@ export function Sidebar({
               Governança
             </h2>
           )}
-          <div className="space-y-1">{renderNavLinks(governanceItems)}</div>
+          <div className="space-y-1">{renderNavLinks(governanceItems, isCollapsed)}</div>
         </div>
 
         {/* Orchestration Section */}
@@ -230,7 +252,7 @@ export function Sidebar({
               Orquestração
             </h2>
           )}
-          <div className="space-y-1">{renderNavLinks(orchestrationItems)}</div>
+          <div className="space-y-1">{renderNavLinks(orchestrationItems, isCollapsed)}</div>
         </div>
 
         {/* Account Section - Pushed to bottom */}
@@ -272,5 +294,6 @@ export function Sidebar({
         </div>
       </nav>
     </aside>
+    </>
   )
 }

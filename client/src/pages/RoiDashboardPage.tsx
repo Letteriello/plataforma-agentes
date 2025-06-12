@@ -57,14 +57,14 @@ export const RoiDashboardPage: React.FC = () => {
   return (
     <div className="p-6 space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-4">Painel de ROI</h2>
+        <h2 className="text-3xl font-bold tracking-tight mb-2">Painel de ROI</h2>
         <p className="text-muted-foreground">
           Acompanhe o retorno sobre o investimento e o valor gerado pelos seus
           agentes de IA.
         </p>
       </div>
       <section>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4">
           Principais Indicadores de Desempenho (KPIs)
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -74,7 +74,7 @@ export const RoiDashboardPage: React.FC = () => {
         </div>
       </section>
       <section>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4">
           Análise de Custo vs. Benefício
         </h3>
         <RoiChart data={roiData} />

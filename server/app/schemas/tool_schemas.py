@@ -1,7 +1,13 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from typing import List, Optional, Dict, Any
 from uuid import UUID
 from datetime import datetime
+from enum import Enum
+
+# --- Enums ---
+class ToolType(str, Enum):
+    PREDEFINED = "predefined"
+    CUSTOM_API = "custom_api"
 
 # --- Tool Parameter Schemas ---
 class ToolParameterBaseSchema(BaseModel):
@@ -20,26 +26,31 @@ class ToolParameterResponseSchema(ToolParameterBaseSchema):
     created_at: datetime
 
     class Config:
-        orm_mode = True # For SQLAlchemy model conversion
-        # Pydantic V2: from_attributes = True
+        from_attributes = True
 
 # --- Tool Schemas ---
 class ToolBaseSchema(BaseModel):
     name: str = Field(..., description="Unique name of the tool for a given user or system.")
     description: Optional[str] = Field(None, description="Detailed description of what the tool does.")
+    tool_type: ToolType = Field(ToolType.PREDEFINED, description="The type of the tool.")
+    api_endpoint: Optional[HttpUrl] = Field(None, description="The API endpoint URL for custom_api tools.")
     return_type_schema: Optional[Dict[str, Any]] = Field(None, description="JSON schema defining the structure of the data returned by the tool.")
 
 class ToolCreateRequestSchema(ToolBaseSchema):
     parameters: List[ToolParameterCreateSchema] = Field(default_factory=list, description="List of parameters for the tool.")
-    # is_system_tool will be False by default for user-created tools, handled in the endpoint/service.
-    # user_id will be extracted from the JWT token.
+    tool_type: ToolType = Field(ToolType.PREDEFINED, description="The type of the tool, fixed to predefined for this endpoint.", const=True)
+
+class CustomApiToolCreateRequestSchema(ToolBaseSchema):
+    parameters: List[ToolParameterCreateSchema] = Field(default_factory=list, description="List of parameters for the tool.")
+    tool_type: ToolType = Field(ToolType.CUSTOM_API, description="The type of the tool, fixed to custom_api for this endpoint.", const=True)
+    api_endpoint: HttpUrl = Field(..., description="The API endpoint URL for this custom tool.")
 
 class ToolUpdateRequestSchema(BaseModel):
-    name: Optional[str] = Field(None, description="Unique name of the tool for a given user or system.")
-    description: Optional[str] = Field(None, description="Detailed description of what the tool does.")
-    return_type_schema: Optional[Dict[str, Any]] = Field(None, description="JSON schema defining the structure of the data returned by the tool.")
-    parameters: Optional[List[ToolParameterCreateSchema]] = Field(None, description="List of parameters for the tool. If provided, existing parameters will be replaced.")
-    # Updating is_system_tool or user_id is generally not allowed or handled differently.
+    name: Optional[str] = None
+    description: Optional[str] = None
+    api_endpoint: Optional[HttpUrl] = None
+    return_type_schema: Optional[Dict[str, Any]] = None
+    parameters: Optional[List[ToolParameterCreateSchema]] = None
 
 class ToolResponseSchema(ToolBaseSchema):
     id: UUID
@@ -50,8 +61,7 @@ class ToolResponseSchema(ToolBaseSchema):
     parameters: List[ToolParameterResponseSchema] = Field(default_factory=list)
 
     class Config:
-        orm_mode = True # For SQLAlchemy model conversion
-        # Pydantic V2: from_attributes = True
+        from_attributes = True
 
 class PaginatedToolResponseSchema(BaseModel):
     tools: List[ToolResponseSchema]

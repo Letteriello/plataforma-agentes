@@ -89,7 +89,7 @@ const Message: React.FC<MessageProps> = ({
         )}
       >
         {agentName && author === 'agent' && !isError && (
-          <p className="mb-0.5 text-xs font-semibold">{agentName}</p>
+          <p className="mb-0.5 text-sm font-semibold">{agentName}</p>
         )}
         {isError && (
           <div className="flex items-center gap-2">

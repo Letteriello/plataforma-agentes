@@ -46,17 +46,21 @@ const withSuspense = (Component: React.ComponentType) => {
 
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'))
-const AgentsPage = lazy(() => import('@/pages/agents/AgentsIndexPage')) // Updated path
-const MemoryPage = lazy(() => import('./pages/MemoryPage'))
+const AgentsIndexPage = lazy(() => import('@/pages/agents/AgentsIndexPage'));
+const NewAgentPage = lazy(() => import('@/pages/agents/AgentsNewPage'));
+const EditAgentPage = lazy(() => import('@/pages/agents/edit/AgentsEditEntryPage'));
+
+
+
 const Deploy = lazy(() => import('./pages/DeployPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const ToolsPage = lazy(() => import('./pages/ToolsPage')) // Added ToolsPage
+
+const BibliotecaPage = lazy(() => import('./pages/BibliotecaPage'))
 const CofrePage = lazy(() =>
   import('./pages/Cofre').then((module) => ({ default: module.CofrePage }))
 )
-const ChatPage = lazy(() => import('./pages/ChatPage')) // Stays the same
 const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'))
-const SessionsPage = lazy(() => import('./pages/SessionsPage'))
+
 const AgentTemplatesPage = lazy(
   () => import('./pages/agents/AgentsTemplatesPage'),
 )
@@ -115,24 +119,24 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Dashboard' },
       },
       {
-        path: 'chat',
-        element: withSuspense(ChatPage),
-        handle: { title: 'Chat' },
-      },
-      {
         path: 'playground',
         element: withSuspense(PlaygroundPage),
         handle: { title: 'Playground' },
       },
       {
-        path: 'sessions',
-        element: withSuspense(SessionsPage),
-        handle: { title: 'Sessions' },
+        path: 'agents',
+        element: withSuspense(AgentsIndexPage),
+        handle: { title: 'Agentes' },
       },
       {
-        path: 'agents', // path changed from 'agentes'
-        element: withSuspense(AgentsPage),
-        handle: { title: 'Agents' }, // title changed
+        path: 'agents/new',
+        element: withSuspense(NewAgentPage),
+        handle: { title: 'Novo Agente' },
+      },
+      {
+        path: 'agents/:id/edit',
+        element: withSuspense(EditAgentPage),
+        handle: { title: 'Editar Agente' },
       },
       {
         path: 'agents/templates',
@@ -190,9 +194,25 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Orchestration' },
       },
       {
-        path: 'memory', // path changed from 'memoria'
-        element: withSuspense(MemoryPage),
-        handle: { title: 'Memory' }, // title changed
+        path: 'biblioteca',
+        element: withSuspense(BibliotecaPage),
+        handle: { title: 'Biblioteca' },
+        children: [
+          {
+            index: true,
+            element: <Navigate to="ferramentas" replace />,
+          },
+          {
+            path: 'ferramentas',
+            element: withSuspense(BibliotecaPage),
+            handle: { title: 'Ferramentas' },
+          },
+          {
+            path: 'memoria',
+            element: withSuspense(BibliotecaPage),
+            handle: { title: 'Memória' },
+          },
+        ],
       },
       {
         path: 'deploy',
@@ -208,11 +228,6 @@ const routes: AppRouteObject[] = [
         path: 'cofre',
         element: withSuspense(CofrePage),
         handle: { title: 'Cofre' },
-      },
-      {
-        path: 'tools',
-        element: withSuspense(ToolsPage),
-        handle: { title: 'Tools' },
       },
     ],
   },

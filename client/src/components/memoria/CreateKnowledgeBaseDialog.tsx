@@ -1,182 +1,152 @@
-import React, { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 import { KnowledgeBaseType } from '@/api/memoryService'
+import { FormDialog } from '@/components/ui/FormDialog'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
+// Zod schema for validation
+const formSchema = z.object({
+  name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres.').max(50, 'O nome não pode exceder 50 caracteres.'),
+  description: z.string().max(250, 'A descrição não pode exceder 250 caracteres.').optional(),
+  type: z.nativeEnum(KnowledgeBaseType),
+  baseModel: z.string().optional(),
+}).refine(data => {
+  if (data.type === KnowledgeBaseType.FINE_TUNING) {
+    return !!data.baseModel;
+  }
+  return true;
+}, {
+  message: 'O modelo base é obrigatório para o tipo Fine-Tuning.',
+  path: ['baseModel'],
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 interface CreateKnowledgeBaseDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSubmit: (data: {
-    name: string
-    description: string
-    type: KnowledgeBaseType
-    baseModel?: string
-  }) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: FormData) => void;
+  isSubmitting: boolean;
 }
 
-export function CreateKnowledgeBaseDialog({
-  open,
-  onOpenChange,
-  onSubmit,
-}: CreateKnowledgeBaseDialogProps) {
-  // Estado do formulário
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [type, setType] = useState<KnowledgeBaseType>(KnowledgeBaseType.RAG)
-  const [baseModel, setBaseModel] = useState('Gemini Pro')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+const modelOptions = [
+  'Gemini Pro',
+  'Claude 3 Haiku',
+  'Claude 3 Sonnet',
+  'GPT-3.5 Turbo',
+  'GPT-4o',
+  'Llama 3',
+];
 
-  // Opções de modelos para fine-tuning
-  const modelOptions = [
-    'Gemini Pro',
-    'Claude 3 Haiku',
-    'Claude 3 Sonnet',
-    'GPT-3.5 Turbo',
-    'GPT-4o',
-    'Llama 3',
-  ]
+export function CreateKnowledgeBaseDialog({ open, onOpenChange, onSubmit, isSubmitting }: CreateKnowledgeBaseDialogProps) {
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      type: KnowledgeBaseType.RAG,
+      baseModel: 'Gemini Pro',
+    },
+  });
 
-  // Resetar o formulário quando o diálogo é fechado
-  const handleOpenChange = (open: boolean) => {
+  const watchedType = form.watch('type');
+
+  useEffect(() => {
     if (!open) {
-      setName('')
-      setDescription('')
-      setType(KnowledgeBaseType.RAG)
-      setBaseModel('Gemini Pro')
-      setIsSubmitting(false)
+      form.reset();
     }
-    onOpenChange(open)
-  }
-
-  // Enviar o formulário
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    onSubmit({
-      name,
-      description,
-      type,
-      baseModel: type === KnowledgeBaseType.FINE_TUNING ? baseModel : undefined,
-    })
-
-    // Nota: O diálogo será fechado pelo componente pai após a conclusão da operação
-  }
+  }, [open, form]);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Criar Base de Conhecimento</DialogTitle>
-            <DialogDescription>
-              Crie uma nova base de conhecimento para armazenar e processar
-              documentos.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Nome
-              </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="col-span-3"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Descrição
-              </Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="col-span-3"
-                rows={3}
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="type" className="text-right">
-                Tipo
-              </Label>
-              <Select
-                value={type}
-                onValueChange={(value) => setType(value as KnowledgeBaseType)}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={KnowledgeBaseType.RAG}>
-                    RAG (Retrieval Augmented Generation)
-                  </SelectItem>
-                  <SelectItem value={KnowledgeBaseType.FINE_TUNING}>
-                    Fine-Tuning
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {type === KnowledgeBaseType.FINE_TUNING && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="baseModel" className="text-right">
-                  Modelo Base
-                </Label>
-                <Select value={baseModel} onValueChange={setBaseModel}>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecione o modelo base" />
-                  </SelectTrigger>
+    <FormDialog
+      isOpen={open}
+      onOpenChange={onOpenChange}
+      title="Criar Base de Conhecimento"
+      description="Crie uma nova base de conhecimento para armazenar e processar documentos."
+      isSubmitting={isSubmitting}
+      submitButtonText="Criar"
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
+      <Form {...form}>
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome</FormLabel>
+                <FormControl>
+                  <Input placeholder="Ex: Documentação de Vendas" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Descrição</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Descreva o propósito desta base de conhecimento." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tipo</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                  </FormControl>
                   <SelectContent>
-                    {modelOptions.map((model) => (
-                      <SelectItem key={model} value={model}>
-                        {model}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value={KnowledgeBaseType.RAG}>RAG (Retrieval Augmented Generation)</SelectItem>
+                    <SelectItem value={KnowledgeBaseType.FINE_TUNING}>Fine-Tuning</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleOpenChange(false)}
-              disabled={isSubmitting}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !name}>
-              {isSubmitting ? 'Criando...' : 'Criar'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
+          />
+          {watchedType === KnowledgeBaseType.FINE_TUNING && (
+            <FormField
+              control={form.control}
+              name="baseModel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Modelo Base</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o modelo base" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {modelOptions.map((model) => (
+                        <SelectItem key={model} value={model}>{model}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+        </div>
+      </Form>
+    </FormDialog>
+  );
 }

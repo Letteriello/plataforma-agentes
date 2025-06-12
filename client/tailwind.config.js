@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import { spacing as themeSpacing, fontSize as themeFontSize, borderRadius as themeBorderRadius, boxShadow as themeBoxShadow } from './src/theme/theme';
 
 export default {
   darkMode: ["class"],
@@ -62,9 +63,9 @@ export default {
         "info-foreground": "hsl(var(--info-foreground))",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        ...themeBorderRadius, // Sobrescreve com borderRadius do theme.ts
+        // Mantém os específicos se necessário, ou remove se themeBorderRadius for completo
+        // Ex: lg: "var(--radius)", // Se esta variável CSS for preferida
       },
       keyframes: {
         "accordion-down": {
@@ -83,22 +84,12 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
-      boxShadow: {
-        'xs': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        'sm': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-        'DEFAULT': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-        'md': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-        'lg': '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-        '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-        'inner': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
-        'none': 'none',
-      },
+      fontSize: themeFontSize, // Adiciona fontSize do theme.ts
+      boxShadow: themeBoxShadow, // Sobrescreve com boxShadow do theme.ts
       spacing: {
-        '18': '4.5rem',
-        '22': '5.5rem',
-        '26': '6.5rem',
-        '30': '7.5rem',
+        ...themeSpacing, // Sobrescreve com spacing do theme.ts
+        // Mantém os específicos se necessário, ou remove se themeSpacing for completo
+        // Ex: '18': '4.5rem',
       },
     },
   },

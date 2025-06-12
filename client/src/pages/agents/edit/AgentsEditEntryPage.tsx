@@ -8,7 +8,7 @@ export function EditAgentPage() {
   return (
     <>
       <AgentSubNav /> {/* Added */}
-      <AgentEditor mode="edit" agentId={id} /> {/* Pass agentId if needed by AgentEditor */}
+      <AgentEditor mode="edit" agentId={id} isWizardMode={false} /> {/* Pass agentId if needed by AgentEditor */}
     </>
   );
 }

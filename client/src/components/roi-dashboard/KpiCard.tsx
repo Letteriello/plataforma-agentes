@@ -32,7 +32,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({ kpi }) => {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{kpi.value}</div>
-        <p className="text-xs text-muted-foreground flex items-center">
+        <p className="text-xs text-muted-foreground flex items-center flex-wrap">
           <span className={`mr-1 ${CHANGE_COLORS[kpi.changeType]}`}>
             {ICONS[kpi.changeType]}
           </span>

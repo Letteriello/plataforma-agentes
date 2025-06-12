@@ -19,9 +19,10 @@ import type { UiToolDefinition } from '@/types/agents';
 
 interface AgentToolsTabProps {
   agentId?: string; // Agent ID for direct API calls in edit mode
+  isWizardMode?: boolean;
 }
 
-const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId }) => {
+const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId, isWizardMode = false }) => {
   const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<ToolDTO | null>(null);
   const [configuredToolsDetails, setConfiguredToolsDetails] = useState<Record<string, UiToolDefinition>>({});
   const { control, setValue, getValues } = useFormContext(); // Added getValues
@@ -96,96 +97,183 @@ const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId }) => {
     return <p className="text-destructive">{error}</p>
   }
 
+  if (isWizardMode) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Ferramentas</CardTitle>
+          <CardDescription>
+            Selecione as ferramentas que seu agente poderá utilizar.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormField
+            control={control}
+            name="tools" // Este será um array de IDs de ferramentas selecionadas
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Ferramentas Disponíveis</FormLabel>
+                  <FormDescription>
+                    Marque as ferramentas que o agente deve ter acesso.
+                  </FormDescription>
+                </div>
+                {availableTools.map((tool) => (
+                  <FormField
+                    key={tool.id}
+                    control={control}
+                    name="tools"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={tool.id}
+                          className="flex flex-row items-start space-x-3 space-y-0 mb-4"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.some((t: UiToolDefinition) => t.name === tool.name)}
+                              onCheckedChange={(checked) => {
+                                const currentTools = getValues().tools || [];
+                                if (checked) {
+                                  // Adiciona a ferramenta inteira, não apenas o ID
+                                  const newToolDef: UiToolDefinition = {
+                                    name: tool.name,
+                                    description: tool.description,
+                                    parameters: tool.parameters?.properties || {},
+                                    required: tool.parameters?.required || [],
+                                  };
+                                  field.onChange([...currentTools, newToolDef]);
+                                } else {
+                                  field.onChange(
+                                    currentTools.filter((t: UiToolDefinition) => t.name !== tool.name)
+                                  );
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {tool.name}
+                            <p className="text-sm text-muted-foreground">
+                              {tool.description}
+                            </p>
+                          </FormLabel>
+                        </FormItem>
+                      )
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Renderização para o modo avançado (não-wizard)
   return (
-  <>
-    <FormField
-      control={control}
-      name="tools"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel className="sr-only">Ferramentas</FormLabel>
-          <FormControl>
-            <div className="space-y-3">
-              {availableTools.map((tool) => {
-                const checked = field.value?.includes(tool.id)
-                const localCheckboxChangeHandler = (checkedStatus: boolean | 'indeterminate') => {
-                  // Assuming 'indeterminate' should not trigger a change or be treated as false
-                  const isActuallyChecked = typeof checkedStatus === 'boolean' ? checkedStatus : false;
-                  handleToolSelectionChange(tool.id, isActuallyChecked);
-                };
-                return (
-                  <div key={tool.id} className="flex items-start gap-3">
-                    <Checkbox
-                      id={`tool-${tool.id}`}
-                      checked={checked}
-                      onCheckedChange={localCheckboxChangeHandler}
-                    />
-                    <Label htmlFor={`tool-${tool.id}`} className="font-medium flex-1">
-                      {tool.name}
-                    </Label>
-                    <span className="text-sm text-muted-foreground flex-2 mr-2">
-                      {tool.description}
-                    </span>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setSelectedToolForConfiguration(tool)}>
-                      Configurar
-                    </Button>
-                  </div>
-                )
-              })}
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
+    <Card>
+      <CardHeader>
+        <CardTitle>Ferramentas</CardTitle>
+        <CardDescription>
+          Selecione e configure as ferramentas que seu agente poderá utilizar.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <FormField
+          control={control}
+          name="tools"
+          render={({ field }) => (
+            <FormItem>
+              <div className="space-y-4 pt-2">
+                {availableTools.map((tool) => {
+                  const isChecked = field.value?.some((t: UiToolDefinition) => t.name === tool.name);
+                  
+                  return (
+                    <div key={tool.id} className="flex items-center justify-between p-3 border rounded-md hover:bg-muted/50">
+                      <div className="flex items-center space-x-4">
+                        <Checkbox
+                          id={`tool-${tool.id}`}
+                          checked={isChecked}
+                          onCheckedChange={(checked) => {
+                            const currentTools = getValues().tools || [];
+                            if (checked) {
+                              const newToolDef: UiToolDefinition = {
+                                name: tool.name,
+                                description: tool.description,
+                                parameters: tool.parameters?.properties || {},
+                                required: tool.parameters?.required || [],
+                              };
+                              field.onChange([...currentTools, newToolDef]);
+                            } else {
+                              field.onChange(
+                                currentTools.filter((t: UiToolDefinition) => t.name !== tool.name)
+                              );
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`tool-${tool.id}`} className="font-medium">
+                          {tool.name}
+                          <p className="text-sm text-muted-foreground font-normal mt-1">{tool.description}</p>
+                        </Label>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedToolForConfiguration(tool)}
+                        disabled={!isChecked}
+                      >
+                        Configurar
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+              <FormMessage className="pt-2" />
+            </FormItem>
+          )}
+        />
+      </CardContent>
+      {selectedToolForConfiguration && (
+        <ToolDefinitionForm
+          isOpen={!!selectedToolForConfiguration}
+          initialToolDefinition={(() => {
+            if (!selectedToolForConfiguration) return undefined;
+            const currentTools = getValues().tools || [];
+            const existingDetail = currentTools.find((t: UiToolDefinition) => t.name === selectedToolForConfiguration.name);
+            if (existingDetail) {
+              return existingDetail;
+            }
+            // Fallback para criar a partir do DTO se não estiver na lista (não deveria acontecer se o botão estiver desabilitado)
+            const toolDto = selectedToolForConfiguration;
+            return {
+              name: toolDto.name,
+              description: toolDto.description,
+              parameters: toolDto.parameters?.properties || {},
+              required: toolDto.parameters?.required || [],
+            };
+          })()}
+          onClose={() => setSelectedToolForConfiguration(null)}
+          onSave={(savedToolDefinition) => {
+            if (!selectedToolForConfiguration) return;
+            const currentTools = getValues().tools || [];
+            const toolIndex = currentTools.findIndex((t: UiToolDefinition) => t.name === savedToolDefinition.name);
+            
+            if (toolIndex > -1) {
+              const updatedTools = [...currentTools];
+              updatedTools[toolIndex] = savedToolDefinition;
+              setValue('tools', updatedTools, { shouldValidate: true, shouldDirty: true });
+              toast({ title: 'Ferramenta configurada', description: `A ferramenta "${savedToolDefinition.name}" foi atualizada.` });
+            }
+            
+            setSelectedToolForConfiguration(null);
+          }}
+        />
       )}
-    />
-
-    {selectedToolForConfiguration && (
-      <ToolDefinitionForm 
-        initialData={(() => {
-          if (!selectedToolForConfiguration) return {}; // Should not happen if form is visible
-          const existingDetail = configuredToolsDetails[selectedToolForConfiguration.id];
-          if (existingDetail) {
-            return existingDetail; // Already UiToolDefinition
-          }
-          // Create a new UiToolDefinition from ToolDTO for initial form display
-          const toolDto = selectedToolForConfiguration;
-          return {
-            name: toolDto.name,
-            description: toolDto.description,
-            // Transform from ToolDTO's parameter structure to UiToolDefinition's structure
-            parameters: toolDto.parameters?.properties || {},
-            required: toolDto.parameters?.required || [],
-          };
-        })()}
-        onClose={() => setSelectedToolForConfiguration(null)}
-        onSave={(savedToolDefinition) => {
-          if (!selectedToolForConfiguration) return;
-
-          const toolId = selectedToolForConfiguration.id;
-          // savedToolDefinition is now AdkToolDefinition
-          const newConfiguredDetails: Record<string, UiToolDefinition> = {
-            ...configuredToolsDetails,
-            [toolId]: savedToolDefinition, 
-          };
-          setConfiguredToolsDetails(newConfiguredDetails);
-          
-          // Update the parent form's field (e.g., 'formToolsDefinitions')
-          // The actual field name in the parent form (AgentEditor) needs to be consistent.
-          // For now, let's assume it's 'detailedToolDefinitions'
-          setValue('detailedToolDefinitions', Object.values(newConfiguredDetails), { shouldValidate: true, shouldDirty: true });
-          
-          console.log(`Updated configuredToolsDetails for tool ID ${toolId}:`, savedToolDefinition);
-          console.log("All configured tool details:", newConfiguredDetails);
-          console.log("Parent form field 'detailedToolDefinitions' updated with:", Object.values(newConfiguredDetails));
-
-          setSelectedToolForConfiguration(null); // Close the form
-        }}
-      />
-    )}
-  </>
+    </Card>
   );
 };
 
-// Add React.Fragment shorthand <> to wrap multiple root elements
-
-export default AgentToolsTab
+export default AgentToolsTab;

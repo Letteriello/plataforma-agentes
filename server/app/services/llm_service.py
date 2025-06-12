@@ -1,6 +1,6 @@
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part, HarmCategory, HarmBlockThreshold, Content
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 from app.models.agent import Agent as AgentConfig # Pydantic model for agent config
 from app.schemas.chat_schemas import ChatMessageResponse # Pydantic model for chat messages
@@ -42,7 +42,7 @@ class LLMService:
         agent_config: AgentConfig,
         conversation_history: List[ChatMessageResponse],
         user_message_content: str
-    ) -> str:
+    ) -> Tuple[str, Dict[str, int]]:
         if not LLMService._initialized:
             logger.error("LLMService not initialized. Call __init__ first.")
             # Attempt to initialize again, or raise a more specific error
@@ -79,19 +79,27 @@ class LLMService:
             response = await model.generate_content_async(
                 contents_for_llm,
                 generation_config=generation_config_dict,
-                system_instruction=system_instruction_part, 
-                # safety_settings=safety_settings,
-                # tools=formatted_tools, # TODO: Map from agent_config.tools
+                system_instruction=system_instruction_part,
             )
             logger.debug(f"LLM Raw Response: {response}")
-            
+
+            # Extract token usage
+            token_usage = {
+                "input_tokens": 0,
+                "output_tokens": 0,
+            }
+            if response.usage_metadata:
+                token_usage["input_tokens"] = response.usage_metadata.prompt_token_count
+                token_usage["output_tokens"] = response.usage_metadata.candidates_token_count
+
+            # Extract response text
             if response.candidates and response.candidates[0].content.parts and response.candidates[0].content.parts[0].text is not None:
                 llm_text_response = response.candidates[0].content.parts[0].text
                 logger.info(f"LLM generated response: {llm_text_response[:100]}...")
-                return llm_text_response
+                return llm_text_response, token_usage
             else:
                 logger.warning(f"LLM response did not contain expected text part. Full response: {response}")
-                return "Sorry, I could not generate a valid response text."
+                return "Sorry, I could not generate a valid response text.", token_usage
         except Exception as e:
             logger.error(f"Error during LLM call: {e}", exc_info=True)
-            return f"Error communicating with LLM: An unexpected error occurred."
+            return f"Error communicating with LLM: An unexpected error occurred.", {"input_tokens": 0, "output_tokens": 0}

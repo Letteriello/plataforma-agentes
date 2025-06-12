@@ -1,4 +1,4 @@
-import { Bell, PlusCircle, Search, User, Settings, HelpCircle, LogOut } from 'lucide-react'; // Added Search & User Menu Icons
+import { Bell, Menu, PlusCircle, Search, User, Settings, HelpCircle, LogOut } from 'lucide-react';
 import { Input } from '@/components/ui/input'; // Added Input
 import { Link, useNavigate } from 'react-router-dom'; // Added Link and useNavigate
 import { useAuthStore } from '@/store/authStore'; // Added useAuthStore
@@ -19,9 +19,10 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface TopbarProps {
   pageTitle?: string;
+  onMenuClick: () => void;
 }
 
-export function Topbar({ pageTitle }: TopbarProps) {
+export function Topbar({ pageTitle, onMenuClick }: TopbarProps) {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -32,9 +33,20 @@ export function Topbar({ pageTitle }: TopbarProps) {
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
-      {/* Left section - Title */}
-      <div className="flex items-center">
-        <h2 className="text-lg font-medium text-foreground">
+      {/* Left section - Title & Mobile Menu */}
+      <div className="flex items-center gap-4">
+        {/* Mobile Menu Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={onMenuClick}
+        >
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Abrir menu</span>
+        </Button>
+
+        <h2 className="text-lg font-medium text-foreground hidden sm:block">
           {pageTitle || 'Painel'}
         </h2>
         <Badge variant="info" size="sm" className="ml-3">

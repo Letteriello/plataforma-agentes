@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useToast } from '@/components/ui/use-toast'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { useState, useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   FormField,
   FormItem,
@@ -12,254 +13,204 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form'
+} from '@/components/ui/form';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
+} from '@/components/ui/card';
 
-import { LLMAgentForm } from './forms/LLMAgentForm'
-import AgentToolsTab from './forms/AgentToolsTab'
+import { LLMAgentForm } from './forms/LLMAgentForm';
+import AgentToolsTab from './forms/AgentToolsTab';
 import { BaseAgentForm } from './forms/BaseAgentForm';
-import agentService from '@/api/agentService'; // Added agentService import
-import type { CreateAgentDTO } from '@/api/agentService'; // For createAgent payload type
-import { LlmAgentConfig, createDefaultAgent, LlmAgentConfigSchema, AgentType } from '@/types/agents'; // Added AgentType if not already there
+import agentService from '@/api/agentService';
+import type { LlmAgentConfig } from '@/types/agents';
+import { LlmAgentConfigSchema, createDefaultAgent } from '@/types/agents';
+import { ComponentSkeleton } from '@/components/ui/component-skeleton';
+import AgentMemoryTab from './forms/AgentMemoryTab';
 
-const WIZARD_STEPS = [
-  'identidade',
-  'instrucoes',
-  'modelo_geracao',
-  'ferramentas',
-  'memoria',
-]
-const STEP_LABELS: { [key: string]: string } = {
-  identidade: 'Identidade',
-  instrucoes: 'Instruções',
-  modelo_geracao: 'Modelo & Geração',
-  ferramentas: 'Ferramentas',
-  memoria: 'Memória',
+interface AgentEditorProps {
+  isWizardMode?: boolean;
 }
 
-// Dados mock atualizados para refletir a nova estrutura aninhada do ADK
-const mockAgents: LlmAgentConfig[] = [
-  {
-    id: '1',
-    name: 'Customer Support Bot',
-    description: 'Handles customer inquiries and support tickets',
-    type: AgentType.LLM,
-    model: 'gemini-1.5-pro',
-    instruction:
-      'You are a helpful customer support assistant. Be polite and professional.',
-    generateContentConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 1024,
-      topP: 1,
-      topK: 40,
-      stopSequences: [],
-    },
-    tools: ['tool-1', 'tool-2'],
-    // Propriedades base
-    version: '1.0.0',
-    isPublic: true,
-    tags: ['support', 'gemini'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-]
+export function AgentEditor({
+  isWizardMode = false,
+}: AgentEditorProps) {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const formMethods = useFormContext<LlmAgentConfig>();
 
-export function AgentEditor() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { toast } = useToast()
-  const [mode, setMode] = useState<'create' | 'edit'>('create')
-  const [agent, setAgent] = useState<AnyAgentConfig | undefined>()
-  const [isLoading, setIsLoading] = useState(false)
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [agentData, setAgentData] = useState<LlmAgentConfig>(createDefaultAgent());
+  const [isLoading, setIsLoading] = useState(true);
+  const [mode, setMode] = useState<'create' | 'edit'>('create');
+  const [activeTab, setActiveTab] = useState('identidade');
+
+  const WIZARD_STEPS = [
+    'identidade',
+    'instrucoes',
+    'modelo_geracao',
+    'ferramentas',
+    'memoria',
+  ];
+  const STEP_LABELS: { [key: string]: string } = {
+    identidade: 'Identidade',
+    instrucoes: 'Instruções',
+    modelo_geracao: 'Modelo & Geração',
+    ferramentas: 'Ferramentas',
+    memoria: 'Memória',
+  };
+
+  const currentStepIndex = WIZARD_STEPS.indexOf(activeTab);
 
   useEffect(() => {
     if (id) {
       setMode('edit');
       setIsLoading(true);
-      agentService.fetchAgentById(id)
-        .then(data => {
-          // O AgentDetailDTO retornado é compatível com LlmAgentConfig
-          // e o estado agent é AnyAgentConfig, então a atribuição direta é ok.
-          setAgent(data as AnyAgentConfig); 
+      agentService
+        .fetchAgentById(id)
+        .then((data) => {
+          setAgentData(data);
         })
-        .catch(err => {
-          console.error('Failed to fetch agent:', err);
+        .catch((error) => {
+          console.error('Failed to fetch agent:', error);
           toast({
-            variant: 'destructive',
             title: 'Erro ao carregar agente',
-            description: (err as Error)?.message || 'Não foi possível encontrar o agente.',
+            description: 'Não foi possível encontrar o agente solicitado.',
+            variant: 'destructive',
           });
           navigate('/agents');
         })
-        .finally(() => setIsLoading(false));
+        .finally(() => {
+          setIsLoading(false);
+        });
     } else {
       setMode('create');
-      // Cria um novo agente com a estrutura padrão correta
-      // createDefaultAgent retorna AnyAgentConfig, compatível com o estado agent.
-      setAgent(createDefaultAgent(AgentType.LLM)); 
+      setAgentData(createDefaultAgent());
+      setIsLoading(false);
     }
-  }, [id, navigate, toast])
+  }, [id, navigate, toast]);
 
   const handleNextStep = () => {
     if (currentStepIndex < WIZARD_STEPS.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1)
+      setActiveTab(WIZARD_STEPS[currentStepIndex + 1]);
     }
-  }
+  };
 
   const handlePreviousStep = () => {
     if (currentStepIndex > 0) {
-      setCurrentStepIndex(currentStepIndex - 1)
+      setActiveTab(WIZARD_STEPS[currentStepIndex - 1]);
     }
-  }
-
-  const handleTabChange = (value: string) => {
-    const stepIndex = WIZARD_STEPS.indexOf(value)
-    if (stepIndex !== -1) {
-      setCurrentStepIndex(stepIndex)
-    }
-  }
+  };
 
   const handleCancel = () => {
-    navigate('/agents')
-  }
+    navigate('/agents');
+  };
 
-  const handleSubmit = async (values: LlmAgentConfig) => {
+  const onSubmit = async (formData: LlmAgentConfig) => {
     setIsLoading(true);
-    const currentAgentId = id; // id from useParams()
+
+    const payload: LlmAgentConfig = {
+      ...formData,
+      tools: formData.tools || [],
+      knowledgeBaseIds: formData.knowledgeBaseIds || [],
+    };
 
     try {
       if (mode === 'create') {
-        // Destructure to get tools and remove id, createdAt, updatedAt for the payload
-        // The 'tools' array from 'values' contains the IDs of selected tools.
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _id, createdAt, updatedAt, tools, ...agentDataForCreation } = values;
-        
-        // Create the agent first (payload should not include 'tools' if backend handles it separately)
-        const newAgent = await agentService.createAgent(agentDataForCreation as CreateAgentDTO);
+        const newAgent = await agentService.createAgent(payload);
         toast({
           title: 'Agente criado com sucesso!',
           description: `O agente "${newAgent.name}" foi criado.`,
         });
-
-        const toolsToAssociate = tools || []; // These are string IDs from the form
-        if (toolsToAssociate.length > 0) {
-          toast({ title: "Info", description: `Associando ${toolsToAssociate.length} ferramentas...` });
-          const associationPromises = toolsToAssociate.map(toolId =>
-            agentService.associateToolWithAgent(newAgent.id, toolId)
-          );
-          // Use Promise.allSettled to handle individual successes/failures
-          const results = await Promise.allSettled(associationPromises);
-          
-          results.forEach((result, index) => {
-            if (result.status === 'rejected') {
-              console.error(`Failed to associate tool ${toolsToAssociate[index]}:`, result.reason);
-              toast({
-                title: 'Erro na associação de ferramenta',
-                description: `Falha ao associar ferramenta ID "${toolsToAssociate[index]}". Motivo: ${(result.reason as Error)?.message || 'Erro desconhecido'}`,
-                variant: 'destructive',
-              });
-            }
-          });
-        }
-        navigate(`/agents/${newAgent.id}/edit`); // Navigate to the new agent's edit page
-
-      } else if (mode === 'edit' && currentAgentId) {
-        // In edit mode, AgentToolsTab handles tool associations directly.
-        // The main update payload should not include the 'tools' array.
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _id, createdAt, updatedAt, tools, ...agentDataForUpdate } = values;
-        
-        const updatedAgent = await agentService.updateAgent(currentAgentId, agentDataForUpdate as any); // Cast if UpdateAgentDTO is different
+        navigate(`/agents/edit/${newAgent.id}`);
+      } else if (id) {
+        const updatedAgent = await agentService.updateAgent(id, payload);
         toast({
-          title: 'Agente salvo com sucesso!',
-          description: `O agente "${updatedAgent.name}" foi atualizado.`,
+          title: 'Agente atualizado com sucesso!',
+          description: `As alterações em "${updatedAgent.name}" foram salvas.`,
         });
-        // Stay on the edit page or navigate to /agents as preferred. Staying is common.
-        navigate(`/agents/${currentAgentId}/edit`); 
       }
-    } catch (err) {
-      console.error(`Failed to ${mode === 'create' ? 'create' : 'update'} agent:`, err);
+    } catch (error) {
+      console.error('Failed to save agent:', error);
       toast({
+        title: 'Erro ao salvar agente',
+        description: 'Ocorreu um erro ao tentar salvar o agente. Tente novamente.',
         variant: 'destructive',
-        title: `Erro ao ${mode === 'create' ? 'criar' : 'salvar'} agente`,
-        description: (err as Error)?.message || 'Não foi possível salvar o agente.',
       });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  if (!agent) {
-    return <div>Carregando...</div> // Ou um componente de esqueleto
+  if (isLoading) {
+    return <ComponentSkeleton />; // Show a loading skeleton
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">
-          {mode === 'create' ? 'Criar Novo Agente' : `Editar Agente: ${agent.name}`}
+    <div className="flex flex-col h-full">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">
+          {mode === 'create' ? 'Criar Novo Agente' : 'Editar Agente'}
         </h1>
-        <p className="text-muted-foreground mt-2">
-          Siga os passos para configurar seu agente LLM.
+        <p className="text-muted-foreground">
+          {isWizardMode
+            ? `Passo ${currentStepIndex + 1} de ${WIZARD_STEPS.length}: ${STEP_LABELS[activeTab]}`
+            : 'Configure os detalhes do seu agente.'}
         </p>
       </header>
 
       <BaseAgentForm
-        schema={LLMAgentSchema}
-        defaultValues={agent}
-        onSubmit={handleSubmit}
+        schema={LlmAgentConfigSchema}
+        onSubmit={onSubmit}
         onCancel={handleCancel}
+        defaultValues={agentData}
       >
-        <Tabs
-          value={WIZARD_STEPS[currentStepIndex]}
-          onValueChange={handleTabChange}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-5 mb-6">
-            {WIZARD_STEPS.map((step) => (
-              <TabsTrigger key={step} value={step}>
-                {STEP_LABELS[step]}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
+          {!isWizardMode && (
+            <TabsList>
+              <TabsTrigger value="identidade">Identidade</TabsTrigger>
+              <TabsTrigger value="instrucoes">Instruções</TabsTrigger>
+              <TabsTrigger value="modelo_geracao">Modelo & Geração</TabsTrigger>
+              <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
+              <TabsTrigger value="memoria">Memória</TabsTrigger>
+            </TabsList>
+          )}
 
-          <TabsContent value="identidade">
+          <TabsContent value="identidade" forceMount>
             <Card>
               <CardHeader>
                 <CardTitle>Identidade do Agente</CardTitle>
                 <CardDescription>
-                  Dê um nome e uma descrição para identificar seu agente.
+                  Defina o nome, a descrição e o modelo base para o seu agente.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent>
                 <FormField
+                  control={formMethods.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Ex: Agente de Vendas" />
+                        <Input placeholder="Ex: Agente de Vendas" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
+                  control={formMethods.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Descrição</FormLabel>
                       <FormControl>
                         <Textarea
+                          placeholder="Ex: Um agente inteligente para automatizar o processo de vendas."
                           {...field}
-                          placeholder="Ex: Responsável por qualificar leads e agendar reuniões."
                         />
                       </FormControl>
                       <FormMessage />
@@ -270,23 +221,25 @@ export function AgentEditor() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="instrucoes">
+          <TabsContent value="instrucoes" forceMount>
             <Card>
               <CardHeader>
-                <CardTitle>Instruções</CardTitle>
+                <CardTitle>Instruções do Sistema</CardTitle>
                 <CardDescription>
-                  Defina o comportamento e a personalidade do seu agente.
+                  Forneça as diretrizes e o comportamento esperado para o agente.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <FormField
-                  name="instruction"
+                  control={formMethods.control}
+                  name="system_prompt"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Prompt do Sistema</FormLabel>
                       <FormControl>
                         <Textarea
+                          rows={10}
                           {...field}
-                          rows={12}
                           placeholder="Você é um assistente prestativo..."
                         />
                       </FormControl>
@@ -298,41 +251,31 @@ export function AgentEditor() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="modelo_geracao">
-            <LLMAgentForm disabled={isLoading} />
+          <TabsContent value="modelo_geracao" forceMount>
+            <LLMAgentForm disabled={isLoading} isWizardMode={isWizardMode} />
           </TabsContent>
 
-          <TabsContent value="ferramentas">
-            <AgentToolsTab agentId={id} />
+          <TabsContent value="ferramentas" forceMount>
+            <AgentToolsTab agentId={id} isWizardMode={isWizardMode} />
           </TabsContent>
 
-          <TabsContent value="memoria">
-            <Card>
-              <CardHeader>
-                <CardTitle>Memória</CardTitle>
-                <CardDescription>
-                  Defina as configurações de memória do seu agente.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Em breve: Funcionalidade de configuração de memória.
-                </p>
-              </CardContent>
-            </Card>
+          <TabsContent value="memoria" forceMount>
+            <AgentMemoryTab />
           </TabsContent>
         </Tabs>
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t">
           <div>
-            <Button
-              variant="outline"
-              onClick={handlePreviousStep}
-              disabled={currentStepIndex === 0 || isLoading}
-              className={currentStepIndex === 0 ? 'invisible' : ''}
-            >
-              Anterior
-            </Button>
+            {isWizardMode && (
+               <Button
+                 variant="outline"
+                 onClick={handlePreviousStep}
+                 disabled={currentStepIndex === 0 || isLoading}
+                 className={currentStepIndex === 0 ? 'invisible' : ''}
+               >
+                 Anterior
+               </Button>
+            )}
           </div>
           <div className="space-x-3">
             <Button
@@ -342,28 +285,28 @@ export function AgentEditor() {
             >
               Cancelar
             </Button>
-            {currentStepIndex === WIZARD_STEPS.length - 1 ? (
-              <Button type="submit" disabled={isLoading}>
-                {isLoading
-                  ? mode === 'create'
-                    ? 'Criando...'
-                    : 'Salvando...'
-                  : mode === 'create'
-                    ? 'Criar Agente'
-                    : 'Salvar Alterações'}
-              </Button>
+            {isWizardMode ? (
+              currentStepIndex === WIZARD_STEPS.length - 1 ? (
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Criando...' : 'Criar Agente'}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={handleNextStep}
+                  disabled={isLoading}
+                >
+                  Próximo
+                </Button>
+              )
             ) : (
-              <Button
-                type="button"
-                onClick={handleNextStep}
-                disabled={currentStepIndex === WIZARD_STEPS.length - 1 || isLoading}
-              >
-                Próximo
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
               </Button>
             )}
           </div>
         </div>
       </BaseAgentForm>
     </div>
-  )
+  );
 }

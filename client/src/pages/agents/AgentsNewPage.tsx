@@ -5,7 +5,7 @@ export function NewAgentPage() {
   return (
     <>
       <AgentSubNav /> {/* Added */}
-      <AgentEditor mode="create" />
+      <AgentEditor mode="create" isWizardMode={true} />
     </>
   );
 }

@@ -31,6 +31,7 @@ class Agent(BaseModel):
     code_executor_config: Optional[Dict[str, Any]] = None
 
     tools: List[ToolResponseSchema] = [] # Changed to ToolResponseSchema
+    knowledge_base_ids: Optional[List[str]] = Field(default_factory=list)
     
     class Config:
         model_config = {
@@ -62,3 +63,4 @@ class AgentUpdate(BaseModel):
     code_executor_config: Optional[Dict[str, Any]] = None
 
     tools: Optional[List[ToolResponseSchema]] = None # Changed to ToolResponseSchema
+    knowledge_base_ids: Optional[List[str]] = None
