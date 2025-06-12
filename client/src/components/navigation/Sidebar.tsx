@@ -1,24 +1,29 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
 import {
   BarChart, // Adicionado para Dashboard ROI
-  Beaker, // Adicionado para Sandbox
+  Beaker,
   Bot,
   BrainCircuit,
-  ClipboardList, // Já existia, usado para Painel QA
+  ClipboardList,
   FlaskConical,
   History,
   LayoutDashboard,
   MessageCircle,
   Rocket,
-  Scale, // Adicionado
+  Scale,
   Settings,
   ShieldCheck,
   Users,
   Wrench,
   GitBranch,
-  FileText, // Added FileText for Auditoria item
-  Library, // Added for Biblioteca
-  ChevronDownIcon, // Added for expandable sections
+  FileText,
+  Library, // Keep Library for "Biblioteca de Recursos"
+  ChevronDownIcon,
+  Briefcase, // Added for "Operações do Agente"
+  Archive, // Added for "Cofre"
+  ScrollText, // Added for "Bases de Conhecimento (Memória)"
+  Network, // Added for "Orquestração" (alternative to GitBranch if needed)
+  ShieldQuestion, // Added for "Governança" (alternative to Scale if needed)
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom';
 import {
@@ -49,40 +54,29 @@ type NavItem = {
   subItems?: NavItem[] // Add subItems for nested navigation
 }
 
-// New navigation item structures
-const navItems: NavItem[] = [
-  {
-    href: '/dashboard',
-    icon: <LayoutDashboard className="h-5 w-5" />,
-    label: 'Painel',
-  },
-
-  {
-    href: '/playground',
-    icon: <FlaskConical className="h-5 w-5" />,
-    label: 'Playground',
-  },
-  {
-    href: '/roi-dashboard',
-    icon: <BarChart className="h-5 w-5" />,
-    label: 'Dashboard ROI',
-  },
-]
-
-const agentManagementItems: NavItem[] = [
+// New navigation structure
+const operacoesAgenteItems: NavItem[] = [
   {
     href: '/agents',
     icon: <Users className="h-5 w-5" />,
-    label: 'Meus Agentes',
+    label: 'Agentes',
   },
-
-  { href: '/deploy', icon: <Rocket className="h-5 w-5" />, label: 'Deploy' },
-]
-
-const resourcesItems: NavItem[] = [
   {
-    label: 'Recursos',
-    icon: <Library className="h-5 w-5" />, // Using Library as a generic icon for Recursos
+    href: '/conversations', // Assuming new path
+    icon: <MessageCircle className="h-5 w-5" />,
+    label: 'Conversas',
+  },
+  {
+    href: '/orchestration',
+    icon: <Network className="h-5 w-5" />, // Using Network as potentially more fitting than GitBranch
+    label: 'Orquestração',
+  },
+];
+
+const bibliotecaRecursosItems: NavItem[] = [
+  {
+    label: 'Biblioteca de Recursos', // This is a parent item
+    icon: <Library className="h-5 w-5" />,
     // No href, this item will just expand/collapse to show subItems
     subItems: [
       {
@@ -91,64 +85,35 @@ const resourcesItems: NavItem[] = [
         label: 'Ferramentas',
       },
       {
-        href: '/memory',
-        icon: <BrainCircuit className="h-5 w-5" />,
-        label: 'Memória',
+        href: '/memory', // Assuming this path for Bases de Conhecimento
+        icon: <ScrollText className="h-5 w-5" />, // Using ScrollText for "Bases de Conhecimento"
+        label: 'Bases de Conhecimento (Memória)',
       },
     ],
   },
-  {
-    href: '/biblioteca',
-    icon: <Library className="h-5 w-5" />,
-    label: 'Biblioteca',
-  },
-  {
-    href: '/simulation-sandbox',
-    icon: <Beaker className="h-5 w-5" />,
-    label: 'Sandbox',
-  },
-]
+];
 
-const governanceItems: NavItem[] = [
-  {
-    href: '/governance',
-    icon: <Scale className="h-5 w-5" />,
-    label: 'Governança',
-  },
+const administracaoConfiguracaoItems: NavItem[] = [
   {
     href: '/cofre',
-    icon: <ShieldCheck className="h-5 w-5" />,
+    icon: <Archive className="h-5 w-5" />, // Using Archive for "Cofre"
     label: 'Cofre',
   },
   {
-    href: '/audit-logs',
-    icon: <FileText className="h-5 w-5" />,
-    label: 'Auditoria',
+    href: '/governance',
+    icon: <ShieldQuestion className="h-5 w-5" />, // Using ShieldQuestion for "Governança"
+    label: 'Governança',
   },
   {
-    href: '/qa-panel',
-    icon: <ClipboardList className="h-5 w-5" />,
-    label: 'Painel QA',
+    href: '/settings', // Path for Configurações
+    icon: <Settings className="h-5 w-5" />,
+    label: 'Configurações',
   },
-]
+];
 
-const orchestrationItems: NavItem[] = [
-  {
-    href: '/orchestration',
-    icon: <GitBranch className="h-5 w-5" />,
-    label: 'Orquestração',
-  },
-  {
-    href: '/auditoria', // Assuming this path for Auditoria
-    icon: <FileText className="h-5 w-5" />, // Added FileText icon
-    label: 'Auditoria',
-  },
-]
-
-// Settings item - href is used in NavLink, icon and label for display
-// The existing account section links to '/configuracoes'
-// const settingsItem = { href: '/configuracoes', icon: Settings, label: 'Configurações' };
-// For clarity, settingsItem is not strictly needed as a variable if we adapt the existing structure directly.
+// Items that might be removed or re-categorized (based on original file)
+// Painel, Playground, Dashboard ROI, Deploy, Biblioteca (item), Sandbox, Auditoria, Painel QA
+// These are not included in the new structure as per the requirements.
 
 export const Sidebar = ({
   isCollapsed,
@@ -294,54 +259,47 @@ export const Sidebar = ({
 
       {/* Navigation Links Area */}
       <nav className="flex-1 flex flex-col p-2 overflow-y-auto">
-        <div className="space-y-1">{renderNavLinks(navItems, isCollapsed)}</div>
-
-        {/* Gerenciamento Section */}
+        {/* Operações do Agente Section */}
         <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
-              Gerenciamento
+              Operações do Agente
             </h2>
           )}
           <div className="space-y-1">
-            {renderNavLinks(agentManagementItems, isCollapsed)}
+            {renderNavLinks(operacoesAgenteItems, isCollapsed)}
           </div>
         </div>
 
-        {/* Recursos Section */}
+        {/* Biblioteca de Recursos Section */}
         <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
-              Recursos
+              Biblioteca de Recursos
             </h2>
           )}
-          <div className="space-y-1">{renderNavLinks(resourcesItems, isCollapsed)}</div>
+          {/* Special rendering for Biblioteca de Recursos as it's a single expandable item */}
+          {renderNavLinks(bibliotecaRecursosItems, isCollapsed)}
         </div>
 
-        {/* Governance Section */}
+        {/* Administração e Configuração Section */}
         <div className="my-2">
           {!isCollapsed && (
             <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
-              Governança
+              Administração e Configuração
             </h2>
           )}
-          <div className="space-y-1">{renderNavLinks(governanceItems, isCollapsed)}</div>
-        </div>
-
-        {/* Orchestration Section */}
-        <div className="my-2">
-          {!isCollapsed && (
-            <h2 className="px-3 mb-2 text-xs font-semibold text-muted-foreground/80 tracking-wider uppercase">
-              Orquestração
-            </h2>
-          )}
-          <div className="space-y-1">{renderNavLinks(orchestrationItems, isCollapsed)}</div>
+          <div className="space-y-1">
+            {renderNavLinks(administracaoConfiguracaoItems, isCollapsed)}
+          </div>
         </div>
 
         {/* Account Section - Pushed to bottom */}
+        {/* The link here might need to change if /settings is now a main nav item.
+            For now, keeping it as is, or it could point to a user profile page e.g., /profile */}
         <div className="mt-auto">
           <NavLink
-            to="/settings" // Alterado de /configuracoes para /settings
+            to="/settings" // This path is also used by "Configurações" in the new nav. Consider if this should be /profile or similar.
             className={({ isActive }) =>
               cn(
                 'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
@@ -364,10 +322,11 @@ export const Sidebar = ({
                 <p className="text-sm font-semibold">
                   {user?.name || 'Usuário Admin'}
                 </p>
-                <p className="text-xs text-muted-foreground">Configurações</p>
+                {/* Label changed to "Minha Conta" or similar if "Configurações" is a main nav item now */}
+                <p className="text-xs text-muted-foreground">Minha Conta</p>
               </div>
             )}
-            <Settings
+            <Settings // Icon can remain Settings or change to a User icon
               className={cn(
                 'h-5 w-5 shrink-0',
                 !isCollapsed && 'ml-3 opacity-75',
