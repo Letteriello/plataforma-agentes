@@ -1,5 +1,6 @@
-import apiClient from '@/api/apiClient'
-import type { LlmAgentConfig } from '@/types/adk'
+import apiClient from '@/api/apiClient';
+import type { LlmAgentConfig } from '@/types/adk';
+import type { ToolDTO } from './toolService'; // Added for agent tools
 
 /**
  * DTO for an agent in a list view (summary).
@@ -40,9 +41,16 @@ export const fetchAgents = async (): Promise<AgentSummaryDTO[]> => {
  * Fetches the detailed configuration of a single agent by its ID.
  */
 export const fetchAgentById = async (id: string): Promise<AgentDetailDTO> => {
-  const { data } = await apiClient.get<AgentDetailDTO>(`/agents/${id}`)
-  return data
-}
+  const { data } = await apiClient.get<any>(`/agents/${id}`); // Get as 'any' first
+  // The backend returns tools as ToolResponseSchema[], map them to string[] of IDs
+  // Also, ensure all fields expected by AgentDetailDTO are correctly mapped.
+  // If AgentDetailDTO extends LlmAgentConfig, and LlmAgentConfig expects tools: string[], this is correct.
+  const agentData: AgentDetailDTO = {
+    ...data,
+    tools: data.tools?.map((tool: any) => tool.id) || [], // Ensure 'tools' is string[]
+  };
+  return agentData;
+};
 
 /**
  * Creates a new agent with the given configuration.
@@ -69,10 +77,43 @@ export const deleteAgent = async (id: string): Promise<void> => {
   await apiClient.delete(`/agents/${id}`)
 }
 
+/**
+ * Associates a tool with an agent.
+ */
+export const associateToolWithAgent = async (
+  agentId: string,
+  toolId: string,
+): Promise<any> => { // The backend returns a Dict[str, Any] which can be { message: string, association: object }
+  const { data } = await apiClient.post(`/agents/${agentId}/tools/${toolId}`);
+  return data;
+};
+
+/**
+ * Disassociates a tool from an agent.
+ */
+export const disassociateToolFromAgent = async (
+  agentId: string,
+  toolId: string,
+): Promise<any> => { // The backend returns a Dict[str, str] which can be { message: string }
+  const { data } = await apiClient.delete(`/agents/${agentId}/tools/${toolId}`);
+  return data;
+};
+
+/**
+ * Fetches all tools associated with a specific agent.
+ */
+export const getAgentTools = async (agentId: string): Promise<ToolDTO[]> => {
+  const { data } = await apiClient.get<ToolDTO[]>(`/agents/${agentId}/tools`);
+  return data;
+};
+
 export default {
   fetchAgents,
   fetchAgentById,
   createAgent,
   updateAgent,
   deleteAgent,
-}
+  associateToolWithAgent, // Added
+  disassociateToolFromAgent, // Added
+  getAgentTools, // Added
+};

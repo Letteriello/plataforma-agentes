@@ -1,5 +1,5 @@
 // client/src/components/chat/ChatInterface.tsx
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react' // Added useEffect
 import {
   ResizableHandle,
   ResizablePanel,
@@ -14,6 +14,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatMessage } from './types'
 import { ChatHeader } from './ChatHeader'
 import { Skeleton } from '@/components/ui/skeleton'
+import chatService from '@/api/chatService';
+import { ChatMessageSenderType, type ChatSession as ApiChatSession, type ChatMessage as ApiChatMessage } from '@/types/chatTypes';
 
 interface ChatInterfaceProps {
   LeftPanelComponent?: ComponentType
@@ -24,8 +26,66 @@ export const ChatInterface = ({
   LeftPanelComponent,
   RightPanelComponent = AgentWorkspace,
 }: ChatInterfaceProps) => {
-  const { messages, addMessage, selectedConversationId, conversations } =
-    useChatStore()
+  const {
+    messages,
+    addMessage,
+    selectedConversationId,
+    conversations,
+    loadConversations,
+    loadMessages,
+    // setSelectedConversationId: selectConversationInStore, // Already in store, aliasing if needed for clarity
+  } = useChatStore();
+
+  // Fetch initial conversations (sessions)
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const sessions: ApiChatSession[] = await chatService.getSessions();
+        const storeConversations = sessions.map(s => ({
+          id: s.id, // Session ID
+          agentId: s.agent_id, // Agent ID
+          agentName: s.session_title || `Agent ${s.agent_id.substring(0, 6)}`, // Use session_title or a placeholder
+          lastMessage: '', // Placeholder for last message; ideally, API provides this or it's derived
+        }));
+        loadConversations(storeConversations);
+      } catch (error) {
+        console.error('Failed to fetch sessions:', error);
+        // TODO: Show error toast to user
+      }
+    };
+    fetchSessions();
+  }, [loadConversations]);
+
+  // Fetch messages when a conversation is selected
+  useEffect(() => {
+    if (selectedConversationId) {
+      const fetchMessages = async () => {
+        try {
+          const sessionDetail = await chatService.getSessionDetail(selectedConversationId);
+          const formattedMessages = sessionDetail.messages.map((m: ApiChatMessage) => ({
+            id: m.id,
+            text: m.content,
+            sender: m.sender_type.toLowerCase() as 'user' | 'agent' | 'system',
+            timestamp: new Date(m.created_at).toLocaleTimeString(),
+            avatarSeed: m.sender_type === ChatMessageSenderType.USER ? 'user-seed' : sessionDetail.agent_id, // Use agent_id from sessionDetail
+            senderName: m.sender_type === ChatMessageSenderType.AGENT ? sessionDetail.session_title || 'Agent' : undefined,
+            // content_metadata could be mapped to artifact if structure aligns
+            // artifact: m.content_metadata ? mapMetadataToArtifact(m.content_metadata) : undefined,
+          }));
+          loadMessages(formattedMessages);
+        } catch (error) {
+          console.error('Failed to fetch messages for session:', selectedConversationId, error);
+          // TODO: Show error toast to user
+          loadMessages([]); // Clear messages on error
+        }
+      };
+      fetchMessages();
+    } else {
+      loadMessages([]); // Clear messages if no conversation is selected
+    }
+  }, [selectedConversationId, loadMessages]);
+
+  // Original state and handlers from here, will modify handleSendMessage next
 
   const [isAgentReplying, setIsAgentReplying] = useState(false)
   // TODO: This should be derived from the selected conversation or global state
@@ -34,31 +94,66 @@ export const ChatInterface = ({
     setCurrentSelectedAgentIdForSelector,
   ] = useState<string | null>(null)
 
-  const handleSendMessage = (text: string) => {
-    const newMessage: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      text,
+  const handleSendMessage = async (text: string) => {
+    if (!selectedConversationId) {
+      console.warn('No conversation selected. Please select or start a new conversation.');
+      // TODO: Implement UI feedback, e.g., toast notification
+      return;
+    }
+
+    const currentConversation = conversations.find(c => c.id === selectedConversationId);
+    if (!currentConversation || !currentConversation.agentId) {
+      console.error('Selected conversation not found in store or agentId is missing.');
+      // TODO: Implement UI feedback
+      return;
+    }
+    const agentId = currentConversation.agentId;
+    const agentName = currentConversation.agentName || 'Agent';
+
+    const userMessagePayload: ChatMessageCreatePayload = {
+      content: text,
+      sender_type: ChatMessageSenderType.USER,
+    };
+
+    // Optimistically add user message to UI
+    const optimisticUserMessage: ChatMessage = { // Using local ChatMessage type
+      id: `optimistic-user-${Date.now()}`,
+      text: text,
       sender: 'user',
       timestamp: new Date().toLocaleTimeString(),
-      avatarSeed: 'user-seed-456',
-    }
-    addMessage(newMessage)
+      avatarSeed: 'user-seed-optimistic', // Placeholder seed
+    };
+    addMessage(optimisticUserMessage);
+    setIsAgentReplying(true);
 
-    // TODO: Replace with actual API call to the agent
-    setIsAgentReplying(true)
-    setTimeout(() => {
-      const agentReply: ChatMessage = {
-        id: `msg-agent-${Date.now()}`,
-        text: 'Esta é uma resposta simulada do agente.',
-        sender: 'agent',
+    try {
+      const agentReplyFromApi = await chatService.postMessageToAgent(agentId, userMessagePayload);
+      
+      const formattedAgentReply: ChatMessage = {
+        id: agentReplyFromApi.id,
+        text: agentReplyFromApi.content,
+        sender: agentReplyFromApi.sender_type.toLowerCase() as 'user' | 'agent' | 'system',
+        timestamp: new Date(agentReplyFromApi.created_at).toLocaleTimeString(),
+        avatarSeed: agentId, // Use agentId for consistent agent avatar
+        senderName: agentName,
+        // artifact: agentReplyFromApi.content_metadata ? mapMetadataToArtifact(agentReplyFromApi.content_metadata) : undefined,
+      };
+      addMessage(formattedAgentReply);
+    } catch (error) {
+      console.error('Failed to send message or get agent reply:', error);
+      const errorReply: ChatMessage = {
+        id: `error-${Date.now()}`,
+        text: 'Error: Could not get a response from the agent.',
+        sender: 'system',
         timestamp: new Date().toLocaleTimeString(),
-        senderName: 'Agente Simulado',
-        avatarSeed: 'agent-sim-seed',
-      }
-      addMessage(agentReply)
-      setIsAgentReplying(false)
-    }, 1500)
-  }
+        avatarSeed: 'system-error-seed',
+      };
+      addMessage(errorReply);
+      // TODO: Show error toast to user
+    } finally {
+      setIsAgentReplying(false);
+    }
+  };
 
   const handleAgentChangeInSelector = (agentId: string) => {
     setCurrentSelectedAgentIdForSelector(agentId)
@@ -74,8 +169,11 @@ export const ChatInterface = ({
   const agentAvatar = agentDisplayName.charAt(0).toUpperCase()
   const agentStatus = selectedConversationId ? 'Online' : 'Offline'
 
-  // TODO: Fetch agents from an API or a dedicated agent store
-  const agentsForSelector: { id: string; title: string }[] = []
+  // TODO: Fetch agents from an API (e.g., agentService) or a dedicated agent store for the selector
+  // For now, ChatHeader's agent selector might not be fully functional for starting NEW chats
+  // until agent listing is integrated here.
+  const agentsForSelector: { id: string; title: string }[] = conversations.map(c => ({ id: c.agentId, title: c.agentName }));
+  // This populates the selector with agents from existing conversations, not all available agents.
 
   return (
     <ResizablePanelGroup

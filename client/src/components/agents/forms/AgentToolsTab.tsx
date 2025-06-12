@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { fetchTools, ToolDTO } from '@/api/toolService'
+import React, { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { getTools } from '@/api/toolService'; // Changed from fetchTools
+import type { ToolDTO } from '@/api/toolService'; // Ensured ToolDTO is imported as type
+import agentService from '@/api/agentService'; // Added agentService import
+import { useToast } from '@/components/ui/use-toast'; // Added useToast import
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   FormControl,
@@ -14,27 +17,76 @@ import { Button } from '@/components/ui/button';
 import { ToolDefinitionForm } from './ToolDefinitionForm';
 import type { UiToolDefinition } from '@/types/agents';
 
-const AgentToolsTab: React.FC = () => {
+interface AgentToolsTabProps {
+  agentId?: string; // Agent ID for direct API calls in edit mode
+}
+
+const AgentToolsTab: React.FC<AgentToolsTabProps> = ({ agentId }) => {
   const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<ToolDTO | null>(null);
   const [configuredToolsDetails, setConfiguredToolsDetails] = useState<Record<string, UiToolDefinition>>({});
-  const { control, setValue } = useFormContext();
-  const [tools, setTools] = useState<ToolDTO[]>([])
+  const { control, setValue, getValues } = useFormContext(); // Added getValues
+  const { toast } = useToast(); // Initialize useToast
+  const [availableTools, setAvailableTools] = useState<ToolDTO[]>([]); // Renamed tools to availableTools
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const loadTools = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        const fetched = await fetchTools()
-        setTools(fetched)
-      } catch (err) {
-        setError('Failed to load tools')
+        // Assuming getTools returns PaginatedToolsDTO, adjust if it returns ToolDTO[] directly
+        // Pass params if your getTools function expects them, e.g., for pagination or filtering
+        const paginatedResult = await getTools({ includeSystemTools: true }); 
+        setAvailableTools(paginatedResult.tools);
+      } catch (err: any) {
+        const errorMessage = err.message || 'Failed to load tools';
+        setError(errorMessage);
+        toast({ title: "Error", description: `Failed to load available tools: ${errorMessage}`, variant: "destructive" });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
+      }
+    };
+    loadTools();
+  }, [toast]);
+
+  const handleToolSelectionChange = async (toolId: string, isChecked: boolean) => {
+    const currentSelectedToolIds = getValues("tools") || [];
+    let newSelectedToolIds: string[];
+
+    if (isChecked) {
+      newSelectedToolIds = [...currentSelectedToolIds, toolId];
+    } else {
+      newSelectedToolIds = currentSelectedToolIds.filter((id: string) => id !== toolId);
+    }
+
+    // Optimistically update the form state first
+    setValue("tools", newSelectedToolIds, { shouldDirty: true, shouldValidate: true });
+
+    if (agentId) { // Only make API calls if agentId exists (editing mode)
+      // For a single operation, we can set a specific loading state if needed
+      // or rely on a global loading indicator if AgentEditor handles it.
+      // For simplicity here, we won't add another setIsLoading just for this operation
+      // but in a real app, you might want more granular loading states.
+      try {
+        if (isChecked) {
+          await agentService.associateToolWithAgent(agentId, toolId);
+          toast({ title: "Success", description: `Tool associated successfully.` });
+        } else {
+          await agentService.disassociateToolFromAgent(agentId, toolId);
+          toast({ title: "Success", description: `Tool disassociated successfully.` });
+        }
+      } catch (apiError: any) {
+        toast({
+          title: "API Error",
+          description: `Failed to update tool association: ${apiError.message || 'Unknown error'}`, 
+          variant: "destructive",
+        });
+        // Revert UI change on API error by setting form value back
+        setValue("tools", currentSelectedToolIds, { shouldDirty: true, shouldValidate: true });
       }
     }
-    loadTools()
-  }, [])
+  };
 
   if (isLoading) {
     return <p>Loading tools...</p>
@@ -54,24 +106,19 @@ const AgentToolsTab: React.FC = () => {
           <FormLabel className="sr-only">Ferramentas</FormLabel>
           <FormControl>
             <div className="space-y-3">
-              {tools.map((tool) => {
+              {availableTools.map((tool) => {
                 const checked = field.value?.includes(tool.id)
-                const handleChange = (checked: boolean | 'indeterminate') => {
-                  const current = field.value || []
-                  if (checked) {
-                    field.onChange([...current, tool.id])
-                  } else {
-                    field.onChange(
-                      current.filter((id: string) => id !== tool.id),
-                    )
-                  }
-                }
+                const localCheckboxChangeHandler = (checkedStatus: boolean | 'indeterminate') => {
+                  // Assuming 'indeterminate' should not trigger a change or be treated as false
+                  const isActuallyChecked = typeof checkedStatus === 'boolean' ? checkedStatus : false;
+                  handleToolSelectionChange(tool.id, isActuallyChecked);
+                };
                 return (
                   <div key={tool.id} className="flex items-start gap-3">
                     <Checkbox
                       id={`tool-${tool.id}`}
                       checked={checked}
-                      onCheckedChange={handleChange}
+                      onCheckedChange={localCheckboxChangeHandler}
                     />
                     <Label htmlFor={`tool-${tool.id}`} className="font-medium flex-1">
                       {tool.name}

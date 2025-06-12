@@ -23,8 +23,10 @@ import {
 
 import { LLMAgentForm } from './forms/LLMAgentForm'
 import AgentToolsTab from './forms/AgentToolsTab'
-import { BaseAgentForm } from './forms/BaseAgentForm'
-import { LlmAgentConfig, createDefaultAgent, LlmAgentConfigSchema } from '@/types/agents'
+import { BaseAgentForm } from './forms/BaseAgentForm';
+import agentService from '@/api/agentService'; // Added agentService import
+import type { CreateAgentDTO } from '@/api/agentService'; // For createAgent payload type
+import { LlmAgentConfig, createDefaultAgent, LlmAgentConfigSchema, AgentType } from '@/types/agents'; // Added AgentType if not already there
 
 const WIZARD_STEPS = [
   'identidade',
@@ -79,19 +81,29 @@ export function AgentEditor() {
 
   useEffect(() => {
     if (id) {
-      setMode('edit')
-      // Simula o carregamento de um agente existente
-      const existingAgent = mockAgents.find((a) => a.id === id)
-      if (existingAgent) {
-        setAgent(existingAgent)
-      } else {
-        toast({ variant: 'destructive', title: 'Agente não encontrado' })
-        navigate('/agents')
-      }
+      setMode('edit');
+      setIsLoading(true);
+      agentService.fetchAgentById(id)
+        .then(data => {
+          // O AgentDetailDTO retornado é compatível com LlmAgentConfig
+          // e o estado agent é AnyAgentConfig, então a atribuição direta é ok.
+          setAgent(data as AnyAgentConfig); 
+        })
+        .catch(err => {
+          console.error('Failed to fetch agent:', err);
+          toast({
+            variant: 'destructive',
+            title: 'Erro ao carregar agente',
+            description: (err as Error)?.message || 'Não foi possível encontrar o agente.',
+          });
+          navigate('/agents');
+        })
+        .finally(() => setIsLoading(false));
     } else {
-      setMode('create')
+      setMode('create');
       // Cria um novo agente com a estrutura padrão correta
-      setAgent(createDefaultAgent(AgentType.LLM))
+      // createDefaultAgent retorna AnyAgentConfig, compatível com o estado agent.
+      setAgent(createDefaultAgent(AgentType.LLM)); 
     }
   }, [id, navigate, toast])
 
@@ -119,19 +131,69 @@ export function AgentEditor() {
   }
 
   const handleSubmit = async (values: LlmAgentConfig) => {
-    setIsLoading(true)
-    console.log('Submitting Agent Data:', values)
+    setIsLoading(true);
+    const currentAgentId = id; // id from useParams()
 
-    // Simula uma chamada de API
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      if (mode === 'create') {
+        // Destructure to get tools and remove id, createdAt, updatedAt for the payload
+        // The 'tools' array from 'values' contains the IDs of selected tools.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _id, createdAt, updatedAt, tools, ...agentDataForCreation } = values;
+        
+        // Create the agent first (payload should not include 'tools' if backend handles it separately)
+        const newAgent = await agentService.createAgent(agentDataForCreation as CreateAgentDTO);
+        toast({
+          title: 'Agente criado com sucesso!',
+          description: `O agente "${newAgent.name}" foi criado.`,
+        });
 
-    toast({
-      title: `Agente ${mode === 'create' ? 'criado' : 'salvo'} com sucesso!`,
-      description: `O agente "${values.name}" foi salvo.`,
-    })
+        const toolsToAssociate = tools || []; // These are string IDs from the form
+        if (toolsToAssociate.length > 0) {
+          toast({ title: "Info", description: `Associando ${toolsToAssociate.length} ferramentas...` });
+          const associationPromises = toolsToAssociate.map(toolId =>
+            agentService.associateToolWithAgent(newAgent.id, toolId)
+          );
+          // Use Promise.allSettled to handle individual successes/failures
+          const results = await Promise.allSettled(associationPromises);
+          
+          results.forEach((result, index) => {
+            if (result.status === 'rejected') {
+              console.error(`Failed to associate tool ${toolsToAssociate[index]}:`, result.reason);
+              toast({
+                title: 'Erro na associação de ferramenta',
+                description: `Falha ao associar ferramenta ID "${toolsToAssociate[index]}". Motivo: ${(result.reason as Error)?.message || 'Erro desconhecido'}`,
+                variant: 'destructive',
+              });
+            }
+          });
+        }
+        navigate(`/agents/${newAgent.id}/edit`); // Navigate to the new agent's edit page
 
-    setIsLoading(false)
-    navigate('/agents')
+      } else if (mode === 'edit' && currentAgentId) {
+        // In edit mode, AgentToolsTab handles tool associations directly.
+        // The main update payload should not include the 'tools' array.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _id, createdAt, updatedAt, tools, ...agentDataForUpdate } = values;
+        
+        const updatedAgent = await agentService.updateAgent(currentAgentId, agentDataForUpdate as any); // Cast if UpdateAgentDTO is different
+        toast({
+          title: 'Agente salvo com sucesso!',
+          description: `O agente "${updatedAgent.name}" foi atualizado.`,
+        });
+        // Stay on the edit page or navigate to /agents as preferred. Staying is common.
+        navigate(`/agents/${currentAgentId}/edit`); 
+      }
+    } catch (err) {
+      console.error(`Failed to ${mode === 'create' ? 'create' : 'update'} agent:`, err);
+      toast({
+        variant: 'destructive',
+        title: `Erro ao ${mode === 'create' ? 'criar' : 'salvar'} agente`,
+        description: (err as Error)?.message || 'Não foi possível salvar o agente.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   if (!agent) {
@@ -241,7 +303,7 @@ export function AgentEditor() {
           </TabsContent>
 
           <TabsContent value="ferramentas">
-            <AgentToolsTab />
+            <AgentToolsTab agentId={id} />
           </TabsContent>
 
           <TabsContent value="memoria">

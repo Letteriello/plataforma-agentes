@@ -1,91 +1,63 @@
-import axios from 'axios'
-import apiClient from '@/api/apiClient'
-import type { Session, ChatMessage, Attachment } from '@/types'
+import apiClient from './apiClient';
+import {
+  ChatSession,
+  ChatSessionCreatePayload,
+  ChatSessionUpdatePayload,
+  ChatSessionDetail,
+  ChatMessage,
+  ChatMessageCreatePayload, // This includes sender_type
+  // UserAgentMessagePayload, // Alternative for postMessageToAgent if sender_type is implicit
+} from '../types/chatTypes';
 
-export interface IChatService {
-  fetchSessions(userId: string): Promise<Session[]>
-  fetchSessionById(sessionId: string): Promise<Session | null>
-  fetchSessionMessages(sessionId: string): Promise<ChatMessage[]>
-  sendMessage(
-    sessionId: string,
-    messageContent: string,
-    attachments?: Attachment[],
-  ): Promise<ChatMessage>
-  startNewSession(userId: string, agentId: string): Promise<Session>
-  deleteSession(sessionId: string): Promise<void>
-  clearHistory(sessionId: string): Promise<void>
-  updateSession(sessionId: string, data: Partial<Session>): Promise<Session>
-}
+const CHAT_BASE_URL = '/chat'; // Matches the router prefix in backend
 
-export const chatService: IChatService = {
-  async fetchSessions(userId: string): Promise<Session[]> {
-    const { data } = await apiClient.get<Session[]>('/sessions', {
-      params: { userId },
-    })
-    return data
+const chatService = {
+  // == Chat Session Management ==
+  createSession: async (sessionData: ChatSessionCreatePayload): Promise<ChatSession> => {
+    const response = await apiClient.post<ChatSession>(`${CHAT_BASE_URL}/sessions/`, sessionData);
+    return response.data;
   },
 
-  async fetchSessionById(sessionId: string): Promise<Session | null> {
-    try {
-      const { data } = await apiClient.get<Session>(`/sessions/${sessionId}`)
-      return data
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        return null // Session not found, return null as per contract
-      }
-      throw error // Re-throw other errors
-    }
+  getSessions: async (): Promise<ChatSession[]> => {
+    const response = await apiClient.get<ChatSession[]>(`${CHAT_BASE_URL}/sessions/`);
+    return response.data;
   },
 
-  async fetchSessionMessages(sessionId: string): Promise<ChatMessage[]> {
-    const { data } = await apiClient.get<ChatMessage[]>(
-      `/sessions/${sessionId}/messages`,
-    )
-    return data
+  getSessionDetail: async (sessionId: string): Promise<ChatSessionDetail> => {
+    const response = await apiClient.get<ChatSessionDetail>(`${CHAT_BASE_URL}/sessions/${sessionId}`);
+    return response.data;
   },
 
-  async sendMessage(
-    sessionId: string,
-    messageContent: string,
-    attachments?: Attachment[],
-  ): Promise<ChatMessage> {
-    const payload = {
-      content: messageContent,
-      attachments,
-    }
-    const { data } = await apiClient.post<ChatMessage>(
-      `/sessions/${sessionId}/messages`,
-      payload,
-    )
-    return data
+  updateSession: async (sessionId: string, sessionData: ChatSessionUpdatePayload): Promise<ChatSession> => {
+    const response = await apiClient.patch<ChatSession>(`${CHAT_BASE_URL}/sessions/${sessionId}`, sessionData);
+    return response.data;
   },
 
-  async startNewSession(userId: string, agentId: string): Promise<Session> {
-    const { data } = await apiClient.post<Session>('/sessions', {
-      userId,
-      agentId,
-    })
-    return data
+  deleteSession: async (sessionId: string): Promise<void> => {
+    await apiClient.delete(`${CHAT_BASE_URL}/sessions/${sessionId}`);
   },
 
-  async deleteSession(sessionId: string): Promise<void> {
-    await apiClient.delete(`/sessions/${sessionId}`)
+  // == Chat Message Management ==
+  // For adding a message to an existing, known session
+  addMessageToSession: async (sessionId: string, messageData: ChatMessageCreatePayload): Promise<ChatMessage> => {
+    const response = await apiClient.post<ChatMessage>(`${CHAT_BASE_URL}/sessions/${sessionId}/messages/`, messageData);
+    return response.data;
   },
 
-  async clearHistory(sessionId: string): Promise<void> {
-    await apiClient.post(`/sessions/${sessionId}/clear-history`)
+  listMessagesForSession: async (sessionId: string): Promise<ChatMessage[]> => {
+    const response = await apiClient.get<ChatMessage[]>(`${CHAT_BASE_URL}/sessions/${sessionId}/messages/`);
+    return response.data;
   },
-
-  async updateSession(
-    sessionId: string,
-    data: Partial<Session>,
-  ): Promise<Session> {
-    const { data: responseData } = await apiClient.put<Session>(
-      `/sessions/${sessionId}`,
-      data,
-    )
-    return responseData
+  
+  // For sending a message directly to an agent (backend handles session creation/retrieval)
+  postMessageToAgent: async (agentId: string, messageData: ChatMessageCreatePayload): Promise<ChatMessage> => {
+    // Backend route for this is POST /chat/{agent_id}/message
+    // The payload for this backend route is ChatMessageBase (content, sender_type, content_metadata)
+    // ChatMessageCreatePayload matches this if session_id is ignored by the backend for this specific route (which it should be)
+    // Ensure sender_type is 'USER' as per backend validation for this route.
+    const response = await apiClient.post<ChatMessage>(`${CHAT_BASE_URL}/${agentId}/message`, messageData);
+    return response.data;
   },
-}
+};
 
-export default chatService
+export default chatService;

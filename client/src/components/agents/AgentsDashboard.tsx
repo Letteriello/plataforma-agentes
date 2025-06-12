@@ -1,220 +1,158 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react' // Added React and useRef
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import React, { useState, useCallback, useRef, useEffect } from 'react'; 
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   PlusIcon,
   SearchIcon,
   Loader2,
-  Trash2,
-  Pencil,
-  Play,
-} from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { AnyAgentConfig, AgentType } from '@/types/agents' // AgentType will be used by the filter
+  AlertTriangle, 
+  RefreshCw, 
+} from 'lucide-react';
+import { AnyAgentConfig, AgentType } from '@/types/agents'; 
+import { AgentSummaryDTO } from '@/api/agentService'; 
+import { useToast } from '@/components/ui/use-toast';
+import { AgentListItem } from './AgentListItem';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useAgents } from '@/hooks/useAgents'; 
+import agentService from '@/api/agentService'; 
 
-import { agentTypeLabels } from '@/lib/agent-utils' // Import centralized agentTypeLabels
-import { useToast } from '@/components/ui/use-toast'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { AgentListItem } from './AgentListItem' // Adjusted path if necessary
-import { useVirtualizer } from '@tanstack/react-virtual'
-
-// Removed mockAgents definition from here
-
-// Removed dashboardAgentTypeLabels definition from here
-// It will be centralized in agent-utils.ts later
-
-type AgentFilter = 'all' | AgentType // AgentType is imported
+type AgentFilter = 'all' | AgentType; 
 
 export function AgentsDashboard() {
-  const navigate = useNavigate()
-  const { toast } = useToast()
-  const [agents, setAgents] = useState<AnyAgentConfig[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [filter, setFilter] = useState<AgentFilter>('all')
-  const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({})
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const { 
+    agents: fetchedAgentsData, 
+    isLoading, 
+    error, 
+    refetchAgents 
+  } = useAgents();
 
-  const parentRef = React.useRef<HTMLDivElement>(null)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<AgentFilter>('all'); 
+  const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
 
-  const filteredAgents = agents.filter(
-    (agent) =>
-      (!searchQuery ||
-        agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (agent.description &&
-          agent.description
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()))) &&
-      (filter === 'all' || agent.type === filter),
-  )
+  const parentRef = React.useRef<HTMLDivElement>(null);
+
+  const filteredAgents = React.useMemo(() => 
+    (fetchedAgentsData || []).filter(
+      (agent: AgentSummaryDTO) => 
+        (!searchQuery ||
+          agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (agent.description &&
+            agent.description
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()))) &&
+        (filter === 'all' /*|| (agent as AnyAgentConfig).type === filter*/)
+    ), [fetchedAgentsData, searchQuery, filter]);
 
   const rowVirtualizer = useVirtualizer({
     count: filteredAgents.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100, // Estimated height of an AgentListItem
+    estimateSize: () => 110, 
     overscan: 5,
-  })
+  });
 
-  // Load agents on component mount
-  useEffect(() => {
-    const loadAgents = async () => {
-      try {
-        setIsLoading(true)
-        // TODO: Replace with actual API call to fetch agents
-        // For now, we'll just initialize with an empty list.
-        setAgents([])
-      } catch (error) {
-        console.error('Failed to load agents:', error)
-        toast({
-          title: 'Error',
-          description: 'Failed to load agents. Please try again later.',
-          variant: 'destructive',
-        })
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadAgents()
-  }, [toast])
-
-  const navigateToEdit = useCallback(
-    (id: string) => {
-      navigate(`/agents/edit/${id}`)
-    },
-    [navigate],
-  )
-
-  const navigateToRun = useCallback(
-    (id: string) => {
-      navigate(`/agents/run/${id}`)
-    },
-    [navigate],
-  )
+  const navigateToEdit = (id: string) => navigate(`/agents/edit/${id}`);
+  const navigateToRun = (id: string) => navigate(`/agents/run/${id}`);
 
   const memoizedHandleDeleteAgent = useCallback(
-    async (agentId: string) => {
-      if (
-        !window.confirm(
-          'Are you sure you want to delete this agent? This action cannot be undone.',
-        )
-      ) {
-        return
-      }
+    async (id: string) => {
+      setIsDeleting((prev) => ({ ...prev, [id]: true }));
       try {
-        setIsDeleting((prev) => ({ ...prev, [agentId]: true }))
-        await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate API call
-        setAgents((prev) => prev.filter((agent) => agent.id !== agentId))
+        await agentService.deleteAgent(id); 
         toast({
-          title: 'Success',
-          description: 'Agent deleted successfully',
-        })
-      } catch (error) {
-        console.error('Failed to delete agent:', error)
+          title: 'Agent Deleted',
+          description: `Agent ${id} has been successfully deleted.`,
+        });
+        refetchAgents(); 
+      } catch (err) {
+        console.error('Failed to delete agent:', err);
         toast({
-          title: 'Error',
-          description: 'Failed to delete agent. Please try again.',
+          title: 'Error Deleting Agent',
+          description: (err as Error)?.message || 'Could not delete the agent.',
           variant: 'destructive',
-        })
+        });
       } finally {
-        setIsDeleting((prev) => ({ ...prev, [agentId]: false }))
+        setIsDeleting((prev) => ({ ...prev, [id]: false }));
       }
     },
-    [toast],
-  ) // setAgents and setIsDeleting are stable from useState
-
-  const filteredAgents = agents.filter((agent) => {
-    const matchesSearch =
-      agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (agent.description &&
-        agent.description.toLowerCase().includes(searchQuery.toLowerCase())) // Made description check safer
-    const matchesFilter = filter === 'all' || agent.type === filter
-    return matchesSearch && matchesFilter
-  })
-
-  // getAgentTypeColor is removed, as it's encapsulated in AgentListItem
-
+    [toast, refetchAgents]
+  );
+  
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <p className="ml-4 text-lg">Loading agents...</p>
       </div>
-    )
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center text-destructive">
+        <AlertTriangle className="h-12 w-12" />
+        <p className="mt-4 text-lg">Error loading agents: {error.message}</p>
+        <Button onClick={refetchAgents} className="mt-4">
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Try Again
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Agents</h1>
-          <p className="text-muted-foreground">
-            Manage your AI agents and workflows
-          </p>
-        </div>
-        <Button onClick={() => navigate('/agents/new')}>
-          <PlusIcon className="mr-2 h-4 w-4" />
-          New Agent
-        </Button>
-      </div>
-
+    <div className="p-4 md:p-6 lg:p-8">
       <Card>
-        <CardHeader className="pb-3">
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div className="relative w-full md:w-96">
-              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <CardTitle className="text-2xl font-bold mb-4 md:mb-0">
+            Agents Dashboard
+          </CardTitle>
+          <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
+            <div className="relative">
+              <SearchIcon className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search agents..."
-                className="pl-9 w-full"
+                type="search"
+                placeholder="Search agents by name or description..."
+                className="w-full rounded-lg bg-background pl-8 md:w-[250px] lg:w-[350px]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex space-x-2 overflow-x-auto pb-1">
-              <Button
-                variant={filter === 'all' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setFilter('all')}
-              >
-                All
-              </Button>
-              {Object.entries(agentTypeLabels).map(([type, label]) => (
-                <Button
-                  key={type}
-                  variant={filter === type ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setFilter(type as AgentType)}
-                >
-                  {label}{' '}
-                  {/* Now using the label from centralized agentTypeLabels */}
-                </Button>
-              ))}
-            </div>
+            <Button onClick={() => navigate('/agents/new')}>
+              <PlusIcon className="mr-2 h-4 w-4" /> Create Agent
+            </Button>
+            <Button onClick={refetchAgents} variant="outline" title="Refresh agents list">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
           {filteredAgents.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                {searchQuery
-                  ? 'No agents match your search.'
-                  : 'No agents found. Create your first agent to get started.'}
-              </p>
-              {!searchQuery && (
-                <Button
-                  className="mt-4"
-                  onClick={() => navigate('/agents/new')}
-                >
-                  <PlusIcon className="mr-2 h-4 w-4" />
-                  Create Agent
-                </Button>
-              )}
-            </div>
+             <div className="text-center py-10">
+               <SearchIcon className="mx-auto h-12 w-12 text-gray-400" />
+               <h3 className="mt-2 text-sm font-medium text-gray-900">
+                 {searchQuery || filter !== 'all'
+                   ? 'No agents match your criteria.'
+                   : fetchedAgentsData && fetchedAgentsData.length === 0 
+                     ? 'No agents found. Create your first agent to get started.'
+                     : 'Your current filters resulted in no agents.' 
+                 }
+               </h3>
+               {!(searchQuery || filter !== 'all') && fetchedAgentsData && fetchedAgentsData.length === 0 && (
+                 <Button
+                   className="mt-4"
+                   onClick={() => navigate('/agents/new')}
+                 >
+                   <PlusIcon className="mr-2 h-4 w-4" />
+                   Create Agent
+                 </Button>
+               )}
+             </div>
           ) : (
             <div
               ref={parentRef}
@@ -229,11 +167,11 @@ export function AgentsDashboard() {
                 }}
               >
                 {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-                  const agent = filteredAgents[virtualItem.index]
-                  if (!agent) return null // Should not happen if count is correct
+                  const agent = filteredAgents[virtualItem.index] as AgentSummaryDTO; 
+                  if (!agent) return null;
                   return (
                     <div
-                      key={agent.id} // Using agent.id as key
+                      key={agent.id}
                       style={{
                         position: 'absolute',
                         top: 0,
@@ -243,14 +181,14 @@ export function AgentsDashboard() {
                       }}
                     >
                       <AgentListItem
-                        agent={agent}
+                        agent={agent} // Removed 'as any' as AgentListItem now expects AgentSummaryDTO
                         onEdit={navigateToEdit}
                         onRun={navigateToRun}
                         onDelete={memoizedHandleDeleteAgent}
                         isDeleting={isDeleting[agent.id] || false}
                       />
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -258,5 +196,5 @@ export function AgentsDashboard() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

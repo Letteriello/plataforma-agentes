@@ -261,28 +261,36 @@ export const createNewAgentConfig = (
 }
 
 // Moved from AgentListItem.tsx
-export const agentTypeLabels: Record<AgentType, string> = {
-  llm: 'LLM',
-  sequential: 'Sequential',
-  parallel: 'Parallel',
-  a2a: 'A2A',
-  // Ensure all AgentTypes are covered if LoopAgentConfig was fully added
-  // loop: 'Loop', // Example if 'loop' type is used
-}
+import { AgentSummaryDTO } from '@/api/agentService'; // Importar AgentSummaryDTO
+
+// Usar uma união de AgentType (do enum) e os tipos de string de AgentSummaryDTO.type
+export type DisplayAgentType = AgentType | AgentSummaryDTO['type'];
+
+export const agentTypeLabels: Record<DisplayAgentType, string> = {
+  [AgentType.LLM]: 'LLM',
+  [AgentType.SEQUENTIAL]: 'Sequential',
+  [AgentType.PARALLEL]: 'Parallel',
+  [AgentType.A2A]: 'A2A',
+  [AgentType.LOOP]: 'Loop', // Adicionando Loop que estava no enum e pode ser usado internamente
+  // Adicionar os novos tipos de AgentSummaryDTO que vêm do backend
+  Workflow: 'Workflow',
+  Custom: 'Custom',
+};
 
 // Moved from AgentListItem.tsx
-export const getAgentTypeColor = (type: AgentType): string => {
-  const colors: Record<AgentType, string> = {
-    llm: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-    sequential:
-      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
-    parallel:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-    a2a: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-    // loop: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100', // Example for loop
-  }
+export const getAgentTypeColor = (type: DisplayAgentType): string => {
+  const colors: Record<DisplayAgentType, string> = {
+    [AgentType.LLM]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+    [AgentType.SEQUENTIAL]: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
+    [AgentType.PARALLEL]: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+    [AgentType.A2A]: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+    [AgentType.LOOP]: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+    // Adicionar cores para os novos tipos de AgentSummaryDTO
+    Workflow: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-100',
+    Custom: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-100',
+  };
   return (
     colors[type] ||
     'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100'
-  )
+  );
 }

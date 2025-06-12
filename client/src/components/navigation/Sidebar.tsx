@@ -14,6 +14,7 @@ import {
   Users,
   Wrench,
   GitBranch,
+  FileText, // Added FileText for Auditoria item
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
@@ -100,7 +101,11 @@ const orchestrationItems: NavItem[] = [
     href: '/orchestration',
     icon: <GitBranch className="h-5 w-5" />,
     label: 'Orquestração',
-  }, Auditoria',
+  },
+  {
+    href: '/auditoria', // Assuming this path for Auditoria
+    icon: <FileText className="h-5 w-5" />, // Added FileText icon
+    label: 'Auditoria',
   },
 ]
 

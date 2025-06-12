@@ -2,9 +2,10 @@ import { create } from 'zustand'
 import { ChatMessage, Artifact } from '../components/chat/types' // Import ChatMessage and Artifact
 
 export interface Conversation {
-  id: string
-  agentName: string
-  lastMessage: string
+  id: string;      // Session ID
+  agentId: string; // Agent ID, crucial for sending messages
+  agentName: string;
+  lastMessage: string;
 }
 
 interface ChatStore {

@@ -50,6 +50,7 @@ const AgentsPage = lazy(() => import('@/pages/agents/AgentsIndexPage')) // Updat
 const MemoryPage = lazy(() => import('./pages/MemoryPage'))
 const Deploy = lazy(() => import('./pages/DeployPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const ToolsPage = lazy(() => import('./pages/ToolsPage')) // Added ToolsPage
 const CofrePage = lazy(() =>
   import('./pages/Cofre').then((module) => ({ default: module.CofrePage }))
 )
@@ -213,6 +214,11 @@ const routes: AppRouteObject[] = [
         path: 'cofre',
         element: withSuspense(CofrePage),
         handle: { title: 'Cofre' },
+      },
+      {
+        path: 'tools',
+        element: withSuspense(ToolsPage),
+        handle: { title: 'Tools' },
       },
     ],
   },

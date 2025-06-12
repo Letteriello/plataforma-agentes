@@ -1,57 +1,118 @@
-import apiClient from '@/api/apiClient'
-import type { ToolDefinition } from '@/types'
+import apiClient from './apiClient';
+import type { AxiosResponse } from 'axios';
 
-/**
- * Data Transfer Object for a Tool, omitting the 'execute' function.
- * The backend will not send the implementation of the function.
- */
-export interface ToolDTO extends Omit<ToolDefinition, 'execute'> {
-  id: string
+// --- Tool Parameter DTOs ---
+export interface ToolParameterDTO {
+  id: string; // UUID
+  tool_id: string; // UUID
+  name: string;
+  type: string;
+  description?: string | null;
+  default_value?: string | null;
+  is_required: boolean;
+  created_at: string; // ISO datetime string
 }
 
-/**
- * DTO for creating a new Tool.
- */
-export type CreateToolDTO = Omit<ToolDTO, 'id'>
-
-/**
- * DTO for updating a Tool.
- */
-export type UpdateToolDTO = Partial<CreateToolDTO>
-
-export const fetchTools = async (): Promise<ToolDTO[]> => {
-  const { data } = await apiClient.get<ToolDTO[]>('/tools')
-  return data
+export interface ToolParameterCreateDTO {
+  name: string;
+  type: string;
+  description?: string | null;
+  default_value?: string | null;
+  is_required: boolean;
 }
 
-export const fetchToolById = async (id: string): Promise<ToolDTO> => {
-  const { data } = await apiClient.get<ToolDTO>(`/tools/${id}`)
-  return data
+// --- Tool DTOs ---
+export interface ToolDTO {
+  id: string; // UUID
+  user_id?: string | null; // UUID, null for system tools
+  name: string;
+  description?: string | null;
+  return_type_schema?: Record<string, any> | null;
+  is_system_tool: boolean;
+  created_at: string; // ISO datetime string
+  updated_at: string; // ISO datetime string
+  parameters: ToolParameterDTO[];
 }
 
+export interface CreateToolDTO {
+  name: string;
+  description?: string | null;
+  return_type_schema?: Record<string, any> | null;
+  parameters: ToolParameterCreateDTO[];
+}
+
+export interface UpdateToolDTO {
+  name?: string;
+  description?: string | null;
+  return_type_schema?: Record<string, any> | null;
+  parameters?: ToolParameterCreateDTO[];
+}
+
+export interface PaginatedToolsDTO {
+  tools: ToolDTO[];
+  total_count: number;
+  skip: number;
+  limit: number;
+}
+
+// --- Service Functions ---
+
+/**
+ * Fetches a paginated list of tools.
+ */
+export const getTools = async (params: {
+  skip?: number;
+  limit?: number;
+  includeSystemTools?: boolean;
+}): Promise<PaginatedToolsDTO> => {
+  const response: AxiosResponse<PaginatedToolsDTO> = await apiClient.get('/tools', {
+    params: {
+      skip: params.skip,
+      limit: params.limit,
+      include_system_tools: params.includeSystemTools,
+    },
+  });
+  return response.data;
+};
+
+/**
+ * Fetches a single tool by its ID.
+ */
+export const getToolById = async (toolId: string): Promise<ToolDTO> => {
+  const response: AxiosResponse<ToolDTO> = await apiClient.get(`/tools/${toolId}`);
+  return response.data;
+};
+
+/**
+ * Creates a new tool.
+ */
 export const createTool = async (payload: CreateToolDTO): Promise<ToolDTO> => {
-  const { data } = await apiClient.post<ToolDTO>('/tools', payload)
-  return data
-}
+  const response: AxiosResponse<ToolDTO> = await apiClient.post('/tools', payload);
+  return response.data;
+};
 
+/**
+ * Updates an existing tool.
+ */
 export const updateTool = async (
-  id: string,
+  toolId: string,
   payload: UpdateToolDTO,
 ): Promise<ToolDTO> => {
-  const { data } = await apiClient.put<ToolDTO>(`/tools/${id}`, payload)
-  return data
-}
+  const response: AxiosResponse<ToolDTO> = await apiClient.put(`/tools/${toolId}`, payload);
+  return response.data;
+};
 
-export const deleteTool = async (id: string): Promise<void> => {
-  await apiClient.delete(`/tools/${id}`)
-}
+/**
+ * Deletes a tool by its ID.
+ */
+export const deleteTool = async (toolId: string): Promise<void> => {
+  await apiClient.delete(`/tools/${toolId}`);
+};
 
-const toolService = {
-  fetchTools,
-  fetchToolById,
+export default {
+  getTools,
+  getToolById,
   createTool,
   updateTool,
   deleteTool,
-}
-
-export default toolService
+};

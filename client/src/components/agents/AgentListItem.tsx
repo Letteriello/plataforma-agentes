@@ -1,25 +1,23 @@
-import { AnyAgentConfig as Agent, AgentType } from '@/types/agents' // Or the correct path to Agent type
-import { Badge } from '@/components/ui/badge' // and other UI components
-import { Button } from '@/components/ui/button'
+import { AgentSummaryDTO } from '@/api/agentService'; // Mudar para AgentSummaryDTO
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Play, Pencil, Trash2, Loader2 } from 'lucide-react'
-import React from 'react' // Import React
-import { agentTypeLabels, getAgentTypeColor } from '@/lib/agent-utils' // Import centralized utilities
-
-// Removed local agentTypeLabels
-// Removed local getAgentTypeColor
+} from '@/components/ui/tooltip';
+import { Play, Pencil, Trash2, Loader2 } from 'lucide-react';
+import React from 'react';
+// Importar DisplayAgentType e as funções atualizadas
+import { agentTypeLabels, getAgentTypeColor, DisplayAgentType } from '@/lib/agent-utils';
 
 interface AgentListItemProps {
-  agent: Agent
-  onEdit: (id: string) => void
-  onRun: (id: string) => void
-  onDelete: (id: string) => void
-  isDeleting: boolean
+  agent: AgentSummaryDTO; // Mudar tipo da prop agent
+  onEdit: (id: string) => void;
+  onRun: (id: string) => void;
+  onDelete: (id: string) => void;
+  isDeleting: boolean;
 }
 
 const AgentListItemComponent: React.FC<AgentListItemProps> = ({
@@ -29,12 +27,15 @@ const AgentListItemComponent: React.FC<AgentListItemProps> = ({
   onDelete,
   isDeleting,
 }) => {
+  // agent.type agora é do tipo AgentSummaryDTO['type'] que é compatível com DisplayAgentType
+  const currentAgentType = agent.type as DisplayAgentType;
+
   return (
     <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
       <div className="flex items-center space-x-4">
         <div className="flex-shrink-0">
           <div
-            className={`h-10 w-10 rounded-full flex items-center justify-center ${getAgentTypeColor(agent.type)}`}
+            className={`h-10 w-10 rounded-full flex items-center justify-center ${getAgentTypeColor(currentAgentType)}`}
           >
             {agent.name.charAt(0).toUpperCase()}
           </div>
@@ -42,23 +43,27 @@ const AgentListItemComponent: React.FC<AgentListItemProps> = ({
         <div className="min-w-0 flex-1">
           <div className="flex items-center space-x-2">
             <h3 className="text-sm font-medium truncate">{agent.name}</h3>
-            <Badge variant="outline" className={getAgentTypeColor(agent.type)}>
-              {agentTypeLabels[agent.type]}
+            <Badge variant="outline" className={getAgentTypeColor(currentAgentType)}>
+              {agentTypeLabels[currentAgentType] || 'Unknown Type'} {/* Adicionar fallback */}
             </Badge>
-            {!agent.isPublic && (
+            {/* Removido o badge de 'Private' pois agent.isPublic não está em AgentSummaryDTO */}
+            {/* 
+            {!agent.isPublic && ( // Este campo não existe em AgentSummaryDTO
               <Badge
                 variant="outline"
                 className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
               >
                 Private
               </Badge>
-            )}
+            )} 
+            */}
           </div>
           <p className="text-sm text-muted-foreground truncate">
             {agent.description || 'No description provided'}
           </p>
         </div>
       </div>
+      {/* Botões de ação permanecem os mesmos */}
       <div className="flex items-center space-x-2">
         <TooltipProvider>
           <Tooltip>
@@ -117,8 +122,8 @@ const AgentListItemComponent: React.FC<AgentListItemProps> = ({
         </TooltipProvider>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export const AgentListItem = React.memo(AgentListItemComponent)
+export const AgentListItem = React.memo(AgentListItemComponent);
 // Ensure AgentType is imported from '@/types/agents' in the actual file.
