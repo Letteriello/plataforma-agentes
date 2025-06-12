@@ -1,46 +1,22 @@
-import type { AgentSummaryDTO } from '@/api/agentService';
-
-/**
- * Defines the operational status of an agent.
- */
-export type AgentStatus = 'online' | 'offline' | 'busy' | 'error';
-
-/**
- * Extends the basic agent summary with dashboard-specific details.
- */
-export interface DashboardAgent extends AgentSummaryDTO {
-  status: AgentStatus;
-  lastActive: string;
+export interface KpiCardMetric {
+  value: number;
+  change: number; // Represents the percentage change from the previous period
 }
 
-/**
- * Defines the type of a dashboard activity/log entry.
- */
-export type ActivityType = 'info' | 'success' | 'warning' | 'error';
+export interface RoiMetricsResponse {
+  total_cost: KpiCardMetric;
+  total_tokens: KpiCardMetric;
+  avg_cost_per_session: KpiCardMetric;
+  cost_by_model: Record<string, number>;
+  tokens_by_model: Record<string, number>;
+}
 
-/**
- * Represents a single activity log entry on the dashboard.
- */
-export interface Activity {
-  id: string;
-  type: ActivityType;
-  message: string;
+export interface TimeSeriesDataPoint {
   timestamp: string;
-}
-
-/**
- * Represents a data point for token usage metrics.
- */
-export interface TokenUsage {
-  date: string;
+  cost: number;
   tokens: number;
 }
 
-/**
- * Represents the main statistics for the dashboard.
- */
-export interface DashboardStats {
-  activeAgentsCount: number;
-  activeSessions: number;
-  totalSessions24h: number;
+export interface RoiTimeSeriesResponse {
+  series: TimeSeriesDataPoint[];
 }

@@ -12,29 +12,32 @@ import {
   Users,
 } from 'lucide-react';
 import { AnyAgentConfig, AgentType } from '@/types/agents'; 
-import { AgentSummaryDTO } from '@/api/agentService'; 
+import { AgentSummaryDTO } from '@/api/agentService';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { AgentListItem } from './AgentListItem';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useAgents } from '@/hooks/useAgents'; 
-import agentService from '@/api/agentService'; 
-
-type AgentFilter = 'all' | AgentType; 
+import { useAgents } from '@/hooks/useAgents';
+import agentService from '@/api/agentService';
 
 export function AgentsDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const { 
-    agents: fetchedAgentsData, 
-    isLoading, 
-    error, 
-    refetchAgents 
-  } = useAgents();
+
+  const { agents: fetchedAgentsData, isLoading, error, refetchAgents } = useAgents();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<AgentFilter>('all'); 
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
+  const [agentToDelete, setAgentToDelete] = useState<AgentSummaryDTO | null>(null);
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 
@@ -60,30 +63,37 @@ export function AgentsDashboard() {
   const navigateToEdit = (id: string) => navigate(`/agents/edit/${id}`);
   const navigateToRun = (id: string) => navigate(`/agents/run/${id}`);
 
-  const memoizedHandleDeleteAgent = useCallback(
-    async (id: string) => {
-      setIsDeleting((prev) => ({ ...prev, [id]: true }));
-      try {
-        await agentService.deleteAgent(id);
-        refetchAgents();
-        toast({ 
-          title: 'Agente excluído',
-          description: 'O agente foi excluído com sucesso.',
-          variant: 'success',
-        });
-      } catch (err) {
-        console.error('Failed to delete agent:', err);
-        toast({
-          title: 'Error Deleting Agent',
-          description: (err as Error)?.message || 'Could not delete the agent.',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsDeleting((prev) => ({ ...prev, [id]: false }));
-      }
-    },
-    [toast, refetchAgents]
-  );
+  const handleDeleteRequest = (agent: AgentSummaryDTO) => {
+    setAgentToDelete(agent);
+  };
+
+  const confirmDelete = async () => {
+    if (!agentToDelete) return;
+
+    const { id, name } = agentToDelete;
+    setIsDeleting((prev) => ({ ...prev, [id]: true }));
+    try {
+      await agentService.deleteAgent(id);
+      refetchAgents();
+      toast({
+        title: 'Agente excluído',
+        description: `O agente "${name}" foi excluído com sucesso.`,
+        variant: 'success',
+      });
+    } catch (err) {
+      console.error('Failed to delete agent:', err);
+      toast({
+        title: 'Erro ao excluir Agente',
+        description: (err as Error)?.message || 'Não foi possível excluir o agente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeleting((prev) => ({ ...prev, [id]: false }));
+      setAgentToDelete(null);
+    }
+  };
+
+  const memoizedHandleDeleteRequest = useCallback(handleDeleteRequest, []);
   
   if (isLoading) {
     return (
@@ -186,7 +196,7 @@ export function AgentsDashboard() {
                         agent={agent} // Removed 'as any' as AgentListItem now expects AgentSummaryDTO
                         onEdit={navigateToEdit}
                         onRun={navigateToRun}
-                        onDelete={memoizedHandleDeleteAgent}
+                        onDelete={() => memoizedHandleDeleteRequest(agent)}
                         isDeleting={isDeleting[agent.id] || false}
                       />
                     </div>
@@ -197,6 +207,21 @@ export function AgentsDashboard() {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog open={!!agentToDelete} onOpenChange={(isOpen) => !isOpen && setAgentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente o agente "<strong>{agentToDelete?.name}</strong>" e todos os seus dados associados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Confirmar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

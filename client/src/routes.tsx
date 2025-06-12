@@ -46,9 +46,13 @@ const withSuspense = (Component: React.ComponentType) => {
 
 // Lazy load pages
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const RoiDashboardPage = lazy(() => import('./pages/RoiDashboardPage'))
 const AgentsIndexPage = lazy(() => import('@/pages/agents/AgentsIndexPage'));
 const NewAgentPage = lazy(() => import('@/pages/agents/AgentsNewPage'));
 const EditAgentPage = lazy(() => import('@/pages/agents/edit/AgentsEditEntryPage'));
+const ToolsPage = lazy(() => import('./pages/ToolsPage'));
+const NewToolPage = lazy(() => import('./pages/tools/NewToolPage'));
+const EditToolPage = lazy(() => import('./pages/tools/EditToolPage'));
 
 
 
@@ -119,6 +123,11 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Dashboard' },
       },
       {
+        path: 'roi-dashboard',
+        element: withSuspense(RoiDashboardPage),
+        handle: { title: 'Dashboard ROI' },
+      },
+      {
         path: 'playground',
         element: withSuspense(PlaygroundPage),
         handle: { title: 'Playground' },
@@ -172,6 +181,27 @@ const routes: AppRouteObject[] = [
         path: 'roi-dashboard',
         element: withSuspense(RoiDashboardPage),
         handle: { title: 'ROI Dashboard' },
+      },
+      {
+        path: 'tools',
+        element: withSuspense(ToolsPage),
+        handle: {
+          title: 'Ferramentas',
+        },
+      },
+      {
+        path: 'tools/new',
+        element: withSuspense(NewToolPage),
+        handle: {
+          title: 'Criar Ferramenta',
+        },
+      },
+      {
+        path: 'tools/edit/:toolId',
+        element: withSuspense(EditToolPage),
+        handle: {
+          title: 'Editar Ferramenta',
+        },
       },
       {
         path: 'simulation-sandbox',

@@ -15,7 +15,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import type { TokenUsage } from '@/api/dashboardService'
+import type { TokenUsageData as TokenUsage } from '@/services/dashboardService';
 
 ChartJS.register(
   CategoryScale,
@@ -38,13 +38,14 @@ export function TokenUsageCard({
   error,
 }: TokenUsageCardProps) {
   const chartData = {
-    labels: data.map((d) => d.date),
+    labels: data.map((d) => new Date(d.day).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })),
     datasets: [
       {
         label: 'Tokens',
-        data: data.map((d) => d.tokens),
+        data: data.map((d) => d.total_tokens),
         borderColor: '#3b82f6',
         backgroundColor: 'rgba(59,130,246,0.3)',
+        fill: true,
       },
     ],
   }

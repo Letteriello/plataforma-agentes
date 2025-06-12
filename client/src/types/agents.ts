@@ -38,7 +38,6 @@ export enum AgentType {
 
 export interface AgentConfig {
   isPublic: boolean;
-  isPublic: boolean
   id: string
   name: string
   description: string
@@ -61,6 +60,10 @@ export interface LlmAgentConfig extends AgentConfig {
   generateContentConfig: GenerateContentConfig;
   tools: UiToolDefinition[];
   knowledgeBaseIds?: string[];
+  autonomy_level?: 'auto' | 'ask';
+  security_config?: { [key: string]: any };
+  planner_config?: { [key: string]: any };
+  code_executor_config?: { [key: string]: any };
 }
 
 export interface SequentialAgentConfig extends AgentConfig {
@@ -115,6 +118,10 @@ export const LlmAgentConfigSchema = z.object({
   generateContentConfig: GenerateContentConfigSchema,
   tools: z.array(z.any()), // Simplified for now
   knowledgeBaseIds: z.array(z.string()).optional(),
+  autonomy_level: z.enum(['auto', 'ask']).default('ask').optional(),
+  security_config: z.record(z.string(), z.any()).optional().default({}),
+  planner_config: z.record(z.string(), z.any()).optional().default({}),
+  code_executor_config: z.record(z.string(), z.any()).optional().default({}),
 })
 
 export function createDefaultAgent(type: AgentType): AnyAgentConfig {
@@ -142,6 +149,10 @@ export function createDefaultAgent(type: AgentType): AnyAgentConfig {
         },
         tools: [],
         knowledgeBaseIds: [],
+        autonomy_level: 'ask',
+        security_config: {},
+        planner_config: {},
+        code_executor_config: {},
       } as LlmAgentConfig
     // Add other agent types here later
     default:

@@ -1,16 +1,17 @@
-import { useFormContext } from 'react-hook-form'
-import { LLMAgent } from '@/types/agents'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { useFormContext } from 'react-hook-form';
+import { LLMAgent } from '@/types/agents';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Slider } from '@/components/ui/slider'
+} from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
 import {
   FormControl,
   FormDescription,
@@ -18,10 +19,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { useCallback, useMemo } from 'react'
+} from '@/components/ui/form';
+import { useCallback, useMemo } from 'react';
 import {
-  Card, CardContent, CardDescription, CardHeader, CardTitle
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import {
   Accordion,
@@ -29,13 +34,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { HelpCircle, X } from 'lucide-react'
+import { HelpCircle, X } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 // Modelos disponíveis com seus detalhes
 const AVAILABLE_MODELS = [
@@ -47,78 +53,167 @@ const AVAILABLE_MODELS = [
     name: 'Gemini 1.5 Pro (Latest)',
     maxTokens: 1048576,
   },
-]
+];
 
 type LLMAgentFormProps = {
   isWizardMode?: boolean;
-  disabled?: boolean
-  className?: string
-}
+  disabled?: boolean;
+  className?: string;
+};
 
 export function LLMAgentForm({
-  isWizardMode = false, // Default to false (full form) if not specified
+  isWizardMode = false,
   disabled = false,
   className = '',
 }: LLMAgentFormProps) {
-  const { control, watch, setValue } = useFormContext<LLMAgent>()
+  const { control, watch, setValue } = useFormContext<LLMAgent>();
 
-  const modelValue = watch('model')
-  // Alinhado com a nova estrutura aninhada do ADK
+  const modelValue = watch('model');
   const temperatureValue = watch('generateContentConfig.temperature', 0.7);
+  const maxTokensValue = watch('generateContentConfig.maxOutputTokens');
+  const stopSequencesValue = watch('stopSequences', [] as string[]);
 
   const temperatureOptions = [
     { label: 'Mais Preciso', value: 0.2 },
     { label: 'Balanceado', value: 0.7 },
     { label: 'Mais Criativo', value: 1.0 },
   ];
-  const maxTokensValue = watch('generateContentConfig.maxOutputTokens')
-  const stopSequencesValue = watch('generateContentConfig.stopSequences', [])
 
   const selectedModel = useMemo(
     () => AVAILABLE_MODELS.find((m) => m.id === modelValue),
-    [modelValue],
-  )
+    [modelValue]
+  );
 
-  const handleModelChange = useCallback(
-    (newModelId: string) => {
-      const model = AVAILABLE_MODELS.find((m) => m.id === newModelId)
-      if (model) {
-        setValue('model', newModelId)
-        // Alinhado com a nova estrutura aninhada do ADK
-        setValue('generateContentConfig.maxOutputTokens', model.maxTokens)
-      }
+  const handleTemperatureChange = useCallback(
+    (value: number) => {
+      setValue('generateContentConfig.temperature', value, { shouldValidate: true });
     },
-    [setValue],
-  )
+    [setValue]
+  );
+
+  // Helper to get the label for a given temperature value
+  const getTemperatureLabel = (value: number | undefined) => {
+    if (value === undefined) return 'Balanceado';
+    const closest = temperatureOptions.reduce((prev, curr) =>
+      Math.abs(curr.value - value) < Math.abs(prev.value - value) ? curr : prev
+    );
+    return closest.label;
+  };
+
+  // Helper to get the value for a given temperature label
+  const getTemperatureValue = (label: string) => {
+    const option = temperatureOptions.find((opt) => opt.label === label);
+    return option ? option.value : 0.7;
+  };
+
+  const renderJsonTextarea = useCallback(
+    (
+      name: 'security_config' | 'planner_config' | 'code_executor_config',
+      label: string,
+      placeholder: string
+    ) => (
+      <FormField
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>{label}</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder={placeholder}
+                className="font-mono h-32 min-h-[8rem]"
+                {...field}
+                value={
+                  field.value
+                    ? typeof field.value === 'string'
+                      ? field.value
+                      : JSON.stringify(field.value, null, 2)
+                    : ''
+                }
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                }}
+                disabled={disabled}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    ),
+    [control, disabled]
+  );
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={cn('space-y-6', className)}>
       <Card>
         <CardHeader>
-          <CardTitle>Modelo</CardTitle>
+          <CardTitle>Configurações Gerais</CardTitle>
           <CardDescription>
-            Selecione o modelo de linguagem e configure seus parâmetros de
-            geração.
+            Defina o nome e a instrução principal para o seu agente.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
+          <FormField
+            control={control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome do Agente</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Ex: Agente de Vendas"
+                    {...field}
+                    disabled={disabled}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="instruction"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Instrução</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Você é um assistente de IA prestativo..."
+                    className="min-h-[100px]"
+                    {...field}
+                    disabled={disabled}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Modelo de Linguagem</CardTitle>
+          <CardDescription>
+            Escolha o modelo de linguagem que seu agente usará.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <FormField
             control={control}
             name="model"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Modelo LLM</FormLabel>
+                <FormLabel>Modelo Base</FormLabel>
                 <Select
-                  onValueChange={(value) => {
-                    field.onChange(value)
-                    handleModelChange(value) // Chama o handler para atualizar maxTokens
-                  }}
+                  onValueChange={field.onChange}
                   defaultValue={field.value}
                   disabled={disabled}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione um modelo LLM" />
+                      <SelectValue placeholder="Selecione um modelo" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -129,220 +224,256 @@ export function LLMAgentForm({
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
         </CardContent>
       </Card>
-      {!isWizardMode && (
-        <Accordion type="single" collapsible className="w-full mt-6">
-        <AccordionItem value="generation-settings">
-          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Parâmetros Avançados de Geração
-          </AccordionTrigger>
-          <AccordionContent className="pt-4 space-y-6">
-            <p className="text-sm text-muted-foreground pb-2">
-              Ajuste fino dos parâmetros que controlam como o modelo gera as respostas.
-            </p>
-            {isWizardMode ? (
-            <FormField
-              control={control}
-              name="generateContentConfig.temperature"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Criatividade da Resposta</FormLabel>
-                  <Select
-                    onValueChange={(valueString) => field.onChange(parseFloat(valueString))}
-                    value={field.value?.toString() ?? '0.7'} // Default to 'Balanceado'
-                    disabled={disabled}
-                  >
+
+      {isWizardMode ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Estilo de Resposta</CardTitle>
+            <CardDescription>
+              Escolha o quão criativo ou preciso o agente deve ser.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              value={getTemperatureLabel(temperatureValue)}
+              onValueChange={(label) => {
+                if (label) handleTemperatureChange(getTemperatureValue(label));
+              }}
+              className="grid grid-cols-3"
+              disabled={disabled}
+            >
+              {temperatureOptions.map((option) => (
+                <ToggleGroupItem
+                  key={option.value}
+                  value={option.label}
+                  className="flex flex-col h-auto"
+                >
+                  <span className="font-semibold">{option.label}</span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Parâmetros de Geração (Modo Avançado)</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              <FormField
+                control={control}
+                name="generateContentConfig.temperature"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Temperatura: {temperatureValue.toFixed(1)}</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o nível de criatividade" />
-                      </SelectTrigger>
+                      <Slider
+                        min={0}
+                        max={2}
+                        step={0.1}
+                        value={[field.value || 0.7]}
+                        onValueChange={(value) => field.onChange(value[0])}
+                        disabled={disabled}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {temperatureOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value.toString()}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Controla o quão criativa ou factual será a resposta do agente.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ) : (
-            <FormField
-            control={control}
-            name="generateContentConfig.temperature"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Temperatura: {temperatureValue.toFixed(1)}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={0}
-                      max={2} // ADK for Gemini supports up to 2.0 for temperature
-                      step={0.1}
-                      value={[field.value || 0.7]} // Default value if undefined
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="generateContentConfig.topP"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Top P: {(field.value || 0.95).toFixed(2)}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={0}
-                      max={1}
-                      step={0.01} // Finer control for Top P
-                      value={[field.value || 0.95]} // Default value if undefined
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="generateContentConfig.topK"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Top K: {field.value || 1}</FormLabel>
-                  <FormControl>
-                    <Slider
-                      min={1}
-                      max={100} // Example range, adjust as needed for Gemini
-                      step={1}
-                      value={[field.value || 1]} // Default value if undefined
-                      onValueChange={(value) => field.onChange(value[0])}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            )}
-            {!isWizardMode && (
-            <FormField
-              control={control}
-              name="generateContentConfig.maxOutputTokens"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    Max Output Tokens
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="w-4 h-4 ml-1.5 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            Máximo de tokens na resposta. O modelo{' '}
-                            {selectedModel?.name || 'selecionado'} suporta até{' '}
-                            {selectedModel?.maxTokens || 'N/A'} tokens.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      value={field.value || selectedModel?.maxTokens || 2048}
-                      onChange={(e) => {
-                        const numValue = parseInt(e.target.value, 10)
-                        if (selectedModel && numValue > selectedModel.maxTokens) {
-                          field.onChange(selectedModel.maxTokens)
-                        } else if (numValue < 1) {
-                          field.onChange(1)
-                        } else {
-                          field.onChange(numValue)
-                        }
-                      }}
-                      max={selectedModel?.maxTokens}
-                      min={1}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Define o limite máximo de tokens para a resposta gerada.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="generateContentConfig.stopSequences"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sequências de Parada</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Digite uma sequência e pressione Enter"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          const newValue = e.currentTarget.value.trim()
-                          if (newValue && !field.value?.includes(newValue)) {
-                            field.onChange([...(field.value || []), newValue])
-                            e.currentTarget.value = ''
-                          }
-                        }
-                      }}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Adicione sequências de texto que farão o modelo parar de
-                    gerar.
-                  </FormDescription>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {stopSequencesValue.map((seq, index) => (
-                      <ToggleGroup
-                        type="single"
-                        key={index}
-                        variant="outline"
-                        className="p-1 bg-gray-100 rounded-md"
-                      >
-                        <ToggleGroupItem
-                          value={seq}
-                          className="flex items-center gap-1.5"
-                          onClick={() => {
-                            const newSequences = [...stopSequencesValue]
-                            newSequences.splice(index, 1)
-                            field.onChange(newSequences)
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="generateContentConfig.topP"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Top P: {(field.value || 0.95).toFixed(2)}</FormLabel>
+                    <FormControl>
+                      <Slider
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        value={[field.value || 0.95]}
+                        onValueChange={(value) => field.onChange(value[0])}
+                        disabled={disabled}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="generateContentConfig.topK"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Top K: {field.value || 1}</FormLabel>
+                    <FormControl>
+                      <Slider
+                        min={1}
+                        max={100}
+                        step={1}
+                        value={[field.value || 1]}
+                        onValueChange={(value) => field.onChange(value[0])}
+                        disabled={disabled}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+          <Accordion type="multiple" className="w-full">
+            <AccordionItem value="generation-settings">
+              <AccordionTrigger className="text-base">
+                Configurações de Geração Adicionais
+              </AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <FormField
+                  control={control}
+                  name="generateContentConfig.maxOutputTokens"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Max. Tokens de Saída: {maxTokensValue}
+                      </FormLabel>
+                      <FormControl>
+                        <Slider
+                          min={1}
+                          max={selectedModel?.maxTokens || 8192}
+                          step={1}
+                          value={[field.value || 2048]}
+                          onValueChange={(value) => field.onChange(value[0])}
+                          disabled={disabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={control}
+                  name="stopSequences"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sequências de Parada</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Digite uma sequência e pressione Enter"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const newValue = e.currentTarget.value.trim();
+                              if (newValue && !field.value?.includes(newValue)) {
+                                field.onChange([
+                                  ...(field.value || []),
+                                  newValue,
+                                ]);
+                                e.currentTarget.value = '';
+                              }
+                            }
                           }}
-                        >
-                          {seq} <X className="h-3 w-3" />
-                        </ToggleGroupItem>
-                      </ToggleGroup>
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </AccordionContent>
-        </AccordionItem>
-        </Accordion>
+                          disabled={disabled}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Adicione sequências de texto que farão o modelo parar de
+                        gerar.
+                      </FormDescription>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {stopSequencesValue.map((seq: string, index: number) => (
+                          <ToggleGroup
+                            type="single"
+                            key={index}
+                            variant="outline"
+                            className="p-1 bg-gray-100 rounded-md"
+                          >
+                            <ToggleGroupItem
+                              value={seq}
+                              className="flex items-center gap-1.5"
+                              onClick={() => {
+                                const newSequences = [...stopSequencesValue];
+                                newSequences.splice(index, 1);
+                                field.onChange(newSequences);
+                              }}
+                            >
+                              {seq} <X className="h-3 w-3" />
+                            </ToggleGroupItem>
+                          </ToggleGroup>
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="advanced-settings">
+              <AccordionTrigger className="text-base">
+                Configurações Avançadas
+              </AccordionTrigger>
+              <AccordionContent className="space-y-6 pt-4">
+                <FormField
+                  control={control}
+                  name="autonomy_level"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nível de Autonomia</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={disabled}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o nível de autonomia" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="ask">
+                            Manual (Requer aprovação)
+                          </SelectItem>
+                          <SelectItem value="auto">Automático</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Define se o agente executa ações automaticamente ou pede
+                        confirmação.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {renderJsonTextarea(
+                    'security_config',
+                    'Config. de Segurança (JSON)',
+                    '{\n  "tool_approval_required": true\n}'
+                  )}
+                  {renderJsonTextarea(
+                    'planner_config',
+                    'Config. do Planejador (JSON)',
+                    '{\n  "strategy": "hierarchical"\n}'
+                  )}
+                </div>
+                {renderJsonTextarea(
+                  'code_executor_config',
+                  'Config. do Executor de Código (JSON)',
+                  '{\n  "timeout_seconds": 60\n}'
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       )}
     </div>
-  )
+  );
 }

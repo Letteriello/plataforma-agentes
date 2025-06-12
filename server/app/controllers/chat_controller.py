@@ -19,6 +19,22 @@ class ChatController:
                 ):
         self.llm_service = llm_service
 
+    def _calculate_cost(self, model_name: str, input_tokens: int, output_tokens: int) -> float:
+        # NOTE: Placeholder costs based on public pricing per 1 million tokens as of June 2025.
+        # This should be moved to a centralized configuration service.
+        MODEL_PRICING = {
+            "gemini-1.5-flash": {"input": 0.50, "output": 1.50},
+            "gemini-1.5-pro": {"input": 7.00, "output": 21.00},
+            "default": {"input": 0.50, "output": 1.50} # Default to flash pricing for safety
+        }
+
+        pricing = MODEL_PRICING.get(model_name, MODEL_PRICING["default"])
+
+        input_cost = (input_tokens / 1_000_000) * pricing["input"]
+        output_cost = (output_tokens / 1_000_000) * pricing["output"]
+
+        return input_cost + output_cost
+
     async def create_chat_session(self, session_data: ChatSessionCreate, current_user: User, jwt_token: str) -> ChatSessionResponse:
         db: SupabaseClient = create_supabase_client_with_jwt(jwt_token)
         user_id = current_user.id
@@ -212,12 +228,13 @@ class ChatController:
             print(f"Error converting agent data to AgentModel: {e}. Data: {agent_config_res.data}")
             raise HTTPException(status_code=500, detail=f"Invalid agent configuration: {e}")
 
-        llm_response_content = await self.llm_service.generate_response(
+        llm_response_content, token_usage = await self.llm_service.generate_response(
             agent_config=agent_model_instance,
             conversation_history=conversation_history,
             user_message_content=user_message_content
         )
 
+        # Store agent message
         agent_message_to_insert = {
             "session_id": str(session.id),
             "sender_type": 'AGENT',
@@ -226,5 +243,32 @@ class ChatController:
         agent_msg_db_res = await db.table('chat_messages').insert(agent_message_to_insert).execute()
         if not agent_msg_db_res.data or len(agent_msg_db_res.data) == 0:
             raise HTTPException(status_code=500, detail="Failed to store agent message")
+
+        # Log usage metrics asynchronously
+        try:
+            cost = self._calculate_cost(
+                model_name=agent_model_instance.model,
+                input_tokens=token_usage.get('input_tokens', 0),
+                output_tokens=token_usage.get('output_tokens', 0)
+            )
+
+            log_payload = {
+                'user_id': str(current_user.id),
+                'agent_id': str(agent_model_instance.id),
+                'session_id': str(session.id),
+                'event_type': 'chat_completion',
+                'model_name': agent_model_instance.model,
+                'input_tokens': token_usage.get('input_tokens', 0),
+                'output_tokens': token_usage.get('output_tokens', 0),
+                'cost': cost,
+                'details': {
+                    'service': 'llm_service',
+                    'action': 'generate_response'
+                }
+            }
+            await db.table('usage_metrics').insert(log_payload).execute()
+        except Exception as e:
+            # Log the error but don't fail the request
+            print(f"ERROR: Could not log usage metrics for session {session.id}: {e}")
 
         return ChatMessageResponse(**agent_msg_db_res.data[0])

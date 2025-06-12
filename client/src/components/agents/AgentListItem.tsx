@@ -13,10 +13,10 @@ import React from 'react';
 import { agentTypeLabels, getAgentTypeColor, DisplayAgentType } from '@/lib/agent-utils';
 
 interface AgentListItemProps {
-  agent: AgentSummaryDTO; // Mudar tipo da prop agent
+  agent: AgentSummaryDTO;
   onEdit: (id: string) => void;
   onRun: (id: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: (agent: AgentSummaryDTO) => void; // Changed to pass the whole agent object
   isDeleting: boolean;
 }
 
@@ -104,7 +104,7 @@ const AgentListItemComponent: React.FC<AgentListItemProps> = ({
                 variant="ghost"
                 size="icon"
                 className="text-destructive hover:text-destructive/90"
-                onClick={() => onDelete(agent.id)}
+                onClick={() => onDelete(agent)}
                 disabled={isDeleting}
               >
                 {isDeleting ? (

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "08_detalhes_adicionais.md",
+                "file": "09_mapeamento_ui_adk.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "08_detalhes_adicionais"
+              "title": "09_mapeamento_ui_adk"
             }
           }
         ]
@@ -170,6 +170,10 @@
   },
   "active": "a168057da33a7c91",
   "lastOpenFiles": [
+    "10_feedback_e_melhorias_ia.md",
+    "11_feedback_no_x.md",
+    "09_mapeamento_ui_adk.md",
+    "08_detalhes_adicionais.md",
     "07_estrutura_do_projeto.md",
     "06_colaboracao.md",
     "01_visao_geral_app.md",

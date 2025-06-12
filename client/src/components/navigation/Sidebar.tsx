@@ -84,6 +84,11 @@ const resourcesItems: NavItem[] = [
     label: 'Biblioteca',
   },
   {
+    href: '/tools',
+    icon: <Wrench className="h-5 w-5" />,
+    label: 'Ferramentas',
+  },
+  {
     href: '/simulation-sandbox',
     icon: <Beaker className="h-5 w-5" />,
     label: 'Sandbox',
