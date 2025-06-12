@@ -1,10 +1,10 @@
 import js from '@eslint/js';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import eslintPluginReact from 'eslint-plugin-react';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 // Final, stable configuration
 export default tseslint.config(
@@ -14,7 +14,6 @@ export default tseslint.config(
 
   // Base configs
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
 
   // React specific configuration
   {
@@ -28,9 +27,9 @@ export default tseslint.config(
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },
-      globals: {
-        ...globals.browser,
-      },
+      globals: Object.fromEntries(
+        Object.entries(globals.browser).map(([key, value]) => [key.trim(), value])
+      ),
     },
     rules: {
       ...eslintPluginReact.configs.recommended.rules,
@@ -49,6 +48,17 @@ export default tseslint.config(
   // Override for TypeScript files to use TypeScript-aware rules
   {
     files: ['src/**/*.{ts,tsx}'],
+    // TypeScript-specific rules
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: './tsconfig.json',
+        tsconfigRootDir: new URL('.', import.meta.url).pathname,
+      },
+    },
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [

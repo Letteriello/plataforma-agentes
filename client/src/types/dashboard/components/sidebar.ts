@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { NavItem } from './header'
 
 /**
@@ -19,7 +21,7 @@ export interface DashboardSidebarProps {
   /** Logo da aplicação */
   logo?: {
     /** Texto ou elemento JSX para o logo */
-    content: React.ReactNode
+    content: ReactNode
     /** URL para redirecionamento ao clicar no logo */
     href?: string
   }
@@ -27,7 +29,7 @@ export interface DashboardSidebarProps {
   /** Rodapé da barra lateral */
   footer?: {
     /** Conteúdo do rodapé */
-    content: React.ReactNode
+    content: ReactNode
     /** Classe CSS adicional para o rodapé */
     className?: string
   }
