@@ -46,6 +46,7 @@ const NewAgentPage = lazy(() => import('./pages/agents/AgentsNewPage'));
 const EditAgentPage = lazy(() => import('./pages/agents/edit/AgentsEditEntryPage'));
 const ToolsPage = lazy(() => import('./pages/ToolsPage'));
 const ToolEditorPage = lazy(() => import('./pages/ToolEditorPage'));
+const MemoryPage = lazy(() => import('./pages/MemoryPage'));
 
 // Lazy load common components
 const CofrePage = lazy(() => import('./pages/Cofre').then(module => ({ default: module.CofrePage })));
@@ -159,25 +160,16 @@ const routes: AppRouteObject[] = [
         handle: { title: 'Orchestration' },
       },
       {
+        path: 'memory',
+        element: withSuspense(MemoryPage),
+        handle: {
+          title: 'Memória',
+        },
+      },
+      {
         path: 'biblioteca',
         element: withSuspense(BibliotecaPage),
         handle: { title: 'Biblioteca' },
-        children: [
-          {
-            index: true,
-            element: <Navigate to="ferramentas" replace />,
-          },
-          {
-            path: 'ferramentas',
-            element: withSuspense(BibliotecaPage),
-            handle: { title: 'Ferramentas' },
-          },
-          {
-            path: 'memoria',
-            element: withSuspense(BibliotecaPage),
-            handle: { title: 'Memória' },
-          },
-        ],
       },
       {
         path: 'deploy',
