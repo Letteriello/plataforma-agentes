@@ -67,8 +67,7 @@ const AgentSettingsPage = lazy(
   () => import('./pages/agents/AgentsSettingsPage'),
 )
 const GovernancePage = lazy(() => import('./pages/GovernancePage'))
-const AuditLogsPage = lazy(() => import('./pages/AuditLogsPage'))
-const SecretsVaultPage = lazy(() => import('./pages/SecretsVaultPage'))
+const AuditLogsPage = lazy(() => import('@/pages/AuditLogsPage')) 
 const QAPanelPage = lazy(() => import('./pages/QAPanelPage'))
 const RoiDashboardPage = lazy(() => import('./pages/RoiDashboardPage'))
 const SimulationSandboxPage = lazy(
@@ -158,12 +157,7 @@ const routes: AppRouteObject[] = [
       {
         path: 'audit-logs',
         element: withSuspense(AuditLogsPage),
-        handle: { title: 'Audit Logs' },
-      },
-      {
-        path: 'secrets-vault',
-        element: withSuspense(SecretsVaultPage),
-        handle: { title: 'Secrets Vault' },
+        handle: { title: 'Logs de Auditoria' },
       },
       {
         path: 'qa-panel',
@@ -208,7 +202,7 @@ const routes: AppRouteObject[] = [
       {
         path: 'settings', // path changed from 'configuracoes'
         element: withSuspense(SettingsPage),
-        handle: { title: 'Settings' }, // title changed
+        handle: { title: 'Configurações' },
       },
       {
         path: 'cofre',

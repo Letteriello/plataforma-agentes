@@ -4,7 +4,8 @@ from typing import List
 from ..controllers import agent_controller
 from ..models.agent import Agent, AgentUpdate
 from ..schemas.tool_schemas import ToolResponseSchema # Added for agent tools response
-from ..security import get_current_user_id # Import the dependency
+from ..schemas.auth_schemas import CurrentUserWithToken # Import the correct schema
+from ..security import get_current_user_and_token # Dependency
 from typing import List, Dict, Any # Added for new response models
 
 router = APIRouter(
@@ -13,35 +14,36 @@ router = APIRouter(
 )
 
 @router.post("/", response_model=Agent, status_code=status.HTTP_201_CREATED)
-def create_new_agent(agent_payload: Agent, current_user_id: str = Depends(get_current_user_id)):
-    # Pass current_user_id to the controller
-    return agent_controller.create_agent(agent_payload=agent_payload, user_id=current_user_id)
+def create_new_agent(agent_payload: Agent, user_data: CurrentUserWithToken = Depends(get_current_user_and_token)):
+    # Pass current_user object and jwt_token to the controller
+    return agent_controller.create_agent(agent_payload=agent_payload, current_user=user_data.user, jwt_token=user_data.jwt_token)
 
 @router.get("/", response_model=List[Agent])
-def list_all_agents(current_user_id: str = Depends(get_current_user_id)):
-    # Pass current_user_id to the controller
-    return agent_controller.get_all_agents(user_id=current_user_id)
+def list_all_agents(user_data: CurrentUserWithToken = Depends(get_current_user_and_token)):
+    # Pass current_user object and jwt_token to the controller
+    return agent_controller.get_all_agents(current_user=user_data.user, jwt_token=user_data.jwt_token)
 
 @router.get("/{agent_id}", response_model=Agent)
-def get_single_agent(agent_id: str, current_user_id: str = Depends(get_current_user_id)):
-    # Pass current_user_id to the controller
-    agent = agent_controller.get_agent_by_id(agent_id=agent_id, user_id=current_user_id)
+def get_single_agent(agent_id: str, user_data: CurrentUserWithToken = Depends(get_current_user_and_token)):
+    # Pass current_user object and jwt_token to the controller
+    agent = agent_controller.get_agent_by_id(agent_id=agent_id, current_user=user_data.user, jwt_token=user_data.jwt_token)
     if not agent:
         raise HTTPException(status_code=404, detail="Agent not found or not authorized")
     return agent
 
 @router.patch("/{agent_id}", response_model=Agent)
-def update_existing_agent(agent_id: str, agent_update: AgentUpdate, current_user_id: str = Depends(get_current_user_id)):
-    # Pass current_user_id to the controller
-    updated_agent = agent_controller.update_agent(agent_id=agent_id, agent_update=agent_update, user_id=current_user_id)
+def update_existing_agent(agent_id: str, agent_update: AgentUpdate, user_data: CurrentUserWithToken = Depends(get_current_user_and_token)):
+    # Pass current_user object and jwt_token to the controller
+    updated_agent = agent_controller.update_agent(agent_id=agent_id, agent_update=agent_update, current_user=user_data.user, jwt_token=user_data.jwt_token)
     if not updated_agent:
         raise HTTPException(status_code=404, detail="Agent not found or not authorized")
     return updated_agent
 
 @router.delete("/{agent_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_existing_agent(agent_id: str, current_user_id: str = Depends(get_current_user_id)):
-    # Pass current_user_id to the controller
-    if not agent_controller.delete_agent(agent_id=agent_id, user_id=current_user_id):
+def delete_existing_agent(agent_id: str, user_data: CurrentUserWithToken = Depends(get_current_user_and_token)):
+    # Pass current_user object and jwt_token to the controller
+    success = agent_controller.delete_agent(agent_id=agent_id, current_user=user_data.user, jwt_token=user_data.jwt_token)
+    if not success:
         raise HTTPException(status_code=404, detail="Agent not found or not authorized")
     return
 
@@ -51,7 +53,7 @@ def delete_existing_agent(agent_id: str, current_user_id: str = Depends(get_curr
 def associate_tool_with_agent(
     agent_id: str, 
     tool_id: str, 
-    current_user_id: str = Depends(get_current_user_id)
+    user_data: CurrentUserWithToken = Depends(get_current_user_and_token)
 ):
     """
     Associates a specific tool with a specific agent.
@@ -62,7 +64,8 @@ def associate_tool_with_agent(
         result = agent_controller.add_tool_to_agent(
             agent_id=agent_id, 
             tool_id=tool_id, 
-            user_id=current_user_id
+            current_user=user_data.user,
+            jwt_token=user_data.jwt_token
         )
         return result
     except HTTPException as e:
@@ -78,7 +81,7 @@ def associate_tool_with_agent(
 def disassociate_tool_from_agent(
     agent_id: str, 
     tool_id: str, 
-    current_user_id: str = Depends(get_current_user_id)
+    user_data: CurrentUserWithToken = Depends(get_current_user_and_token)
 ):
     """
     Disassociates a tool from an agent.
@@ -87,7 +90,8 @@ def disassociate_tool_from_agent(
         result = agent_controller.remove_tool_from_agent(
             agent_id=agent_id, 
             tool_id=tool_id, 
-            user_id=current_user_id
+            current_user=user_data.user,
+            jwt_token=user_data.jwt_token
         )
         return result
     except HTTPException as e:
@@ -101,13 +105,13 @@ def disassociate_tool_from_agent(
 @router.get("/{agent_id}/tools", response_model=List[ToolResponseSchema])
 def list_agent_associated_tools(
     agent_id: str, 
-    current_user_id: str = Depends(get_current_user_id)
+    user_data: CurrentUserWithToken = Depends(get_current_user_and_token)
 ):
     """
     Lists all tools associated with a specific agent.
     """
     try:
-        tools = agent_controller.get_agent_tools(agent_id=agent_id, user_id=current_user_id)
+        tools = agent_controller.get_agent_tools(agent_id=agent_id, current_user=user_data.user, jwt_token=user_data.jwt_token)
         return tools
     except HTTPException as e:
         raise e

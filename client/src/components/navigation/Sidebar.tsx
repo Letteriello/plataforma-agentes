@@ -1,8 +1,10 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
 import {
+  BarChart, // Adicionado para Dashboard ROI
+  Beaker, // Adicionado para Sandbox
   Bot,
   BrainCircuit,
-  ClipboardList,
+  ClipboardList, // Já existia, usado para Painel QA
   FlaskConical,
   History,
   LayoutDashboard,
@@ -49,6 +51,11 @@ const navItems: NavItem[] = [
     icon: <FlaskConical className="h-5 w-5" />,
     label: 'Playground',
   },
+  {
+    href: '/roi-dashboard',
+    icon: <BarChart className="h-5 w-5" />,
+    label: 'Dashboard ROI',
+  },
 ]
 
 const agentManagementItems: NavItem[] = [
@@ -76,6 +83,11 @@ const resourcesItems: NavItem[] = [
     icon: <BrainCircuit className="h-5 w-5" />,
     label: 'Memória',
   },
+  {
+    href: '/simulation-sandbox',
+    icon: <Beaker className="h-5 w-5" />,
+    label: 'Sandbox',
+  },
 ]
 
 const governanceItems: NavItem[] = [
@@ -91,8 +103,13 @@ const governanceItems: NavItem[] = [
   },
   {
     href: '/audit-logs',
+    icon: <FileText className="h-5 w-5" />,
+    label: 'Auditoria',
+  },
+  {
+    href: '/qa-panel',
     icon: <ClipboardList className="h-5 w-5" />,
-    label: 'Logs de Auditoria',
+    label: 'Painel QA',
   },
 ]
 
@@ -219,7 +236,7 @@ export function Sidebar({
         {/* Account Section - Pushed to bottom */}
         <div className="mt-auto">
           <NavLink
-            to="/configuracoes"
+            to="/settings" // Alterado de /configuracoes para /settings
             className={({ isActive }) =>
               cn(
                 'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors w-full',
