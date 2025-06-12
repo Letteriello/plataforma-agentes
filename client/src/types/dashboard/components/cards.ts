@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { Agent, DashboardStats } from '../dashboard.types'
 
 /**
@@ -14,7 +16,7 @@ export interface StatsCardProps {
   description?: string
 
   /** Ícone do card */
-  icon?: React.ReactNode
+  icon?: ReactNode
 
   /** Tendência (up/down) */
   trend?: 'up' | 'down' | 'neutral'

@@ -34,10 +34,12 @@ export interface DashboardState {
 }
 
 // Tipos para navegação
+import type { ReactNode } from 'react'
+
 export interface NavItem {
   title: string
   href: string
-  icon: React.ReactNode
+  icon: ReactNode
   disabled?: boolean
 }
 
