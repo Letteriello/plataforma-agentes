@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { ChatMessage, Artifact } from '../components/chat/types' // Import ChatMessage and Artifact
 
 export interface Conversation {
@@ -23,9 +24,11 @@ interface ChatStore {
   setActiveArtifact: (artifact: Artifact | null) => void
 }
 
-export const useChatStore = create<ChatStore>((set) => ({
-  conversations: [],
-  selectedConversationId: null,
+export const useChatStore = create(
+  persist<ChatStore>(
+    (set) => ({
+      conversations: [],
+      selectedConversationId: null,
   messages: [], // Initialize messages
   activeArtifact: null,
   setSelectedConversationId: (id) => {
@@ -61,4 +64,9 @@ export const useChatStore = create<ChatStore>((set) => ({
       }
     }),
   setActiveArtifact: (artifact) => set({ activeArtifact: artifact }),
-}))
+    }),
+    {
+      name: 'chat-storage', // Name for localStorage key
+    },
+  ),
+)

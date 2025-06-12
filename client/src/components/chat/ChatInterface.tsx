@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatMessage } from './types'
 import { ChatHeader } from './ChatHeader'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useToast } from '@/components/ui/use-toast' // Added useToast
 import chatService from '@/api/chatService';
 import { ChatMessageSenderType, type ChatSession as ApiChatSession, type ChatMessage as ApiChatMessage } from '@/types/chatTypes';
 
@@ -26,6 +27,7 @@ export const ChatInterface = ({
   LeftPanelComponent,
   RightPanelComponent = AgentWorkspace,
 }: ChatInterfaceProps) => {
+  const { toast } = useToast(); // Initialized useToast
   const {
     messages,
     addMessage,
@@ -96,15 +98,23 @@ export const ChatInterface = ({
 
   const handleSendMessage = async (text: string) => {
     if (!selectedConversationId) {
-      console.warn('No conversation selected. Please select or start a new conversation.');
-      // TODO: Implement UI feedback, e.g., toast notification
+      // console.warn('No conversation selected. Please select or start a new conversation.');
+      toast({
+        variant: "warning",
+        title: "No Conversation Selected",
+        description: "Please select or start a new conversation.",
+      });
       return;
     }
 
     const currentConversation = conversations.find(c => c.id === selectedConversationId);
     if (!currentConversation || !currentConversation.agentId) {
       console.error('Selected conversation not found in store or agentId is missing.');
-      // TODO: Implement UI feedback
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Selected conversation details are missing. Please try again.",
+      });
       return;
     }
     const agentId = currentConversation.agentId;
@@ -140,16 +150,20 @@ export const ChatInterface = ({
       };
       addMessage(formattedAgentReply);
     } catch (error) {
-      console.error('Failed to send message or get agent reply:', error);
-      const errorReply: ChatMessage = {
-        id: `error-${Date.now()}`,
-        text: 'Error: Could not get a response from the agent.',
-        sender: 'system',
-        timestamp: new Date().toLocaleTimeString(),
-        avatarSeed: 'system-error-seed',
-      };
-      addMessage(errorReply);
-      // TODO: Show error toast to user
+      // console.error('Failed to send message or get agent reply:', error);
+      // const errorReply: ChatMessage = {
+      //   id: `error-${Date.now()}`,
+      //   text: 'Error: Could not get a response from the agent.',
+      //   sender: 'system',
+      //   timestamp: new Date().toLocaleTimeString(),
+      //   avatarSeed: 'system-error-seed',
+      // };
+      // addMessage(errorReply);
+      toast({
+        variant: "destructive",
+        title: "API Error",
+        description: "Error: Could not get a response from the agent. Please try again.",
+      });
     } finally {
       setIsAgentReplying(false);
     }
