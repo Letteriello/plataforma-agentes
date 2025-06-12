@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '../../ui/checkbox';
 import {
   FormControl,
   FormField,
@@ -8,17 +8,17 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
+} from '../../ui/form';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
-import { ComponentSkeleton } from '@/components/ui/component-skeleton';
-import memoryService from '@/api/memoryService'; // Assumindo que este serviço existe
-import type { KnowledgeBaseDTO } from '@/api/memoryService'; // Assumindo que este tipo existe
+} from '../../ui/card';
+import { ComponentSkeleton } from '../../ui/component-skeleton';
+import memoryService from '../../../api/memoryService'; // Assumindo que este serviço existe
+import type { KnowledgeBaseDTO } from '../../../api/memoryService'; // Assumindo que este tipo existe
 
 const AgentMemoryTab: React.FC = () => {
   const { control, getValues, setValue } = useFormContext();

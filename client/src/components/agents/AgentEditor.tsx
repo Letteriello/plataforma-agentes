@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '../ui/use-toast';
+import { Button } from '../ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
 import {
   FormField,
   FormItem,
@@ -13,22 +13,22 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/components/ui/form';
+} from '../ui/form';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
+} from '../ui/card';
 
 import { LLMAgentForm } from './forms/LLMAgentForm';
 import AgentToolsTab from './forms/AgentToolsTab';
 import { BaseAgentForm } from './forms/BaseAgentForm';
-import agentService from '@/api/agentService';
-import type { LlmAgentConfig } from '@/types/agents';
-import { LlmAgentConfigSchema, createDefaultAgent } from '@/types/agents';
-import { ComponentSkeleton } from '@/components/ui/component-skeleton';
+import agentService from '../../api/agentService';
+import type { LlmAgentConfig } from '../../types/agents';
+import { LlmAgentConfigSchema, createDefaultAgent } from '../../types/agents';
+import { ComponentSkeleton } from '../ui/component-skeleton';
 import AgentMemoryTab from './forms/AgentMemoryTab';
 import { AdvancedAgentForm } from './forms/AdvancedAgentForm';
 

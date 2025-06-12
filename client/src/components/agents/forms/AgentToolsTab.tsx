@@ -1,17 +1,17 @@
 import { useFormContext } from 'react-hook-form';
-import { LlmAgentConfig, UiToolDefinition } from '@/types/agents';
-import { getTools, PaginatedToolsDTO, ToolDTO } from '@/api/toolService';
+import { LlmAgentConfig, UiToolDefinition } from '../../../types/agents';
+import { getTools, PaginatedToolsDTO, ToolDTO } from '../../../api/toolService';
 import { useQuery } from '@tanstack/react-query';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Checkbox } from '../../ui/checkbox';
+import { Button } from '../../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
+import { Input } from '../../ui/input';
 import { useState } from 'react';
 import { ToolDefinitionForm } from './ToolDefinitionForm';
 import { Settings } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
+import { Label } from '../../ui/label';
+import { toast } from '../../ui/use-toast';
 
 const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
   const parameters: UiToolDefinition['parameters'] = {};
