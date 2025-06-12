@@ -1,5 +1,5 @@
-import { AgentEditor } from '@/components/agents/AgentEditor';
-import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
+import { AgentEditor } from '../../components/agents/AgentEditor';
+import { AgentSubNav } from '../../components/agents/AgentSubNav'; // Added
 
 export function NewAgentPage() {
   return (

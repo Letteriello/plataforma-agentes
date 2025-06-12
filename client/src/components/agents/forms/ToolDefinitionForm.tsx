@@ -68,7 +68,7 @@ export interface ToolDefinitionFormProps {
   onClose: () => void;
 }
 
-export export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialData, onSave, onClose }) => {
+export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialData, onSave, onClose }) => {
   const methods = useForm<ToolDefinitionFormData>({
     resolver: zodResolver(toolDefinitionFormSchema),
     defaultValues: {
