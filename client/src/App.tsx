@@ -1,14 +1,15 @@
-import { Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import NotFoundPage from './pages/NotFoundPage';
-import AppLayout from './layouts/AppLayout';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import { Route,Routes } from 'react-router-dom';
+
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import ToolsPage from './pages/ToolsPage';
-import CreateOrEditToolPage from './pages/CreateOrEditToolPage';
+import AppLayout from './layouts/AppLayout';
 import AgentsPage from './pages/AgentsPage';
 import CreateOrEditAgentPage from './pages/CreateOrEditAgentPage';
+import CreateOrEditToolPage from './pages/CreateOrEditToolPage';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import NotFoundPage from './pages/NotFoundPage';
+import RegisterPage from './pages/RegisterPage';
+import ToolsPage from './pages/ToolsPage';
 
 function App() {
   return (

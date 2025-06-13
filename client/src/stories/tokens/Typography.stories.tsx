@@ -1,5 +1,5 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import React from 'react'
 
 const TypographyShowcase = () => (
   <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none">

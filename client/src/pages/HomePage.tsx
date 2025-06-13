@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Users, Wrench } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+import { Card, CardContent,CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const HomePage = () => {
   return (

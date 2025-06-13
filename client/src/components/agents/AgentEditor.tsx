@@ -1,36 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useToast } from '../ui/use-toast';
+
+import agentService from '../../api/agentService';
+import type { LlmAgentConfig } from '../../types/agents';
+import { createDefaultAgent,LlmAgentConfigSchema } from '../../types/agents';
 import { Button } from '../ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  FormDescription,
-} from '../ui/form';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '../ui/card';
-
-import { LLMAgentForm } from './forms/LLMAgentForm';
+import { ComponentSkeleton } from '../ui/component-skeleton';
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form';
+import { Input } from '../ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Textarea } from '../ui/textarea';
+import { useToast } from '../ui/use-toast';
+import { AdvancedAgentForm } from './forms/AdvancedAgentForm';
+import AgentMemoryTab from './forms/AgentMemoryTab';
 import AgentToolsTab from './forms/AgentToolsTab';
 import { BaseAgentForm } from './forms/BaseAgentForm';
-import agentService from '../../api/agentService';
-import type { LlmAgentConfig } from '../../types/agents';
-import { LlmAgentConfigSchema, createDefaultAgent } from '../../types/agents';
-import { ComponentSkeleton } from '../ui/component-skeleton';
-import AgentMemoryTab from './forms/AgentMemoryTab';
-import { AdvancedAgentForm } from './forms/AdvancedAgentForm';
+import { LLMAgentForm } from './forms/LLMAgentForm';
 
 interface AgentEditorProps {
   isWizardMode?: boolean;

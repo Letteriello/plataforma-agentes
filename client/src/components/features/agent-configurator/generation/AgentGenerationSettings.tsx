@@ -2,17 +2,18 @@
  * @file AgentGenerationSettings.tsx
  * @description Componente para configurar os parâmetros de geração do LLM.
  */
+import { Info } from 'lucide-react'
 import React from 'react'
+
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
-import { LlmAgentConfig } from '@/types/agent'
-import { Info } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { LlmAgentConfig } from '@/types/agent'
 
 interface AgentGenerationSettingsProps {
   config: Pick<

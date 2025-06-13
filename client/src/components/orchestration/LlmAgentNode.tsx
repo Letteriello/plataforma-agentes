@@ -2,10 +2,11 @@
  * @file Nó customizado para representar um LlmAgent no canvas do React Flow.
  */
 
-import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bot } from 'lucide-react';
+import React, { memo } from 'react';
+import { Handle, NodeProps,Position } from 'reactflow';
+
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Usamos memo para otimizar a performance, evitando re-renderizações desnecessárias.
 const LlmAgentNode: React.FC<NodeProps> = memo(({ data, selected }) => {

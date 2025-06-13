@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { AvailableAgent } from '@/types/multi-agent'
 
 interface AgentPaletteProps {

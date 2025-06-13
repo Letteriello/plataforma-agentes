@@ -1,8 +1,8 @@
 import {
-  Agent,
   Activity,
-  TokenUsageData,
+  Agent,
   AgentActivityData,
+  TokenUsageData,
 } from '@/types/dashboard'
 
 export const mockAgents: Agent[] = [

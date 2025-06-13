@@ -2,10 +2,11 @@
  * @file Nó visual para um Agente Paralelo no canvas de orquestração.
  */
 
-import React from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
 import { GitMerge, Share2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import React from 'react';
+import { Handle, NodeProps,Position } from 'reactflow';
+
+import { Card, CardContent,CardHeader, CardTitle } from '@/components/ui/card';
 
 const ParallelAgentNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
   return (

@@ -1,6 +1,8 @@
-import React, { useState, useRef, KeyboardEvent } from 'react'
-import { Textarea } from '@/components/ui/textarea' // Changed from Input to Textarea
+import React, { KeyboardEvent,useRef, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea' // Changed from Input to Textarea
+
 import ToolSelector from './ToolSelector'
 
 interface ChatInputProps {

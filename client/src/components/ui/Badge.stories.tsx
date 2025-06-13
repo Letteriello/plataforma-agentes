@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Badge, badgeVariants } from './badge';
 import { Brain, CheckCircle, Rocket, Wrench } from 'lucide-react';
+
+import { Badge, badgeVariants } from './badge';
 
 /**
  * A versatile badge component with multiple visual styles (variants), sizes,

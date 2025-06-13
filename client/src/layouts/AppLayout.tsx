@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+
 import Topbar from '@/components/layout/Topbar';
 
 const AppLayout = () => {

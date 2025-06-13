@@ -1,4 +1,4 @@
-import { Node, Edge } from 'reactflow'
+import { Edge,Node } from 'reactflow'
 
 // Represents an agent available to be added to a team
 export interface AvailableAgent {

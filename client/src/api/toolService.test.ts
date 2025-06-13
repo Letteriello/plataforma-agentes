@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import apiClient from './apiClient'
+import type { CreateToolDTO, ToolDTO } from './toolService'
 import {
   createTool,
   deleteTool,
   fetchTools,
   updateTool,
 } from './toolService'
-import type { CreateToolDTO, ToolDTO } from './toolService'
 
 vi.mock('./apiClient')
 

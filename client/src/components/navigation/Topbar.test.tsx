@@ -1,8 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { fireEvent,render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { Topbar } from './Topbar'
 import { vi } from 'vitest'
+
 import { useAuthStore } from '@/store/authStore'
+
+import { Topbar } from './Topbar'
 
 // Mock child components and hooks
 vi.mock('@/components/agents/CreateAgentDialog', () => ({

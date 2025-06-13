@@ -1,3 +1,6 @@
+import { Loader2,Pencil, Play, Trash2 } from 'lucide-react';
+import React from 'react';
+
 import { AgentSummaryDTO } from '@/api/agentService'; // Mudar para AgentSummaryDTO
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,10 +10,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Play, Pencil, Trash2, Loader2 } from 'lucide-react';
-import React from 'react';
 // Importar DisplayAgentType e as funções atualizadas
-import { agentTypeLabels, getAgentTypeColor, DisplayAgentType } from '@/lib/agent-utils';
+import { agentTypeLabels, DisplayAgentType,getAgentTypeColor } from '@/lib/agent-utils';
 
 interface AgentListItemProps {
   agent: AgentSummaryDTO;

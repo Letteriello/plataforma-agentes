@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { ScenarioSelector } from '@/components/simulation-sandbox/ScenarioSelector'
+import React, { useEffect,useState } from 'react'
+
 import { ChatPanel } from '@/components/simulation-sandbox/ChatPanel'
 import { ReasoningPanel } from '@/components/simulation-sandbox/ReasoningPanel'
-import { Scenario, ChatMessage, ReasoningStep } from '@/types/simulation'
+import { ScenarioSelector } from '@/components/simulation-sandbox/ScenarioSelector'
+import { ChatMessage, ReasoningStep,Scenario } from '@/types/simulation'
 
 export const SimulationSandboxPage: React.FC = () => {
   const [scenarios, setScenarios] = useState<Scenario[]>([])

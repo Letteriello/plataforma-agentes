@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { MarketplaceItem, MarketplaceItemType } from '@/types/marketplace'
 
 const getTypeBadge = (type: MarketplaceItemType) => {

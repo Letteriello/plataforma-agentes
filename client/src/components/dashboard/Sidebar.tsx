@@ -1,14 +1,15 @@
 import { motion } from 'framer-motion'
 import {
-  LayoutDashboard,
-  Bot,
-  Cpu,
   BarChart2,
-  FileText,
+  Bot,
   ChevronDown,
+  Cpu,
+  FileText,
+  LayoutDashboard,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 
 interface SidebarProps {
   isOpen: boolean

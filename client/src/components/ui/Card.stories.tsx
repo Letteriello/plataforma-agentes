@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { BellIcon, CheckIcon } from 'lucide-react';
+
 import { Button } from './button';
 import {
   Card,

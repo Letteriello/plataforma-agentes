@@ -1,6 +1,6 @@
 // Arquivo: client/src/types/agents/agent.types.ts
 
-import type { UiToolDefinition, ToolDTO } from '@/types/tools';
+import type { ToolDTO,UiToolDefinition } from '@/types/tools';
 
 /**
  * Configuração de um agente LLM.

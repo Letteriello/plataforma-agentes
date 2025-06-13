@@ -1,13 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
 } from './table';
 
 /**

@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FormProvider, useForm } from 'react-hook-form';
 import { http } from 'msw';
-import AgentToolsTab from './AgentToolsTab';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { FormProvider, useForm } from 'react-hook-form';
+
 import { ToolDTO } from '@/api/toolService';
+import { TooltipProvider } from '@/components/ui/tooltip';
+
+import AgentToolsTab from './AgentToolsTab';
 
 // Mock data for tools, simulating what an API would return.
 const mockTools: ToolDTO[] = [

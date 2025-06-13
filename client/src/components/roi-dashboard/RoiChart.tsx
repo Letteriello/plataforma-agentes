@@ -6,15 +6,16 @@
 
 import React from 'react'
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from 'recharts'
+
 import { RoiDataPoint } from '@/types/roi'
 
 interface RoiChartProps {

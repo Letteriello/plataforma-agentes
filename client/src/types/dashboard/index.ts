@@ -9,11 +9,11 @@ export * from './api'
 
 // Re-exportar tipos comuns para facilitar a importação
 export type {
+  Activity,
   Agent,
   AgentStatus,
   AgentType,
-  DashboardStats,
-  Activity,
-  TokenUsage,
   DashboardState,
+  DashboardStats,
+  TokenUsage,
 } from './dashboard.types'

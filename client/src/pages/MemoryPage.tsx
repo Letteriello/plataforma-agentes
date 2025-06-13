@@ -1,15 +1,15 @@
+import { FileText, Loader2,Plus, Search } from 'lucide-react'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Search, FileText, Loader2 } from 'lucide-react'
 
-import { useMemoryModule } from '@/hooks/useMemoryModule'
+import { CreateKnowledgeBaseDialog } from '@/components/memoria/CreateKnowledgeBaseDialog'
+import { DocumentsTable } from '@/components/memoria/DocumentsTable'
 import { KnowledgeBaseCard } from '@/components/memoria/KnowledgeBaseCard'
 import { UploadDocumentDialog } from '@/components/memoria/UploadDocumentDialog'
-import { DocumentsTable } from '@/components/memoria/DocumentsTable'
-import { CreateKnowledgeBaseDialog } from '@/components/memoria/CreateKnowledgeBaseDialog'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useMemoryModule } from '@/hooks/useMemoryModule'
 import { KnowledgeBase, KnowledgeBaseType } from '@/types/memory'
 
 export default function MemoriaPage() {

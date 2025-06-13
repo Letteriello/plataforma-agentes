@@ -1,6 +1,7 @@
-import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
+import * as React from 'react'
+
 import { cn } from '@/lib/utils'
 
 // Base Dialog Components
@@ -159,23 +160,23 @@ DialogDescription.displayName = 'DialogDescription'
 
 export {
   Dialog,
-  DialogTrigger,
-  DialogPortal,
-  DialogOverlay,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 }
 
 // Export Props types as in dialog-new.tsx
 export type {
-  DialogPortalProps,
-  DialogOverlayProps,
   DialogContentProps,
-  DialogHeaderProps,
-  DialogFooterProps,
-  DialogTitleProps,
   DialogDescriptionProps,
+  DialogFooterProps,
+  DialogHeaderProps,
+  DialogOverlayProps,
+  DialogPortalProps,
+  DialogTitleProps,
 }

@@ -1,10 +1,11 @@
 import axios from 'axios'
+
 import apiClient from '@/api/apiClient'
 import type {
-  KnowledgeBase,
   Document,
-  SearchResult,
+  KnowledgeBase,
   KnowledgeBaseConfig,
+  SearchResult,
 } from '@/types/memory'
 
 /**

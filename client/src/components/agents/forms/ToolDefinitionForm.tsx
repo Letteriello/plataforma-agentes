@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
-import { useForm, useFieldArray, Controller, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PlusCircle, Trash2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Controller, SubmitHandler,useFieldArray, useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
+
+import type { UiSchemaDefinition, UiToolDefinition } from '../../../types/agents';
 import { Button } from '../../ui/button';
-import { Input } from '../../ui/input';
-import { Textarea } from '../../ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
 import { Checkbox } from '../../ui/checkbox';
 import {
   Form,
@@ -15,6 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../../ui/form';
+import { Input } from '../../ui/input';
 import {
   Select,
   SelectContent,
@@ -22,10 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
-import { PlusCircle, Trash2 } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
-import type { UiSchemaDefinition, UiToolDefinition } from '../../../types/agents';
+import { Textarea } from '../../ui/textarea';
 
 // Internal form structure for a single parameter
 interface ParameterData {

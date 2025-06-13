@@ -3,17 +3,17 @@
  * @description Componente para configurar a identidade básica de um agente (nome, descrição, modelo).
  */
 import React, { useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -21,8 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { EditDescriptionDialog } from './EditDescriptionDialog'
+import { Textarea } from '@/components/ui/textarea'
 import { LlmAgentConfig } from '@/types/agent'
+
+import { EditDescriptionDialog } from './EditDescriptionDialog'
 
 interface AgentIdentityProps {
   config: LlmAgentConfig

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
+
 import { ScrollArea, ScrollBar } from './scroll-area';
 import { Separator } from './separator';
 

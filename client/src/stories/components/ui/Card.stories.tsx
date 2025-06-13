@@ -1,16 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { Check, MessageSquare, MoreVertical, Share2,Star } from 'lucide-react'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
-  CardHeader,
   CardContent,
-  CardFooter,
-  CardTitle,
   CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Check, MoreVertical, Star, MessageSquare, Share2 } from 'lucide-react'
 
 // Meta information for the component
 const meta = {

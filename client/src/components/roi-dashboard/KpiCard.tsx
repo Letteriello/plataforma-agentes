@@ -2,9 +2,10 @@
  * @file Card para exibir um único Indicador Chave de Desempenho (KPI).
  */
 
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react'
 import React from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react'
 import { Kpi } from '@/types/roi'
 
 interface KpiCardProps {

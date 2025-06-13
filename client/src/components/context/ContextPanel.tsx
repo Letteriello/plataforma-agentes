@@ -1,16 +1,16 @@
 // client/src/components/context/ContextPanel.tsx
-import type { ContextPanelData, ContextPanelProperty } from './types'
-
+import { Avatar, AvatarFallback,AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { StatusBadge } from '@/components/ui/StatusBadge'
 import { Separator } from '@/components/ui/separator' // Pode ser útil
+import { StatusBadge } from '@/components/ui/StatusBadge'
+
+import type { ContextPanelData, ContextPanelProperty } from './types'
 
 interface ContextPanelProps {
   data: ContextPanelData | null

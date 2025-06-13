@@ -2,23 +2,24 @@
  * @file Componente do Canvas principal para a visualização e edição de workflows.
  */
 
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import ReactFlow, {
-  Controls,
   Background,
-  Node,
-  Edge,
   Connection,
+  Controls,
+  Edge,
   EdgeChange,
+  Node,
   NodeChange,
   useReactFlow,
 } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
-import LlmAgentNode from './LlmAgentNode';
-import SequentialAgentNode from './SequentialAgentNode';
-import ParallelAgentNode from './ParallelAgentNode';
-import LoopAgentNode from './LoopAgentNode';
+
 import CustomEdge from './CustomEdge';
+import LlmAgentNode from './LlmAgentNode';
+import LoopAgentNode from './LoopAgentNode';
+import ParallelAgentNode from './ParallelAgentNode';
+import SequentialAgentNode from './SequentialAgentNode';
 
 interface WorkflowCanvasProps {
   nodes: Node[];

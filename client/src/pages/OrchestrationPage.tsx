@@ -6,33 +6,34 @@
  * @file Página para criar e visualizar workflows de orquestração de agentes.
  */
 
-import React, { useState, useCallback } from 'react';
+import 'reactflow/dist/style.css';
+
+import React, { useCallback,useState } from 'react';
 import {
-  ReactFlowProvider,
-  Node,
-  Edge,
-  Connection,
-  EdgeChange,
-  NodeChange,
+  addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  addEdge,
+  Connection,
+  Edge,
+  EdgeChange,
+  Node,
+  NodeChange,
+  ReactFlowProvider,
 } from 'reactflow';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { saveWorkflow, executeWorkflow } from '@/services/workflowService';
-import WorkflowCanvas from '@/components/orchestration/WorkflowCanvas';
-import OrchestrationSidebar from '@/components/orchestration/OrchestrationSidebar';
+
 import NodeConfigSidebar from '@/components/orchestration/NodeConfigSidebar';
+import OrchestrationSidebar from '@/components/orchestration/OrchestrationSidebar';
+import WorkflowCanvas from '@/components/orchestration/WorkflowCanvas';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-
-import 'reactflow/dist/style.css';
+import { useToast } from '@/components/ui/use-toast';
+import { executeWorkflow,saveWorkflow } from '@/services/workflowService';
 
 const initialNodes: Node[] = [
   {

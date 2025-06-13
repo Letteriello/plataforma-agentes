@@ -1,7 +1,9 @@
-import { useAgentStore } from './agentStore'
-import { mockInitialAgents } from '@/data/mocks/mock-initial-agents'
-import { AnyAgentConfig, AgentType } from '@/types/core/agent' // Using core types
 import { vi } from 'vitest'
+
+import { mockInitialAgents } from '@/data/mocks/mock-initial-agents'
+import { AgentType,AnyAgentConfig } from '@/types/core/agent' // Using core types
+
+import { useAgentStore } from './agentStore'
 
 // Helper to reset store state before each test if needed, though not strictly necessary for all tests.
 // Zustand stores are global. For true isolation, you might re-create or use specific reset actions.

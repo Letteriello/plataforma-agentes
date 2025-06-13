@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { TestRunList } from '@/components/qa-panel/TestRunList'
+import React, { useEffect,useState } from 'react'
+
 import { TestRunDetailsModal } from '@/components/qa-panel/TestRunDetailsModal'
-import { TestRun, TestCase, TestCaseStatus } from '@/types/qa'
+import { TestRunList } from '@/components/qa-panel/TestRunList'
+import { TestCase, TestCaseStatus,TestRun } from '@/types/qa'
 
 // Mock Data para simulação
 const mockTestCases: TestCase[] = [

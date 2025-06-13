@@ -1,23 +1,7 @@
+import { Edit,MoreHorizontal, PlusCircle, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Trash2, Edit } from 'lucide-react';
-import { getTools, deleteTool, Tool } from '@/services/toolService';
-import { useToast } from '@/components/ui/use-toast';
+
 import { LoadingSpinner } from '@/components/ui';
 import {
   AlertDialog,
@@ -29,6 +13,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useToast } from '@/components/ui/use-toast';
+import { deleteTool, getTools, Tool } from '@/services/toolService';
 
 export const ToolsPage: React.FC = () => {
   const [tools, setTools] = useState<Tool[]>([]);

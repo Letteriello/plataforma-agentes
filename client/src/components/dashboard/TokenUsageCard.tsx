@@ -1,20 +1,21 @@
 import {
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Tooltip,
+} from 'chart.js'
+import { Line } from 'react-chartjs-2'
+
+import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   LoadingSpinner,
 } from '@/components/ui'
-import { Line } from 'react-chartjs-2'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-} from 'chart.js'
 import type { TokenUsageData as TokenUsage } from '@/services/dashboardService';
 
 ChartJS.register(

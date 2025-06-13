@@ -1,42 +1,42 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
 import {
+  Archive, // Added for "Cofre"
   BarChart, // Adicionado para Dashboard ROI
   Beaker,
   Bot,
   BrainCircuit,
+  Briefcase, // Added for "Operações do Agente"
+  ChevronDownIcon,
   ClipboardList,
+  FileText,
   FlaskConical,
+  GitBranch,
   History,
   LayoutDashboard,
+  Library, // Keep Library for "Biblioteca de Recursos"
   MessageCircle,
+  Network, // Added for "Orquestração" (alternative to GitBranch if needed)
   Rocket,
   Scale,
+  ScrollText, // Added for "Bases de Conhecimento (Memória)"
   Settings,
   ShieldCheck,
+  ShieldQuestion, // Added for "Governança" (alternative to Scale if needed)
   Users,
   Wrench,
-  GitBranch,
-  FileText,
-  Library, // Keep Library for "Biblioteca de Recursos"
-  ChevronDownIcon,
-  Briefcase, // Added for "Operações do Agente"
-  Archive, // Added for "Cofre"
-  ScrollText, // Added for "Bases de Conhecimento (Memória)"
-  Network, // Added for "Orquestração" (alternative to GitBranch if needed)
-  ShieldQuestion, // Added for "Governança" (alternative to Scale if needed)
 } from 'lucide-react'
+import { useState } from 'react'; // Import useState
 import { NavLink } from 'react-router-dom';
+
+import { Avatar } from '@/components/ui/avatar'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-
-import { Avatar } from '@/components/ui/avatar'
 import { cn, generateAvatarUrl } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
-import { useState } from 'react'; // Import useState
 
 interface SidebarProps {
   isCollapsed: boolean;

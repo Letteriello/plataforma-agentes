@@ -3,11 +3,12 @@
  */
 
 import React from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
+
 import { Badge } from '@/components/ui/badge'
-import { TestRun, TestCase, TestCaseStatus } from '@/types/qa'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter,DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { TestCase, TestCaseStatus,TestRun } from '@/types/qa'
 
 interface TestRunDetailsModalProps {
   isOpen: boolean

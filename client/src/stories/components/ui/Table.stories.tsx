@@ -1,4 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -8,8 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 
 const meta: Meta<typeof Table> = {
   title: 'Components/UI/Table',

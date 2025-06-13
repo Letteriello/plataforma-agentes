@@ -1,6 +1,7 @@
 // src/api/auditLogService.ts
-import apiClient from './apiClient'
 import { AuditLog } from '@/types/governance' // Corrected path
+
+import apiClient from './apiClient'
 
 /**
  * Fetches the list of audit logs from the API.

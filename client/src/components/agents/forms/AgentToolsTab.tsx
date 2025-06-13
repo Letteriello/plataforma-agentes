@@ -1,17 +1,18 @@
-import { useFormContext } from 'react-hook-form';
-import { LlmAgentConfig, UiToolDefinition } from '../../../types/agents';
-import { getTools, PaginatedToolsDTO, ToolDTO } from '../../../api/toolService';
 import { useQuery } from '@tanstack/react-query';
-import { Checkbox } from '../../ui/checkbox';
+import { Settings } from 'lucide-react';
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { getTools, PaginatedToolsDTO, ToolDTO } from '../../../api/toolService';
+import { LlmAgentConfig, UiToolDefinition } from '../../../types/agents';
 import { Button } from '../../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import { Checkbox } from '../../ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Input } from '../../ui/input';
-import { useState } from 'react';
-import { ToolDefinitionForm } from './ToolDefinitionForm';
-import { Settings } from 'lucide-react';
 import { Label } from '../../ui/label';
 import { toast } from '../../ui/use-toast';
+import { ToolDefinitionForm } from './ToolDefinitionForm';
 
 const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
   const parameters: UiToolDefinition['parameters'] = {};

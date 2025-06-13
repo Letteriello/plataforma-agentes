@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {
-  PanelGroup,
   Panel,
+  PanelGroup,
   PanelResizeHandle,
   type PanelResizeHandleProps,
 } from 'react-resizable-panels'

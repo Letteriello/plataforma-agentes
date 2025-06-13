@@ -3,16 +3,18 @@
  * @description Componente para configurar as instruções principais (prompt) de um agente.
  */
 import React, { useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
+
 import { EditInstructionDialog } from './EditInstructionDialog'
 
 interface AgentInstructionsProps {

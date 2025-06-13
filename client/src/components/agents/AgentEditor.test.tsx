@@ -1,9 +1,11 @@
+import { act,render } from '@testing-library/react'
 import React from 'react'
-import { render, act } from '@testing-library/react'
-import { vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
-import { AgentEditor } from './AgentEditor'
+import { vi } from 'vitest'
+
 import { Toaster } from '@/components/ui/toaster' // Needed if toasts are rendered
+
+import { AgentEditor } from './AgentEditor'
 
 // Mock dependencies
 vi.mock('@/components/ui/use-toast', () => ({

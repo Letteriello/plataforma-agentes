@@ -1,13 +1,14 @@
+import { AlertTriangle,Bot, Check, Wrench, Zap } from 'lucide-react' // Added AlertTriangle
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { Bot, Zap, Wrench, Check, AlertTriangle } from 'lucide-react' // Added AlertTriangle
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { cn } from '@/lib/utils'
 
 // Corresponds to ChatMessage.sender but narrowed for this component's direct use
 type MessageAuthor = 'user' | 'agent'

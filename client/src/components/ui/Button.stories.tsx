@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Mail, PlusCircle } from 'lucide-react';
+
 import { Button, buttonVariants } from './button';
 
 /**

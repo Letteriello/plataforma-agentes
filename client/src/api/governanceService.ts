@@ -1,5 +1,6 @@
 import type { AutonomyLevel } from '@/components/governance/AutonomySpectrumSelector'
 import type { ApprovalItem, AuditLog, HistoryItem } from '@/types/governance'
+
 import api from './apiClient'
 
 export const getAutonomyLevel = async (): Promise<{ autonomyLevel: AutonomyLevel }> => {

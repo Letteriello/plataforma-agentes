@@ -1,5 +1,6 @@
+import { Plus,X } from 'lucide-react'
 import * as React from 'react'
-import { X, Plus } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 export interface TagInputProps extends React.HTMLAttributes<HTMLDivElement> {

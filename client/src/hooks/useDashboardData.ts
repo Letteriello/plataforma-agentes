@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import { useDashboardStore } from '@/store/dashboardStore'
 
 export const useDashboardData = (period: string = '7d') => {

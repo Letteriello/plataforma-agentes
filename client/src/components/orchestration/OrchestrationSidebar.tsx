@@ -2,8 +2,8 @@
  * @file Sidebar com ferramentas para construir o workflow de orquestração.
  */
 
-import React from 'react';
 import { Bot, GitBranch, GitMerge, Repeat } from 'lucide-react';
+import React from 'react';
 
 const agentTypes = [
   {

@@ -1,10 +1,9 @@
 // Arquivo: client/src/types/tools/index.ts
 
-export * from './tool.types';
-
 export type {
+  PaginatedToolsDTO,
+  ToolDTO,
   ToolParameterDTO,
   UiToolDefinition,
-  ToolDTO,
-  PaginatedToolsDTO,
 } from './tool.types';
+export * from './tool.types';

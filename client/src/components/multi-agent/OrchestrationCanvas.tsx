@@ -1,15 +1,16 @@
-import React, { useState, useCallback } from 'react'
+import 'reactflow/dist/style.css'
+
+import React, { useCallback,useState } from 'react'
 import ReactFlow, {
-  Controls,
-  Background,
   addEdge,
+  Background,
   Connection,
+  Controls,
   Edge,
   Node,
-  useNodesState,
   useEdgesState,
+  useNodesState,
 } from 'reactflow'
-import 'reactflow/dist/style.css'
 
 interface OrchestrationCanvasProps {
   initialNodes: Node[]

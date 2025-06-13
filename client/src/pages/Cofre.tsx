@@ -1,5 +1,15 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { PlusCircle, Trash2 } from 'lucide-react';
+import { FormEvent,useEffect, useState } from 'react';
+
+import { createSecret, deleteSecret,listSecrets } from '@/api/secretService';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -19,17 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { listSecrets, createSecret, deleteSecret } from '@/api/secretService';
 import type { Secret, SecretCreate } from '@/types/secrets';
 
 export function CofrePage() {

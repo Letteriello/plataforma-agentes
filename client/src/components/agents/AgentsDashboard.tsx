@@ -1,19 +1,17 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react'; 
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import {
-  PlusIcon,
-  SearchIcon,
-  Loader2,
   AlertTriangle, 
+  Loader2,
+  PlusIcon,
   RefreshCw, 
+  SearchIcon,
   Users,
 } from 'lucide-react';
-import { AnyAgentConfig, AgentType } from '@/types/agents'; 
+import React, { useCallback, useEffect,useRef, useState } from 'react'; 
+import { useNavigate } from 'react-router-dom';
+
 import { AgentSummaryDTO } from '@/api/agentService';
-import { useToast } from '@/components/ui/use-toast';
+import agentService from '@/api/agentService';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +22,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { AgentListItem } from './AgentListItem';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { useAgents } from '@/hooks/useAgents';
-import agentService from '@/api/agentService';
+import { AgentType,AnyAgentConfig } from '@/types/agents'; 
+
+import { AgentListItem } from './AgentListItem';
 
 export function AgentsDashboard() {
   const navigate = useNavigate();

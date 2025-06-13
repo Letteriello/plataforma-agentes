@@ -1,10 +1,11 @@
+import { action } from '@storybook/addon-actions';
 import type { Meta, StoryObj } from '@storybook/react';
 import { z } from 'zod';
-import { action } from '@storybook/addon-actions';
+
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
 import { BaseAgentForm } from './BaseAgentForm';
-import { Input } from '@/components/ui/input';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 
 // A simple Zod schema for demonstration purposes
 const DemoSchema = z.object({

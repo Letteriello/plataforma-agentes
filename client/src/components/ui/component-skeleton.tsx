@@ -1,6 +1,8 @@
-import { cn } from '@/lib/utils'
-import { Skeleton } from './skeleton'
 import type { HTMLAttributes } from 'react'
+
+import { cn } from '@/lib/utils'
+
+import { Skeleton } from './skeleton'
 
 interface ComponentSkeletonProps extends HTMLAttributes<HTMLDivElement> {
   lines?: number

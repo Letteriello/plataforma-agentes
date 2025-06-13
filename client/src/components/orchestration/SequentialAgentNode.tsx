@@ -2,10 +2,11 @@
  * @file Nó visual para um Agente Sequencial no canvas de orquestração.
  */
 
+import { ChevronsRight,GitBranch } from 'lucide-react';
 import React from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
-import { GitBranch, ChevronsRight } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Handle, NodeProps,Position } from 'reactflow';
+
+import { Card, CardContent,CardHeader, CardTitle } from '@/components/ui/card';
 
 const SequentialAgentNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
   return (

@@ -1,18 +1,19 @@
-import React, { useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useToast } from '@/components/ui/use-toast';
-import { getToolById, createTool, updateTool, Tool, ToolCreateSchema, ToolUpdateSchema } from '@/services/toolService';
-import { LoadingSpinner } from '@/components/ui';
 import { Trash2 } from 'lucide-react';
+import React, { useCallback,useEffect } from 'react';
+import { Controller,useFieldArray, useForm } from 'react-hook-form';
+import { useNavigate,useParams } from 'react-router-dom';
+import * as z from 'zod';
+
+import { LoadingSpinner } from '@/components/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription,CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { createTool, getToolById, Tool, ToolCreateSchema, ToolUpdateSchema,updateTool } from '@/services/toolService';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'O nome do parâmetro é obrigatório.'),

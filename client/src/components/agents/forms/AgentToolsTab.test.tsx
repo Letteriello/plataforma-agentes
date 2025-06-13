@@ -1,11 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import AgentToolsTab from './AgentToolsTab'
-import { useToolStore } from '@/store/toolStore'
-import { LLMAgentSchema, LLMAgent } from '@/types/agents'
+import { beforeEach,describe, expect, it, vi } from 'vitest'
+
 import { ToolDTO } from '@/api/toolService'
+import { useToolStore } from '@/store/toolStore'
+import { LLMAgent,LLMAgentSchema } from '@/types/agents'
+
+import AgentToolsTab from './AgentToolsTab'
 
 // Mock o store do Zustand
 vi.mock('@/store/toolStore')

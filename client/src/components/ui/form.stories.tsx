@@ -1,12 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
 import { Button } from './button';
-import { Input } from './input';
-import { useToast } from './use-toast';
-import { Toaster } from './toaster';
 import {
   Form,
   FormControl,
@@ -16,6 +13,9 @@ import {
   FormLabel,
   FormMessage,
 } from './form';
+import { Input } from './input';
+import { Toaster } from './toaster';
+import { useToast } from './use-toast';
 
 /**
  * A form component that integrates `react-hook-form` with `zod` for validation.

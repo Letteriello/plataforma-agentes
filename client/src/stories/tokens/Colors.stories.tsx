@@ -1,5 +1,5 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import React from 'react'
 
 const tailwindColors = {
   background: 'hsl(var(--background))',

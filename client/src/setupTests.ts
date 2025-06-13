@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom';
+
 import { toHaveNoViolations } from 'jest-axe';
-import { server } from './mocks/server';
-import { resetMockAgentsDB } from './mocks/handlers'; // Import the reset function
 import { vi } from 'vitest';
+
+import { resetMockAgentsDB } from './mocks/handlers'; // Import the reset function
+import { server } from './mocks/server';
 
 expect.extend(toHaveNoViolations);
 

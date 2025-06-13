@@ -1,4 +1,9 @@
+import { FileCode, FileImage,FileText, Trash2 } from 'lucide-react'
 import React from 'react'
+
+import { Document, DocumentStatus } from '@/api/memoryService'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -7,10 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Trash2, FileText, FileCode, FileImage } from 'lucide-react'
-import { Document, DocumentStatus } from '@/api/memoryService'
 
 interface DocumentsTableProps {
   documents: Document[]

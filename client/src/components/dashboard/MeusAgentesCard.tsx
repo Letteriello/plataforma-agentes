@@ -1,10 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { ComponentSkeleton, Skeleton } from '@/components/ui'
 import { Plus } from 'lucide-react'
+
+import { ComponentSkeleton, Skeleton } from '@/components/ui'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import type { Agent } from '@/store/dashboardStore'
 
 interface MeusAgentesCardProps {

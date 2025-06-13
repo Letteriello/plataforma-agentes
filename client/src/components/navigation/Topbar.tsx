@@ -1,8 +1,10 @@
-import { Bell, Menu, PlusCircle, Search, User, Settings, HelpCircle, LogOut } from 'lucide-react';
-import { Input } from '@/components/ui/input'; // Added Input
+import { Bell, HelpCircle, LogOut,Menu, PlusCircle, Search, Settings, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom'; // Added Link and useNavigate
-import { useAuthStore } from '@/store/authStore'; // Added useAuthStore
+
+import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'; // Added Avatar components
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +12,10 @@ import {
   DropdownMenuSeparator, // Corrected to DropdownMenuSeparator if that's the intended component
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'; // Added DropdownMenu components
-import { generateAvatarUrl } from '@/lib/utils'; // Added generateAvatarUrl
-
-import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input'; // Added Input
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { generateAvatarUrl } from '@/lib/utils'; // Added generateAvatarUrl
+import { useAuthStore } from '@/store/authStore'; // Added useAuthStore
 
 interface TopbarProps {
   pageTitle?: string;

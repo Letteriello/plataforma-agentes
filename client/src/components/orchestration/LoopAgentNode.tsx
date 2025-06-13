@@ -2,10 +2,11 @@
  * @file Nó visual para um Agente de Loop no canvas de orquestração.
  */
 
-import React from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
 import { Repeat, RotateCw } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import React from 'react';
+import { Handle, NodeProps,Position } from 'reactflow';
+
+import { Card, CardContent,CardHeader, CardTitle } from '@/components/ui/card';
 
 const LoopAgentNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
   return (

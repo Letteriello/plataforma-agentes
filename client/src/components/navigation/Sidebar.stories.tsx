@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom'; // Updated imports
-import { Sidebar } from './Sidebar';
-import { useAuthStore } from '@/store/authStore';
+import { MemoryRouter, Route,Routes } from 'react-router-dom'; // Updated imports
 import { vi } from 'vitest';
+
+import { useAuthStore } from '@/store/authStore';
+
+import { Sidebar } from './Sidebar';
 
 // Mock the auth store for Storybook
 vi.mock('@/store/authStore');

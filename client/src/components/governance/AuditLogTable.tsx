@@ -1,5 +1,6 @@
 import React from 'react'
-import { AuditLog } from '@/types/governance'
+
+import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -8,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
+import { AuditLog } from '@/types/governance'
 
 interface AuditLogTableProps {
   logs: AuditLog[]

@@ -1,14 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { StatusBadge } from './StatusBadge';
+
 import {
   AGENT_STATUS_ACTIVE,
-  AGENT_STATUS_PENDING,
-  AGENT_STATUS_ERROR,
-  AGENT_STATUS_UNKNOWN,
-  AGENT_STATUS_DEPLOYING,
-  AGENT_STATUS_IDLE,
   AGENT_STATUS_DEFAULT,
+  AGENT_STATUS_DEPLOYING,
+  AGENT_STATUS_ERROR,
+  AGENT_STATUS_IDLE,
+  AGENT_STATUS_PENDING,
+  AGENT_STATUS_UNKNOWN,
 } from '@/constants/agentStatus';
+
+import { StatusBadge } from './StatusBadge';
 
 /**
  * A specialized badge that displays a status with a corresponding icon and color.

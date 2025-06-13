@@ -1,4 +1,5 @@
 // client/src/components/debug/AgentSelector.tsx
+import type { ContextPanelData } from '@/components/context/types'
 import {
   Select,
   SelectContent,
@@ -6,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select' // Supondo que Select está em ui/select
-import type { ContextPanelData } from '@/components/context/types'
 
 interface AgentSelectorProps {
   agents: Pick<ContextPanelData, 'id' | 'title'>[] // Apenas ID e título são necessários

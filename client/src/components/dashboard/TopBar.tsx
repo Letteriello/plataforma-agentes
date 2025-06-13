@@ -1,22 +1,23 @@
 import {
-  Search,
   Bell,
-  User,
-  Settings,
+  ChevronDown,
   HelpCircle,
   LogOut,
-  ChevronDown,
+  Search,
+  Settings,
+  User,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 
 interface TopBarProps {
   onSearch?: (query: string) => void

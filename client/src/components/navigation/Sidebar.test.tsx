@@ -1,8 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { fireEvent,render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { vi } from 'vitest'
-import { Sidebar } from './Sidebar'
+
 import { useAuthStore } from '@/store/authStore'
+
+import { Sidebar } from './Sidebar'
 
 // Mock the auth store
 vi.mock('@/store/authStore')

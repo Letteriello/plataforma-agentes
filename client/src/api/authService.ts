@@ -1,6 +1,6 @@
-import apiClient from './apiClient'; // Nosso apiClient configurado
-import { useAuthStore } from '../stores/authStore'; // Nossa store Zustand
 import { supabase } from '../lib/supabaseClient'; // Importa o cliente Supabase
+import { useAuthStore } from '../stores/authStore'; // Nossa store Zustand
+import apiClient from './apiClient'; // Nosso apiClient configurado
 
 // Tipos para os dados de login e registro (podem vir de um arquivo de tipos compartilhado)
 interface LoginCredentials {

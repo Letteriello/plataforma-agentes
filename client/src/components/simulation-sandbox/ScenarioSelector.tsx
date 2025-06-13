@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Scenario } from '@/types/simulation'
 
 interface ScenarioSelectorProps {

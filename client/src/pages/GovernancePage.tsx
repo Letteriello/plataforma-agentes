@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
+
 import {
-  AutonomySpectrumSelector,
-  AutonomyLevel,
-} from '../components/governance/AutonomySpectrumSelector'
-import { ApprovalInbox } from '../components/governance/ApprovalInbox'
-import { ApprovalHistoryModal } from '../components/governance/ApprovalHistoryModal'
-import { AuditLogTable } from '@/components/governance/AuditLogTable' // Import the new component
-import { ApprovalItem, HistoryItem, AuditLog } from '@/types/governance'
-import { useToast } from '@/components/ui/use-toast'
-import {
-  getAutonomyLevel,
-  setAutonomyLevel as apiSetAutonomyLevel,
-  getPendingApprovals,
   approveAction,
-  rejectAction,
   getApprovalHistory,
   getAuditLogs, // Import the new service function
+  getAutonomyLevel,
+  getPendingApprovals,
+  rejectAction,
+  setAutonomyLevel as apiSetAutonomyLevel,
 } from '@/api/governanceService'
+import { AuditLogTable } from '@/components/governance/AuditLogTable' // Import the new component
+import { useToast } from '@/components/ui/use-toast'
+import { ApprovalItem, AuditLog,HistoryItem } from '@/types/governance'
+
+import { ApprovalHistoryModal } from '../components/governance/ApprovalHistoryModal'
+import { ApprovalInbox } from '../components/governance/ApprovalInbox'
+import {
+  AutonomyLevel,
+  AutonomySpectrumSelector,
+} from '../components/governance/AutonomySpectrumSelector'
 
 const GovernancePage: React.FC = () => {
   const { toast } = useToast()

@@ -1,13 +1,13 @@
+import { FileText, Loader2,Plus, Search } from 'lucide-react';
 import { useState } from 'react';
+
+import { DocumentsTable } from '@/components/memoria/DocumentsTable';
+import { KnowledgeBaseCard } from '@/components/memoria/KnowledgeBaseCard';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
-import { Plus, Search, FileText, Loader2 } from 'lucide-react';
-
 import { useMemoryModule } from '@/hooks/useMemoryModule';
-import { KnowledgeBaseCard } from '@/components/memoria/KnowledgeBaseCard';
-import { DocumentsTable } from '@/components/memoria/DocumentsTable';
 import { KnowledgeBaseType } from '@/types/memory';
 
 export const MemoryManagement = () => {

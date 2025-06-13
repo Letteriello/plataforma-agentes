@@ -1,10 +1,11 @@
 import React from 'react'
+
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/ui/card' // Adicionado CardDescription
 
 const KnowledgeBaseManager: React.FC = () => {

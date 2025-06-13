@@ -1,26 +1,28 @@
 // client/src/components/ui/StatusBadge.tsx
-import { Badge, type BadgeProps } from '@/components/ui/badge'
-import {
-  Power,
-  Loader2,
-  AlertTriangle,
-  HelpCircle,
-  Rocket,
-  Coffee,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { LucideIcon } from 'lucide-react'
-import type { AgentStatus } from '../../../types/statusTypes' // Importando o novo tipo
+import {
+  AlertTriangle,
+  Coffee,
+  HelpCircle,
+  Loader2,
+  Power,
+  Rocket,
+} from 'lucide-react'
+
+import { Badge, type BadgeProps } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+
 import {
   AGENT_STATUS_ACTIVE,
-  AGENT_STATUS_PENDING,
-  AGENT_STATUS_ERROR,
-  AGENT_STATUS_UNKNOWN,
-  AGENT_STATUS_DEPLOYING,
-  AGENT_STATUS_IDLE,
   AGENT_STATUS_DEFAULT,
+  AGENT_STATUS_DEPLOYING,
+  AGENT_STATUS_ERROR,
+  AGENT_STATUS_IDLE,
+  AGENT_STATUS_PENDING,
+  AGENT_STATUS_UNKNOWN,
 } from '../../../constants/agentStatus'
+import type { AgentStatus } from '../../../types/statusTypes' // Importando o novo tipo
 
 // Removida a definição local de AgentStatusType
 

@@ -1,7 +1,9 @@
-import { renderHook, act } from '@testing-library/react'
+import { act,renderHook } from '@testing-library/react'
 import { vi } from 'vitest'
-import { useDashboardData } from './useDashboardData'
+
 import { useDashboardStore } from '@/store/dashboardStore'
+
+import { useDashboardData } from './useDashboardData'
 
 vi.mock('@/store/dashboardStore')
 

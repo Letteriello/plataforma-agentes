@@ -1,14 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Badge } from '@/components/ui/badge'
 import {
-  Check,
-  X,
   AlertTriangle,
+  Check,
   Info,
-  Zap,
-  Workflow,
   User,
+  Workflow,
+  X,
+  Zap,
 } from 'lucide-react'
+
+import { Badge } from '@/components/ui/badge'
 
 // Meta information for the component
 const meta = {

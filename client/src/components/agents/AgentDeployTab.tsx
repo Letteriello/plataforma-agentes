@@ -2,9 +2,9 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/ui/card'
 
 export default function AgentDeployTab() {

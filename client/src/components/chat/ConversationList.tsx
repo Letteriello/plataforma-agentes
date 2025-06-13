@@ -1,8 +1,7 @@
 // client/src/components/chat/ConversationList.tsx
+import { MoreVertical, Plus } from 'lucide-react'
 import React from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
-import { useChatStore } from '@/store/chatStore'
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,7 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreVertical, Plus } from 'lucide-react'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { cn } from '@/lib/utils'
+import { useChatStore } from '@/store/chatStore'
 
 const ConversationList: React.FC = () => {
   const {

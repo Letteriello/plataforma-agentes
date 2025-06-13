@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
+
 import { Button } from './button' // To trigger toasts
-import { useToast } from './use-toast' // The hook to trigger toasts
 import { ToastAction } from './toaster' // The ToastAction component for actions in toasts
+import { useToast } from './use-toast' // The hook to trigger toasts
 
 // Meta configuration for the Toast stories
 const meta = {

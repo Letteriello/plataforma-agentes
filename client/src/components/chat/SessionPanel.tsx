@@ -1,9 +1,11 @@
 // client/src/components/chat/SessionPanel.tsx
-import React from 'react'
-import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
-import { ConversationList } from './ConversationList'
+import React from 'react'
+
+import { Button } from '@/components/ui/button'
 import { useChatStore } from '@/store/chatStore'
+
+import { ConversationList } from './ConversationList'
 
 export const SessionPanel: React.FC = () => {
   const { addConversation, setSelectedConversationId } = useChatStore()

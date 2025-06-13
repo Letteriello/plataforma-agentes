@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
-import { DashboardStats, DashboardState } from '@/types/dashboard.types'
+import { useCallback,useEffect, useState } from 'react'
+
+import { DashboardState,DashboardStats } from '@/types/dashboard.types'
 
 // Mock data - Em produção, isso viria de uma API
 const MOCK_STATS: DashboardStats = {

@@ -2,8 +2,10 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { vi } from 'vitest';
-import { AgentSubNav } from './AgentSubNav';
+
 import { cn } from '@/lib/utils'; // We might need to mock this if it causes issues
+
+import { AgentSubNav } from './AgentSubNav';
 
 // Mock useLocation
 vi.mock('react-router-dom', async () => {

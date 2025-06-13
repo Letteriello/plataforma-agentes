@@ -1,6 +1,7 @@
 import React from 'react';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer,Tooltip, XAxis, YAxis } from 'recharts';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TimeSeriesDataPoint } from '@/types/dashboard';
 
 interface RoiChartProps {

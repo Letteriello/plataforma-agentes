@@ -1,0 +1,608 @@
+npm verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+npm info using npm@10.9.2
+npm info using node@v22.13.1
+npm silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+npm silly config load:file:C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\.npmrc
+npm silly config load:file:C:\Users\gabri\.npmrc
+npm silly config load:file:C:\Users\gabri\AppData\Roaming\npm\etc\npmrc
+npm verbose title npm install
+npm verbose argv "install" "--legacy-peer-deps" "--loglevel" "silly"
+npm verbose logfile logs-max:10 dir:C:\Users\gabri\AppData\Local\npm-cache\_logs\2025-06-13T18_49_06_652Z-
+npm verbose logfile C:\Users\gabri\AppData\Local\npm-cache\_logs\2025-06-13T18_49_06_652Z-debug-0.log
+npm silly logfile start cleaning logs, removing 1 files
+npm silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+npm silly logfile done cleaning log files
+npm silly idealTree buildDeps
+npm silly reify moves {}
+npm silly audit bulk request {
+npm silly audit   '@alloc/quick-lru': [ '5.2.0' ],
+npm silly audit   '@ampproject/remapping': [ '2.3.0' ],
+npm silly audit   '@babel/code-frame': [ '7.27.1' ],
+npm silly audit   '@babel/compat-data': [ '7.27.5' ],
+npm silly audit   '@babel/core': [ '7.27.4' ],
+npm silly audit   semver: [ '6.3.1', '7.7.2' ],
+npm silly audit   '@babel/generator': [ '7.27.5' ],
+npm silly audit   '@babel/helper-compilation-targets': [ '7.27.2' ],
+npm silly audit   '@babel/helper-module-imports': [ '7.27.1' ],
+npm silly audit   '@babel/helper-module-transforms': [ '7.27.3' ],
+npm silly audit   '@babel/helper-plugin-utils': [ '7.27.1' ],
+npm silly audit   '@babel/helper-string-parser': [ '7.27.1' ],
+npm silly audit   '@babel/helper-validator-identifier': [ '7.27.1' ],
+npm silly audit   '@babel/helper-validator-option': [ '7.27.1' ],
+npm silly audit   '@babel/helpers': [ '7.27.6' ],
+npm silly audit   '@babel/parser': [ '7.27.5' ],
+npm silly audit   '@babel/plugin-transform-react-jsx-self': [ '7.27.1' ],
+npm silly audit   '@babel/plugin-transform-react-jsx-source': [ '7.27.1' ],
+npm silly audit   '@babel/template': [ '7.27.2' ],
+npm silly audit   '@babel/traverse': [ '7.27.4' ],
+npm silly audit   '@babel/types': [ '7.27.6' ],
+npm silly audit   '@esbuild/aix-ppc64': [ '0.21.5' ],
+npm silly audit   '@esbuild/android-arm': [ '0.21.5' ],
+npm silly audit   '@esbuild/android-arm64': [ '0.21.5' ],
+npm silly audit   '@esbuild/android-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/darwin-arm64': [ '0.21.5' ],
+npm silly audit   '@esbuild/darwin-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/freebsd-arm64': [ '0.21.5' ],
+npm silly audit   '@esbuild/freebsd-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-arm': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-arm64': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-ia32': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-loong64': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-mips64el': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-ppc64': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-riscv64': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-s390x': [ '0.21.5' ],
+npm silly audit   '@esbuild/linux-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/netbsd-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/openbsd-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/sunos-x64': [ '0.21.5' ],
+npm silly audit   '@esbuild/win32-arm64': [ '0.21.5' ],
+npm silly audit   '@esbuild/win32-ia32': [ '0.21.5' ],
+npm silly audit   '@eslint-community/eslint-utils': [ '4.7.0' ],
+npm silly audit   'eslint-visitor-keys': [ '3.4.3' ],
+npm silly audit   '@eslint-community/regexpp': [ '4.12.1' ],
+npm silly audit   '@eslint/eslintrc': [ '2.1.4' ],
+npm silly audit   'brace-expansion': [ '1.1.12', '2.0.1', '1.1.11' ],
+npm silly audit   globals: [ '13.24.0', '11.12.0' ],
+npm silly audit   ignore: [ '5.3.2' ],
+npm silly audit   minimatch: [ '3.1.2', '9.0.5' ],
+npm silly audit   'type-fest': [ '0.20.2' ],
+npm silly audit   '@eslint/js': [ '8.57.1' ],
+npm silly audit   '@humanwhocodes/config-array': [ '0.13.0' ],
+npm silly audit   '@humanwhocodes/module-importer': [ '1.0.1' ],
+npm silly audit   '@humanwhocodes/object-schema': [ '2.0.3' ],
+npm silly audit   '@isaacs/cliui': [ '8.0.2' ],
+npm silly audit   'emoji-regex': [ '9.2.2', '8.0.0' ],
+npm silly audit   'string-width': [ '5.1.2', '4.2.3' ],
+npm silly audit   '@jridgewell/gen-mapping': [ '0.3.8' ],
+npm silly audit   '@jridgewell/resolve-uri': [ '3.1.2' ],
+npm silly audit   '@jridgewell/set-array': [ '1.2.1' ],
+npm silly audit   '@jridgewell/sourcemap-codec': [ '1.5.0' ],
+npm silly audit   '@jridgewell/trace-mapping': [ '0.3.25' ],
+npm silly audit   '@nodelib/fs.scandir': [ '2.1.5' ],
+npm silly audit   '@nodelib/fs.stat': [ '2.0.5' ],
+npm silly audit   '@nodelib/fs.walk': [ '1.2.8' ],
+npm silly audit   '@pkgjs/parseargs': [ '0.11.0' ],
+npm silly audit   '@remix-run/router': [ '1.23.0' ],
+npm silly audit   '@rolldown/pluginutils': [ '1.0.0-beta.9' ],
+npm silly audit   '@rollup/rollup-android-arm-eabi': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-android-arm64': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-darwin-arm64': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-darwin-x64': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-freebsd-arm64': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-freebsd-x64': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-arm-gnueabihf': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-arm-musleabihf': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-arm64-gnu': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-arm64-musl': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-loongarch64-gnu': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-powerpc64le-gnu': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-riscv64-gnu': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-riscv64-musl': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-s390x-gnu': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-x64-gnu': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-linux-x64-musl': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-win32-arm64-msvc': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-win32-ia32-msvc': [ '4.43.0' ],
+npm silly audit   '@rollup/rollup-win32-x64-msvc': [ '4.43.0' ],
+npm silly audit   '@types/babel__core': [ '7.20.5' ],
+npm silly audit   '@types/babel__generator': [ '7.27.0' ],
+npm silly audit   '@types/babel__template': [ '7.4.4' ],
+npm silly audit   '@types/babel__traverse': [ '7.20.7' ],
+npm silly audit   '@types/node': [ '20.19.0' ],
+npm silly audit   '@types/prop-types': [ '15.7.14' ],
+npm silly audit   '@types/react': [ '18.3.23' ],
+npm silly audit   '@types/react-dom': [ '18.3.7' ],
+npm silly audit   '@typescript-eslint/eslint-plugin': [ '7.18.0' ],
+npm silly audit   '@typescript-eslint/scope-manager': [ '7.18.0' ],
+npm silly audit   '@typescript-eslint/types': [ '7.18.0' ],
+npm silly audit   '@typescript-eslint/typescript-estree': [ '7.18.0' ],
+npm silly audit   '@typescript-eslint/utils': [ '7.18.0' ],
+npm silly audit   '@typescript-eslint/visitor-keys': [ '7.18.0' ],
+npm silly audit   globby: [ '11.1.0' ],
+npm silly audit   slash: [ '3.0.0' ],
+npm silly audit   'ts-api-utils': [ '1.4.3' ],
+npm silly audit   '@typescript-eslint/parser': [ '7.18.0' ],
+npm silly audit   '@typescript-eslint/type-utils': [ '7.18.0' ],
+npm silly audit   '@ungap/structured-clone': [ '1.3.0' ],
+npm silly audit   '@vitejs/plugin-react': [ '4.5.1' ],
+npm silly audit   'acorn-jsx': [ '5.3.2' ],
+npm silly audit   ajv: [ '6.12.6' ],
+npm silly audit   'ansi-regex': [ '5.0.1', '6.1.0' ],
+npm silly audit   'ansi-styles': [ '4.3.0', '6.2.1' ],
+npm silly audit   'any-promise': [ '1.3.0' ],
+npm silly audit   anymatch: [ '3.1.3' ],
+npm silly audit   arg: [ '5.0.2' ],
+npm silly audit   argparse: [ '2.0.1' ],
+npm silly audit   'array-union': [ '2.1.0' ],
+npm silly audit   asynckit: [ '0.4.0' ],
+npm silly audit   autoprefixer: [ '10.4.21' ],
+npm silly audit   axios: [ '1.9.0' ],
+npm silly audit   'balanced-match': [ '1.0.2' ],
+npm silly audit   'binary-extensions': [ '2.3.0' ],
+npm silly audit   braces: [ '3.0.3' ],
+npm silly audit   browserslist: [ '4.25.0' ],
+npm silly audit   'call-bind-apply-helpers': [ '1.0.2' ],
+npm silly audit   callsites: [ '3.1.0' ],
+npm silly audit   'camelcase-css': [ '2.0.1' ],
+npm silly audit   'caniuse-lite': [ '1.0.30001721' ],
+npm silly audit   chalk: [ '4.1.2' ],
+npm silly audit   chokidar: [ '3.6.0' ],
+npm silly audit   'color-convert': [ '2.0.1' ],
+npm silly audit   'color-name': [ '1.1.4' ],
+npm silly audit   'combined-stream': [ '1.0.8' ],
+npm silly audit   'concat-map': [ '0.0.1' ],
+npm silly audit   'convert-source-map': [ '2.0.0' ],
+npm silly audit   'cross-spawn': [ '7.0.6' ],
+npm silly audit   cssesc: [ '3.0.0' ],
+npm silly audit   csstype: [ '3.1.3' ],
+npm silly audit   debug: [ '4.4.1' ],
+npm silly audit   'deep-is': [ '0.1.4' ],
+npm silly audit   'delayed-stream': [ '1.0.0' ],
+npm silly audit   didyoumean: [ '1.2.2' ],
+npm silly audit   'dir-glob': [ '3.0.1' ],
+npm silly audit   'path-type': [ '4.0.0' ],
+npm silly audit   dlv: [ '1.1.3' ],
+npm silly audit   doctrine: [ '3.0.0' ],
+npm silly audit   'dunder-proto': [ '1.0.1' ],
+npm silly audit   eastasianwidth: [ '0.2.0' ],
+npm silly audit   'electron-to-chromium': [ '1.5.165' ],
+npm silly audit   'es-define-property': [ '1.0.1' ],
+npm silly audit   'es-errors': [ '1.3.0' ],
+npm silly audit   'es-object-atoms': [ '1.1.1' ],
+npm silly audit   'es-set-tostringtag': [ '2.1.0' ],
+npm silly audit   escalade: [ '3.2.0' ],
+npm silly audit   eslint: [ '8.57.1' ],
+npm silly audit   'eslint-plugin-react-hooks': [ '4.6.2' ],
+npm silly audit   'eslint-plugin-react-refresh': [ '0.4.20' ],
+npm silly audit   'eslint-scope': [ '7.2.2' ],
+npm silly audit   'escape-string-regexp': [ '4.0.0' ],
+npm silly audit   'glob-parent': [ '6.0.2', '5.1.2' ],
+npm silly audit   'strip-ansi': [ '6.0.1', '7.1.0' ],
+npm silly audit   espree: [ '9.6.1' ],
+npm silly audit   acorn: [ '8.15.0' ],
+npm silly audit   esquery: [ '1.6.0' ],
+npm silly audit   esrecurse: [ '4.3.0' ],
+npm silly audit   estraverse: [ '5.3.0' ],
+npm silly audit   esutils: [ '2.0.3' ],
+npm silly audit   'fast-deep-equal': [ '3.1.3' ],
+npm silly audit   'fast-glob': [ '3.3.3' ],
+npm silly audit   'fast-json-stable-stringify': [ '2.1.0' ],
+npm silly audit   'fast-levenshtein': [ '2.0.6' ],
+npm silly audit   fastq: [ '1.19.1' ],
+npm silly audit   'file-entry-cache': [ '6.0.1' ],
+npm silly audit   'fill-range': [ '7.1.1' ],
+npm silly audit   'find-up': [ '5.0.0' ],
+npm silly audit   'flat-cache': [ '3.2.0' ],
+npm silly audit   glob: [ '7.2.3', '10.4.5' ],
+npm silly audit   rimraf: [ '3.0.2' ],
+npm silly audit   flatted: [ '3.3.3' ],
+npm silly audit   'follow-redirects': [ '1.15.9' ],
+npm silly audit   'foreground-child': [ '3.3.1' ],
+npm silly audit   'signal-exit': [ '4.1.0' ],
+npm silly audit   'form-data': [ '4.0.3' ],
+npm silly audit   'fraction.js': [ '4.3.7' ],
+npm silly audit   'fs.realpath': [ '1.0.0' ],
+npm silly audit   fsevents: [ '2.3.3' ],
+npm silly audit   'function-bind': [ '1.1.2' ],
+npm silly audit   gensync: [ '1.0.0-beta.2' ],
+npm silly audit   'get-intrinsic': [ '1.3.0' ],
+npm silly audit   'get-proto': [ '1.0.1' ],
+npm silly audit   gopd: [ '1.2.0' ],
+npm silly audit   graphemer: [ '1.4.0' ],
+npm silly audit   'has-flag': [ '4.0.0' ],
+npm silly audit   'has-symbols': [ '1.1.0' ],
+npm silly audit   'has-tostringtag': [ '1.0.2' ],
+npm silly audit   hasown: [ '2.0.2' ],
+npm silly audit   'import-fresh': [ '3.3.1' ],
+npm silly audit   'resolve-from': [ '4.0.0' ],
+npm silly audit   imurmurhash: [ '0.1.4' ],
+npm silly audit   inflight: [ '1.0.6' ],
+npm silly audit   inherits: [ '2.0.4' ],
+npm silly audit   'is-binary-path': [ '2.1.0' ],
+npm silly audit   'is-core-module': [ '2.16.1' ],
+npm silly audit   'is-extglob': [ '2.1.1' ],
+npm silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+npm silly audit   'is-glob': [ '4.0.3' ],
+npm silly audit   'is-number': [ '7.0.0' ],
+npm silly audit   'is-path-inside': [ '3.0.3' ],
+npm silly audit   isexe: [ '2.0.0' ],
+npm silly audit   jackspeak: [ '3.4.3' ],
+npm silly audit   jiti: [ '1.21.7' ],
+npm silly audit   'js-tokens': [ '4.0.0' ],
+npm silly audit   'js-yaml': [ '4.1.0' ],
+npm silly audit   jsesc: [ '3.1.0' ],
+npm silly audit   'json-buffer': [ '3.0.1' ],
+npm silly audit   'json-schema-traverse': [ '0.4.1' ],
+npm silly audit   'json-stable-stringify-without-jsonify': [ '1.0.1' ],
+npm silly audit   json5: [ '2.2.3' ],
+npm silly audit   keyv: [ '4.5.4' ],
+npm silly audit   levn: [ '0.4.1' ],
+npm silly audit   lilconfig: [ '3.1.3' ],
+npm silly audit   'lines-and-columns': [ '1.2.4' ],
+npm silly audit   'locate-path': [ '6.0.0' ],
+npm silly audit   'lodash.merge': [ '4.6.2' ],
+npm silly audit   'loose-envify': [ '1.4.0' ],
+npm silly audit   'lru-cache': [ '5.1.1', '10.4.3' ],
+npm silly audit   'math-intrinsics': [ '1.1.0' ],
+npm silly audit   merge2: [ '1.4.1' ],
+npm silly audit   micromatch: [ '4.0.8' ],
+npm silly audit   'mime-types': [ '2.1.35' ],
+npm silly audit   'mime-db': [ '1.52.0' ],
+npm silly audit   minipass: [ '7.1.2' ],
+npm silly audit   ms: [ '2.1.3' ],
+npm silly audit   mz: [ '2.7.0' ],
+npm silly audit   nanoid: [ '3.3.11' ],
+npm silly audit   'natural-compare': [ '1.4.0' ],
+npm silly audit   'node-releases': [ '2.0.19' ],
+npm silly audit   'normalize-path': [ '3.0.0' ],
+npm silly audit   'normalize-range': [ '0.1.2' ],
+npm silly audit   'object-assign': [ '4.1.1' ],
+npm silly audit   'object-hash': [ '3.0.0' ],
+npm silly audit   once: [ '1.4.0' ],
+npm silly audit   optionator: [ '0.9.4' ],
+npm silly audit   'p-limit': [ '3.1.0' ],
+npm silly audit   'p-locate': [ '5.0.0' ],
+npm silly audit   'package-json-from-dist': [ '1.0.1' ],
+npm silly audit   'parent-module': [ '1.0.1' ],
+npm silly audit   'path-exists': [ '4.0.0' ],
+npm silly audit   'path-is-absolute': [ '1.0.1' ],
+npm silly audit   'path-key': [ '3.1.1' ],
+npm silly audit   'path-parse': [ '1.0.7' ],
+npm silly audit   'path-scurry': [ '1.11.1' ],
+npm silly audit   picocolors: [ '1.1.1' ],
+npm silly audit   picomatch: [ '2.3.1' ],
+npm silly audit   pify: [ '2.3.0' ],
+npm silly audit   pirates: [ '4.0.7' ],
+npm silly audit   postcss: [ '8.5.4' ],
+npm silly audit   'postcss-import': [ '15.1.0' ],
+npm silly audit   'postcss-js': [ '4.0.1' ],
+npm silly audit   'postcss-load-config': [ '4.0.2' ],
+npm silly audit   'postcss-nested': [ '6.2.0' ],
+npm silly audit   'postcss-selector-parser': [ '6.1.2' ],
+npm silly audit   'postcss-value-parser': [ '4.2.0' ],
+npm silly audit   'prelude-ls': [ '1.2.1' ],
+npm silly audit   'proxy-from-env': [ '1.1.0' ],
+npm silly audit   punycode: [ '2.3.1' ],
+npm silly audit   'queue-microtask': [ '1.2.3' ],
+npm silly audit   react: [ '18.3.1' ],
+npm silly audit   'react-dom': [ '18.3.1' ],
+npm silly audit   'react-refresh': [ '0.17.0' ],
+npm silly audit   'react-router': [ '6.30.1' ],
+npm silly audit   'react-router-dom': [ '6.30.1' ],
+npm silly audit   'read-cache': [ '1.0.0' ],
+npm silly audit   readdirp: [ '3.6.0' ],
+npm silly audit   resolve: [ '1.22.10' ],
+npm silly audit   reusify: [ '1.1.0' ],
+npm silly audit   rollup: [ '4.43.0' ],
+npm silly audit   '@types/estree': [ '1.0.7' ],
+npm silly audit   'run-parallel': [ '1.2.0' ],
+npm silly audit   scheduler: [ '0.23.2' ],
+npm silly audit   'shebang-command': [ '2.0.0' ],
+npm silly audit   'shebang-regex': [ '3.0.0' ],
+npm silly audit   'source-map-js': [ '1.2.1' ],
+npm silly audit   'strip-json-comments': [ '3.1.1' ],
+npm silly audit   sucrase: [ '3.35.0' ],
+npm silly audit   commander: [ '4.1.1' ],
+npm silly audit   'supports-color': [ '7.2.0' ],
+npm silly audit   'supports-preserve-symlinks-flag': [ '1.0.0' ],
+npm silly audit   tailwindcss: [ '3.4.17' ],
+npm silly audit   'text-table': [ '0.2.0' ],
+npm silly audit   thenify: [ '3.3.1' ],
+npm silly audit   'thenify-all': [ '1.6.0' ],
+npm silly audit   'to-regex-range': [ '5.0.1' ],
+npm silly audit   'ts-interface-checker': [ '0.1.13' ],
+npm silly audit   'type-check': [ '0.4.0' ],
+npm silly audit   typescript: [ '5.8.3' ],
+npm silly audit   'undici-types': [ '6.21.0' ],
+npm silly audit   'update-browserslist-db': [ '1.1.3' ],
+npm silly audit   'uri-js': [ '4.4.1' ],
+npm silly audit   'util-deprecate': [ '1.0.2' ],
+npm silly audit   vite: [ '5.4.19' ],
+npm silly audit   '@esbuild/win32-x64': [ '0.21.5' ],
+npm silly audit   esbuild: [ '0.21.5' ],
+npm silly audit   which: [ '2.0.2' ],
+npm silly audit   'word-wrap': [ '1.2.5' ],
+npm silly audit   'wrap-ansi': [ '8.1.0', '7.0.0' ],
+npm silly audit   wrappy: [ '1.0.2' ],
+npm silly audit   yallist: [ '3.1.1' ],
+npm silly audit   yaml: [ '2.8.0' ],
+npm silly audit   'yocto-queue': [ '0.1.0' ]
+npm silly audit }
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\fsevents
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\fsevents'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-win32-ia32-msvc
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-win32-ia32-msvc'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-win32-arm64-msvc
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-win32-arm64-msvc'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-x64-musl
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-x64-musl'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-x64-gnu
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-x64-gnu'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-s390x-gnu
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-s390x-gnu'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-riscv64-musl
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-riscv64-musl'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-riscv64-gnu
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-riscv64-gnu'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-powerpc64le-gnu
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-powerpc64le-gnu'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-loongarch64-gnu
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-loongarch64-gnu'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-arm64-musl
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-arm64-musl'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-arm64-gnu
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-arm64-gnu'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-arm-musleabihf
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-arm-musleabihf'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-linux-arm-gnueabihf
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-linux-arm-gnueabihf'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-freebsd-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-freebsd-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-freebsd-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-freebsd-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-darwin-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-darwin-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-darwin-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-darwin-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-android-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-android-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@rollup\rollup-android-arm-eabi
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@rollup\\rollup-android-arm-eabi'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\win32-ia32
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\win32-ia32'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\win32-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\win32-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\sunos-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\sunos-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\openbsd-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\openbsd-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\netbsd-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\netbsd-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-s390x
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-s390x'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-riscv64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-riscv64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-ppc64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-ppc64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-mips64el
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-mips64el'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-loong64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-loong64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-ia32
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-ia32'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\linux-arm
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\linux-arm'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\freebsd-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\freebsd-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\freebsd-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\freebsd-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\darwin-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\darwin-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\darwin-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\darwin-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\android-x64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\android-x64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\android-arm64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\android-arm64'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\android-arm
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\android-arm'
+npm silly reify ]
+npm verbose reify failed optional dependency C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client\node_modules\@esbuild\aix-ppc64
+npm silly reify mark deleted [
+npm silly reify   'C:\\Users\\gabri\\OneDrive\\Área de Trabalho\\Projetos\\plataforma-agentes\\client\\node_modules\\@esbuild\\aix-ppc64'
+npm silly reify ]
+npm http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 932ms
+npm silly audit report {
+npm silly audit report   'brace-expansion': [
+npm silly audit report     {
+npm silly audit report       id: 1105443,
+npm silly audit report       url: 'https://github.com/advisories/GHSA-v6h2-p8h4-qcjw',
+npm silly audit report       title: 'brace-expansion Regular Expression Denial of Service vulnerability',
+npm silly audit report       severity: 'low',
+npm silly audit report       vulnerable_versions: '>=1.0.0 <=1.1.11',
+npm silly audit report       cwe: [Array],
+npm silly audit report       cvss: [Object]
+npm silly audit report     },
+npm silly audit report     {
+npm silly audit report       id: 1105444,
+npm silly audit report       url: 'https://github.com/advisories/GHSA-v6h2-p8h4-qcjw',
+npm silly audit report       title: 'brace-expansion Regular Expression Denial of Service vulnerability',
+npm silly audit report       severity: 'low',
+npm silly audit report       vulnerable_versions: '>=2.0.0 <=2.0.1',
+npm silly audit report       cwe: [Array],
+npm silly audit report       cvss: [Object]
+npm silly audit report     }
+npm silly audit report   ],
+npm silly audit report   esbuild: [
+npm silly audit report     {
+npm silly audit report       id: 1102341,
+npm silly audit report       url: 'https://github.com/advisories/GHSA-67mh-4wv8-2f99',
+npm silly audit report       title: 'esbuild enables any website to send any requests to the development server and read the response',
+npm silly audit report       severity: 'moderate',
+npm silly audit report       vulnerable_versions: '<=0.24.2',
+npm silly audit report       cwe: [Array],
+npm silly audit report       cvss: [Object]
+npm silly audit report     }
+npm silly audit report   ]
+npm silly audit report }
+npm silly packumentCache corgi:https://registry.npmjs.org/brace-expansion cache-miss
+npm silly packumentCache corgi:https://registry.npmjs.org/esbuild cache-miss
+npm http cache https://registry.npmjs.org/brace-expansion 46ms (cache hit)
+npm silly packumentCache corgi:https://registry.npmjs.org/brace-expansion set size:16192 disposed:false
+npm http cache https://registry.npmjs.org/esbuild 53ms (cache hit)
+npm silly packumentCache corgi:https://registry.npmjs.org/esbuild set size:861077 disposed:false
+npm silly packumentCache corgi:https://registry.npmjs.org/minimatch cache-miss
+npm http cache https://registry.npmjs.org/minimatch 16ms (cache hit)
+npm silly packumentCache corgi:https://registry.npmjs.org/minimatch set size:143741 disposed:false
+npm silly packumentCache corgi:https://registry.npmjs.org/vite cache-miss
+npm http cache https://registry.npmjs.org/vite 20ms (cache hit)
+npm silly packumentCache corgi:https://registry.npmjs.org/vite set size:2013849 disposed:false
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+npm silly ADD
+
+up to date, audited 327 packages in 4s
+
+71 packages are looking for funding
+  run `npm fund` for details
+
+3 vulnerabilities (1 low, 2 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm verbose cwd C:\Users\gabri\OneDrive\Área de Trabalho\Projetos\plataforma-agentes\client
+npm verbose os Windows_NT 10.0.26100
+npm verbose node v22.13.1
+npm verbose npm  v10.9.2
+npm verbose exit 0
+npm info ok

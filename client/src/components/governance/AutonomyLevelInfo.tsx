@@ -1,4 +1,5 @@
 import React from 'react'
+
 import type { AutonomyLevel } from './AutonomySpectrumSelector'
 
 const descriptions: Record<AutonomyLevel, string> = {

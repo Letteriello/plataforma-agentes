@@ -1,6 +1,7 @@
+import { ArrowDown,ArrowUp } from 'lucide-react';
 import React from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowUp, ArrowDown } from 'lucide-react';
 
 interface KpiCardProps {
   title: string;

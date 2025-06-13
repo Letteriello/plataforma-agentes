@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import { ChatMessage, Artifact } from '../components/chat/types' // Import ChatMessage and Artifact
+import { createJSONStorage,persist } from 'zustand/middleware'
+
+import { Artifact,ChatMessage } from '../components/chat/types' // Import ChatMessage and Artifact
 
 export interface Conversation {
   id: string;      // Session ID

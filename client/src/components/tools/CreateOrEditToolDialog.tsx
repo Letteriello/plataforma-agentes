@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PlusCircle, Trash2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useFieldArray,useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { FormDialog } from '@/components/ui/FormDialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+
+import { CreateToolDTO, ToolDTO, ToolType,UpdateToolDTO } from '@/api/toolService';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormDialog } from '@/components/ui/FormDialog';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlusCircle, Trash2 } from 'lucide-react';
-import { ToolDTO, CreateToolDTO, UpdateToolDTO, ToolType } from '@/api/toolService';
+import { Textarea } from '@/components/ui/textarea';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'O nome do parâmetro é obrigatório.'),

@@ -1,13 +1,13 @@
-import apiClient from './apiClient';
 import {
-  ChatSession,
-  ChatSessionCreatePayload,
-  ChatSessionUpdatePayload,
-  ChatSessionDetail,
   ChatMessage,
   ChatMessageCreatePayload, // This includes sender_type
+  ChatSession,
+  ChatSessionCreatePayload,
+  ChatSessionDetail,
+  ChatSessionUpdatePayload,
   // UserAgentMessagePayload, // Alternative for postMessageToAgent if sender_type is implicit
 } from '../types/chatTypes';
+import apiClient from './apiClient';
 
 const CHAT_BASE_URL = '/chat'; // Matches the router prefix in backend
 

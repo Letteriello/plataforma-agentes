@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-import apiClient from '@/api/apiClient'
 import agentService from '@/api/agentService'
+import apiClient from '@/api/apiClient'
 import type { LlmAgentConfig } from '@/types/agents';
 import type { ToolDTO, UiToolDefinition as SharedUiToolDefinition } from '@/types/tools';
 
@@ -23,9 +23,9 @@ describe('agentService', () => {
 
     await agentService.deleteAgent(agentId)
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(mockedApiClient.delete).toHaveBeenCalledWith(`/agents/${agentId}`)
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(mockedApiClient.delete).toHaveBeenCalledTimes(1)
   })
 
@@ -72,9 +72,9 @@ describe('agentService', () => {
       knowledge_base_ids: [],
     };
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(mockedApiClient.post).toHaveBeenCalledWith('/agents', expectedApiPayload);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+     
     expect(mockedApiClient.post).toHaveBeenCalledTimes(1);
   });
 })

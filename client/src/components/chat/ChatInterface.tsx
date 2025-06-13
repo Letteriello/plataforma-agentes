@@ -1,22 +1,24 @@
 // client/src/components/chat/ChatInterface.tsx
-import React, { useState, useEffect } from 'react' // Added useEffect
+import type { ComponentType } from 'react'
+import React, { useEffect,useState } from 'react' // Added useEffect
+
+import chatService from '@/api/chatService';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { AgentWorkspace } from './AgentWorkspace'
-import type { ComponentType } from 'react'
-import { useChatStore } from '@/store/chatStore'
-import { MessageList } from './MessageList'
-import { ChatInput } from './ChatInput'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { ChatMessage } from './types'
-import { ChatHeader } from './ChatHeader'
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast'; // Import useToast
-import chatService from '@/api/chatService';
-import { ChatMessageSenderType, type ChatSession as ApiChatSession, type ChatMessage as ApiChatMessage } from '@/types/chatTypes';
+import { useChatStore } from '@/store/chatStore'
+import { type ChatMessage as ApiChatMessage,ChatMessageSenderType, type ChatSession as ApiChatSession } from '@/types/chatTypes';
+
+import { AgentWorkspace } from './AgentWorkspace'
+import { ChatHeader } from './ChatHeader'
+import { ChatInput } from './ChatInput'
+import { MessageList } from './MessageList'
+import { ChatMessage } from './types'
 
 interface ChatInterfaceProps {
   LeftPanelComponent?: ComponentType

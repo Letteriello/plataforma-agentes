@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
+
+import { storeSecret } from '@/api/secretService'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { useAuthStore } from '@/store/authStore'
-import { storeSecret } from '@/api/secretService'
 
 export default function ConfiguracoesPage() {
   const { user, setUser } = useAuthStore()

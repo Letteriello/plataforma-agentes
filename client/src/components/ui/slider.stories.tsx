@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
+
 import { Label } from './label';
 import { Slider } from './slider';
 

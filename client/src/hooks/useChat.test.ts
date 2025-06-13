@@ -1,9 +1,11 @@
-import { renderHook, act } from '@testing-library/react'
+import { act,renderHook } from '@testing-library/react'
 import { vi } from 'vitest'
-import { useChat } from './useChat'
-import { useSessionStore } from '@/store/sessionStore'
+
 import chatService from '@/api/chatService'
-import { Session, ChatMessage } from '@/types'
+import { useSessionStore } from '@/store/sessionStore'
+import { ChatMessage,Session } from '@/types'
+
+import { useChat } from './useChat'
 
 vi.mock('@/store/sessionStore')
 vi.mock('@/api/chatService')

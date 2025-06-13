@@ -2,16 +2,17 @@
  * @file Componente de aresta (edge) customizada com um botão de exclusão.
  */
 
+import { X } from 'lucide-react';
 import React from 'react';
 import {
+  BaseEdge,
+  EdgeLabelRenderer,
   EdgeProps,
   getBezierPath,
-  EdgeLabelRenderer,
-  BaseEdge,
   useReactFlow,
 } from 'reactflow';
+
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 
 const CustomEdge: React.FC<EdgeProps> = ({
   id,

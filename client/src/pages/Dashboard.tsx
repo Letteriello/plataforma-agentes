@@ -1,24 +1,19 @@
-import React from 'react'
 import { motion } from 'framer-motion'
+// Icons
+import { Bot, Clock,MessageSquare, TrendingUp } from 'lucide-react'
+import React from 'react'
 
+import { AgentActivityCard, AgentActivityData } from '@/components/dashboard/AgentActivityCard'
+import { StatsCard } from '@/components/dashboard/StatsCard'
 // Components
 // import { DashboardLayout } from '@/components/dashboard/DashboardLayout'; // Removed
 import { TokenUsageCard } from '@/components/dashboard/TokenUsageCard'
-import { AgentActivityCard, AgentActivityData } from '@/components/dashboard/AgentActivityCard'
-import { StatsCard } from '@/components/dashboard/StatsCard'
-
 // Hooks
 import { useDashboard } from '@/hooks/useDashboard'
 import { useDashboardMetrics } from '@/hooks/useDashboardMetrics'
-
 // Types
 import { Agent, DashboardStats } from '@/types/dashboard.types'
-
-// Icons
-import { Bot, MessageSquare, TrendingUp, Clock } from 'lucide-react'
-
 // Removido: mock data agora é fornecido pelos hooks personalizados
-
 // Utils
 import { formatTokenNumber } from '@/utils/dashboardUtils'
 

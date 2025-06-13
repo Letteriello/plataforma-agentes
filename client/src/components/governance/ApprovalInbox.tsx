@@ -1,6 +1,8 @@
 import React from 'react'
-import { ApprovalItem } from '../../types/governance'
+
 import { Button } from '@/components/ui/button'
+
+import { ApprovalItem } from '../../types/governance'
 
 interface ApprovalInboxProps {
   items: ApprovalItem[]

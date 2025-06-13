@@ -1,6 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LucideUsers, LucideCpu, LucideZap } from 'lucide-react'
+import { LucideCpu, LucideUsers, LucideZap } from 'lucide-react'
+
 import { ComponentSkeleton } from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface StatCardProps {
   title: string

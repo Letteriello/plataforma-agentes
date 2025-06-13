@@ -1,5 +1,8 @@
 // client/src/components/chat/ChatHeader.tsx
+import { MoreVertical } from 'lucide-react' // Or another icon for the trigger
 import React from 'react'
+
+import { AgentSelector } from '@/components/debug/AgentSelector' // Corrected path
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,8 +12,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { AgentSelector } from '@/components/debug/AgentSelector' // Corrected path
-import { MoreVertical } from 'lucide-react' // Or another icon for the trigger
 
 // Define types for agent and props for AgentSelector
 interface AgentInfo {

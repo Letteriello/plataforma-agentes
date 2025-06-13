@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import { BaseAgentSchema } from './base'
 
 // Esquema para as configurações de geração de conteúdo, espelhando o objeto `generate_content_config` do ADK.

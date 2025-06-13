@@ -2,12 +2,13 @@
  * @file Componente para listar as execuções de teste em uma tabela.
  */
 
-import React from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { TestRun } from '@/types/qa'
 import { format } from 'date-fns'
+import React from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { TestRun } from '@/types/qa'
 
 interface TestRunListProps {
   testRuns: TestRun[]

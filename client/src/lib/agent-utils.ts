@@ -1,18 +1,18 @@
 import {
+  AnyAgentConfig,
+  LlmAgentConfig,
+  LoopAgentConfig,
+  ParallelAgentConfig,
+  SequentialAgentConfig,
+} from '@/types'
+import {
+  A2AAgent,
   Agent,
   AgentType,
   LLMAgent,
-  SequentialAgent,
   ParallelAgent,
-  A2AAgent,
+  SequentialAgent,
 } from '@/types/agents'
-import {
-  AnyAgentConfig,
-  LlmAgentConfig,
-  SequentialAgentConfig,
-  ParallelAgentConfig,
-  LoopAgentConfig,
-} from '@/types'
 
 /**
  * Get the display name for an agent type

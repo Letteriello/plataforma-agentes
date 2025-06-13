@@ -1,9 +1,10 @@
+import { lazy, Suspense } from 'react';
 import {
   createBrowserRouter,
   Navigate,
 } from 'react-router-dom';
+
 import MainLayout from '@/components/layouts/MainLayout';
-import { lazy, Suspense } from 'react';
 
 // Define custom handle and AppRouteObject types
 interface CustomRouteHandle {

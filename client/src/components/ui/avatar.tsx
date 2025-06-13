@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import { cn } from '@/lib/utils'
 
 // Componente Avatar simplificado que não depende do Radix UI
@@ -59,4 +60,4 @@ const AvatarFallback = React.forwardRef<
 ))
 AvatarFallback.displayName = 'AvatarFallback'
 
-export { Avatar, AvatarImage, AvatarFallback }
+export { Avatar, AvatarFallback,AvatarImage }

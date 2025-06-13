@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { ReasoningStep } from '@/types/simulation'
 
 interface ReasoningPanelProps {

@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi } from 'vitest'
-import { AgentIdentity } from './AgentIdentity'
+import { describe, expect, it, vi } from 'vitest'
+
 import { LlmAgentConfig } from '@/types/agent'
+
+import { AgentIdentity } from './AgentIdentity'
 
 vi.mock('./EditDescriptionDialog', () => ({
   EditDescriptionDialog: ({ isOpen }: { isOpen: boolean }) =>

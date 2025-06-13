@@ -1,4 +1,9 @@
+import { Database, FileText, Settings,Upload } from 'lucide-react'
 import React from 'react'
+
+import { KnowledgeBase, KnowledgeBaseType } from '@/api/memoryService'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -7,10 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { FileText, Database, Upload, Settings } from 'lucide-react'
-import { KnowledgeBase, KnowledgeBaseType } from '@/api/memoryService'
 
 interface KnowledgeBaseCardProps {
   knowledgeBase: KnowledgeBase

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import { BaseAgentSchema } from './base'
 
 // Esquema para um Agente de Workflow Sequencial.

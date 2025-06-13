@@ -1,13 +1,14 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+
 import { KnowledgeBaseType } from '@/api/memoryService'
-import { FormDialog } from '@/components/ui/FormDialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { FormDialog } from '@/components/ui/FormDialog'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 // Zod schema for validation
 const formSchema = z.object({

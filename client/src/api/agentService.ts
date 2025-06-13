@@ -1,5 +1,5 @@
 import apiClient from '@/api/apiClient';
-import type { LlmAgentConfig, AgentSummaryDTO as SharedAgentSummaryDTO } from '@/types/agents';
+import type { AgentSummaryDTO as SharedAgentSummaryDTO,LlmAgentConfig } from '@/types/agents';
 import type { ToolDTO, UiToolDefinition as SharedUiToolDefinition } from '@/types/tools';
 
 /**

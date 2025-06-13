@@ -1,16 +1,17 @@
-import { create, StateCreator } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
+import { create, StateCreator } from 'zustand'
+
 import {
-  getDashboardStats,
-  getRecentAgents,
-  getRecentActivities,
-  getTokenUsageMetrics,
-  type DashboardStats,
-  type TokenUsage,
-  type Agent,
   type Activity,
-  type AgentStatus,
   type ActivityType,
+  type Agent,
+  type AgentStatus,
+  type DashboardStats,
+  getDashboardStats,
+  getRecentActivities,
+  getRecentAgents,
+  getTokenUsageMetrics,
+  type TokenUsage,
 } from '@/api/dashboardService'
 
 interface DashboardState {
