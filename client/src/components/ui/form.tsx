@@ -10,8 +10,8 @@ import {
   useFormContext,
 } from 'react-hook-form'
 
-import { cn } from '@lib/utils' // Assuming @lib alias is configured for src/lib
-import { Label } from '@components/ui/label' // Assuming @components alias
+import { cn } from '@/lib/utils'
+import { Label } from '@/components/ui/label'
 
 const Form = FormProvider
 

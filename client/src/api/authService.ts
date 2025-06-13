@@ -1,5 +1,6 @@
 import apiClient from './apiClient'; // Nosso apiClient configurado
 import { useAuthStore } from '../stores/authStore'; // Nossa store Zustand
+import { supabase } from '../lib/supabaseClient'; // Importa o cliente Supabase
 
 // Tipos para os dados de login e registro (podem vir de um arquivo de tipos compartilhado)
 interface LoginCredentials {
@@ -51,18 +52,25 @@ export const loginUser = async (credentials: LoginCredentials): Promise<void> =>
 };
 
 export const registerUser = async (userData: UserRegistrationData): Promise<RegisteredUser> => {
-  try {
-    const { data } = await apiClient.post<RegisteredUser>('/auth/register', userData);
-    // Após o registro bem-sucedido, você pode optar por logar o usuário automaticamente
-    // ou pedir que ele faça login manualmente.
-    // Se logar automaticamente:
-    // await loginUser({ email: userData.email, password: userData.password });
-    return data;
-  } catch (error) {
-    console.error('Registration failed:', error);
+  const { data, error } = await supabase.auth.signUp({
+    email: userData.email,
+    password: userData.password,
+  });
+
+  if (error) {
+    console.error('Supabase registration failed:', error.message);
     throw error;
   }
+
+  if (!data.user) {
+    throw new Error('Registration succeeded but no user data was returned.');
+  }
+  
+  // A UI deve informar o usuário para checar seu email para confirmação.
+  // A função retorna os dados do usuário do Supabase, que correspondem à interface RegisteredUser.
+  return data.user as RegisteredUser;
 };
+
 
 export const logoutUser = (): void => {
   useAuthStore.getState().setToken(null);

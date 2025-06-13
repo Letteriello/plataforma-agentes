@@ -1,15 +1,26 @@
-fastapi==0.110.0
-uvicorn==0.29.0
-cryptography==42.0.5
-pydantic-settings==2.2.1
-python-dotenv==1.0.1
-google-cloud-aiplatform==1.49.0
-supabase-py==2.4.2
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
 
+# Supabase (se usar cliente python)
+supabase>=1.0.0
 
-# Testing
-pytest==8.2.2
-httpx==0.27.0
-vulture
+# Para hashing de senha
+passlib[bcrypt]
+
+# Para manipulação de JWT (autenticação)
+python-jose[cryptography]
+
+# JWT (se usar python-jose ou pyjwt)
+# python-jose[cryptography]
+# pyjwt
+
+# SQLAlchemy (se usar ORM completo)
+# sqlalchemy
+# psycopg2-binary
+# alembic
+
+# Para testes
+# pytest
+# httpx # Necessário para TestClient

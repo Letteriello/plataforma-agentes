@@ -15,10 +15,13 @@ Este arquivo serve como um índice central para todos os documentos no Banco de 
 - `planos/workflow_master.md`: Fluxo de trabalho mestre com 7 etapas x 7 tarefas
 - `planos/roadmap_v1.md`: Roadmap detalhado de implementação técnica
 - `planos/etapa2_planejamento_macro.md`: Detalhamento da Etapa 2 - Planejamento Macro
+- `planos/etapa4_design_arquitetura.md`: Detalhamento da Etapa 4 - Design da Arquitetura (Operações em Arquivos)
+- `planos/etapa5_implementacao_backend.md`: Detalhamento da Etapa 5 - Implementação do Backend (CRUD e Autenticação)
 
 ## Registros de Tarefas
 - `registro_tarefas/`: Armazena logs detalhados de cada tarefa executada, incluindo decisões e desafios.
 - `registro_tarefas/2025-06-13_ETAPA1_SessionStart.md`: Log da execução da Etapa 1
+- `registro_tarefas/2025-06-13_ETAPA4_DesignArquitetura.md`: Log da execução da Etapa 4 - Design da Arquitetura
 
 ## Erros
 - `erros/`: Documenta erros encontrados e suas resoluções.

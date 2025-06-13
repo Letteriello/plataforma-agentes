@@ -1,17 +1,17 @@
 import { useFormContext } from 'react-hook-form';
-import { LLMAgent } from '../../../types/agents';
-import { Label } from '../../ui/label';
-import { Input } from '../../ui/input';
-import { ToggleGroup, ToggleGroupItem } from '../../ui/toggle-group';
+import { LLMAgent } from '@/types/agents';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../ui/select';
-import { Slider } from '../../ui/slider';
-import { Textarea } from '../../ui/textarea';
+} from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
 import {
   FormControl,
   FormDescription,
@@ -19,7 +19,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../ui/form';
+} from '@/components/ui/form';
 import { useCallback, useMemo } from 'react';
 import {
   Card,
@@ -27,21 +27,21 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../ui/card';
+} from '@/components/ui/card';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '../../ui/accordion';
+} from '@/components/ui/accordion';
 import { HelpCircle, X } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../../ui/tooltip';
-import { cn } from '../../../lib/utils';
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 // Modelos disponíveis com seus detalhes
 const AVAILABLE_MODELS = [

@@ -1,31 +1,40 @@
-import { RouterProvider } from 'react-router-dom'
-import { Toaster } from '@/components/ui/toaster'
-import { ThemeProvider } from '@/components/ui/theme-provider'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import { ToastProvider } from '@/components/ui/use-toast'
-import { router } from '@/routes.tsx'
-import { ErrorBoundary } from '@/components/common/ErrorBoundary'
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
+import AppLayout from './layouts/AppLayout';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import ToolsPage from './pages/ToolsPage';
+import CreateOrEditToolPage from './pages/CreateOrEditToolPage';
+import AgentsPage from './pages/AgentsPage';
+import CreateOrEditAgentPage from './pages/CreateOrEditAgentPage';
 
-import './App.css'
-
-export function App() {
+function App() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="system" storageKey="nexus-ui-theme">
-        <TooltipProvider>
-          <ToastProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <RouterProvider
-                router={router}
-                future={{ v7_startTransition: true }}
-              />
-              <Toaster />
-            </div>
-          </ToastProvider>
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  )
+    <Routes>
+      {/* Rotas públicas */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+
+      {/* Rotas protegidas */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomePage />} />
+          {/* Ferramentas */}
+          <Route path="/tools" element={<ToolsPage />} />
+          <Route path="/tools/new" element={<CreateOrEditToolPage />} />
+          <Route path="/tools/:id/edit" element={<CreateOrEditToolPage />} />
+          {/* Agentes */}
+          <Route path="/agents" element={<AgentsPage />} />
+          <Route path="/agents/new" element={<CreateOrEditAgentPage />} />
+          <Route path="/agents/:id/edit" element={<CreateOrEditAgentPage />} />
+        </Route>
+      </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

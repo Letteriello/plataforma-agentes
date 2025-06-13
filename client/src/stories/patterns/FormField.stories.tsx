@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import { Button } from '@components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormField,
@@ -13,11 +13,11 @@ import {
   FormControl,
   FormDescription,
   FormMessage,
-} from '@components/ui/form';
-import { Input } from '@components/ui/input';
-import { ToastProvider } from '@components/ui/toast'; // Toaster is often part of app layout
-import { Toaster } from '@components/ui/toaster';     // To display toast messages
-import { useToast } from '@components/ui/use-toast';   // Hook to trigger toasts
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ToastProvider } from '@/components/ui/toast'; // Toaster is often part of app layout
+import { Toaster } from '@/components/ui/toaster';     // To display toast messages
+import { useToast } from '@/components/ui/use-toast';   // Hook to trigger toasts
 
 // Define a schema for our form
 const FormSchema = z.object({
