@@ -1,0 +1,183 @@
+{
+  "entities": [
+    {
+      "type": "framework",
+      "name": "Google Agent Development Kit (ADK)",
+      "observations": [
+        "Toolkit Python open-source para construir, avaliar e implantar agentes inteligentes.",
+        "Destaques: Ecossistema de ferramentas, desenvolvimento code-first, sistemas multi-agente modulares, integração nativa com Google Cloud (Cloud Run, Vertex AI).",
+        "Suporte ao protocolo Agent2Agent (A2A) para comunicação remota entre agentes.",
+        "Permite orquestração flexível e versionamento de agentes com foco em produção e escalabilidade."
+      ]
+    },
+    {
+      "type": "framework",
+      "name": "CrewAI",
+      "observations": [
+        "Framework Python rápido e flexível para automação multi-agente, independente de LangChain.",
+        "Foco em autonomia colaborativa, controle granular de fluxos (Flows) e orquestração de agentes (Crews).",
+        "Ideal para cenários enterprise e automação de tarefas complexas.",
+        "Permite integração com modelos locais e externos, além de suporte a ferramentas customizadas."
+      ]
+    },
+    {
+      "type": "framework",
+      "name": "LangChain",
+      "observations": [
+        "Framework para desenvolvimento de aplicações baseadas em LLMs (Large Language Models).",
+        "Simplifica o ciclo de vida de aplicações LLM: desenvolvimento, monitoramento (LangSmith), produção (LangGraph Platform).",
+        "Componentes open-source, integrações com múltiplos provedores (OpenAI, Google Gemini, Vertex, AWS, etc).",
+        "Permite construção de agentes stateful, streaming, human-in-the-loop e APIs de produção."
+      ]
+    },
+    {
+      "type": "module",
+      "name": "client",
+      "observations": [
+        "Módulo frontend principal. Estrutura rica em arquivos de configuração (Vite, Tailwind, ESLint, TypeScript, Storybook). Contém pasta src (código fonte), public (assets), documentação própria. Provável stack: React/Vite + Tailwind.",
+        "Fluxos: Criação de agente e chat passam pelo client, que orquestra UI, hooks, serviços e integração com Zustand."
+      ]
+    },
+    {
+      "type": "module",
+      "name": "server",
+      "observations": [
+        "Módulo backend principal. Estrutura Python, com main.py, requirements.txt, Dockerfile, app/ (código), integrações com Supabase.",
+        "Recebe requisições do client para criação de agentes, chat, autenticação, e integra com Supabase e serviços externos."
+      ]
+    },
+    {
+      "type": "module",
+      "name": "frontend",
+      "observations": [
+        "Diretório vazio, reservado para expansão futura ou estrutura alternativa de frontend."
+      ]
+    },
+    {
+      "type": "module",
+      "name": "supabase",
+      "observations": [
+        "Gerencia integrações, migrations e configuração de banco de dados Supabase."
+      ]
+    },
+    {
+      "type": "module",
+      "name": "docs",
+      "observations": [
+        "Central de documentação técnica. Contém subpastas para adrs (decisões arquiteturais), ai (IA), data-flows (fluxos de dados), rfcs (propostas técnicas), tech-radar.md."
+      ]
+    },
+    {
+      "type": "module",
+      "name": "tests",
+      "observations": [
+        "Central de testes automatizados. Contém e2e (end-to-end) e exemplos."
+      ]
+    },
+    {
+      "type": "service",
+      "name": "API Gateway",
+      "observations": [
+        "Centraliza autenticação (API Key), rate limiting e logging para agentes expostos externamente.",
+        "Fornece endpoint único: /api/v1/agents/{agentId}/invoke."
+      ]
+    },
+    {
+      "type": "service",
+      "name": "LLM Service",
+      "observations": [
+        "Responsável por processar prompts, gerar respostas, acionar ferramentas (function calls) e interagir com modelos de linguagem (ex: OpenAI)."
+      ]
+    },
+    {
+      "type": "service",
+      "name": "Tool Executor",
+      "observations": [
+        "Executa ferramentas específicas sob demanda, como busca em base de conhecimento/vetor, integrações externas, etc."
+      ]
+    },
+    {
+      "type": "database",
+      "name": "Knowledge Base",
+      "observations": [
+        "Armazena informações, contextos e vetores para agentes e ferramentas de busca."
+      ]
+    },
+    {
+      "type": "table",
+      "name": "token_usage_logs",
+      "observations": [
+        "Tabela para registrar logs de uso de tokens por usuário, agente, sessão e modelo.",
+        "Campos: id, created_at, user_id, agent_id, session_id, model_name, input_tokens, output_tokens, total_tokens.",
+        "Permissões e políticas RLS para garantir que usuários só vejam seus próprios logs.",
+        "Índices para user_id, agent_id, created_at."
+      ]
+    },
+    {
+      "type": "table",
+      "name": "usage_metrics",
+      "observations": [
+        "Tabela para métricas granulares de uso, ROI e observabilidade.",
+        "Campos: id, created_at, user_id, agent_id, session_id, event_type, model_name, input_tokens, output_tokens, cost, details (JSONB).",
+        "Comentários detalhados na tabela e colunas para documentação.",
+        "Política RLS e índices para user_id, agent_id, event_type, created_at."
+      ]
+    },
+    {
+      "type": "cognitive_line_of_thought",
+      "name": "plataforma_agentes_intuitiva",
+      "observations": [
+        "Objetivo: Criar a plataforma de agentes mais intuitiva, confiável e eficiente do mercado, baseada em feedback real da comunidade e melhores práticas de arquitetura de agentes.",
+        "Premissas: Utilizar as stacks Google ADK, CrewAI, LangChain, Supabase, FastAPI, React, Vite, Zustand, etc., integradas de forma modular.",
+        "Pain points identificados na comunidade: (1) Baixa confiabilidade dos agentes (hallucination, erros em cadeia), (2) Alto custo e lentidão, (3) Dificuldade de depuração e controle, (4) Falta de transparência e confiança do usuário, (5) Complexidade para criar fluxos multi-agente, (6) Interface pouco amigável.",
+        "Hipóteses de solução: (a) Orquestração modular com separação clara de responsabilidades (inspirado em LangGraph), (b) Planejamento dinâmico de fluxos com paralelismo e limitação de contexto, (c) Interface de chat centralizada com feedback visual dos agentes, logs auditáveis e painel de métricas em tempo real, (d) Backend com FastAPI, Supabase para dados/métricas, frontend React/Vite com Zustand para estado.",
+        "Funcionalidades essenciais para interface de chat: chat centralizado, visualização de decisões, logs detalhados, feedback do usuário, painel de métricas, onboarding guiado, wizard de agentes, marketplace de skills, upload/download de arquivos, sugestão de ações, explainability, multi-canal.",
+        "Diferenciais: debug visual, customização de personalidade/workflow, replay/simulação de conversas, painel de feedback da comunidade.",
+        "Wireframe conceitual: dashboard com cards de agentes, wizard de criação, chat central com histórico, bolhas de decisão, logs e métricas à direita, painel detalhado para cada agente, painel de feedback/sugestões integrado ao produto.",
+        "Plano de refatoração e otimização: Limpeza de estrutura (mapear/remover arquivos e pastas não utilizados, eliminar código morto, padronizar diretórios), Modularidade (desacoplamento, separação de lógica, documentação automática), Otimização de performance (revisar algoritmos, queries, memória, cache, lazy loading/code splitting), Melhoria de UX (onboarding guiado, feedback visual, logs acessíveis, painel de métricas, debug visual), Correção de erros (linters, testes, logs estruturados, cobertura de fluxos críticos).",
+        "Checklist executável: mapear lixo, remover, modularizar, otimizar, corrigir bugs, automatizar docs/métricas, validar performance.",
+        "Boas práticas globais para refatoração e otimização de plataformas de agentes de IA: Eficiência, Consistência, Precisão, Aprendizado Contínuo, Tackling the Tough Stuff, Limitações (supervisão humana, automação equilibrada), Refatoração assistida por IA (detecção de code smells, duplicações, funções complexas, nomes ruins, redundâncias, lógica confusa), Revisão de código automatizada, Debugging assistido, Documentação automática, Rotinas de limpeza e refatoração contínua integradas ao CI/CD, Integração de repositórios e contexto, Compartilhamento de código para feedback, prompts claros, automação + revisão humana para qualidade e segurança."
+      ]
+    }
+  ]
+  ],
+  "relations": [
+    { "from": "client", "type": "consome_api", "to": "server" },
+    { "from": "server", "type": "integra", "to": "supabase" },
+    { "from": "server", "type": "utiliza_teste", "to": "tests" },
+    { "from": "client", "type": "documentado_em", "to": "docs" },
+    { "from": "server", "type": "documentado_em", "to": "docs" },
+    { "from": "supabase", "type": "documentado_em", "to": "docs" },
+    { "from": "client", "type": "usa_store_global", "to": "Zustand" },
+    { "from": "client", "type": "fluxo_criacao_agente", "to": "server" },
+    { "from": "server", "type": "valida_e_salva", "to": "supabase" },
+    { "from": "server", "type": "retorna_resposta", "to": "client" },
+    { "from": "client", "type": "fluxo_chat", "to": "server" },
+    { "from": "server", "type": "processa_prompt", "to": "LLM Service" },
+    { "from": "LLM Service", "type": "pode_acionar", "to": "Tool Executor" },
+    { "from": "Tool Executor", "type": "consulta", "to": "Knowledge Base" },
+    { "from": "API Gateway", "type": "expondo", "to": "server" },
+    { "from": "API Gateway", "type": "centraliza", "to": "autenticacao, rate limiting, logging" },
+    { "from": "client", "type": "pode_integrar_com", "to": "LangChain" },
+    { "from": "server", "type": "pode_orquestrar_com", "to": "CrewAI" },
+    { "from": "server", "type": "pode_integrar_com", "to": "Google Agent Development Kit (ADK)" },
+    { "from": "API Gateway", "type": "pode_utilizar", "to": "Google Agent Development Kit (ADK)" },
+    { "from": "Tool Executor", "type": "pode_ser_implementado_com", "to": "LangChain" },
+    { "from": "LLM Service", "type": "pode_ser_implementado_com", "to": "LangChain" }
+  ],
+  "metadata": {
+    "version": "1.2",
+    "generated_at": "2025-06-13T19:19:58-03:00",
+    "observations": [
+      "Adotar documentação centralizada de APIs (Swagger/OpenAPI) para todos os serviços.",
+      "Implementar logging centralizado para microsserviços e backend.",
+      "Manter separação clara de responsabilidades entre frontend, backend e integrações.",
+      "Automatizar validação de padrões de código e arquitetura via CI/CD.",
+      "Padronizar testes automatizados (unitários, integração, e2e) e relatórios.",
+      "Recomendar uso de padrões de modularidade e escalabilidade (ex: arquitetura orientada a serviços/microsserviços).",
+      "Centralizar decisões arquiteturais em docs/adrs e docs/rfcs.",
+      "Garantir versionamento e rastreabilidade de decisões e integrações.",
+      "Decisões ADR: Zustand como store global (simples, performático, pouco boilerplate). API Gateway para agentes, centralizando segurança e monitoramento."
+    ]
+  }
+}

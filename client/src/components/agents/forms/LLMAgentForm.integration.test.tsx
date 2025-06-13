@@ -14,7 +14,7 @@ import {
   agentSchema,
   getDefaultValues,
 } from '@/lib/form-utils'
-import { AgentType, LLMAgent } from '@/types/agents'
+import { AgentType, LlmAgentConfig } from '@/types/agents'
 
 import { LLMAgentForm } from './LLMAgentForm'
 

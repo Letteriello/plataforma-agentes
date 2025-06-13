@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
-import { LlmAgentConfig } from '@/types/agent'
+import { LlmAgentConfig, AgentType } from '@/types/agents'
 
 import { AgentIdentity } from './AgentIdentity'
 

@@ -2,6 +2,19 @@ import type { AxiosResponse } from 'axios';
 
 import apiClient from './apiClient';
 
+// Define a more specific type for return type schema
+type ReturnTypeSchema = {
+  type: 'object' | 'string' | 'number' | 'boolean' | 'array' | 'null';
+  properties?: Record<string, ReturnTypeSchema>;
+  items?: ReturnTypeSchema;
+  required?: string[];
+  description?: string;
+  format?: string;
+  enum?: Array<string | number | boolean | null>;
+  default?: unknown;
+  [key: string]: unknown;
+};
+
 // --- Enums ---
 export type ToolType = 'TOOL_CODE' | 'API';
 
@@ -33,7 +46,7 @@ export interface ToolDTO {
   description?: string | null;
   tool_type: ToolType;
   api_endpoint?: string | null;
-  return_type_schema?: Record<string, any> | null;
+  return_type_schema?: ReturnTypeSchema | null;
   is_system_tool: boolean;
   created_at: string; // ISO datetime string
   updated_at: string; // ISO datetime string
@@ -45,7 +58,7 @@ export interface CreateToolDTO {
   description?: string | null;
   tool_type: ToolType;
   api_endpoint?: string | null;
-  return_type_schema?: Record<string, any> | null;
+  return_type_schema?: ReturnTypeSchema | null;
   parameters: ToolParameterCreateDTO[];
 }
 
@@ -54,7 +67,7 @@ export interface UpdateToolDTO {
   description?: string | null;
   tool_type?: ToolType;
   api_endpoint?: string | null;
-  return_type_schema?: Record<string, any> | null;
+  return_type_schema?: ReturnTypeSchema | null;
   parameters?: ToolParameterCreateDTO[];
 }
 

@@ -99,7 +99,7 @@ export function CreateOrEditToolDialog({ open, onOpenChange, onSubmit, isSubmitt
     }
   }, [editingTool, form]);
 
-  const handleFormSubmit = (data: ToolFormData) => {
+  const handleFormSubmit = (data: {name: string, description?: string, parameters?: Record<string, any>}) => {
     const submissionData = {
       ...data,
       return_type_schema: data.return_type_schema ? JSON.parse(data.return_type_schema) : undefined,

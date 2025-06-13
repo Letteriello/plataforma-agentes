@@ -5,7 +5,7 @@ import { beforeEach,describe, expect, it, vi } from 'vitest'
 
 import { ToolDTO } from '@/api/toolService'
 import { useToolStore } from '@/store/toolStore'
-import { LLMAgent,LLMAgentSchema } from '@/types/agents'
+import { LlmAgentConfig, LlmAgentConfigSchema, AgentType } from '@/types/agents'
 
 import AgentToolsTab from './AgentToolsTab'
 

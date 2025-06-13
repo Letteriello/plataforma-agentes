@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { LlmAgentConfig } from '@/types/agent'
+import { LlmAgentConfig } from '@/types/agents'
 
 interface AgentGenerationSettingsProps {
   config: Pick<

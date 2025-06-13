@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { LlmAgentConfig } from '@/types/agent'
+import { LlmAgentConfig } from '@/types/agents'
 
 import { EditDescriptionDialog } from './EditDescriptionDialog'
 

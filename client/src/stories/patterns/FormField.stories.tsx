@@ -168,7 +168,7 @@ const FormFieldWithErrorDemo = () => {
         />
         <FormField
           control={form.control}
-.          name="email"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>

@@ -32,8 +32,7 @@ apiClient.interceptors.response.use(
       // Exemplo: Token expirado ou inválido
       // Aqui você pode limpar o token da store e redirecionar para a página de login
       useAuthStore.getState().setToken(null); // Supondo que você tenha uma action setToken
-      // window.location.href = '/login'; // Ou use o router do seu framework
-      console.error('Unauthorized, logging out.'); // Removido redirecionamento direto para evitar problemas de SSR/testes
+      // Não usar console em produção, o redirecionamento deve ser tratado no nível da aplicação
       // É importante não redirecionar se o erro 401 for da própria página de login
       if (error.config.url !== '/auth/token' && error.config.url !== '/auth/register') { // Evita loop de redirecionamento
          // A lógica de redirecionamento deve ser tratada no nível da aplicação (ex: em um componente de Rota Protegida ou no hook que faz a chamada)

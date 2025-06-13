@@ -5,8 +5,12 @@ import uuid
 
 from app.models import schemas
 from app.crud import agent_crud
-from app.core.db import get_supabase_client
-from app.dependencies.auth_deps import get_current_active_user, get_current_active_superuser
+from app.dependencies.auth_deps import (
+    get_current_active_user,
+    get_current_active_superuser,
+    get_user_scoped_supabase_client,
+    get_service_client
+)
 from supabase import Client
 
 router = APIRouter()
@@ -14,7 +18,7 @@ router = APIRouter()
 @router.post("/", response_model=schemas.Agent, status_code=status.HTTP_201_CREATED)
 async def create_new_agent(
     agent_in: schemas.AgentCreate,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -32,7 +36,7 @@ async def create_new_agent(
 async def read_my_agents(
     skip: int = 0,
     limit: int = 100,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -44,7 +48,7 @@ async def read_my_agents(
 @router.get("/{agent_id}", response_model=schemas.Agent)
 async def read_agent_by_id(
     agent_id: uuid.UUID,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user) 
 ):
     """
@@ -63,7 +67,7 @@ async def read_agent_by_id(
 async def update_existing_agent(
     agent_id: uuid.UUID,
     agent_in: schemas.AgentUpdate,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -95,7 +99,7 @@ async def update_existing_agent(
 @router.delete("/{agent_id}", response_model=schemas.Agent)
 async def delete_existing_agent(
     agent_id: uuid.UUID,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -114,7 +118,7 @@ async def delete_existing_agent(
 async def read_all_agents_as_superuser(
     skip: int = 0,
     limit: int = 100,
-    db: Client = Depends(get_supabase_client)
+    db: Client = Depends(get_service_client) # ATENÇÃO: Usando service client para bypass RLS
 ):
     """
     (Superuser) Lista todos os agentes no sistema, incluindo suas ferramentas.

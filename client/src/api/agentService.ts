@@ -1,5 +1,16 @@
 import apiClient from '@/api/apiClient';
-import type { AgentSummaryDTO as SharedAgentSummaryDTO,LlmAgentConfig } from '@/types/agents';
+
+// Define specific response types for tool association/disassociation
+interface AgentToolAssociationResponse {
+  message: string;
+  association?: object; // Consider defining a more specific type if the 'association' object structure is known and consistent
+}
+
+interface AgentToolDisassociationResponse {
+  message: string;
+}
+
+import type { AgentSummaryDTO as SharedAgentSummaryDTO, LlmAgentConfig } from '@/types/agents';
 import type { ToolDTO, UiToolDefinition as SharedUiToolDefinition } from '@/types/tools';
 
 /**
@@ -57,8 +68,10 @@ export const createAgent = async (
 ): Promise<LlmAgentConfig> => {
   // Transform UiToolDefinition[] to ToolDTO[] for the API
   const toolsForApi: ToolDTO[] = (agentData.tools || []).map(uiTool => {
-    const { icon, category, ...apiTool } = uiTool; // Exclude UI-specific fields
-    return apiTool as ToolDTO; // Cast to ToolDTO
+    // These fields are intentionally unused as they're UI-specific
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { icon: _icon, category: _category, ...apiTool } = uiTool;
+    return apiTool as ToolDTO;
   });
 
   const apiPayload: CreateAgentAPIPayload = {
@@ -80,8 +93,10 @@ export const updateAgent = async (
   let toolsForApi: ToolDTO[] | undefined = undefined;
   if (agentData.tools) {
     toolsForApi = agentData.tools.map(uiTool => {
-      const { icon, category, ...apiTool } = uiTool as SharedUiToolDefinition; // Cast to ensure UI fields are known
-      return apiTool as ToolDTO; // What remains should be compatible with ToolDTO
+      // These fields are intentionally unused as they're UI-specific
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { icon: _icon, category: _category, ...apiTool } = uiTool as SharedUiToolDefinition;
+      return apiTool as ToolDTO;
     });
   }
 
@@ -109,7 +124,7 @@ export const deleteAgent = async (id: string): Promise<void> => {
 export const associateToolWithAgent = async (
   agentId: string,
   toolId: string,
-): Promise<any> => { // The backend returns a Dict[str, Any] which can be { message: string, association: object }
+): Promise<AgentToolAssociationResponse> => { 
   const { data } = await apiClient.post(`/agents/${agentId}/tools/${toolId}`);
   return data;
 };
@@ -120,7 +135,7 @@ export const associateToolWithAgent = async (
 export const disassociateToolFromAgent = async (
   agentId: string,
   toolId: string,
-): Promise<any> => { // The backend returns a Dict[str, str] which can be { message: string }
+): Promise<AgentToolDisassociationResponse> => { 
   const { data } = await apiClient.delete(`/agents/${agentId}/tools/${toolId}`);
   return data;
 };

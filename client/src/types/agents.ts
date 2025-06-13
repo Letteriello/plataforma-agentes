@@ -1,164 +1,152 @@
-// client/src/types/agents.ts
+// Arquivo: client/src/types/agents.ts
+// FONTE ÚNICA DA VERDADE PARA TIPOS DE AGENTE
 
-// UI-specific Schema Definition (simplified for forms, can be expanded)
-export interface UiSchemaDefinition {
-  type: 'STRING' | 'NUMBER' | 'BOOLEAN' | 'OBJECT' | 'ARRAY';
-  description?: string;
-  default?: any; // Can be string, number, boolean for primitive types
-  enum?: any[]; // Array of allowed values of the specified type
-  // For OBJECT type
-  properties?: { [key: string]: UiSchemaDefinition }; // Recursive definition for nested objects
-  // For ARRAY type
-  items?: UiSchemaDefinition; // Definition for items if type is ARRAY
-  // required?: string[]; // For object properties, if needed at this level
-}
+import { z } from 'zod';
+import { ToolSchema, ToolDTOSchema } from '@/types/tools';
 
-// UI-specific Tool Definition (for forms)
-export interface UiToolDefinition {
-  id?: string; // Added optional ID
-  name: string;
-  description?: string;
-  parameters?: {
-    [key: string]: UiSchemaDefinition; // Key is parameter name
-  };
-  required?: string[]; // List of required parameter names
-  // outputSchema?: UiSchemaDefinition; // Future: For defining the tool's output structure
-}
-
-// Potentially other agent-related types can be added here later,
-// e.g., LlmAgentConfig, AgentIdentity, GenerationSettings, SafetySettings, etc.
-// consistent with Google ADK.
+// ----------------------------------------------------------------------
+// ENUMS E TIPOS FUNDAMENTAIS
+// ----------------------------------------------------------------------
 
 export enum AgentType {
-  LLM = 'LLM',
-  SEQUENTIAL = 'SEQUENTIAL',
-  PARALLEL = 'PARALLEL',
-  LOOP = 'LOOP',
-  A2A = 'A2A',
+  LLM = 'llm',
+  SEQUENTIAL = 'sequential',
+  PARALLEL = 'parallel',
+  A2A = 'a2a', // Agent-to-Agent
 }
 
-export interface AgentConfig {
-  isPublic: boolean;
-  id: string
-  name: string
-  description: string
-  version: string
-  type: AgentType
-}
+// ----------------------------------------------------------------------
+// ESQUEMAS DE CONFIGURAÇÃO ZOD (Lógica Interna da UI)
+// ----------------------------------------------------------------------
 
-export interface GenerateContentConfig {
-  temperature: number;
-  maxOutputTokens?: number;
-  topP?: number;
-  topK?: number;
-  stopSequences?: string[];
-}
-
-export interface LlmAgentConfig extends AgentConfig {
-  type: AgentType.LLM;
-  model: string;
-  instruction: string;
-  generateContentConfig: GenerateContentConfig;
-  tool_ids?: string[];
-  knowledgeBaseIds?: string[];
-  autonomy_level?: 'auto' | 'ask';
-  security_config?: { [key: string]: any };
-  planner_config?: { [key: string]: any };
-  code_executor_config?: { [key: string]: any };
-}
-
-export interface SequentialAgentConfig extends AgentConfig {
-  type: AgentType.SEQUENTIAL
-  workflowType: 'sequential'
-  agents: AnyAgentConfig[]
-}
-
-export interface ParallelAgentConfig extends AgentConfig {
-  type: AgentType.PARALLEL
-  workflowType: 'parallel'
-  agents: AnyAgentConfig[]
-  maxConcurrent: number
-}
-
-export interface LoopAgentConfig extends AgentConfig {
-  type: AgentType.LOOP
-  workflowType: 'loop'
-  agents: AnyAgentConfig[]
-  maxIterations: number
-}
-
-export interface A2AAgentConfig extends AgentConfig {
-  type: AgentType.A2A
-  endpoint: string
-  authType: 'none' | 'apiKey' | 'oauth'
-  apiKey?: string
-}
-
-import { z } from 'zod'
-
-export type AnyAgentConfig = LlmAgentConfig | SequentialAgentConfig | ParallelAgentConfig | LoopAgentConfig | A2AAgentConfig
-
-export type Agent = AnyAgentConfig
-
-export const GenerateContentConfigSchema = z.object({
-  temperature: z.number().min(0).max(2),
-  maxOutputTokens: z.number().int().positive().optional(),
-  topP: z.number().min(0).max(1).optional(),
-  topK: z.number().int().nonnegative().optional(),
-  stopSequences: z.array(z.string()).optional(),
+export const BaseAgentConfigSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1, 'O nome é obrigatório.'),
+  description: z.string().optional(),
+  type: z.nativeEnum(AgentType),
+  isPublic: z.boolean().default(false),
+  version: z.string().default('1.0.0'),
+  createdAt: z.string().datetime().optional(),
+  updatedAt: z.string().datetime().optional(),
+  userId: z.string().uuid().optional(),
 });
 
-export const LlmAgentConfigSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'O nome é obrigatório'),
-  description: z.string(),
-  version: z.string(),
+export const LlmAgentConfigSchema = BaseAgentConfigSchema.extend({
   type: z.literal(AgentType.LLM),
-  model: z.string().min(1, 'A seleção de um modelo é obrigatória'),
-  instruction: z.string().min(1, 'As instruções são obrigatórias'),
-  generateContentConfig: GenerateContentConfigSchema,
-  tool_ids: z.array(z.string()).optional(), // Align with backend
-  knowledgeBaseIds: z.array(z.string()).optional(),
-  autonomy_level: z.enum(['auto', 'ask']).default('ask').optional(),
-  security_config: z.record(z.string(), z.any()).optional().default({}),
-  planner_config: z.record(z.string(), z.any()).optional().default({}),
-  code_executor_config: z.record(z.string(), z.any()).optional().default({}),
-})
+  model: z.string().min(1, 'O modelo é obrigatório.'),
+  instruction: z.string().min(1, 'A instrução é obrigatória.'),
+  generateContentConfig: z.object({
+    temperature: z.number().min(0).max(2).default(0.7),
+    maxOutputTokens: z.number().int().positive().default(2048),
+    topP: z.number().min(0).max(1).default(1.0),
+    topK: z.number().int().positive().default(40),
+  }),
+  tools: z.array(ToolSchema).optional(),
+  knowledgeBaseIds: z.array(z.string().uuid()).optional(),
+  autonomy_level: z.enum(['auto', 'ask']).default('ask'),
+  security_config: z.record(z.any()).optional(),
+  planner_config: z.record(z.any()).optional(),
+  code_executor_config: z.record(z.any()).optional(),
+});
 
-export function createDefaultAgent(type: AgentType): AnyAgentConfig {
-  const baseConfig: Partial<AgentConfig> = {
-    id: `agent-${Date.now()}`,
-    name: 'Novo Agente',
-    description: 'Descrição do agente',
-    version: '1.0.0',
-    type,
-  }
+export const SequentialAgentConfigSchema = BaseAgentConfigSchema.extend({
+  type: z.literal(AgentType.SEQUENTIAL),
+  agents: z.array(z.string().uuid()),
+});
 
-  switch (type) {
-    case AgentType.LLM:
-      return {
-        ...baseConfig,
-        type: AgentType.LLM,
-        model: 'gemini-1.5-pro',
-        instruction: 'Você é um assistente útil.',
-        generateContentConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 2048,
-          topP: 1.0,
-          topK: 40,
-          stopSequences: [],
-        },
-        tool_ids: [],
-        knowledgeBaseIds: [],
-        autonomy_level: 'ask',
-        security_config: {},
-        planner_config: {},
-        code_executor_config: {},
-      } as LlmAgentConfig
-    // Add other agent types here later
-    default:
-      throw new Error(`Unsupported agent type: ${type}`)
-  }
+export const ParallelAgentConfigSchema = BaseAgentConfigSchema.extend({
+  type: z.literal(AgentType.PARALLEL),
+  agents: z.array(z.string().uuid()),
+});
+
+export const AnyAgentConfigSchema = z.union([
+  LlmAgentConfigSchema,
+  SequentialAgentConfigSchema,
+  ParallelAgentConfigSchema,
+]);
+
+// Tipos TypeScript inferidos dos esquemas Zod
+export type BaseAgentConfig = z.infer<typeof BaseAgentConfigSchema>;
+export type LlmAgentConfig = z.infer<typeof LlmAgentConfigSchema>;
+export type SequentialAgentConfig = z.infer<typeof SequentialAgentConfigSchema>;
+export type ParallelAgentConfig = z.infer<typeof ParallelAgentConfigSchema>;
+export type AnyAgentConfig = z.infer<typeof AnyAgentConfigSchema>;
+
+// ----------------------------------------------------------------------
+// DTOS (Data Transfer Objects) - Contrato com a API Backend
+// ----------------------------------------------------------------------
+
+/**
+ * DTO para a lista de agentes (visão resumida).
+ */
+export const AgentSummaryDTOSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  type: z.nativeEnum(AgentType),
+  version: z.string(),
+  is_public: z.boolean(),
+  avatar_url: z.string().url().nullable().optional(),
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
+});
+
+export type AgentSummaryDTO = z.infer<typeof AgentSummaryDTOSchema>;
+
+/**
+ * DTO para os detalhes completos de um agente LLM.
+ */
+export const AgentDetailDTOSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    description: z.string().nullable(),
+    model: z.string(),
+    instruction: z.string(),
+    temperature: z.number(),
+    max_output_tokens: z.number().int(),
+    top_p: z.number(),
+    top_k: z.number().int(),
+    autonomy_level: z.enum(['auto', 'ask']),
+    is_public: z.boolean(),
+    version: z.string(),
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime(),
+    user_id: z.string().uuid(),
+    tools: z.array(ToolDTOSchema).optional(),
+    // Adicionar outros campos como security_config, etc., se a API os retornar
+});
+
+export type AgentDetailDTO = z.infer<typeof AgentDetailDTOSchema>;
+
+/**
+ * DTO para criar um novo agente.
+ */
+export const AgentCreateDTOSchema = AgentDetailDTOSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  user_id: true,
+  tools: true, // Os IDs das ferramentas são enviados separadamente
+}).extend({
+  tool_ids: z.array(z.string().uuid()).optional(),
+});
+
+export type AgentCreateDTO = z.infer<typeof AgentCreateDTOSchema>;
+
+/**
+ * DTO para atualizar um agente existente.
+ */
+export const AgentUpdateDTOSchema = AgentCreateDTOSchema.partial();
+
+export type AgentUpdateDTO = z.infer<typeof AgentUpdateDTOSchema>;
+
+// ----------------------------------------------------------------------
+// TIPOS ESPECÍFICOS DA UI (que não são DTOs)
+// ----------------------------------------------------------------------
+
+/**
+ * Interface para os dados resumidos de um agente a serem exibidos no AgentCard.
+ */
+export interface AgentCardData extends AgentSummaryDTO {
+  // Adicionar quaisquer propriedades específicas da UI aqui, se necessário
 }
-
-

@@ -1,6 +1,8 @@
 // client/src/components/chat/ChatInterface.tsx
 import type { ComponentType } from 'react'
-import React, { useEffect,useState } from 'react' // Added useEffect
+import { useCallback, useEffect, useState } from 'react'
+import type { ChatMessage, ChatMessageSenderType, ChatSession } from '@/types/chatTypes';
+import type { ChatHeaderProps } from './ChatHeader';
 
 import chatService from '@/api/chatService';
 import {
@@ -41,61 +43,61 @@ export const ChatInterface = ({
 
   // Fetch initial conversations (sessions)
   useEffect(() => {
-    const fetchSessions = async () => {
+    const handleFetchSessions = useCallback(async () => {
       try {
-        const sessions: ApiChatSession[] = await chatService.getSessions();
-        const storeConversations = sessions.map(s => ({
-          id: s.id, // Session ID
-          agentId: s.agent_id, // Agent ID
-          agentName: s.session_title || `Agent ${s.agent_id.substring(0, 6)}`, // Use session_title or a placeholder
-          lastMessage: '', // Placeholder for last message; ideally, API provides this or it's derived
+        const sessions = await chatService.getSessions();
+        const storeConversations = sessions.map((session) => ({
+          id: session.id,
+          title: session.title || `Conversa ${new Date(session.created_at).toLocaleDateString()}`,
+          agentId: session.agent_id,
+          agentName: session.agent_name || 'Agente',
+          createdAt: session.created_at,
+          updatedAt: session.updated_at,
         }));
         loadConversations(storeConversations);
-      } catch (error) {
-        console.error('Failed to fetch sessions:', error);
-        // TODO: Show error toast to user
+      } catch {
+        toast({
+          title: 'Erro ao carregar conversas',
+          description: 'Não foi possível carregar as conversas. Tente novamente mais tarde.',
+          variant: 'destructive',
+        });
       }
-    };
-    fetchSessions();
+    }, [loadConversations]);
+    handleFetchSessions();
   }, [loadConversations]);
 
   // Fetch messages when a conversation is selected
   useEffect(() => {
+    const handleFetchMessages = useCallback(async (conversationId: string) => {
+      try {
+        const messages = await chatService.getMessages(conversationId);
+        const formattedMessages = messages.map((msg) => ({
+          id: msg.id,
+          text: msg.content,
+          sender: msg.sender_type.toLowerCase() as 'user' | 'agent' | 'system',
+          timestamp: new Date(msg.created_at).toLocaleTimeString(),
+        }));
+        loadMessages(formattedMessages);
+      } catch {
+        toast({
+          title: 'Erro ao carregar mensagens',
+          description: 'Não foi possível carregar as mensagens desta conversa.',
+          variant: 'destructive',
+        });
+        loadMessages([]); // Clear messages on error
+      }
+    }, [loadMessages, toast]);
+
     if (selectedConversationId) {
-      const fetchMessages = async () => {
-        try {
-          const sessionDetail = await chatService.getSessionDetail(selectedConversationId);
-          const formattedMessages = sessionDetail.messages.map((m: ApiChatMessage) => ({
-            id: m.id,
-            text: m.content,
-            sender: m.sender_type.toLowerCase() as 'user' | 'agent' | 'system',
-            timestamp: new Date(m.created_at).toLocaleTimeString(),
-            avatarSeed: m.sender_type === ChatMessageSenderType.USER ? 'user-seed' : sessionDetail.agent_id, // Use agent_id from sessionDetail
-            senderName: m.sender_type === ChatMessageSenderType.AGENT ? sessionDetail.session_title || 'Agent' : undefined,
-            // content_metadata could be mapped to artifact if structure aligns
-            // artifact: m.content_metadata ? mapMetadataToArtifact(m.content_metadata) : undefined,
-          }));
-          loadMessages(formattedMessages);
-        } catch (error) {
-          console.error('Failed to fetch messages for session:', selectedConversationId, error);
-          // TODO: Show error toast to user
-          loadMessages([]); // Clear messages on error
-        }
-      };
-      fetchMessages();
+      handleFetchMessages(selectedConversationId);
     } else {
       loadMessages([]); // Clear messages if no conversation is selected
     }
-  }, [selectedConversationId, loadMessages]);
+  }, [selectedConversationId, loadMessages, toast]);
 
-  // Original state and handlers from here, will modify handleSendMessage next
+  const [isAgentReplying, setIsAgentReplying] = useState(false);
 
-  const [isAgentReplying, setIsAgentReplying] = useState(false)
-  // TODO: This should be derived from the selected conversation or global state
-  const [
-    currentSelectedAgentIdForSelector,
-    setCurrentSelectedAgentIdForSelector,
-  ] = useState<string | null>(null)
+  // Using imported ChatMessageSenderType from chatTypes
 
   const handleSendMessage = async (text: string) => {
     if (!selectedConversationId) {
@@ -107,18 +109,21 @@ export const ChatInterface = ({
       return;
     }
 
-    const currentConversation = conversations.find(c => c.id === selectedConversationId);
-    if (!currentConversation || !currentConversation.agentId) {
-      console.error('Selected conversation not found in store or agentId is missing.');
-      // TODO: Implement UI feedback
+    const currentConversation = conversations.find((c: { id: string }) => c.id === selectedConversationId);
+    if (!currentConversation?.agentId) {
+      toast({
+        title: 'Erro na conversa',
+        description: 'Não foi possível identificar o agente para esta conversa.',
+        variant: 'destructive',
+      });
       return;
     }
     const agentId = currentConversation.agentId;
-    const agentName = currentConversation.agentName || 'Agent';
+    const agentName = currentConversation.agentName ?? 'Agente';
 
-    const userMessagePayload: ChatMessageCreatePayload = {
+    const userMessagePayload = {
       content: text,
-      sender_type: ChatMessageSenderType.USER,
+      sender_type: ChatMessageSenderType.USER as const,
     };
 
     // Optimistically add user message to UI
@@ -134,7 +139,7 @@ export const ChatInterface = ({
 
     try {
       const agentReplyFromApi = await chatService.postMessageToAgent(agentId, userMessagePayload);
-      
+
       const formattedAgentReply: ChatMessage = {
         id: agentReplyFromApi.id,
         text: agentReplyFromApi.content,
@@ -146,11 +151,11 @@ export const ChatInterface = ({
       };
       addMessage(formattedAgentReply);
     } catch (error) {
-      console.error('Falha ao enviar mensagem ou obter resposta do agente:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       const errorReply: ChatMessage = {
         id: `error-${Date.now()}`,
-        text: 'Erro: Não foi possível obter uma resposta do agente.',
-        sender: 'error',
+        text: `Erro: ${errorMessage}`,
+        sender: 'system',
         timestamp: new Date().toLocaleTimeString(),
         avatarSeed: 'system-error-seed',
       };
@@ -165,25 +170,24 @@ export const ChatInterface = ({
     }
   };
 
-  const handleAgentChangeInSelector = (agentId: string) => {
-    setCurrentSelectedAgentIdForSelector(agentId)
-    console.log(`Agent selected in header: ${agentId}`)
-    // TODO: Implement logic to switch agent context or conversation
-  }
-
   const currentConversation = conversations.find(
-    (c) => c.id === selectedConversationId,
-  )
-  const agentDisplayName =
-    currentConversation?.agentName || 'Selecione uma conversa'
-  const agentAvatar = agentDisplayName.charAt(0).toUpperCase()
-  const agentStatus = selectedConversationId ? 'Online' : 'Offline'
-
-  // TODO: Fetch agents from an API (e.g., agentService) or a dedicated agent store for the selector
-  // For now, ChatHeader's agent selector might not be fully functional for starting NEW chats
-  // until agent listing is integrated here.
-  const agentsForSelector: { id: string; title: string }[] = conversations.map(c => ({ id: c.agentId, title: c.agentName }));
-  // This populates the selector with agents from existing conversations, not all available agents.
+    (c: { id: string }) => c.id === selectedConversationId,
+  );
+  const agentDisplayName = currentConversation?.agentName || 'Selecione uma conversa';
+  const agentAvatar = agentDisplayName.charAt(0).toUpperCase();
+  const agentStatus = selectedConversationId ? 'Online' : 'Offline';
+  
+  // Chat header props
+  const chatHeaderProps: ChatHeaderProps = {
+    agentName: agentDisplayName,
+    agentStatus: agentStatus,
+    agentAvatarFallback: agentAvatar,
+    agents: [],
+    selectedAgentId: selectedConversationId || '',
+    onSelectAgent: () => {
+      // Will be implemented when agent switching is supported
+    },
+  };
 
   return (
     <ResizablePanelGroup
@@ -199,11 +203,7 @@ export const ChatInterface = ({
       <ResizablePanel defaultSize={55} minSize={30}>
         <div className="flex h-full flex-col">
           {/* ChatHeader agora não exibe mais o AgentSelector. O agente ativo é sempre o da conversa selecionada. */}
-          <ChatHeader
-            agentName={agentDisplayName}
-            agentStatus={agentStatus}
-            agentAvatarFallback={agentAvatar}
-          />
+          <ChatHeader {...chatHeaderProps} />
 
           <ScrollArea className="flex-1">
             <MessageList messages={messages} />

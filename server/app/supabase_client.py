@@ -8,18 +8,15 @@ from dotenv import load_dotenv
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '..', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
-# Get Supabase URL, Service Role Key, and Anon Key from environment variables
+# Get Supabase URL and Anon Key from environment variables
 url: str = os.environ.get("SUPABASE_URL")
 anon_key: str = os.environ.get("SUPABASE_ANON_KEY")
-service_key: str = os.environ.get("SUPABASE_SERVICE_KEY")
 
 # Check if the environment variables are set
 if not url:
     raise EnvironmentError(f"SUPABASE_URL environment variable not set. Check {dotenv_path}")
 if not anon_key:
     raise EnvironmentError(f"SUPABASE_ANON_KEY environment variable not set. Check {dotenv_path}")
-if not service_key:
-    raise EnvironmentError(f"SUPABASE_SERVICE_KEY environment variable not set. Check {dotenv_path}")
 
 def create_supabase_client_with_jwt(jwt_token: str) -> Client:
     """
@@ -45,12 +42,4 @@ def create_supabase_client_with_jwt(jwt_token: str) -> Client:
         # Depending on desired error handling, could re-raise or return None/custom error
         raise
 
-# Initialize Supabase client using the Service Role Key for backend administrative operations.
-# Use this client sparingly and only when RLS bypass is explicitly needed and understood.
-supabase_service_client: Client
-try:
-    supabase_service_client = create_client(url, service_key)
-    print("Supabase service client (using Service Role Key) initialized successfully.")
-except Exception as e:
-    print(f"Error initializing Supabase service client: {e}")
-    supabase_service_client = None # type: ignore
+

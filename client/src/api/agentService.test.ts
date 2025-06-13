@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import agentService from '@/api/agentService'
 import apiClient from '@/api/apiClient'
+import { AgentType } from '@/types/agents';
 import type { LlmAgentConfig } from '@/types/agents';
 import type { ToolDTO, UiToolDefinition as SharedUiToolDefinition } from '@/types/tools';
 
@@ -31,16 +32,22 @@ describe('agentService', () => {
 
   test('createAgent should call apiClient.post with the correct payload', async () => {
     // Define the payload based on the expected type for createAgent's first parameter
-    const newAgentData: Omit<LlmAgentConfig, 'id' | 'created_at' | 'updated_at' | 'user_id' | 'tools'> & { tools?: SharedUiToolDefinition[], knowledgeBaseIds?: string[] } = {
+    const newAgentData: Omit<LlmAgentConfig, 'id' | 'createdAt' | 'updatedAt' | 'userId' | 'tools'> & { tools?: SharedUiToolDefinition[], knowledgeBaseIds?: string[] } = {
       name: 'Test Agent',
       description: 'A description for the test agent.',
-      system_prompt: 'You are a helpful test assistant.',
-      llm_model: 'gpt-4-test',
-      temperature: 0.7,
-      max_tokens: 500,
-      is_public: false,
+      // type: AgentType.LLM, // This should be implicitly set by LlmAgentConfig or handled by the service
+      model: 'gpt-4-test',
+      instruction: 'You are a helpful test assistant.',
+      generateContentConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 500,
+        topP: 1.0, // Add default or ensure it's optional in LlmAgentConfigSchema if not provided
+        topK: 40,  // Add default or ensure it's optional
+      },
+      isPublic: false,
       version: '1.0.0',
-      tools: [], // Empty array of tools (UiToolDefinition compatible)
+      // autonomy_level and other LlmAgentConfig specific fields might be needed if not optional
+      tools: [], 
       knowledgeBaseIds: [],
     };
 
@@ -48,10 +55,15 @@ describe('agentService', () => {
     const expectedResponse: LlmAgentConfig = {
       ...newAgentData,
       id: 'new-agent-id',
-      user_id: 'test-user-id',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      tools: [] as ToolDTO[], // createAgent internally converts UiToolDefinition to ToolDTO for API, and API returns LlmAgentConfig with ToolDTO[]
+      userId: 'test-user-id', // Corrected to camelCase
+      createdAt: new Date().toISOString(), // Corrected to camelCase
+      updatedAt: new Date().toISOString(), // Corrected to camelCase
+      type: AgentType.LLM, // LlmAgentConfig should have this
+      // Ensure all fields from LlmAgentConfig are present or correctly spread from newAgentData
+      // model, instruction, generateContentConfig are spread from newAgentData
+      // isPublic, version are spread
+      // autonomy_level, security_config, planner_config, code_executor_config might be needed if not optional and not in newAgentData
+      tools: [] as ToolDTO[], 
     };
     mockedApiClient.post.mockResolvedValueOnce({ data: expectedResponse });
 
@@ -59,17 +71,13 @@ describe('agentService', () => {
 
     // The agentService.createAgent function transforms newAgentData before sending it to apiClient.post.
     // We need to assert against the transformed payload (CreateAgentAPIPayload).
+    // The service spreads newAgentData and replaces tools.
     const expectedApiPayload = {
-      name: 'Test Agent',
-      description: 'A description for the test agent.',
-      system_prompt: 'You are a helpful test assistant.',
-      llm_model: 'gpt-4-test',
-      temperature: 0.7,
-      max_tokens: 500,
-      is_public: false,
-      version: '1.0.0',
-      tools: [], // Transformed to ToolDTO[]
-      knowledge_base_ids: [],
+      ...newAgentData, // Spreads name, description, model, instruction, generateContentConfig, isPublic, version, knowledgeBaseIds
+      tools: [], // Service transforms UiToolDefinition[] to ToolDTO[] for the API call
+      // Ensure any fields OMITTED from LlmAgentConfig in newAgentData's type are not here if they are not part of the API payload for creation.
+      // Specifically, id, createdAt, updatedAt, userId are omitted from newAgentData's LlmAgentConfig base.
+      // The 'tools' in newAgentData (UiToolDefinition[]) is replaced by ToolDTO[] here.
     };
 
      

@@ -5,8 +5,11 @@ import uuid
 
 from app.models import schemas
 from app.crud import tool_crud
-from app.core.db import get_supabase_client
-from app.dependencies.auth_deps import get_current_active_user, get_current_active_superuser # Adicionado get_current_active_superuser
+from app.dependencies.auth_deps import (
+    get_current_active_user,
+    get_current_active_superuser,
+    get_user_scoped_supabase_client
+)
 from supabase import Client
 
 router = APIRouter()
@@ -14,7 +17,7 @@ router = APIRouter()
 @router.post("/", response_model=schemas.Tool, status_code=status.HTTP_201_CREATED)
 async def create_new_tool(
     tool_in: schemas.ToolCreate,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -32,7 +35,7 @@ async def create_new_tool(
 async def read_all_tools(
     skip: int = 0,
     limit: int = 100,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     # current_user: schemas.User = Depends(get_current_active_user) # Descomentar se todas as ferramentas listadas devem ser apenas para usuários logados
 ):
     """
@@ -47,7 +50,7 @@ async def read_all_tools(
 async def read_my_tools(
     skip: int = 0,
     limit: int = 100,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -60,7 +63,7 @@ async def read_my_tools(
 @router.get("/{tool_id}", response_model=schemas.Tool)
 async def read_tool_by_id(
     tool_id: uuid.UUID,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     # current_user: schemas.User = Depends(get_current_active_user) # Descomentar se o acesso é restrito a usuários logados
 ):
     """
@@ -75,7 +78,7 @@ async def read_tool_by_id(
 async def update_existing_tool(
     tool_id: uuid.UUID,
     tool_in: schemas.ToolUpdate,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """
@@ -99,7 +102,7 @@ async def update_existing_tool(
 @router.delete("/{tool_id}", response_model=schemas.Tool)
 async def delete_existing_tool(
     tool_id: uuid.UUID,
-    db: Client = Depends(get_supabase_client),
+    db: Client = Depends(get_user_scoped_supabase_client),
     current_user: schemas.User = Depends(get_current_active_user)
 ):
     """

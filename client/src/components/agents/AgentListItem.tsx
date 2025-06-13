@@ -127,4 +127,4 @@ const AgentListItemComponent: React.FC<AgentListItemProps> = ({
 };
 
 export const AgentListItem = React.memo(AgentListItemComponent);
-// Ensure AgentType is imported from '@/types/agents' in the actual file.
+import { AgentType } from '@/types/agents';

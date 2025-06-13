@@ -3,7 +3,53 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FormProvider,useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { createDefaultAgent,LLMAgent, LLMAgentSchema } from '@/types/agents';
+import { LlmAgentConfig, LlmAgentConfigSchema, AgentType } from '@/types/agents';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { Meta, StoryObj } from '@storybook/react';
+import { useForm, FormProvider } from 'react-hook-form';
+
+import LLMAgentForm from './LLMAgentForm';
+
+const meta: Meta<typeof LLMAgentForm> = {
+  title: 'Components/Agents/Forms/LLMAgentForm',
+  component: LLMAgentForm,
+  decorators: [
+    (Story) => {
+      const formMethods = useForm<LlmAgentConfig>({
+        resolver: zodResolver(LlmAgentConfigSchema),
+        defaultValues: {
+          id: 'agent-123',
+          name: 'Agente de Teste',
+          description: 'Esta é uma descrição de teste.',
+          type: AgentType.LLM,
+          isPublic: false,
+          version: '1.0.0',
+          model: 'gemini-1.5-pro',
+          instruction: 'Você é um agente de teste.',
+          generateContentConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2048,
+            topP: 1.0,
+            topK: 40,
+          },
+          tools: [],
+        },
+      });
+
+      return (
+        <FormProvider {...formMethods}>
+          <Story />
+        </FormProvider>
+      );
+    },
+  ],
+  tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
 
 import { LLMAgentForm } from './LLMAgentForm';
 

@@ -8,7 +8,11 @@ import uuid # Para converter user_id de string para UUID
 from typing import Optional # Adicionado Optional
 
 from app.core.config import settings
-from app.core.db import get_supabase_client
+# Importa o cliente de serviço e a função para criar cliente com JWT
+from app.supabase_client import supabase_service_client, create_supabase_client_with_jwt
+
+# O get_supabase_client de db.py será substituído
+# from app.core.db import get_supabase_client
 from app.models import schemas
 from app.crud import user_crud
 
@@ -17,9 +21,36 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/token" 
 )
 
+async def get_service_client() -> Client:
+    """
+    Dependência para fornecer o cliente Supabase com a chave de serviço.
+    USO DEVE SER RESTRITO E REMOVIDO FUTURAMENTE.
+    """
+    if supabase_service_client is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Cliente Supabase (serviço) não inicializado."
+        )
+    return supabase_service_client
+
+async def get_user_scoped_supabase_client(token: str = Depends(oauth2_scheme)) -> Client:
+    """
+    Dependência que cria e retorna um cliente Supabase com o escopo do usuário,
+    utilizando o token JWT da requisição.
+    """
+    try:
+        client = create_supabase_client_with_jwt(jwt_token=token)
+        return client
+    except Exception as e:
+        print(f"Erro ao criar cliente Supabase com escopo de usuário: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Não foi possível criar um cliente de banco de dados com o token fornecido."
+        )
+
 async def get_current_user(
     token: str = Depends(oauth2_scheme), 
-    db: Client = Depends(get_supabase_client)
+    db: Client = Depends(get_service_client) # Temporariamente usa o service client para buscar perfil
 ) -> schemas.User:
     """
     Decodifica o token JWT, valida e retorna o usuário atual.

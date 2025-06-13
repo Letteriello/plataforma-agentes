@@ -5,7 +5,7 @@ import uuid
 
 from app.models import schemas
 from app.crud import user_crud
-from app.core.db import get_supabase_client # Atualizado para pegar o cliente
+from app.dependencies.auth_deps import get_service_client # Usado para operações de admin
 from supabase import Client
 
 from app.dependencies.auth_deps import get_current_active_user # Para obter o usuário logado
@@ -31,7 +31,7 @@ async def read_users_me(
              de uma implementação mais robusta ou ser removida/restringida.""")
 async def create_new_user(
     user_in: schemas.UserCreate,
-    db: Client = Depends(get_supabase_client)
+    db: Client = Depends(get_service_client)
     # current_user: schemas.User = Depends(get_current_active_superuser) # Exemplo de proteção
 ):
     """
@@ -76,7 +76,7 @@ async def create_new_user(
 async def read_users(
     skip: int = 0,
     limit: int = 100,
-    db: Client = Depends(get_supabase_client)
+    db: Client = Depends(get_service_client)
     # current_user: schemas.User = Depends(get_current_active_superuser) # Proteger esta rota
 ):
     """
@@ -90,7 +90,7 @@ async def read_users(
 @router.get("/{user_id}", response_model=schemas.User, summary="Obter usuário por ID")
 async def read_user_by_id(
     user_id: uuid.UUID,
-    db: Client = Depends(get_supabase_client)
+    db: Client = Depends(get_service_client)
     # current_user: schemas.User = Depends(get_current_active_superuser) # Ou verificar se é o próprio usuário
 ):
     """

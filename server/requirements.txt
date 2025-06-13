@@ -22,5 +22,5 @@ python-jose[cryptography]
 # alembic
 
 # Para testes
-# pytest
-# httpx # Necessário para TestClient
+pytest
+httpx # Necessário para TestClient
