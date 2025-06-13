@@ -13,7 +13,8 @@ import { ChatInput } from './ChatInput'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatMessage } from './types'
 import { ChatHeader } from './ChatHeader'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/components/ui/use-toast'; // Import useToast
 import chatService from '@/api/chatService';
 import { ChatMessageSenderType, type ChatSession as ApiChatSession, type ChatMessage as ApiChatMessage } from '@/types/chatTypes';
 
@@ -33,8 +34,8 @@ export const ChatInterface = ({
     conversations,
     loadConversations,
     loadMessages,
-    // setSelectedConversationId: selectConversationInStore, // Already in store, aliasing if needed for clarity
   } = useChatStore();
+  const { toast } = useToast();
 
   // Fetch initial conversations (sessions)
   useEffect(() => {
@@ -96,8 +97,11 @@ export const ChatInterface = ({
 
   const handleSendMessage = async (text: string) => {
     if (!selectedConversationId) {
-      console.warn('No conversation selected. Please select or start a new conversation.');
-      // TODO: Implement UI feedback, e.g., toast notification
+      toast({
+        title: 'Nenhuma conversa selecionada',
+        description: 'Selecione ou inicie uma nova conversa para enviar mensagens.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -140,16 +144,20 @@ export const ChatInterface = ({
       };
       addMessage(formattedAgentReply);
     } catch (error) {
-      console.error('Failed to send message or get agent reply:', error);
+      console.error('Falha ao enviar mensagem ou obter resposta do agente:', error);
       const errorReply: ChatMessage = {
         id: `error-${Date.now()}`,
-        text: 'Error: Could not get a response from the agent.',
-        sender: 'system',
+        text: 'Erro: Não foi possível obter uma resposta do agente.',
+        sender: 'error',
         timestamp: new Date().toLocaleTimeString(),
         avatarSeed: 'system-error-seed',
       };
       addMessage(errorReply);
-      // TODO: Show error toast to user
+      toast({
+        title: 'Erro ao comunicar com o agente',
+        description: 'Não foi possível obter uma resposta do agente. Tente novamente mais tarde.',
+        variant: 'destructive',
+      });
     } finally {
       setIsAgentReplying(false);
     }
@@ -188,13 +196,11 @@ export const ChatInterface = ({
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={55} minSize={30}>
         <div className="flex h-full flex-col">
+          {/* ChatHeader agora não exibe mais o AgentSelector. O agente ativo é sempre o da conversa selecionada. */}
           <ChatHeader
             agentName={agentDisplayName}
             agentStatus={agentStatus}
             agentAvatarFallback={agentAvatar}
-            agents={agentsForSelector}
-            selectedAgentId={currentSelectedAgentIdForSelector}
-            onSelectAgent={handleAgentChangeInSelector}
           />
 
           <ScrollArea className="flex-1">

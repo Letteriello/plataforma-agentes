@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { ChatMessage, Artifact } from '../components/chat/types' // Import ChatMessage and Artifact
 
 export interface Conversation {
@@ -23,7 +24,9 @@ interface ChatStore {
   setActiveArtifact: (artifact: Artifact | null) => void
 }
 
-export const useChatStore = create<ChatStore>((set) => ({
+export const useChatStore = create(
+  persist<ChatStore>(
+    (set) => ({
   conversations: [],
   selectedConversationId: null,
   messages: [], // Initialize messages
@@ -61,4 +64,16 @@ export const useChatStore = create<ChatStore>((set) => ({
       }
     }),
   setActiveArtifact: (artifact) => set({ activeArtifact: artifact }),
-}))
+    }),
+    {
+      name: 'chat-storage', // unique name
+      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(([key]) =>
+            ['conversations', 'selectedConversationId', 'messages'].includes(key),
+          ),
+        ),
+    },
+  ),
+)
