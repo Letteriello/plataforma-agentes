@@ -1,83 +1,13 @@
 import type { AxiosResponse } from 'axios';
 
+import {
+  CreateToolDTO,
+  PaginatedToolsDTO,
+  ToolDTO,
+  UpdateToolDTO,
+} from '@/features/tools/types';
+
 import apiClient from './apiClient';
-
-// Define a more specific type for return type schema
-type ReturnTypeSchema = {
-  type: 'object' | 'string' | 'number' | 'boolean' | 'array' | 'null';
-  properties?: Record<string, ReturnTypeSchema>;
-  items?: ReturnTypeSchema;
-  required?: string[];
-  description?: string;
-  format?: string;
-  enum?: Array<string | number | boolean | null>;
-  default?: unknown;
-  [key: string]: unknown;
-};
-
-// --- Enums ---
-export type ToolType = 'TOOL_CODE' | 'API';
-
-// --- Tool Parameter DTOs ---
-export interface ToolParameterDTO {
-  id: string; // UUID
-  tool_id: string; // UUID
-  name: string;
-  type: string;
-  description?: string | null;
-  default_value?: string | null;
-  is_required: boolean;
-  created_at: string; // ISO datetime string
-}
-
-export interface ToolParameterCreateDTO {
-  name: string;
-  type: string;
-  description?: string | null;
-  default_value?: string | null;
-  is_required: boolean;
-}
-
-// --- Tool DTOs ---
-export interface ToolDTO {
-  id: string; // UUID
-  user_id?: string | null; // UUID, null for system tools
-  name: string;
-  description?: string | null;
-  tool_type: ToolType;
-  api_endpoint?: string | null;
-  return_type_schema?: ReturnTypeSchema | null;
-  is_system_tool: boolean;
-  created_at: string; // ISO datetime string
-  updated_at: string; // ISO datetime string
-  parameters: ToolParameterDTO[];
-}
-
-export interface CreateToolDTO {
-  name: string;
-  description?: string | null;
-  tool_type: ToolType;
-  api_endpoint?: string | null;
-  return_type_schema?: ReturnTypeSchema | null;
-  parameters: ToolParameterCreateDTO[];
-}
-
-export interface UpdateToolDTO {
-  name?: string;
-  description?: string | null;
-  tool_type?: ToolType;
-  api_endpoint?: string | null;
-  return_type_schema?: ReturnTypeSchema | null;
-  parameters?: ToolParameterCreateDTO[];
-}
-
-export interface PaginatedToolsDTO {
-  items: ToolDTO[];
-  total: number;
-  page: number;
-  size: number;
-  total_pages: number;
-}
 
 // --- Service Functions ---
 
@@ -133,10 +63,4 @@ export const deleteTool = async (toolId: string): Promise<void> => {
   await apiClient.delete(`/tools/${toolId}`);
 };
 
-export default {
-  getTools,
-  getToolById,
-  createTool,
-  updateTool,
-  deleteTool,
-};
+

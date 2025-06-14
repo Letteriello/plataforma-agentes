@@ -9,16 +9,16 @@ import {
   rejectAction,
   setAutonomyLevel as apiSetAutonomyLevel,
 } from '@/api/governanceService'
-import { AuditLogTable } from '@/components/governance/AuditLogTable' // Import the new component
+import { AuditLogTable } from '@/features/governance/components/AuditLogTable' // Import the new component
 import { useToast } from '@/components/ui/use-toast'
 import { ApprovalItem, AuditLog,HistoryItem } from '@/types/common'
 
-import { ApprovalHistoryModal } from '../components/governance/ApprovalHistoryModal'
-import { ApprovalInbox } from '../components/governance/ApprovalInbox'
+import { ApprovalHistoryModal } from '@/features/governance/components/ApprovalHistoryModal'
+import { ApprovalInbox } from '@/features/governance/components/ApprovalInbox'
 import {
   AutonomyLevel,
   AutonomySpectrumSelector,
-} from '../components/governance/AutonomySpectrumSelector'
+} from '@/features/governance/components/AutonomySpectrumSelector'
 
 const GovernancePage: React.FC = () => {
   const { toast } = useToast()

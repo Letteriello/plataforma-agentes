@@ -4,7 +4,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 
-import MainLayout from '@/components/layouts/MainLayout';
+import MainLayout from '@/features/layout/components/MainLayout';
 
 // Define custom handle and AppRouteObject types
 interface CustomRouteHandle {

@@ -1,8 +1,8 @@
 import React from 'react'
 import { useEffect,useState } from 'react'
 
-import { MarketplaceFilters } from '@/components/marketplace/MarketplaceFilters'
-import { MarketplaceItemCard } from '@/components/marketplace/MarketplaceItemCard'
+import { MarketplaceFilters } from '@/features/marketplace/components/MarketplaceFilters'
+import { MarketplaceItemCard } from '@/features/marketplace/components/MarketplaceItemCard'
 import { MarketplaceItem } from '@/types/common'
 
 export const MarketplacePage: React.FC = () => {

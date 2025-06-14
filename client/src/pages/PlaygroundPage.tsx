@@ -1,5 +1,5 @@
-import { ChatInterface } from '@/components/chat/ChatInterface';
-import SessionsList from '@/components/sessions/SessionsList';
+import { ChatInterface } from '@/features/chat/components/ChatInterface';
+import SessionsList from '@/features/sessions/components/SessionsList';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const PlaygroundPage = () => {

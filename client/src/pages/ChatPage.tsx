@@ -1,5 +1,5 @@
 // Em client/src/pages/ChatPage.tsx
-import { ChatInterface } from '@/components/chat/ChatInterface'
+import { ChatInterface } from '@/features/chat/components/ChatInterface'
 
 const ChatPage = () => {
   return (

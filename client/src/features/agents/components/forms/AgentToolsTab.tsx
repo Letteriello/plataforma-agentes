@@ -1,17 +1,36 @@
 import { useQuery } from '@tanstack/react-query';
 import { Settings } from 'lucide-react';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 
-import { getTools, PaginatedToolsDTO, ToolDTO } from '../../../api/toolService';
-import { LlmAgentConfig, UiToolDefinition } from '../../../types/agents';
-import { Button } from '../../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
-import { Checkbox } from '../../ui/checkbox';
-import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
-import { Input } from '../../ui/input';
-import { Label } from '../../ui/label';
-import { useToast } from '../../ui/use-toast';
+import { getTools } from '@/api/toolService';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
+import {
+  PaginatedToolsDTO,
+  ToolDTO,
+  ToolParameterDTO,
+  UiToolDefinition,
+} from '@/features/tools/types';
+import { LlmAgentConfig } from '@/types/agents';
+
 import { ToolDefinitionForm } from './ToolDefinitionForm';
 
 const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
@@ -19,12 +38,15 @@ const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
   const required: string[] = [];
 
   if (Array.isArray(toolDto.parameters)) {
-    toolDto.parameters.forEach(param => {
+    toolDto.parameters.forEach((param: ToolParameterDTO) => {
       parameters[param.name] = {
         type: param.type.toUpperCase() as 'STRING' | 'NUMBER' | 'BOOLEAN',
         description: param.description || undefined,
-        default: param.default_value || undefined,
-        enum: undefined,
+        default:
+          param.default_value !== null && param.default_value !== undefined
+            ? param.default_value
+            : undefined,
+        enum: undefined, // O DTO não parece ter isso
       };
       if (param.is_required) {
         required.push(param.name);
@@ -36,8 +58,8 @@ const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
     id: toolDto.id,
     name: toolDto.name,
     description: toolDto.description || '',
-    parameters: parameters,
-    required: required,
+    parameters,
+    required,
   };
 };
 
@@ -45,12 +67,18 @@ export function AgentToolsTab() {
   const form = useFormContext<LlmAgentConfig>();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [configuredToolsDetails, setConfiguredToolsDetails] = useState<Record<string, UiToolDefinition>>({});
-  const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<UiToolDefinition | null>(null);
+  const [configuredToolsDetails, setConfiguredToolsDetails] = useState<
+    Record<string, UiToolDefinition>
+  >({});
+  const [selectedToolForConfiguration, setSelectedToolForConfiguration] =
+    useState<UiToolDefinition | null>(null);
 
-  const { data: toolsData, isLoading, error } = useQuery<PaginatedToolsDTO, Error>({
-    queryKey: ['tools', { page: 1, per_page: 100 }],
-    queryFn: () => getTools({ page: 1, per_page: 100 }),
+  const { data: toolsData, isLoading, error } = useQuery<
+    PaginatedToolsDTO,
+    Error
+  >({
+    queryKey: ['tools', { page: 1, size: 100 }],
+    queryFn: () => getTools({ page: 1, size: 100 }),
   });
 
   if (isLoading) {
@@ -61,11 +89,11 @@ export function AgentToolsTab() {
     return <div>Erro ao carregar ferramentas: {error.message}</div>;
   }
 
-  const availableTools = toolsData?.data.map(transformToUiDefinition) || [];
+  const availableTools = toolsData?.items.map(transformToUiDefinition) || [];
   const selectedToolIds = form.watch('tool_ids') || [];
 
-  const filteredTools = availableTools.filter(tool =>
-    tool.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTools = availableTools.filter((tool) =>
+    tool.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -86,7 +114,7 @@ export function AgentToolsTab() {
         <FormField
           control={form.control}
           name="tool_ids"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<LlmAgentConfig, 'tool_ids'> }) => (
             <FormItem>
               <div className="mb-4">
                 <FormLabel className="text-base">Ferramentas</FormLabel>
@@ -95,10 +123,13 @@ export function AgentToolsTab() {
                 </FormDescription>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                {filteredTools.map(tool => {
+                {filteredTools.map((tool) => {
                   const isChecked = selectedToolIds.includes(tool.id);
                   return (
-                    <div key={tool.id} className="flex items-center justify-between">
+                    <div
+                      key={tool.id}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center space-x-3">
                         <Checkbox
                           id={tool.id}
@@ -106,14 +137,20 @@ export function AgentToolsTab() {
                           onCheckedChange={(checked) => {
                             const newSelectedIds = checked
                               ? [...selectedToolIds, tool.id]
-                              : selectedToolIds.filter((id: string) => id !== tool.id);
+                              : selectedToolIds.filter(
+                                  (id: string) => id !== tool.id,
+                                );
                             field.onChange(newSelectedIds);
                           }}
                         />
-                        <Label htmlFor={tool.id} className="font-medium">
-                          {tool.name}
-                          <p className="text-sm text-muted-foreground">{tool.description}</p>
-                        </Label>
+                        <div className="grid gap-1.5 leading-none">
+                          <Label htmlFor={tool.id} className="font-medium">
+                            {tool.name}
+                          </Label>
+                          <p className="text-sm text-muted-foreground">
+                            {tool.description}
+                          </p>
+                        </div>
                       </div>
                       <Button
                         type="button"
@@ -136,24 +173,27 @@ export function AgentToolsTab() {
       </CardContent>
       {selectedToolForConfiguration && (
         <ToolDefinitionForm
-          isOpen={!!selectedToolForConfiguration}
-          initialToolDefinition={
-            configuredToolsDetails[selectedToolForConfiguration.id] || selectedToolForConfiguration
+          initialData={
+            configuredToolsDetails[selectedToolForConfiguration.id] ||
+            selectedToolForConfiguration
           }
           onClose={() => setSelectedToolForConfiguration(null)}
           onSave={(savedToolDef: UiToolDefinition) => {
             if (!savedToolDef.id) return;
-            setConfiguredToolsDetails(prevDetails => ({
+            setConfiguredToolsDetails((prevDetails) => ({
               ...prevDetails,
               [savedToolDef.id!]: savedToolDef,
             }));
-            toast({ title: 'Ferramenta configurada', description: `A ferramenta "${savedToolDef.name}" foi atualizada.` });
+            toast({
+              title: 'Ferramenta configurada',
+              description: `A ferramenta "${savedToolDef.name}" foi atualizada.`,
+            });
             setSelectedToolForConfiguration(null);
           }}
         />
       )}
     </Card>
   );
-};
+}
 
 export default AgentToolsTab;

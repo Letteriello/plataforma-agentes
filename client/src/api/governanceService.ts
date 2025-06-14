@@ -1,4 +1,4 @@
-import type { AutonomyLevel } from '@/components/governance/AutonomySpectrumSelector'
+import type { AutonomyLevel } from '@/features/governance/components/AutonomySpectrumSelector'
 import type { ApprovalItem, AuditLog, HistoryItem } from '@/types/common'
 
 import api from './apiClient'

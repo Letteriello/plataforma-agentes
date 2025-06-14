@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ToolDTO } from '@/api/toolService';
-import { MemoryManagement } from '@/components/biblioteca/MemoryManagement';
-import { ToolsList } from '@/components/biblioteca/ToolsList';
-import { CreateKnowledgeBaseDialog } from '@/components/memoria/CreateKnowledgeBaseDialog';
-import { UploadDocumentDialog } from '@/components/memoria/UploadDocumentDialog';
+import { MemoryManagement } from '@/features/biblioteca/components/MemoryManagement';
+import { ToolsList } from '@/features/biblioteca/components/ToolsList';
+import { CreateKnowledgeBaseDialog } from '@/features/memoria/components/CreateKnowledgeBaseDialog';
+import { UploadDocumentDialog } from '@/features/memoria/components/UploadDocumentDialog';
 import { CreateOrEditToolDialog } from '@/components/tools/CreateOrEditToolDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

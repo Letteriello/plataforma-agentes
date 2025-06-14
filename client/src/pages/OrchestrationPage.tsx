@@ -21,9 +21,9 @@ import {
   ReactFlowProvider,
 } from 'reactflow';
 
-import NodeConfigSidebar from '@/components/orchestration/NodeConfigSidebar';
-import OrchestrationSidebar from '@/components/orchestration/OrchestrationSidebar';
-import WorkflowCanvas from '@/components/orchestration/WorkflowCanvas';
+import NodeConfigSidebar from '@/features/orchestration/components/NodeConfigSidebar';
+import OrchestrationSidebar from '@/features/orchestration/components/OrchestrationSidebar';
+import WorkflowCanvas from '@/features/orchestration/components/WorkflowCanvas';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,

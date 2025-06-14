@@ -2,8 +2,8 @@ import React from 'react'
 import { useEffect,useState } from 'react'
 import { Edge,Node } from 'reactflow'
 
-import { AgentPalette } from '@/components/multi-agent/AgentPalette'
-import { OrchestrationCanvas } from '@/components/multi-agent/OrchestrationCanvas'
+import { AgentPalette } from '@/features/multi-agent/components/AgentPalette'
+import { OrchestrationCanvas } from '@/features/orchestration/components/OrchestrationCanvas'
 import { AvailableAgent } from '@/types/multi-agent'
 
 const initialNodes: Node[] = [

@@ -1,6 +1,6 @@
 import { Route,Routes } from 'react-router-dom';
 
-import ProtectedRoute from './components/auth/ProtectedRoute';
+import ProtectedRoute from './features/auth/components/ProtectedRoute';
 import AppLayout from './layouts/AppLayout';
 import AgentsPage from './pages/AgentsPage';
 import CreateOrEditAgentPage from './pages/CreateOrEditAgentPage';
