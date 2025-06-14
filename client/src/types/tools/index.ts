@@ -5,8 +5,8 @@ export type {
   ToolDTO,
   ToolParameterDTO,
   UiToolDefinition,
-} from './tool.types';
-export * from './tool.types';
+} from '@/features/tools/types';
+export * from '@/features/tools/types';
 
 // Mocks temporários para ToolSchema/ToolDTOSchema
 export const ToolSchema = {} as Record<string, never>;

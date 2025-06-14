@@ -3,15 +3,15 @@ import { useFormContext } from 'react-hook-form';
 
 import type { KnowledgeBaseDTO } from '@/features/memoria/services/memoryService';
 import { memoryService } from '@/features/memoria/services/memoryService';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../ui/card';
-import { Checkbox } from '../../ui/checkbox';
-import { ComponentSkeleton } from '../../ui/component-skeleton';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ComponentSkeleton } from '@/components/ui/component-skeleton';
 import {
   FormControl,
   FormDescription,
@@ -19,7 +19,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../ui/form';
+} from '@/components/ui/form';
 
 const AgentMemoryTab: React.FC = () => {
   const { control, getValues } = useFormContext();

@@ -1,11 +1,6 @@
 import type { AxiosResponse } from 'axios';
 
-import {
-  CreateToolDTO,
-  PaginatedToolsDTO,
-  ToolDTO,
-  UpdateToolDTO,
-} from '@/features/tools/types';
+import type { CreateToolDTO, PaginatedToolsDTO, ToolDTO, UpdateToolDTO } from '@/features/tools/types';
 
 import apiClient from '@/api/apiClient';
 

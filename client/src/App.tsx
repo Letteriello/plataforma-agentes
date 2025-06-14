@@ -1,15 +1,16 @@
 import { Route,Routes } from 'react-router-dom';
 
-import ProtectedRoute from './features/auth/components/ProtectedRoute';
-import AppLayout from './layouts/AppLayout';
-import AgentsPage from './pages/AgentsPage';
-import CreateOrEditAgentPage from './pages/CreateOrEditAgentPage';
-import CreateOrEditToolPage from './pages/CreateOrEditToolPage';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import NotFoundPage from './pages/NotFoundPage';
-import RegisterPage from './pages/RegisterPage';
-import ToolsPage from './features/tools/routes/ToolsPage';
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import AppLayout from "@/layouts/AppLayout";
+import AgentsIndexPage from "@/features/agents/routes/AgentsIndexPage";
+import AgentsNewPage from "@/features/agents/routes/AgentsNewPage";
+import AgentsEditEntryPage from "@/features/agents/routes/edit/AgentsEditEntryPage";
+import ToolEditorPage from "@/features/tools/routes/ToolEditorPage";
+import ToolsPage from "@/features/tools/routes/ToolsPage";
+import HomePage from "@/pages/HomePage";
+import LoginPage from "@/pages/LoginPage";
+import NotFoundPage from "@/pages/NotFoundPage";
+import RegisterPage from "@/pages/RegisterPage";
 
 function App() {
   return (
@@ -24,12 +25,12 @@ function App() {
           <Route path="/" element={<HomePage />} />
           {/* Ferramentas */}
           <Route path="/tools" element={<ToolsPage />} />
-          <Route path="/tools/new" element={<CreateOrEditToolPage />} />
-          <Route path="/tools/:id/edit" element={<CreateOrEditToolPage />} />
+          <Route path="/tools/new" element={<ToolEditorPage />} />
+          <Route path="/tools/:id/edit" element={<ToolEditorPage />} />
           {/* Agentes */}
-          <Route path="/agents" element={<AgentsPage />} />
-          <Route path="/agents/new" element={<CreateOrEditAgentPage />} />
-          <Route path="/agents/:id/edit" element={<CreateOrEditAgentPage />} />
+          <Route path="/agents" element={<AgentsIndexPage />} />
+          <Route path="/agents/new" element={<AgentsNewPage />} />
+          <Route path="/agents/:id/edit" element={<AgentsEditEntryPage />} />
         </Route>
       </Route>
 

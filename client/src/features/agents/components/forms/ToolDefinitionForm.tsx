@@ -5,10 +5,10 @@ import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 
-import type { UiSchemaDefinition, UiToolDefinition } from '../../../types/agents';
-import { Button } from '../../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
-import { Checkbox } from '../../ui/checkbox';
+import type { UiSchemaDefinition, UiToolDefinition } from '@/types/agents';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -17,16 +17,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../ui/form';
-import { Input } from '../../ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../ui/select';
-import { Textarea } from '../../ui/textarea';
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 // Internal form structure for a single parameter
 interface ParameterData {

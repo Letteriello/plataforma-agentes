@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormControl,
   FormDescription,
@@ -8,15 +8,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../ui/form';
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../ui/select';
-import { Textarea } from '../../ui/textarea';
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 // Helper to validate JSON
 const isJSON = (str: string) => {

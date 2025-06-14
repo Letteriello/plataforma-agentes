@@ -2,9 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormProvider,useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-
-import { Button } from '../../ui/button'
-import { Form } from '../../ui/form'
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 
 type BaseAgentFormProps<T extends z.ZodType> = {
   defaultValues?: z.infer<T>

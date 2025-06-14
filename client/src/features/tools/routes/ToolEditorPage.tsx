@@ -1,19 +1,19 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from "@hookform/resolvers";
 import { Trash2 } from 'lucide-react';
-import React, { useCallback,useEffect } from 'react';
-import { Controller,useFieldArray, useForm } from 'react-hook-form';
-import { useNavigate,useParams } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as z from 'zod';
 
+import { createTool, getToolById, Tool, ToolCreateSchema, ToolUpdateSchema, updateTool } from '@/api/toolService';
 import { ComponentSkeleton } from '@/components/ui';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription,CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { createTool, getToolById, Tool, ToolCreateSchema, ToolUpdateSchema,updateTool } from '@/api/toolService';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'O nome do parâmetro é obrigatório.'),
@@ -26,10 +26,9 @@ const parameterSchema = z.object({
 const formSchema = z.object({
   name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres.'),
   description: z.string().min(10, 'A descrição deve ter pelo menos 10 caracteres.'),
-  // Hardcoding to custom_api as it's the only user-creatable type for now
-  type: z.literal('custom_api'), 
+  type: z.literal('custom_api'),
   api_endpoint: z.string().url('Por favor, insira uma URL válida.'),
-  api_method: z.enum(['GET', 'POST', 'PUT', 'DELETE']), 
+  api_method: z.enum(['GET', 'POST', 'PUT', 'DELETE']),
   parameters: z.array(parameterSchema).optional(),
 });
 
@@ -61,16 +60,15 @@ const ToolEditorPage: React.FC = () => {
   const fetchTool = useCallback(async (toolId: string) => {
     try {
       const tool = await getToolById(toolId);
-      // Map Tool to ToolFormValues
       form.reset({
         name: tool.name,
         description: tool.description,
-        type: 'custom_api', // Assuming we only edit custom_api tools
+        type: 'custom_api',
         api_endpoint: tool.api_endpoint || '',
         api_method: tool.api_method || 'GET',
         parameters: tool.parameters.map(p => ({ ...p, default_value: p.default_value ?? '' })),
       });
-    } catch (error) {
+    } catch {
       toast({ title: 'Erro ao buscar ferramenta', description: 'Não foi possível carregar os dados da ferramenta.', variant: 'destructive' });
       navigate('/tools');
     }
@@ -86,14 +84,13 @@ const ToolEditorPage: React.FC = () => {
     try {
       const payload: ToolCreateSchema | ToolUpdateSchema = {
         ...data,
-        // Ensure parameters are correctly formatted (e.g., remove empty default_values)
         parameters: data.parameters?.map(p => {
-            const { ...param } = p;
-            if (param.default_value === '' || param.default_value === null) {
-                delete param.default_value;
-            }
-            return param;
-        }) || []
+          const { ...param } = p;
+          if (param.default_value === '' || param.default_value === null) {
+            delete param.default_value;
+          }
+          return param;
+        }) || [],
       };
 
       let response: Tool;
@@ -105,8 +102,14 @@ const ToolEditorPage: React.FC = () => {
         toast({ title: 'Sucesso!', description: `Ferramenta "${response.name}" criada.` });
       }
       navigate('/tools');
-    } catch (error: any) {
-      const errorMsg = error.response?.data?.detail || 'Ocorreu um erro inesperado.';
+    } catch (error: unknown) {
+      let errorMsg = 'Ocorreu um erro inesperado.';
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const response = (error as { response?: { data?: { detail?: string } } }).response;
+        if (response?.data?.detail) {
+          errorMsg = response.data.detail;
+        }
+      }
       toast({ title: 'Falha na operação', description: errorMsg, variant: 'destructive' });
     }
   };
@@ -172,7 +175,7 @@ const ToolEditorPage: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Método HTTP</FormLabel>
-                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o método" />
@@ -192,30 +195,30 @@ const ToolEditorPage: React.FC = () => {
 
               <div>
                 <h3 className="text-lg font-medium mb-4">Parâmetros</h3>
-                {fields.map((field, index) => (
-                  <div key={field.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 border p-4 rounded-md mb-4 relative">
-                     <FormField
-                        control={form.control}
-                        name={`parameters.${index}.name`}
-                        render={({ field }) => (
-                          <FormItem className="col-span-1">
-                            <FormLabel>Nome</FormLabel>
-                            <FormControl><Input {...field} /></FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                     <FormField
-                        control={form.control}
-                        name={`parameters.${index}.description`}
-                        render={({ field }) => (
-                          <FormItem className="col-span-1">
-                            <FormLabel>Descrição</FormLabel>
-                            <FormControl><Input {...field} /></FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                {fields.map((item, index) => (
+                  <div key={item.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 border p-4 rounded-md mb-4 items-center">
+                    <FormField
+                      control={form.control}
+                      name={`parameters.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="col-span-1">
+                          <FormLabel>Nome</FormLabel>
+                          <FormControl><Input {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`parameters.${index}.description`}
+                      render={({ field }) => (
+                        <FormItem className="col-span-1">
+                          <FormLabel>Descrição</FormLabel>
+                          <FormControl><Input {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name={`parameters.${index}.type`}
@@ -234,17 +237,25 @@ const ToolEditorPage: React.FC = () => {
                         </FormItem>
                       )}
                     />
-                    <div className="col-span-1 flex items-end space-x-2">
-                       <FormField
-                          control={form.control}
-                          name={`parameters.${index}.required`}
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm h-10">
-                               <FormLabel>Obrigatório?</FormLabel>
-                               <FormControl><Controller name={`parameters.${index}.required`} control={form.control} render={({field: props}) => <input type="checkbox" className="form-checkbox h-5 w-5" checked={props.value} onChange={(e) => props.onChange(e.target.checked)} />} /></FormControl>
-                            </FormItem>
-                          )}
-                        />
+                    <FormField
+                      control={form.control}
+                      name={`parameters.${index}.required`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm h-10 col-span-1">
+                          <FormLabel>Obrigatório?</FormLabel>
+                          <FormControl>
+                            <input
+                              type="checkbox"
+                              className="form-checkbox h-5 w-5"
+                              checked={field.value}
+                              onChange={field.onChange}
+                              ref={field.ref}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="col-span-1 flex justify-center">
                       <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </div>
@@ -259,10 +270,10 @@ const ToolEditorPage: React.FC = () => {
               </div>
 
               <div className="flex justify-end space-x-2">
-                 <Button type="button" variant="ghost" onClick={() => navigate('/tools')}>Cancelar</Button>
-                 <Button type="submit" disabled={form.formState.isSubmitting}>
-                   {form.formState.isSubmitting ? <LoadingSpinner /> : (isEditMode ? 'Salvar Alterações' : 'Criar Ferramenta')}
-                 </Button>
+                <Button type="button" variant="ghost" onClick={() => navigate('/tools')}>Cancelar</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? 'Salvando...' : (isEditMode ? 'Salvar Alterações' : 'Criar Ferramenta')}
+                </Button>
               </div>
             </form>
           </Form>
