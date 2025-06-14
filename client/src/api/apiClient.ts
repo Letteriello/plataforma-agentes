@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Supondo que você terá uma store Zustand para autenticação
 // O caminho pode variar dependendo da estrutura do seu projeto
-import { useAuthStore } from '../stores/authStore'; // Ajuste o caminho conforme necessário
+import { useAuthStore } from '@/store/authStore'; // Ajuste o caminho conforme necessário
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1', // Fallback para dev
