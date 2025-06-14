@@ -33,15 +33,14 @@ const CreateOrEditToolPage: React.FC = () => {
 
   const handleSubmit = async (values: ToolFormValues) => {
     setIsLoading(true);
+    let parsedSchema: ReturnTypeSchema | null = null;
     try {
       if (isEditing && tool) {
-        let parsedSchema: ReturnTypeSchema | null = null;
         if (values.return_type_schema_json) {
           try {
             parsedSchema = JSON.parse(values.return_type_schema_json);
           } catch (error) {
-            console.error('Erro ao parsear return_type_schema_json:', error);
-            toast({ title: 'Erro de Formato', description: 'O JSON do esquema de retorno é inválido.', variant: 'destructive' });
+                        toast({ title: 'Erro de Formato', description: 'O JSON do esquema de retorno é inválido.', variant: 'destructive' });
             setIsLoading(false);
             return;
           }
@@ -63,13 +62,11 @@ const CreateOrEditToolPage: React.FC = () => {
         await updateTool(tool.id, payload);
         toast({ title: 'Sucesso', description: 'Ferramenta atualizada.' });
       } else {
-        let parsedSchema: ReturnTypeSchema | null = null;
         if (values.return_type_schema_json) {
           try {
             parsedSchema = JSON.parse(values.return_type_schema_json);
           } catch (error) {
-            console.error('Erro ao parsear return_type_schema_json:', error);
-            toast({ title: 'Erro de Formato', description: 'O JSON do esquema de retorno é inválido.', variant: 'destructive' });
+                        toast({ title: 'Erro de Formato', description: 'O JSON do esquema de retorno é inválido.', variant: 'destructive' });
             setIsLoading(false);
             return;
           }
@@ -93,7 +90,6 @@ const CreateOrEditToolPage: React.FC = () => {
       }
       navigate('/tools');
     } catch (error) {
-      console.error('Falha ao salvar a ferramenta:', error);
       toast({ title: 'Erro', description: 'Falha ao salvar a ferramenta.', variant: 'destructive' });
     } finally {
       setIsLoading(false);
