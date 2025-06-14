@@ -11,7 +11,7 @@ import { Checkbox } from '../../ui/checkbox';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
-import { toast } from '../../ui/use-toast';
+import { useToast } from '../../ui/use-toast';
 import { ToolDefinitionForm } from './ToolDefinitionForm';
 
 const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
@@ -47,6 +47,7 @@ interface AgentToolsTabProps {
 
 export function AgentToolsTab({ agentId }: AgentToolsTabProps) {
   const form = useFormContext<LlmAgentConfig>();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [configuredToolsDetails, setConfiguredToolsDetails] = useState<Record<string, UiToolDefinition>>({});
   const [selectedToolForConfiguration, setSelectedToolForConfiguration] = useState<UiToolDefinition | null>(null);
