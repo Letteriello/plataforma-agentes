@@ -1,4 +1,4 @@
-import { useChatStore } from '@/store/chatStore'
+import { useChatStore } from '@/features/chat/store/chatStore'
 
 export function AgentWorkspace() {
   const { activeArtifact } = useChatStore()

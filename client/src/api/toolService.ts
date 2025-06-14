@@ -1,4 +1,4 @@
-import api from '../api/apiClient';
+import api from './apiClient';
 
 // Basic Tool Parameter Schema
 export interface ToolParameter {
