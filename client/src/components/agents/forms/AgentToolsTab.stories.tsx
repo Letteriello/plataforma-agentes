@@ -2,6 +2,13 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { http } from 'msw';
 import { FormProvider, useForm } from 'react-hook-form';
 
+interface StoryArgs {
+  defaultValues?: {
+    tools: string[];
+    detailedToolDefinitions?: unknown[];
+  };
+}
+
 import { ToolDTO } from '@/api/toolService';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
@@ -78,7 +85,7 @@ const meta: Meta<typeof AgentToolsTab> = {
     (Story, { args }) => {
       const formMethods = useForm({
         // Use defaultValues from the story's args, or a default state
-        defaultValues: (args as any).defaultValues || {
+        defaultValues: (args as StoryArgs).defaultValues || {
           tools: [],
           detailedToolDefinitions: [],
         },

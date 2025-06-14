@@ -5,7 +5,7 @@ import { beforeEach,describe, expect, it, vi } from 'vitest'
 
 import { ToolDTO } from '@/api/toolService'
 import { useToolStore } from '@/store/toolStore'
-import { LlmAgentConfig, LlmAgentConfigSchema, AgentType } from '@/types/agents'
+// Types are declared globally in vite-env.d.ts
 
 import AgentToolsTab from './AgentToolsTab'
 
