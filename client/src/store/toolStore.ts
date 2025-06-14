@@ -24,8 +24,7 @@ export const useToolStore = create<ToolState & ToolActions>((set) => ({
     try {
       const tools = await apiFetchTools()
       set({ tools, isLoading: false })
-    } catch (error) {
-      console.error('Failed to fetch tools:', error)
+    } catch {
       set({ error: 'Failed to fetch tools.', isLoading: false })
     }
   },

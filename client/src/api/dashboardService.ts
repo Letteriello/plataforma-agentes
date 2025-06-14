@@ -4,7 +4,6 @@ import type {
   DashboardAgent,
   DashboardStats,
   TokenUsage,
-  AgentStatus,
 } from '@/types/dashboard';
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {

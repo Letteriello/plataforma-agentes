@@ -9,5 +9,5 @@ export type {
 export * from './tool.types';
 
 // Mocks temporários para ToolSchema/ToolDTOSchema
-export const ToolSchema = {} as any;
-export const ToolDTOSchema = {} as any;
+export const ToolSchema = {} as Record<string, never>;
+export const ToolDTOSchema = {} as Record<string, never>;

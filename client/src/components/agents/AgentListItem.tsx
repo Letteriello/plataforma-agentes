@@ -127,4 +127,3 @@ const AgentListItemComponent: React.FC<AgentListItemProps> = ({
 };
 
 export const AgentListItem = React.memo(AgentListItemComponent);
-import { AgentType } from '@/types/agents';

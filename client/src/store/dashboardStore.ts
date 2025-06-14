@@ -39,7 +39,7 @@ const initialState: DashboardState = {
 }
 
 // Create the store with proper typing
-const store: StateCreator<DashboardState & DashboardActions> = (set, get) => ({
+const store: StateCreator<DashboardState & DashboardActions> = (set) => ({
   ...initialState,
 
   // Ações
@@ -95,7 +95,6 @@ const store: StateCreator<DashboardState & DashboardActions> = (set, get) => ({
       const error =
         e instanceof Error ? e.message : 'Falha ao buscar dados do dashboard'
       set({ error, isLoading: false })
-      console.error(error)
     }
   },
 })

@@ -90,11 +90,11 @@ const TypographyShowcase = () => (
         plugin)
       </h2>
       <p>
-        This is a paragraph with a <a href="#">link</a>. And some{' '}
+        This is a paragraph with a <a href="https://example.com">link</a>. And some{' '}
         <strong>bold text</strong> and <em>italic text</em>.
       </p>
       <blockquote>
-        This is a blockquote. It's typically used for highlighting a section of
+        This is a blockquote. It&apos;s typically used for highlighting a section of
         text from another source.
       </blockquote>
       <ul>

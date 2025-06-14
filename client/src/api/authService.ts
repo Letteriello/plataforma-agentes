@@ -44,10 +44,8 @@ export const loginUser = async (credentials: LoginCredentials): Promise<void> =>
       // Opcional: buscar dados do usuário aqui e armazená-los na store também
     }
   } catch (error) {
-    console.error('Login failed:', error);
-    // Limpar token em caso de falha (embora o interceptor de resposta já possa fazer isso para 401)
     useAuthStore.getState().setToken(null);
-    throw error; // Re-lançar para que o componente de UI possa lidar com o erro
+    throw error;
   }
 };
 
@@ -58,7 +56,6 @@ export const registerUser = async (userData: UserRegistrationData): Promise<Regi
   });
 
   if (error) {
-    console.error('Supabase registration failed:', error.message);
     throw error;
   }
 
