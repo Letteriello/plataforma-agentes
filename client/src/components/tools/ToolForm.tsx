@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle,Trash2 } from 'lucide-react';
 import React from 'react';
-import { Controller,useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Tool, ToolCreateSchema, ToolUpdateSchema } from '@/services/toolService';
+import { Tool } from '@/services/toolService';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'O nome do parâmetro é obrigatório.'),
@@ -39,7 +39,7 @@ export const toolFormSchema = z.object({
     try {
       JSON.parse(val);
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }, { message: 'Os cabeçalhos devem ser um objeto JSON válido.' }),

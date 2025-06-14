@@ -31,7 +31,7 @@ const toolSchema = z.object({
     try {
       JSON.parse(val);
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }, { message: 'O schema de retorno deve ser um JSON válido.' }),

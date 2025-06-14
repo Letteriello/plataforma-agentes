@@ -32,7 +32,7 @@ const meta: Meta<typeof LLMAgentForm> = {
         defaultValues: (args as StoryArgs).defaultValues || createDefaultAgent('llm') as LLMAgent
       })
 
-      const onSubmit = (data: LLMAgent) => {
+      const onSubmit = () => {
         alert('Dados do formul\u00e1rio logados no console. Veja a aba "Actions".')
       }
 

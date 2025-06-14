@@ -58,7 +58,7 @@ export function useMemoryModule() {
       setKnowledgeBases(data)
       applyFilters(data, searchTerm, selectedType)
     } catch (error) {
-      console.error('Erro ao carregar bases de conhecimento:', error)
+      void console.error('Erro ao carregar bases de conhecimento:', error)
       toast({
         title: 'Erro',
         description: 'Não foi possível carregar as bases de conhecimento.',
@@ -77,7 +77,7 @@ export function useMemoryModule() {
         await loadKnowledgeBases()
       } catch (error) {
         // O erro já é tratado e exibido como um toast dentro de `loadKnowledgeBases`
-        console.error(
+        void console.error(
           'Falha ao carregar bases de conhecimento no useEffect:',
           error,
         )
@@ -103,7 +103,7 @@ export function useMemoryModule() {
           setDocuments([])
         }
       } catch (error) {
-        console.error('Erro ao carregar documentos:', error)
+        void console.error('Erro ao carregar documentos:', error)
         toast({
           title: 'Erro',
           description: 'Não foi possível carregar os documentos.',
@@ -125,7 +125,7 @@ export function useMemoryModule() {
           await loadDocuments(knowledgeBase.id)
         } catch (error) {
           // O erro já é tratado e exibido como um toast dentro de `loadDocuments`
-          console.error(
+          void console.error(
             'Falha ao carregar documentos para a base de conhecimento selecionada:',
             error,
           )
@@ -156,7 +156,7 @@ export function useMemoryModule() {
 
         return newKnowledgeBase;
       } catch (error) {
-        console.error('Erro ao criar base de conhecimento:', error)
+        void console.error('Erro ao criar base de conhecimento:', error)
         toast({
           title: 'Erro',
           description: 'Erro ao criar a base de conhecimento.',
@@ -184,7 +184,7 @@ export function useMemoryModule() {
           description: 'Base de conhecimento excluída com sucesso.',
         })
       } catch (error) {
-        console.error('Erro ao excluir base de conhecimento:', error)
+        void console.error('Erro ao excluir base de conhecimento:', error)
         toast({
           title: 'Erro',
           description: 'Não foi possível excluir a base de conhecimento.',
@@ -244,7 +244,7 @@ export function useMemoryModule() {
           throw batchError // Re-throw
         }
       } catch (error) {
-        console.error('Erro durante o upload em lote:', error)
+        void console.error('Erro durante o upload em lote:', error)
         toast({
           title: 'Erro no Upload',
           description: 'Falha ao enviar os documentos.',
@@ -284,7 +284,7 @@ export function useMemoryModule() {
           description: 'Documento excluído com sucesso.',
         })
       } catch (error) {
-        console.error('Erro ao excluir documento:', error)
+        void console.error('Erro ao excluir documento:', error)
         toast({
           title: 'Erro',
           description: 'Não foi possível excluir o documento.',

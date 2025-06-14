@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 interface NodeConfigSidebarProps {
   node: Node;
-  onNodeDataChange: (nodeId: string, newData: any) => void;
+  onNodeDataChange: (nodeId: string, newData: Record<string, unknown>) => void;
 }
 
 const NodeConfigSidebar: React.FC<NodeConfigSidebarProps> = ({ node, onNodeDataChange }) => {

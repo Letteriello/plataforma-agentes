@@ -6,7 +6,7 @@ import { ScenarioSelector } from '@/components/simulation-sandbox/ScenarioSelect
 import { ChatMessage, ReasoningStep,Scenario } from '@/types/simulation'
 
 export const SimulationSandboxPage: React.FC = () => {
-  const [scenarios, setScenarios] = useState<Scenario[]>([])
+  const [scenarios] = useState<Scenario[]>([])
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [reasoningSteps, setReasoningSteps] = useState<ReasoningStep[]>([])
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>('')

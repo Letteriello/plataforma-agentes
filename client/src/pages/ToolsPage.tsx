@@ -46,7 +46,7 @@ export const ToolsPage: React.FC = () => {
       const paginatedTools = await getTools(1, 100, true);
       setTools(paginatedTools.items);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Falha ao carregar as ferramentas.');
       toast({
         title: 'Erro',
@@ -73,7 +73,7 @@ export const ToolsPage: React.FC = () => {
       });
       setToolToDelete(null);
       fetchTools(); // Refresh list after deletion
-    } catch (err) {
+    } catch {
       toast({
         title: 'Erro',
         description: `Não foi possível deletar a ferramenta "${toolToDelete.name}".`,

@@ -11,11 +11,11 @@ export const deepClone = <T>(obj: T): T => {
   }
   // Lida com datas, se necessário
   if (obj instanceof Date) {
-    return new Date(obj.getTime()) as any
+    return new Date(obj.getTime()) as unknown as T
   }
   // Lida com arrays
   if (Array.isArray(obj)) {
-    return obj.map((item) => deepClone(item)) as any
+    return obj.map((item) => deepClone(item)) as unknown as T
   }
   // Lida com objetos
   const clonedObj = {} as T

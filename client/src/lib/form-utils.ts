@@ -165,7 +165,7 @@ export const booleanTransformer = {
 }
 
 // Format form values for API
-export function formatAgentForApi(agent: AgentFormValues): any {
+export function formatAgentForApi(agent: AgentFormValues): Record<string, unknown> {
   // Remove undefined values
   const formatted = JSON.parse(JSON.stringify(agent))
 
@@ -175,41 +175,42 @@ export function formatAgentForApi(agent: AgentFormValues): any {
 
 // Parse API response to form values
 export function parseApiResponseToFormValues(
-  apiResponse: any,
+  apiResponse: unknown,
 ): AgentFormValues {
+  const resp = apiResponse as Partial<AgentFormValues> & Record<string, unknown>;
   // Transform the API response to match our form schema
   const base = {
-    id: apiResponse.id,
-    name: apiResponse.name || '',
-    description: apiResponse.description || '',
-    type: apiResponse.type,
-    isPublic: apiResponse.isPublic || false,
-    tags: apiResponse.tags || [],
+    id: resp.id,
+    name: resp.name || '',
+    description: resp.description || '',
+    type: resp.type,
+    isPublic: resp.isPublic || false,
+    tags: resp.tags || [],
   }
 
   // Add type-specific fields
-  switch (apiResponse.type) {
+  switch (resp.type) {
     case AgentType.LLM:
       return {
         ...base,
-        ...llmAgentSchema.parse(apiResponse),
+        ...llmAgentSchema.parse(resp),
       }
     case AgentType.Sequential:
       return {
         ...base,
-        ...sequentialAgentSchema.parse(apiResponse),
+        ...sequentialAgentSchema.parse(resp),
       }
     case AgentType.Parallel:
       return {
         ...base,
-        ...parallelAgentSchema.parse(apiResponse),
+        ...parallelAgentSchema.parse(resp),
       }
     case AgentType.A2A:
       return {
         ...base,
-        ...a2aAgentSchema.parse(apiResponse),
+        ...a2aAgentSchema.parse(resp),
       }
     default:
-      throw new Error(`Unknown agent type: ${apiResponse.type}`)
+      throw new Error(`Unknown agent type: ${resp.type}`)
   }
 }

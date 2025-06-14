@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 // Icons
 import { Bot, Clock,MessageSquare, TrendingUp } from 'lucide-react'
 import React from 'react'
@@ -12,7 +11,7 @@ import { TokenUsageCard } from '@/components/dashboard/TokenUsageCard'
 import { useDashboard } from '@/hooks/useDashboard'
 import { useDashboardMetrics } from '@/hooks/useDashboardMetrics'
 // Types
-import { Agent, DashboardStats } from '@/types/dashboard.types'
+import { DashboardStats } from '@/types/dashboard.types'
 // Removido: mock data agora é fornecido pelos hooks personalizados
 // Utils
 import { formatTokenNumber } from '@/utils/dashboardUtils'
@@ -42,7 +41,6 @@ const Dashboard: React.FC = () => {
   const {
     stats: metricsStats,
     tokenMetrics,
-    agentMetrics,
   } = useDashboardMetrics(mockAgentsData, mockTokenUsageData)
 
   // Combina os dados de stats vindos dos hooks
@@ -66,12 +64,9 @@ const Dashboard: React.FC = () => {
     refresh()
   }, [refresh])
 
-  const handlePeriodChange = React.useCallback((newPeriod: string) => {
-    // In a real app, this would update the period in the URL or state
   }, [])
 
   // Os agentes agora são fornecidos pelos hooks (via useDashboardMetrics)
-  // Se necessário, pode-se filtrar agentMetrics.agents diretamente
 
   return (
     <>

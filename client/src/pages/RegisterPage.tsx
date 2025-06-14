@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { registerUser } from '@/api/authService'; // Importa a função real
 
@@ -8,7 +8,6 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,12 +38,24 @@ const RegisterPage = () => {
       <h2>Registro</h2>
       <form onSubmit={handleRegister}>
         <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <label htmlFor="reg-email">Email:</label>
+          <input
+            id="reg-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
         <div>
-          <label>Password:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <label htmlFor="reg-password">Password:</label>
+          <input
+            id="reg-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Registrar</button>
