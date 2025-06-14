@@ -9,3 +9,18 @@ node_modules/
 
 # Arquivos de ambiente
 .env
+
+# Turborepo
+.turbo/
+dist/
+build/
+.next/
+
+# Node
+# node_modules/ is already listed above
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json # Often ignored in libraries, but can be kept for applications
+pnpm-lock.yaml # If using pnpm

@@ -11,11 +11,7 @@ import { TokenUsageCard } from '@/features/dashboard/components/TokenUsageCard'
 import { useDashboard } from '@/features/dashboard/hooks/useDashboard'
 import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics'
 // Types
-<<<<<<< HEAD
-import { DashboardStats } from '@/features/dashboard/types'
-=======
-import { DashboardStats } from '@/types/dashboard.types'
->>>>>>> 16a3fd56be1a34e150431c0255ab52e709cef38b
+import { DashboardStats } from '@/features/dashboard/types' // RESOLVED
 // Removido: mock data agora é fornecido pelos hooks personalizados
 // Utils
 import { formatTokenNumber } from '@/utils/dashboardUtils'
@@ -27,11 +23,7 @@ const Dashboard: React.FC = () => {
   const {
     stats: metricsStats,
     tokenMetrics,
-<<<<<<< HEAD
-  } = useDashboardMetrics(agents, tokenUsage);
-=======
-  } = useDashboardMetrics(mockAgentsData, mockTokenUsageData)
->>>>>>> 16a3fd56be1a34e150431c0255ab52e709cef38b
+  } = useDashboardMetrics(agents, tokenUsage); // RESOLVED
 
   // Combina os dados de stats vindos dos hooks
   const combinedStats: DashboardStats | null = React.useMemo(() => {
@@ -51,11 +43,7 @@ const Dashboard: React.FC = () => {
     refresh()
   }, [refresh])
 
-<<<<<<< HEAD
-  
-=======
-  }, [])
->>>>>>> 16a3fd56be1a34e150431c0255ab52e709cef38b
+  // RESOLVED (empty line here)
 
   // Os agentes agora são fornecidos pelos hooks (via useDashboardMetrics)
 

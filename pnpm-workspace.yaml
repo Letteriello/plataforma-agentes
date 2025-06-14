@@ -1,0 +1,6 @@
+packages:
+  - "client"
+  - "server"
+  # You can also use glob patterns
+  # e.g. "packages/*"
+  # e.g. "apps/*"
