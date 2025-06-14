@@ -8,6 +8,7 @@ export * from './select'
 export * from './slider'
 export * from './textarea'
 export * from './tooltip'
+export * from './toggle-group'
 
 // New UI Components
 export * from './component-skeleton'

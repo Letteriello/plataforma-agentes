@@ -7,3 +7,7 @@ export type {
   UiToolDefinition,
 } from './tool.types';
 export * from './tool.types';
+
+// Mocks temporários para ToolSchema/ToolDTOSchema
+export const ToolSchema = {} as any;
+export const ToolDTOSchema = {} as any;

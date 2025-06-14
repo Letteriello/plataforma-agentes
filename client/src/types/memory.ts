@@ -7,6 +7,20 @@ export enum KnowledgeBaseType {
 }
 
 /**
+ * DTO para transferência de dados da base de conhecimento entre backend e frontend.
+ * Use este tipo para contratos de API e serviços.
+ */
+export interface KnowledgeBaseDTO {
+  id: string;
+  name: string;
+  description: string;
+  type: KnowledgeBaseType;
+  createdAt: string;
+  updatedAt: string;
+  status?: 'active' | 'processing' | 'error';
+}
+
+/**
  * Represents a knowledge base.
  */
 export interface KnowledgeBase {

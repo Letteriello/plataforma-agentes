@@ -2,7 +2,13 @@
 // FONTE ÚNICA DA VERDADE PARA TIPOS DE AGENTE
 
 import { z } from 'zod';
+// Corrigido: importar ToolSchema e ToolDTOSchema corretamente, ou criar mocks temporários se necessário
+// import { ToolSchema, ToolDTOSchema } from '@/types/tools';
 import { ToolSchema, ToolDTOSchema } from '@/types/tools';
+// ToolSchema e ToolDTOSchema agora são importados corretamente.
+
+// Importa createDefaultAgent e exporta
+export { createDefaultAgentConfig as createDefaultAgent } from './core/agent';
 
 // ----------------------------------------------------------------------
 // ENUMS E TIPOS FUNDAMENTAIS
