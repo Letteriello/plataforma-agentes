@@ -4,7 +4,7 @@ export interface Artifact {
   type: 'code' | 'table' | 'chart' | string
   language?: string
   content?: string
-  data?: any
+  data?: unknown
 }
 
 export interface ChatMessage {

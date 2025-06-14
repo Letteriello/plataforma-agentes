@@ -70,6 +70,11 @@ export function AgentStatusCard({
           {agents.map((agent) => (
             <div
               key={agent.id}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') onAgentClick?.(agent)
+              }}
               className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer"
               onClick={() => onAgentClick?.(agent)}
             >

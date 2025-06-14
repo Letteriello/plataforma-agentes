@@ -138,9 +138,9 @@ export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialD
     const adkParameters: { [key: string]: AdkSchemaDefinition } = {};
     const requiredParams: string[] = [];
 
-    formData.parameters?.forEach(param => {
-      if (param.paramName) {
-        let adkDefaultValue: any = param.paramDefaultValue;
+      formData.parameters?.forEach((param) => {
+        if (param.paramName) {
+          let adkDefaultValue: unknown = param.paramDefaultValue;
         if (param.paramDefaultValue) {
           if (param.paramType === 'NUMBER') adkDefaultValue = parseFloat(param.paramDefaultValue);
           else if (param.paramType === 'BOOLEAN') adkDefaultValue = param.paramDefaultValue.toLowerCase() === 'true';
@@ -149,7 +149,7 @@ export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialD
           }
         }
 
-        let adkEnumValues: any[] | undefined = undefined;
+          let adkEnumValues: unknown[] | undefined = undefined;
         if (param.paramEnum && param.paramEnum.length > 0) {
           adkEnumValues = param.paramEnum.map(enumStr => {
             if (param.paramType === 'NUMBER') return parseFloat(enumStr);

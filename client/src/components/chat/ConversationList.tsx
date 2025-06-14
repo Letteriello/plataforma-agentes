@@ -48,11 +48,16 @@ const ConversationList: React.FC = () => {
       {conversations.map((convo) => (
         <div
           key={convo.id}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') setSelectedConversationId(convo.id)
+          }}
           className={cn(
             'flex items-center space-x-3 mb-[2px] cursor-pointer rounded-md px-2 py-1.5 hover:bg-muted/50',
-            { 'bg-accent': convo.id === selectedConversationId }, // Updated to bg-accent
+            { 'bg-accent': convo.id === selectedConversationId },
           )}
-          onClick={() => setSelectedConversationId(convo.id)} // Use setSelectedConversationId from store
+          onClick={() => setSelectedConversationId(convo.id)}
         >
           <Avatar className="h-10 w-10">
             <AvatarFallback>
