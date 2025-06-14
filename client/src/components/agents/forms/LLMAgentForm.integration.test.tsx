@@ -14,7 +14,7 @@ import {
   agentSchema,
   getDefaultValues,
 } from '@/lib/form-utils'
-import { AgentType, LlmAgentConfig } from '@/types/agents'
+import { AgentType } from '@/types/agents'
 
 import { LLMAgentForm } from './LLMAgentForm'
 
@@ -46,15 +46,15 @@ const TestWrapper: React.FC<{
 
   const contextValue: UseAgentFormReturn = {
     ...methods,
-    handleSubmit: methods.handleSubmit(async (data) => {}),
+    handleSubmit: methods.handleSubmit(async () => {}),
     resetForm: (values) => methods.reset(values),
     isSubmitting: methods.formState.isSubmitting,
     submitError: null,
     currentType: AgentType.LLM,
-    registerField: methods.register as any,
-    registerNestedField: vi.fn((prefix, name) =>
-      methods.register(`${prefix}.${name}` as any),
-    ) as any,
+    registerField: methods.register,
+    registerNestedField: vi.fn((prefix: string, name: string) =>
+      methods.register(`${prefix}.${name}` as keyof AgentFormValues),
+    ) as ReturnType<typeof methods.register>,
     handleArrayField: vi.fn(),
     setFieldValue: methods.setValue, // Use RHF's setValue directly
     getFieldValue: methods.getValues,

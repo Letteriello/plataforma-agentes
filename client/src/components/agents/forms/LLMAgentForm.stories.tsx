@@ -1,57 +1,16 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { Meta, StoryObj } from '@storybook/react';
-import { FormProvider,useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod'
+import type { Meta, StoryObj } from '@storybook/react'
+import { FormProvider, useForm } from 'react-hook-form'
 
-import { Button } from '@/components/ui/button';
-import { LlmAgentConfig, LlmAgentConfigSchema, AgentType } from '@/types/agents';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { Meta, StoryObj } from '@storybook/react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { Button } from '@/components/ui/button'
+import { createDefaultAgent } from '@/lib/agent-utils'
+import { LLMAgentSchema, type LLMAgent } from '@/types/agents'
 
-import LLMAgentForm from './LLMAgentForm';
+import { LLMAgentForm } from './LLMAgentForm'
 
-const meta: Meta<typeof LLMAgentForm> = {
-  title: 'Components/Agents/Forms/LLMAgentForm',
-  component: LLMAgentForm,
-  decorators: [
-    (Story) => {
-      const formMethods = useForm<LlmAgentConfig>({
-        resolver: zodResolver(LlmAgentConfigSchema),
-        defaultValues: {
-          id: 'agent-123',
-          name: 'Agente de Teste',
-          description: 'Esta é uma descrição de teste.',
-          type: AgentType.LLM,
-          isPublic: false,
-          version: '1.0.0',
-          model: 'gemini-1.5-pro',
-          instruction: 'Você é um agente de teste.',
-          generateContentConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 2048,
-            topP: 1.0,
-            topK: 40,
-          },
-          tools: [],
-        },
-      });
-
-      return (
-        <FormProvider {...formMethods}>
-          <Story />
-        </FormProvider>
-      );
-    },
-  ],
-  tags: ['autodocs'],
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-
-import { LLMAgentForm } from './LLMAgentForm';
+interface StoryArgs {
+  defaultValues?: LLMAgent
+}
 
 const meta: Meta<typeof LLMAgentForm> = {
   title: 'Agents/Forms/LLMAgentForm',
@@ -62,95 +21,57 @@ const meta: Meta<typeof LLMAgentForm> = {
     docs: {
       description: {
         component:
-          'Este formulário gerencia a configuração de um Agente LLM, incluindo a seleção do modelo e os parâmetros de geração. Ele é projetado para ser usado dentro de um `FormProvider` do `react-hook-form`.',
-      },
-    },
+          'Este formulário gerencia a configuração de um Agente LLM, incluindo a seleção do modelo e os parâmetros de geração. Ele é projetado para ser usado dentro de um `FormProvider` do `react-hook-form`.'
+      }
+    }
   },
-  // Documentação das props para o painel de Controles do Storybook
-  argTypes: {
-    disabled: {
-      control: 'boolean',
-      description:
-        'Desabilita todos os campos do formulário, útil para estados de carregamento ou somente leitura.',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
-      },
-    },
-    className: {
-      control: 'text',
-      description: 'Classes CSS adicionais para customizar o container do formulário.',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: '""' },
-      },
-    },
-  },
-  // O decorator agora aceita `defaultValues` dos args da story
   decorators: [
     (Story, { args }) => {
-      // Use os defaultValues da story, ou crie um novo agente se não for fornecido
-      const defaultValues = (args as any).defaultValues || createDefaultAgent('llm');
-
       const formMethods = useForm<LLMAgent>({
         resolver: zodResolver(LLMAgentSchema),
-        defaultValues,
-      });
+        defaultValues: (args as StoryArgs).defaultValues || createDefaultAgent('llm') as LLMAgent
+      })
 
-      const onSubmit = (data: any) => {
-        console.log('Form Submitted', data);
-        alert('Dados do formulário logados no console. Veja a aba "Actions".');
-      };
+      const onSubmit = (data: LLMAgent) => {
+        console.log('Form Submitted', data)
+        alert('Dados do formulário logados no console. Veja a aba "Actions".')
+      }
 
       return (
         <FormProvider {...formMethods}>
-          <form
-            onSubmit={formMethods.handleSubmit(onSubmit)}
-            className="p-8 max-w-4xl mx-auto"
-          >
+          <form onSubmit={formMethods.handleSubmit(onSubmit)} className="p-8 max-w-4xl mx-auto">
             <Story />
             <div className="mt-8 flex justify-end">
               <Button type="submit">Salvar Agente</Button>
             </div>
           </form>
         </FormProvider>
-      );
-    },
-  ],
-};
+      )
+    }
+  ]
+}
 
-export default meta;
-type Story = StoryObj<typeof LLMAgentForm & { defaultValues?: LLMAgent }>;
+export default meta
 
-/**
- * Estado padrão do formulário, para criar um novo agente.
- * Todos os campos são interativos e preenchidos com os valores padrão definidos no `createDefaultAgent`.
- */
+type Story = StoryObj<typeof meta & { defaultValues?: LLMAgent }>
+
 export const Default: Story = {
   args: {
-    disabled: false,
-  },
-};
+    disabled: false
+  }
+}
 
-/**
- * Estado desabilitado do formulário.
- * Útil para visualizar como o formulário se comporta em modo de "somente leitura" ou durante uma operação de submissão.
- */
 export const Disabled: Story = {
   args: {
-    disabled: true,
-  },
-};
+    disabled: true
+  }
+}
 
-/**
- * Formulário preenchido com dados de um agente existente.
- * Demonstra o estado de "edição", com todos os campos populados, incluindo a estrutura aninhada `generateContentConfig`.
- */
 export const Editing: Story = {
   args: {
     disabled: false,
     defaultValues: {
-      ...createDefaultAgent('llm'),
+      ...createDefaultAgent('llm') as LLMAgent,
       id: 'agent-123',
       name: 'Agente de Análise de Sentimento',
       description: 'Este agente analisa o sentimento de textos em português.',
@@ -162,8 +83,8 @@ export const Editing: Story = {
         maxOutputTokens: 100,
         topP: 0.9,
         topK: 20,
-        stopSequences: ['FIM'],
-      },
-    },
-  },
-};
+        stopSequences: ['FIM']
+      }
+    }
+  }
+}
