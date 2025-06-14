@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 import uuid
+from typing import Optional
 
 from app.models import schemas
 
