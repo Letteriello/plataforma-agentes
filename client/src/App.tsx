@@ -9,7 +9,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RegisterPage from './pages/RegisterPage';
-import ToolsPage from './pages/ToolsPage';
+import ToolsPage from './features/tools/routes/ToolsPage';
 
 function App() {
   return (

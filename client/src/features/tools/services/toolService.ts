@@ -7,7 +7,7 @@ import {
   UpdateToolDTO,
 } from '@/features/tools/types';
 
-import apiClient from './apiClient';
+import apiClient from '@/api/apiClient';
 
 // --- Service Functions ---
 

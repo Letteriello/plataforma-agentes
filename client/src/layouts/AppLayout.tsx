@@ -1,11 +1,11 @@
 import { Outlet } from 'react-router-dom';
 
-import Topbar from '@/features/navigation/components/Topbar';
+import { Topbar } from '@/features/navigation/components/Topbar';
 
 const AppLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Topbar />
+      <Topbar onMenuClick={() => {}} />
 
       {/* Conteúdo principal da página */}
       <main className="flex-grow p-4">
