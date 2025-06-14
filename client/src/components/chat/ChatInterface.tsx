@@ -1,7 +1,7 @@
 // client/src/components/chat/ChatInterface.tsx
 import type { ComponentType } from 'react'
 import { useCallback, useEffect, useState } from 'react'
-import type { ChatMessage, ChatMessageSenderType, ChatSession } from '@/types/chatTypes';
+import type { ChatMessage, ChatMessageSenderType } from '@/types/chatTypes';
 import type { ChatHeaderProps } from './ChatHeader';
 
 import chatService from '@/api/chatService';
@@ -14,7 +14,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast'; // Import useToast
 import { useChatStore } from '@/store/chatStore'
-import { type ChatMessage as ApiChatMessage,ChatMessageSenderType, type ChatSession as ApiChatSession } from '@/types/chatTypes';
 
 import { AgentWorkspace } from './AgentWorkspace'
 import { ChatHeader } from './ChatHeader'

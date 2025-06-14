@@ -20,13 +20,12 @@ interface AgentGenerationSettingsProps {
     LlmAgentConfig,
     'temperature' | 'maxOutputTokens' | 'topP' | 'topK'
   >
-  onNumberInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onSliderChange: (name: string, value: number) => void
 }
 
 export const AgentGenerationSettings: React.FC<
   AgentGenerationSettingsProps
-> = ({ config, onNumberInputChange, onSliderChange }) => {
+> = ({ config, onSliderChange }) => {
   return (
     <div className="space-y-5 p-1">
       {' '}

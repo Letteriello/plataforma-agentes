@@ -24,7 +24,7 @@ export interface Tool {
   // For custom_api tools
   api_endpoint?: string;
   api_method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  api_headers?: Record<string, any>;
+  api_headers?: Record<string, string | number | boolean>;
 }
 
 // Schema for creating a new tool
@@ -34,7 +34,7 @@ export interface ToolCreateSchema {
   type: 'custom_api'; // Currently only supporting this type for creation
   api_endpoint: string;
   api_method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  api_headers?: Record<string, any>;
+  api_headers?: Record<string, string | number | boolean>;
   parameters: Omit<ToolParameter, 'id'>[];
 }
 

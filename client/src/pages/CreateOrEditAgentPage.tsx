@@ -5,7 +5,7 @@ import { createAgent, fetchAgentById, updateAgent } from '@/api/agentService';
 import { AgentEditor } from '@/components/agents/AgentEditor';
 import { LoadingSpinner } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';
-import { LlmAgentConfig, LlmAgentConfigSchema, AgentType } from '@/types/agents';
+import { LlmAgentConfig } from '@/types/agents';
 
 const CreateOrEditAgentPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

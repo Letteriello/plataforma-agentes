@@ -1,10 +1,8 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useNavigate,useParams } from 'react-router-dom';
 
 import { createTool, getToolById, Tool,updateTool } from '@/api/toolService';
-import { ToolForm, toolFormSchema, ToolFormValues } from '@/components/tools/ToolForm';
+import { ToolForm, ToolFormValues } from '@/components/tools/ToolForm';
 import { LoadingSpinner } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -42,7 +40,7 @@ const CreateOrEditToolPage: React.FC = () => {
         toast({ title: 'Sucesso', description: 'Ferramenta criada.' });
       }
       navigate('/tools');
-    } catch (error) {
+    } catch {
       toast({ title: 'Erro', description: 'Falha ao salvar a ferramenta.', variant: 'destructive' });
     }
   };
