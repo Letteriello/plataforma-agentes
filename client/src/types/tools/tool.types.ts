@@ -9,7 +9,7 @@ export interface ToolParameterDTO {
   type: string; // ex: 'string', 'number', 'boolean'
   required: boolean;
   options?: string[]; // Para tipos enum ou select
-  default_value?: any;
+  default_value?: unknown;
 }
 
 /**
