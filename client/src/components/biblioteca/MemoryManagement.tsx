@@ -1,9 +1,7 @@
-import { FileText, Loader2,Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { FileText, Loader2, Search } from 'lucide-react';
 
 import { DocumentsTable } from '@/components/memoria/DocumentsTable';
 import { KnowledgeBaseCard } from '@/components/memoria/KnowledgeBaseCard';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
