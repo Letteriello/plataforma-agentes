@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabaseClient'; // Importa o cliente Supabase
-import { useAuthStore } from '../stores/authStore'; // Nossa store Zustand
+import { useAuthStore } from '@/store/authStore'; // Nossa store Zustand
 import apiClient from './apiClient'; // Nosso apiClient configurado
 
 // Tipos para os dados de login e registro (podem vir de um arquivo de tipos compartilhado)

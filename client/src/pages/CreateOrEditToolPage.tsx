@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate,useParams } from 'react-router-dom';
 
-import { createTool, getToolById, type Tool, updateTool } from '@/features/tools/services/toolService';
-import { ToolForm, ToolFormValues } from '@/components/tools/ToolForm';
+import { createTool, getToolById, type ToolDTO as Tool, updateTool } from '@/features/tools/services/toolService';
+import { ToolForm, ToolFormValues } from '@/features/tools/components/ToolForm';
+import type { CreateToolDTO, UpdateToolDTO, ReturnTypeSchema, ToolParameterCreateDTO } from '@/features/tools/types';
 import { LoadingSpinner } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -11,7 +12,7 @@ const CreateOrEditToolPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [tool, setTool] = useState<Tool | null>(null);
+  const [tool, setTool] = useState<Tool | null>(null); // Tool aqui é ToolDTO por causa do alias na importação
 
   const isEditing = !!id;
 
@@ -31,17 +32,67 @@ const CreateOrEditToolPage: React.FC = () => {
   }, [id, isEditing, navigate, toast]);
 
   const handleSubmit = async (values: ToolFormValues) => {
+    setIsLoading(true);
+    let parsedSchema: ReturnTypeSchema | null = null;
     try {
       if (isEditing && tool) {
-        await updateTool(tool.id, values as any); // Ajustar tipo se necessário
+        if (values.return_type_schema_json) {
+          try {
+            parsedSchema = JSON.parse(values.return_type_schema_json);
+          } catch (error) {
+                        toast({ title: 'Erro de Formato', description: 'O JSON do esquema de retorno é inválido.', variant: 'destructive' });
+            setIsLoading(false);
+            return;
+          }
+        }
+        const payload: UpdateToolDTO = {
+          name: values.name,
+          description: values.description,
+          tool_type: values.tool_type,
+          api_endpoint: values.api_endpoint,
+          return_type_schema: parsedSchema,
+          parameters: values.parameters.map(p => ({
+            name: p.name,
+            type: p.type,
+            description: p.description,
+            default_value: p.default_value,
+            is_required: p.is_required,
+          } as ToolParameterCreateDTO)),
+        };
+        await updateTool(tool.id, payload);
         toast({ title: 'Sucesso', description: 'Ferramenta atualizada.' });
       } else {
-        await createTool(values as any); // Ajustar tipo se necessário
+        if (values.return_type_schema_json) {
+          try {
+            parsedSchema = JSON.parse(values.return_type_schema_json);
+          } catch (error) {
+                        toast({ title: 'Erro de Formato', description: 'O JSON do esquema de retorno é inválido.', variant: 'destructive' });
+            setIsLoading(false);
+            return;
+          }
+        }
+        const payload: CreateToolDTO = {
+          name: values.name,
+          description: values.description,
+          tool_type: values.tool_type,
+          api_endpoint: values.api_endpoint,
+          return_type_schema: parsedSchema,
+          parameters: values.parameters.map(p => ({
+            name: p.name,
+            type: p.type,
+            description: p.description,
+            default_value: p.default_value,
+            is_required: p.is_required,
+          } as ToolParameterCreateDTO)),
+        };
+        await createTool(payload);
         toast({ title: 'Sucesso', description: 'Ferramenta criada.' });
       }
       navigate('/tools');
-    } catch {
+    } catch (error) {
       toast({ title: 'Erro', description: 'Falha ao salvar a ferramenta.', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
     }
   };
 

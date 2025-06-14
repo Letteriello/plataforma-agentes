@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect,useState } from 'react'
 
-import { listAuditLogs } from '@/api/auditLogService'
+import { listAuditLogs } from '@/features/audit-logs/services/auditLogService'
 import { AuditLogList } from '@/features/audit-logs/components/AuditLogList'
 import { useToast } from '@/components/ui/use-toast'
 import { AuditLog } from '@/types/common'

@@ -18,6 +18,15 @@ if not url:
 if not anon_key:
     raise EnvironmentError(f"SUPABASE_ANON_KEY environment variable not set. Check {dotenv_path}")
 
+# Service role client (used cautiously)
+supabase_service_client: Client | None = None
+try:
+    supabase_service_key = os.environ.get("SUPABASE_SERVICE_KEY")
+    if supabase_service_key:
+        supabase_service_client = create_client(url, supabase_service_key)
+except Exception as e:
+    print(f"Could not initialize Supabase service client: {e}")
+
 def create_supabase_client_with_jwt(jwt_token: str) -> Client:
     """
     Creates a Supabase client instance configured to use the provided JWT for authorization.
