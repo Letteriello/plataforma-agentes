@@ -22,8 +22,8 @@ export interface ToolParameter {
     | 'null'
   description?: string
   required?: boolean
-  default?: any
-  enum?: any[]
+  default?: unknown
+  enum?: unknown[]
   items?: ToolParameter
   properties?: Record<string, ToolParameter>
 }
@@ -40,7 +40,7 @@ export interface Tool {
   required?: string[]
   schema?: {
     type: string
-    properties: Record<string, any>
+    properties: Record<string, unknown>
     required?: string[]
   }
 }
@@ -59,7 +59,7 @@ export interface ToolCall {
 
 export type ToolResult = {
   toolCallId: string
-  output: any
+  output: unknown
   error?: string
 }
 
@@ -85,7 +85,7 @@ export interface ToolExecutionContext {
   /**
    * Additional metadata
    */
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -95,13 +95,13 @@ export type ToolHandler = (
   /**
    * The parameters for the tool
    */
-  params: Record<string, any>,
+  params: Record<string, unknown>,
 
   /**
    * The execution context
    */
   context: ToolExecutionContext,
-) => Promise<any>
+) => Promise<unknown>
 
 /**
  * Tool definition with handler

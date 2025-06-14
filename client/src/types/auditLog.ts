@@ -7,6 +7,6 @@ export interface AuditLog {
     name: string
   }
   action: string
-  details: Record<string, any>
+  details: Record<string, unknown>
   ipAddress?: string
 }

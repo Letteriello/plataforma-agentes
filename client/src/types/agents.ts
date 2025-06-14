@@ -147,6 +147,4 @@ export type AgentUpdateDTO = z.infer<typeof AgentUpdateDTOSchema>;
 /**
  * Interface para os dados resumidos de um agente a serem exibidos no AgentCard.
  */
-export interface AgentCardData extends AgentSummaryDTO {
-  // Adicionar quaisquer propriedades específicas da UI aqui, se necessário
-}
+export type AgentCardData = AgentSummaryDTO

@@ -26,15 +26,9 @@ declare module '@/types/agents' {
 
 declare module '@/types/dashboard' {
   export type AgentStatus = 'online'|'offline'|'pending'|'error';
-  export interface Activity {
-    // Activity properties
-  }
-  export interface AgentActivityData {
-    // Agent activity data properties
-  }
-  export interface DashboardStats {
-    // Dashboard stats properties
-  }
+  export type Activity = Record<string, unknown>
+  export type AgentActivityData = Record<string, unknown>
+  export type DashboardStats = Record<string, unknown>
 }
 
 declare module '@/api/agentService' {
@@ -70,17 +64,13 @@ declare module '@/api/toolService' {
   export type ToolType = 'function'|'api'|'plugin';
   
   export interface ToolDTO extends Tool {
-    parameters?: Record<string, any>;
+    parameters?: Record<string, unknown>;
     // Additional DTO properties
   }
   
-  export interface CreateToolDTO {
-    // Create tool properties
-  }
+  export type CreateToolDTO = Record<string, unknown>
   
-  export interface UpdateToolDTO {
-    // Update tool properties
-  }
+  export type UpdateToolDTO = Record<string, unknown>
   
   export function createTool(tool: CreateToolDTO): Promise<ToolDTO>;
   export function updateTool(id: string, tool: UpdateToolDTO): Promise<ToolDTO>;
