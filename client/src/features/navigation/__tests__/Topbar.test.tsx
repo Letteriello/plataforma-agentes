@@ -2,7 +2,7 @@ import { fireEvent,render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { vi } from 'vitest'
 
-import { useAuthStore } from '@/store/authStore'
+import { useAuthStore } from '@/store' // Updated path
 
 import { Topbar } from './Topbar'
 
@@ -18,7 +18,7 @@ vi.mock('@/components/ui/theme-toggle', () => ({
   ThemeToggle: () => <button>Toggle theme</button>,
 }))
 
-vi.mock('@/store/authStore')
+vi.mock('@/features/auth/store/authStore') // Updated mock path
 vi.mock('lucide-react', async () => {
   const actual = await vi.importActual('lucide-react')
   return {

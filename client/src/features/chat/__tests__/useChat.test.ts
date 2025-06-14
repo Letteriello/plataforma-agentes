@@ -2,12 +2,12 @@ import { act, renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import chatService from '@/features/chat/services/chatService';
-import { useSessionStore } from '@/store/sessionStore';
+import { useSessionStore } from '@/features/sessions/store/sessionStore';
 import { type ChatMessage, type Session } from '@/types';
 
 import { useChat } from './useChat';
 
-vi.mock('@/store/sessionStore');
+vi.mock('@/features/sessions/store/sessionStore');
 // Correctly mock the service and the function that is actually used.
 vi.mock('@/features/chat/services/chatService', () => ({
   default: {

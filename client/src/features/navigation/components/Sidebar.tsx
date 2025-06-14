@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn, generateAvatarUrl } from '@/lib/utils'
-import { useAuthStore } from '@/store/authStore'
+import { useAuthStore } from '@/store' // Updated path
 
 interface SidebarProps {
   isCollapsed: boolean;

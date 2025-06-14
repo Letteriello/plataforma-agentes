@@ -40,24 +40,24 @@ const withSuspense = (Component: React.ComponentType) => {
 };
 
 // Lazy load pages
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const RoiDashboardPage = lazy(() => import('./pages/RoiDashboardPage'));
-const AgentsIndexPage = lazy(() => import('./pages/agents/AgentsIndexPage'));
-const NewAgentPage = lazy(() => import('./pages/agents/AgentsNewPage'));
-const EditAgentPage = lazy(() => import('./pages/agents/edit/AgentsEditEntryPage'));
-const ToolsPage = lazy(() => import('./pages/ToolsPage'));
-const ToolEditorPage = lazy(() => import('./pages/ToolEditorPage'));
-const MemoryPage = lazy(() => import('./pages/MemoryPage'));
+const Dashboard = lazy(() => import('@/features/dashboard/routes/DashboardPage'));
+const RoiDashboardPage = lazy(() => import('@/features/roi-dashboard/routes/RoiDashboardPage'));
+const AgentsIndexPage = lazy(() => import('@/features/agents/routes/AgentsIndexPage'));
+const NewAgentPage = lazy(() => import('@/features/agents/routes/AgentsNewPage'));
+const EditAgentPage = lazy(() => import('@/features/agents/routes/edit/AgentsEditEntryPage'));
+const ToolsPage = lazy(() => import('@/features/tools/routes/ToolsPage'));
+const ToolEditorPage = lazy(() => import('@/features/tools/routes/ToolEditorPage'));
+const MemoryPage = lazy(() => import('@/features/memoria/routes/MemoryPage'));
 
 // Lazy load common components
-const CofrePage = lazy(() => import('./pages/Cofre').then(module => ({ default: module.CofrePage })));
-const SettingsPage = lazy(() => import('./pages/SettingsPage'));
-const DeployPage = lazy(() => import('./pages/DeployPage'));
-const BibliotecaPage = lazy(() => import('./pages/BibliotecaPage'));
-const OrchestrationPage = lazy(() => import('./pages/OrchestrationPage'));
-const MarketplacePage = lazy(() => import('./pages/MarketplacePage'));
-const MultiAgentPage = lazy(() => import('./pages/MultiAgentPage'));
-const SimulationSandboxPage = lazy(() => import('./pages/SimulationSandboxPage'));
+const CofrePage = lazy(() => import('@/features/secrets-vault/routes/CofrePage').then(module => ({ default: module.CofrePage })));
+const SettingsPage = lazy(() => import('@/features/common/routes/SettingsPage'));
+const DeployPage = lazy(() => import('@/features/agents/routes/DeployPage'));
+const BibliotecaPage = lazy(() => import('@/features/biblioteca/routes/BibliotecaPage'));
+const OrchestrationPage = lazy(() => import('@/features/orchestration/routes/OrchestrationPage'));
+const MarketplacePage = lazy(() => import('@/features/marketplace/routes/MarketplacePage'));
+const MultiAgentPage = lazy(() => import('@/features/multi-agent/routes/MultiAgentPage'));
+const SimulationSandboxPage = lazy(() => import('@/features/simulation-sandbox/routes/SimulationSandboxPage'));
 
 const routes: AppRouteObject[] = [
   {

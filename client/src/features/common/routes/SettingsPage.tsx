@@ -4,7 +4,7 @@ import { storeSecret } from '@/features/secrets-vault/services/secretService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { useAuthStore } from '@/store/authStore'
+import { useAuthStore } from '@/store' // Updated path
 
 export default function ConfiguracoesPage() {
   const { user, setUser } = useAuthStore()

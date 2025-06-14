@@ -21,8 +21,8 @@ import {
   AGENT_STATUS_IDLE,
   AGENT_STATUS_PENDING,
   AGENT_STATUS_UNKNOWN,
-} from '../../../constants/agentStatus'
-import type { AgentStatus } from '../../../types/statusTypes' // Importando o novo tipo
+} from '@/constants/agentStatus'
+import type { AgentStatus } from '@/types/statusTypes' // Importando o novo tipo
 
 // Removida a definição local de AgentStatusType
 

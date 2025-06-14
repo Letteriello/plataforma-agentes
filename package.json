@@ -8,7 +8,16 @@
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "npm run lint --prefix client"
+    "dev": "turbo run dev",
+    "dev:client": "turbo run dev --filter=client",
+    "build": "turbo run build",
+    "build:client": "turbo run build --filter=client",
+    "lint": "turbo run lint",
+    "lint:client": "turbo run lint --filter=client",
+    "lint:server": "turbo run lint --filter=server",
+    "test": "turbo run test",
+    "test:client": "turbo run test --filter=client",
+    "sync:types": "supabase gen types typescript --project-id ai.da > client/src/types/supabase.ts"
   },
   "repository": {
     "type": "git",
@@ -21,12 +30,18 @@
     "url": "https://github.com/Letteriello/plataforma-agentes/issues"
   },
   "homepage": "https://github.com/Letteriello/plataforma-agentes#readme",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.15.30",
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "supabase": "^2.24.3",
+    "turbo": "^2.5.4"
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.7",

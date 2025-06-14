@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Route,Routes } from 'react-router-dom'; // Updated imports
 import { vi } from 'vitest';
 
-import { useAuthStore } from '@/store/authStore'; // Added
+import { useAuthStore } from '@/store'; // Updated path
 
 import { Topbar } from './Topbar';
 
@@ -19,7 +19,7 @@ vi.mock('@/components/ui/theme-toggle', () => ({
 }));
 
 // Mock useAuthStore
-vi.mock('@/store/authStore');
+vi.mock('@/features/auth/store/authStore'); // Updated mock path
 const mockUser = { name: 'Storybook User', email: 'storybook@example.com' };
 const mockLogout = () => {};
 

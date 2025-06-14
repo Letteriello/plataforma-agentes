@@ -2,12 +2,12 @@ import { fireEvent,render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { vi } from 'vitest'
 
-import { useAuthStore } from '@/store/authStore'
+import { useAuthStore } from '@/store' // Updated path
 
 import { Sidebar } from './Sidebar'
 
 // Mock the auth store
-vi.mock('@/store/authStore')
+vi.mock('@/features/auth/store/authStore') // Updated mock path
 
 // Mock lucide-react icons
 vi.mock('lucide-react', async () => {

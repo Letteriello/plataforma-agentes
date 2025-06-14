@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator' // Pode ser útil
-import { StatusBadge } from '@/components/ui/StatusBadge'
+import { StatusBadge } from '@/features/agents/components/StatusBadge' // Updated path
 
 import type { ContextPanelData, ContextPanelProperty } from '@/features/context/types'
 

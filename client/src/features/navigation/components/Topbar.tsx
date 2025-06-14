@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input'; // Added Input
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { generateAvatarUrl } from '@/lib/utils'; // Added generateAvatarUrl
-import { useAuthStore } from '@/store/authStore'; // Added useAuthStore
+import { useAuthStore } from '@/store'; // Updated path
 
 interface TopbarProps {
   pageTitle?: string;

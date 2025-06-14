@@ -2,12 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Route,Routes } from 'react-router-dom'; // Updated imports
 import { vi } from 'vitest';
 
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store'; // Updated path
 
 import { Sidebar } from './Sidebar';
 
 // Mock the auth store for Storybook
-vi.mock('@/store/authStore');
+vi.mock('@/features/auth/store/authStore'); // Updated mock path
 (useAuthStore as unknown as vi.Mock).mockReturnValue({
   user: { name: 'Storybook User', email: 'storybook@example.com' },
   logout: () => {}, // Mock logout

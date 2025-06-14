@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { useDashboardStore } from '@/store/dashboardStore'
+import { useDashboardStore } from '@/store' // Updated path
 
 export const useDashboardData = (period: string = '7d') => {
   // Select each piece of state individually to keep the snapshot stable
