@@ -1,50 +1,45 @@
-import { useEffect,useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import agentService from '@/features/agents/services/agentService';
-import type { LlmAgentConfig } from '@/types/agents';
-import { createDefaultAgent,LlmAgentConfigSchema } from '@/types/agents';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { ComponentSkeleton } from '@/components/ui/component-skeleton';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import agentService from '@/features/agents/services/agentService';
+import {
+  createDefaultAgent,
+  LlmAgentConfigSchema,
+  type LlmAgentConfig,
+} from '@/types/agents';
+
 import { AdvancedAgentForm } from './forms/AdvancedAgentForm';
 import AgentMemoryTab from './forms/AgentMemoryTab';
 import AgentToolsTab from './forms/AgentToolsTab';
-import { BaseAgentForm } from './forms/BaseAgentForm';
+import { IdentityForm } from './forms/IdentityForm';
+import { InstructionsForm } from './forms/InstructionsForm';
 import { LLMAgentForm } from './forms/LLMAgentForm';
 
 interface AgentEditorProps {
   isWizardMode?: boolean;
 }
 
-export function AgentEditor({
-  isWizardMode = false,
-}: AgentEditorProps) {
+export function AgentEditor({ isWizardMode = false }: AgentEditorProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const formMethods = useFormContext<LlmAgentConfig>();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!id);
   const [activeTab, setActiveTab] = useState('identidade');
+
+  const formMethods = useForm<LlmAgentConfig>({
+    resolver: zodResolver(LlmAgentConfigSchema),
+    defaultValues: createDefaultAgent(),
+  });
+
+  const { control, handleSubmit, reset } = formMethods;
 
   const WIZARD_STEPS = [
     'identidade',
@@ -58,21 +53,22 @@ export function AgentEditor({
 
   useEffect(() => {
     if (id) {
+      setIsLoading(true);
       agentService
         .getAgentById(id)
         .then((data) => {
           const parsedData = LlmAgentConfigSchema.parse(data);
-          formMethods.reset(parsedData);
+          reset(parsedData);
         })
         .catch(() =>
-          toast({ variant: 'destructive', title: 'Erro ao carregar o agente' })
+          toast({
+            variant: 'destructive',
+            title: 'Erro ao carregar o agente',
+          })
         )
         .finally(() => setIsLoading(false));
-    } else {
-      formMethods.reset(createDefaultAgent());
-      setIsLoading(false);
     }
-  }, [id, formMethods, toast]);
+  }, [id, reset, toast]);
 
   const handleTabChange = (newTab: string) => {
     if (!isWizardMode) {
@@ -94,13 +90,32 @@ export function AgentEditor({
 
   const handleCancel = () => navigate('/agents');
 
+  const onSubmit = async (data: LlmAgentConfig) => {
+    try {
+      setIsSubmitting(true);
+      if (id) {
+        await agentService.updateAgent(id, data);
+        toast({ title: 'Agente atualizado com sucesso!' });
+      } else {
+        await agentService.createAgent(data);
+        toast({ title: 'Agente criado com sucesso!' });
+      }
+      navigate('/agents');
+    } catch {
+
+      toast({ variant: 'destructive', title: 'Erro ao salvar o agente' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (isLoading) {
-    return <ComponentSkeleton />; // Use the new skeleton component
+    return <ComponentSkeleton />;
   }
 
   return (
-    <div className="p-6">
-      <BaseAgentForm>
+    <FormProvider {...formMethods}>
+      <form onSubmit={handleSubmit(onSubmit)} className="p-6">
         <Tabs
           value={activeTab}
           onValueChange={handleTabChange}
@@ -116,78 +131,15 @@ export function AgentEditor({
           </TabsList>
 
           <TabsContent value="identidade" forceMount>
-            <Card>
-              <CardHeader>
-                <CardTitle>Identidade do Agente</CardTitle>
-                <CardDescription>
-                  Defina o nome, a descrição e a identidade visual do seu agente.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={formMethods.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome do Agente</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Ex: Agente de Vendas" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={formMethods.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Descrição</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder="Descreva o que este agente faz."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+            <IdentityForm control={control} />
           </TabsContent>
 
           <TabsContent value="instrucoes" forceMount>
-            <Card>
-              <CardHeader>
-                <CardTitle>Instruções do Sistema</CardTitle>
-                <CardDescription>
-                  Forneça as diretrizes e o prompt principal para o agente.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={formMethods.control}
-                  name="instruction"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          rows={12}
-                          placeholder="Você é um assistente prestativo..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+            <InstructionsForm control={control} />
           </TabsContent>
 
           <TabsContent value="modelo_geracao" forceMount>
-            <LLMAgentForm disabled={isLoading} isWizardMode={isWizardMode} />
+            <LLMAgentForm disabled={isSubmitting} isWizardMode={isWizardMode} />
           </TabsContent>
 
           <TabsContent value="ferramentas" forceMount>
@@ -207,9 +159,10 @@ export function AgentEditor({
           <div>
             {isWizardMode && (
               <Button
+                type="button"
                 variant="outline"
                 onClick={handlePreviousStep}
-                disabled={currentStepIndex === 0 || isLoading}
+                disabled={currentStepIndex === 0 || isSubmitting}
                 className={currentStepIndex === 0 ? 'invisible' : ''}
               >
                 Anterior
@@ -218,34 +171,35 @@ export function AgentEditor({
           </div>
           <div className="space-x-3">
             <Button
+              type="button"
               variant="outline"
               onClick={handleCancel}
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
               Cancelar
             </Button>
             {isWizardMode ? (
               currentStepIndex === WIZARD_STEPS.length - 1 ? (
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? 'Criando...' : 'Criar Agente'}
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Criando...' : 'Criar Agente'}
                 </Button>
               ) : (
                 <Button
                   type="button"
                   onClick={handleNextStep}
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
                   Próximo
                 </Button>
               )
             ) : (
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
               </Button>
             )}
           </div>
         </div>
-      </BaseAgentForm>
-    </div>
+      </form>
+    </FormProvider>
   );
 }
