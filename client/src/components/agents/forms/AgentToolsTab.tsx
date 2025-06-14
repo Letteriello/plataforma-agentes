@@ -8,7 +8,7 @@ import { LlmAgentConfig, UiToolDefinition } from '../../../types/agents';
 import { Button } from '../../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
 import { Checkbox } from '../../ui/checkbox';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
+import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { useToast } from '../../ui/use-toast';
@@ -41,11 +41,7 @@ const transformToUiDefinition = (toolDto: ToolDTO): UiToolDefinition => {
   };
 };
 
-interface AgentToolsTabProps {
-  agentId?: string;
-}
-
-export function AgentToolsTab({ agentId }: AgentToolsTabProps) {
+export function AgentToolsTab() {
   const form = useFormContext<LlmAgentConfig>();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');

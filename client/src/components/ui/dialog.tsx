@@ -34,8 +34,9 @@ const DialogPortal: React.FC<DialogPortalProps> = ({
 DialogPortal.displayName = 'DialogPortal'
 
 // Dialog Overlay Props
-interface DialogOverlayProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> {}
+type DialogOverlayProps = React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Overlay
+>;
 
 // Dialog Overlay
 const DialogOverlay = React.forwardRef<
@@ -57,8 +58,9 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = 'DialogOverlay'
 
 // Dialog Content
-interface DialogContentProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {}
+type DialogContentProps = React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Content
+>;
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -92,7 +94,7 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = 'DialogContent'
 
 // Dialog Header
-interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 const DialogHeader: React.FC<DialogHeaderProps> = ({ className, ...props }) => (
   <div
@@ -107,7 +109,7 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({ className, ...props }) => (
 DialogHeader.displayName = 'DialogHeader'
 
 // Dialog Footer
-interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
+type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 const DialogFooter: React.FC<DialogFooterProps> = ({ className, ...props }) => (
   <div
@@ -122,8 +124,9 @@ const DialogFooter: React.FC<DialogFooterProps> = ({ className, ...props }) => (
 DialogFooter.displayName = 'DialogFooter'
 
 // Dialog Title
-interface DialogTitleProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title> {}
+type DialogTitleProps = React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Title
+>;
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -142,8 +145,9 @@ const DialogTitle = React.forwardRef<
 DialogTitle.displayName = 'DialogTitle'
 
 // Dialog Description
-interface DialogDescriptionProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description> {}
+type DialogDescriptionProps = React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Description
+>;
 
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,

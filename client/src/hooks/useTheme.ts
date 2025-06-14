@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 
 import { theme } from '@/theme'
 
@@ -17,13 +16,13 @@ export const useTheme = (): Theme => {
  * @param path Dot notation path to the theme value (e.g., 'colors.primary')
  * @returns The theme value or undefined if not found
  */
-export const useThemeValue = <T = any>(path: string): T | undefined => {
-  const theme = useTheme()
+export const useThemeValue = <T = unknown>(path: string): T | undefined => {
+  const themeObj = useTheme()
 
   // Split the path into parts and traverse the theme object
-  return path.split('.').reduce((obj, key) => {
-    return obj && obj[key as keyof typeof obj]
-  }, theme as any) as T
+  return path.split('.').reduce((obj: unknown, key) => {
+    return obj && (obj as Record<string, unknown>)[key]
+  }, themeObj as Record<string, unknown>) as T
 }
 
 export default useTheme

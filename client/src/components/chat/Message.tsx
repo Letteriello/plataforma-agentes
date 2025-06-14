@@ -46,10 +46,10 @@ const Message: React.FC<MessageProps> = ({
                 <Zap className="mr-2 h-3 w-3 text-yellow-500" />
                 Iniciando a tarefa: Análise de Mercado
               </p>
-              <p className="text-xs flex items-center">
-                <Wrench className="mr-2 h-3 w-3 text-blue-500" />
-                Usando ferramenta: 'Web Search'
-              </p>
+                <p className="text-xs flex items-center">
+                  <Wrench className="mr-2 h-3 w-3 text-blue-500" />
+                  Usando ferramenta: &quot;Web Search&quot;
+                </p>
               <p className="text-xs flex items-center">
                 <Check className="mr-2 h-3 w-3 text-green-500" />
                 Ferramenta executada com sucesso.

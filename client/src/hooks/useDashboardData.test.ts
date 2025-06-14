@@ -22,7 +22,7 @@ describe('useDashboardData', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     ;(useDashboardStore as unknown as vi.Mock).mockImplementation(
-      (selector: any) => selector(storeState),
+      (selector: (state: typeof storeState) => unknown) => selector(storeState),
     )
   })
 
