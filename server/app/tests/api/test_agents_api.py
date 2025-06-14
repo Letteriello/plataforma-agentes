@@ -149,3 +149,19 @@ async def test_delete_agent_other_user_forbidden(async_client: AsyncClient, test
 # - Testes para superusuário tentando modificar/deletar agentes de outros usuários (deve ser permitido).
 # - Testar tool_ids na criação e atualização de agentes.
 
+
+@pytest.mark.asyncio
+async def test_create_agent_invalid_temperature(async_client: AsyncClient, test_user_token_headers: dict):
+    if "FAKE_USER_TOKEN" in test_user_token_headers.get("Authorization", ""):
+        pytest.skip("Skipping test, real token not available for test_user_token_headers")
+
+    agent_data = {
+        "name": f"BadTempAgent-{uuid.uuid4()}",
+        "model": "test-model",
+        "instruction": "temp",
+        "temperature": 2.5,
+    }
+
+    response = await async_client.post("/api/v1/agents/", json=agent_data, headers=test_user_token_headers)
+    assert response.status_code == 422
+

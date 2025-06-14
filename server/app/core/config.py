@@ -1,4 +1,7 @@
-from pydantic_settings import BaseSettings
+try:
+    from pydantic_settings import BaseSettings  # Pydantic v2
+except ModuleNotFoundError:  # Fallback for environments without pydantic_settings
+    from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "ai.da Platform API"

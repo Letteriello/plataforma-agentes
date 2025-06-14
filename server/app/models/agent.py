@@ -7,8 +7,8 @@ from ..schemas.tool_schemas import ToolResponseSchema # Import ToolResponseSchem
 class Agent(BaseModel):
     id: Optional[str] = None
     user_id: Optional[str] = None 
-    createdAt: Optional[str] = None # Alias for created_at
-    updatedAt: Optional[str] = None # Alias for updated_at
+    created_at: Optional[str] = Field(default=None, alias="createdAt")
+    updated_at: Optional[str] = Field(default=None, alias="updatedAt")
 
     name: str
     description: Optional[str] = None
