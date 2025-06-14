@@ -33,7 +33,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
-import { executeWorkflow,saveWorkflow } from '@/services/workflowService';
+import { executeWorkflow,saveWorkflow } from '@/api/workflowService';
 
 const initialNodes: Node[] = [
   {

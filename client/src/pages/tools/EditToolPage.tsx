@@ -6,7 +6,7 @@ import { ToolForm, ToolFormValues } from '@/components/tools/ToolForm';
 import { LoadingSpinner } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { getToolById, Tool,updateTool } from '@/services/toolService';
+import { getToolById, Tool,updateTool } from '@/api/toolService';
 
 export const EditToolPage: React.FC = () => {
   const { toolId } = useParams<{ toolId: string }>();

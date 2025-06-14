@@ -1,6 +1,6 @@
 import { RoiMetricsResponse, RoiTimeSeriesResponse } from '@/types/common';
 
-import { apiClient } from './apiClient';
+import apiClient from './apiClient';
 
 const API_URL = '/dashboard';
 

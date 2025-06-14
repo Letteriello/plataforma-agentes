@@ -1,11 +1,11 @@
 import { act,renderHook } from '@testing-library/react'
 import { vi } from 'vitest'
 
-import { useDashboardStore } from '@/store/dashboardStore'
+import { useDashboardStore } from '@/features/dashboard/store/dashboardStore'
 
 import { useDashboardData } from './useDashboardData'
 
-vi.mock('@/store/dashboardStore')
+vi.mock('@/features/dashboard/store/dashboardStore')
 
 const mockLoadDashboardData = vi.fn()
 const storeState = {

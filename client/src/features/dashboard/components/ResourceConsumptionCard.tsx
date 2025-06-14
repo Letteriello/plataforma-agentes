@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  LoadingSpinner,
+  ComponentSkeleton,
 } from '@/components/ui'
 import { Progress } from '@/components/ui/progress'
 
@@ -30,8 +30,8 @@ export function ResourceConsumptionCard({
         {error ? (
           <p className="text-sm text-destructive text-center py-4">{error}</p>
         ) : isLoading ? (
-          <div className="flex justify-center py-4">
-            <LoadingSpinner />
+          <div className="py-4">
+            <ComponentSkeleton lines={2} />
           </div>
         ) : (
           <>

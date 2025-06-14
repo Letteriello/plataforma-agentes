@@ -4,13 +4,13 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { beforeEach,describe, expect, it, vi } from 'vitest'
 
 import { ToolDTO } from '@/features/tools/services/toolService'
-import { useToolStore } from '@/store/toolStore'
+import { useToolStore } from '@/features/tools/store/toolStore'
 // Types are declared globally in vite-env.d.ts
 
 import AgentToolsTab from './AgentToolsTab'
 
 // Mock o store do Zustand
-vi.mock('@/store/toolStore')
+vi.mock('@/features/tools/store/toolStore')
 
 const mockTools: ToolDTO[] = [
   { id: 'web_search', name: 'Web Search', description: 'Search the web' },

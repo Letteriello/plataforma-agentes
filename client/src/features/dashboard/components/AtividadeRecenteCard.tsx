@@ -5,7 +5,7 @@ import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
 import { ComponentSkeleton } from '@/components/ui'
 import { Card, CardContent,CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import type { Activity } from '@/store/dashboardStore'
+import type { Activity } from '@/features/dashboard/store/dashboardStore'
 
 const activityIcons: Record<Activity['type'], React.ReactElement> = {
   info: <Info className="h-4 w-4" />,

@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { ErrorBoundary } from '@/features/common/components/ErrorBoundary';
 import {
   createBrowserRouter,
   Navigate,
@@ -33,9 +34,11 @@ type AppRouteObject = AppNonIndexRouteProps | AppIndexRouteProps;
 // Lazy load components with proper error boundaries
 const withSuspense = (Component: React.ComponentType) => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Component />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Component />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 

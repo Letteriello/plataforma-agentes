@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useChatStore } from '@/store/chatStore'
+import { useChatStore } from '@/features/chat/store/chatStore'
 
 import { ConversationList } from './ConversationList'
 

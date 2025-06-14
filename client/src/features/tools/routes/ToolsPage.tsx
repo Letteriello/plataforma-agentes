@@ -2,7 +2,7 @@ import { Edit,MoreHorizontal, PlusCircle, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { LoadingSpinner } from '@/components/ui';
+import { ComponentSkeleton } from '@/components/ui';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,7 +29,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
-import { deleteTool, getTools, Tool } from '@/services/toolService';
+import { deleteTool, getTools, Tool } from '@/api/toolService';
 
 export const ToolsPage: React.FC = () => {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -85,8 +85,8 @@ export const ToolsPage: React.FC = () => {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex justify-center items-center h-64">
-          <LoadingSpinner />
+        <div className="p-6">
+          <ComponentSkeleton className="h-64 w-full" />
         </div>
       );
     }

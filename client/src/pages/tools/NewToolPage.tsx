@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToolForm, ToolFormValues } from '@/components/tools/ToolForm';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { createTool } from '@/services/toolService';
+import { createTool } from '@/api/toolService';
 
 export const NewToolPage: React.FC = () => {
   const navigate = useNavigate();

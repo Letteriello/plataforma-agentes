@@ -5,7 +5,7 @@ import { Controller,useFieldArray, useForm } from 'react-hook-form';
 import { useNavigate,useParams } from 'react-router-dom';
 import * as z from 'zod';
 
-import { LoadingSpinner } from '@/components/ui';
+import { ComponentSkeleton } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription,CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { createTool, getToolById, Tool, ToolCreateSchema, ToolUpdateSchema,updateTool } from '@/services/toolService';
+import { createTool, getToolById, Tool, ToolCreateSchema, ToolUpdateSchema,updateTool } from '@/api/toolService';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'O nome do parâmetro é obrigatório.'),
@@ -112,7 +112,7 @@ const ToolEditorPage: React.FC = () => {
   };
 
   if (isEditMode && form.formState.isLoading) {
-    return <LoadingSpinner />; 
+    return <ComponentSkeleton className="h-40 w-full" />;
   }
 
   return (

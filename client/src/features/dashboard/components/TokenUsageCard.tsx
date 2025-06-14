@@ -14,7 +14,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  LoadingSpinner,
+  ComponentSkeleton,
 } from '@/components/ui'
 import type { TokenUsageCardProps, TokenUsageData } from '@/features/dashboard/types';
 
@@ -56,8 +56,8 @@ export function TokenUsageCard({
         {error ? (
           <p className="text-sm text-destructive text-center py-4">{error}</p>
         ) : isLoading ? (
-          <div className="flex justify-center py-4">
-            <LoadingSpinner />
+          <div className="py-4">
+            <ComponentSkeleton lines={4} />
           </div>
         ) : (
           <Line data={chartData} />

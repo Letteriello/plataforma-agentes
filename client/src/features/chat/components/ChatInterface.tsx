@@ -12,7 +12,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast'; // Import useToast
-import { useChatStore } from '@/store/chatStore'
+import { useChatStore } from '@/features/chat/store/chatStore'
 
 import { AgentWorkspace } from './AgentWorkspace'
 import { ChatHeader } from './ChatHeader'
