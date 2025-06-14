@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { deleteAgent,fetchAgents } from '@/api/agentService' // This line was correct
-import { AgentDTO } from '@/api/agentService'
-import { agentsSelector, loadAgents } from '@/store/agentSelectors' // This line was correct
+import { deleteAgent, fetchAgents } from '@/api/agentService'
+import { AgentSummaryDTO } from '@/api/agentService'
+import type { AnyAgentConfig } from '@/types/agents'
 import { useAgentStore } from '@/store/agentStore'
 
 export interface UseAgentsReturn {
-  agents: AgentDTO[] | undefined
+  agents: AgentSummaryDTO[] | undefined
   isLoading: boolean
   error: Error | null
   remove: (id: string) => Promise<void>
@@ -16,11 +16,11 @@ export const useAgents = (): UseAgentsReturn => {
   const { agents, loadAgents } = useAgentStore()
   const queryClient = useQueryClient()
 
-  const { isLoading, error } = useQuery<AgentDTO[], Error>({
+  const { isLoading, error } = useQuery<AgentSummaryDTO[], Error>({
     queryKey: ['agents'],
     queryFn: async () => {
       const data = await fetchAgents()
-      loadAgents(data as any)
+      loadAgents(data as unknown as AnyAgentConfig[])
       return data
     },
   })
@@ -31,7 +31,7 @@ export const useAgents = (): UseAgentsReturn => {
   })
 
   return {
-    agents: agents as unknown as AgentDTO[],
+    agents: agents as unknown as AgentSummaryDTO[],
     isLoading: isLoading || removing,
     error: error || null,
     remove,

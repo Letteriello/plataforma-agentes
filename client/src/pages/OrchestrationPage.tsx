@@ -196,7 +196,6 @@ const OrchestrationPage: React.FC = () => {
     };
 
     const workflowTree = buildWorkflowTree();
-    console.log('Enviando para a API:', JSON.stringify(workflowTree, null, 2));
 
     try {
       const response = await saveWorkflow(workflowTree);

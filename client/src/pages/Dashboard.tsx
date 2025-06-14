@@ -68,7 +68,6 @@ const Dashboard: React.FC = () => {
 
   const handlePeriodChange = React.useCallback((newPeriod: string) => {
     // In a real app, this would update the period in the URL or state
-    console.log('Period changed to:', newPeriod)
   }, [])
 
   // Os agentes agora são fornecidos pelos hooks (via useDashboardMetrics)

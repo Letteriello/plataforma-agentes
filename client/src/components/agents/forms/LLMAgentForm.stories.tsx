@@ -33,8 +33,7 @@ const meta: Meta<typeof LLMAgentForm> = {
       })
 
       const onSubmit = (data: LLMAgent) => {
-        console.log('Form Submitted', data)
-        alert('Dados do formulário logados no console. Veja a aba "Actions".')
+        alert('Dados do formul\u00e1rio logados no console. Veja a aba "Actions".')
       }
 
       return (

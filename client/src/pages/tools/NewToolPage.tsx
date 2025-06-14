@@ -29,7 +29,7 @@ export const NewToolPage: React.FC = () => {
         description: 'A nova ferramenta foi criada com sucesso.',
       });
       navigate('/tools');
-    } catch (error) {
+    } catch {
       toast({
         title: 'Erro',
         description: 'Não foi possível criar a ferramenta. Verifique os dados e tente novamente.',

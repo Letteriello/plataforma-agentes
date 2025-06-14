@@ -18,12 +18,12 @@ interface MeusAgentesCardProps {
   error?: string | null
 }
 
-const statusVariantMap = {
+const statusVariantMap: Record<string, BadgeVariant> = {
   online: 'success',
   busy: 'warning',
   offline: 'outline',
   error: 'destructive',
-} as const
+}
 
 const typeIconMap = {
   llm: '🤖',
@@ -75,12 +75,15 @@ export function MeusAgentesCard({
         ) : (
           <ScrollArea className="h-72 pr-4">
             <div className="space-y-3">
-              {agents.map((agent) => (
-                <div
-                  key={agent.id}
-                  className="flex items-center p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                  onClick={() => onAgentClick(agent)}
-                >
+                {agents.map((agent) => (
+                  <div
+                    key={agent.id}
+                    role="button"
+                    tabIndex={0}
+                    className="flex items-center p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                    onClick={() => onAgentClick(agent)}
+                    onKeyDown={(e) => e.key === 'Enter' && onAgentClick(agent)}
+                  >
                   <Avatar className="h-9 w-9 mr-3">
                     <AvatarFallback>{typeIconMap[agent.type]}</AvatarFallback>
                   </Avatar>
@@ -90,7 +93,7 @@ export function MeusAgentesCard({
                         {agent.name}
                       </p>
                       <Badge
-                        variant={statusVariantMap[agent.status] as any}
+                        variant={statusVariantMap[agent.status]}
                         className="text-xs"
                       >
                         {agent.status === 'online'

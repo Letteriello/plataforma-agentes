@@ -10,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 interface UploadDocumentDialogProps {
@@ -91,14 +90,17 @@ export function UploadDocumentDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                isUploading
-                  ? 'cursor-not-allowed bg-muted/20'
-                  : 'cursor-pointer hover:bg-muted/50'
-              } transition-colors`}
-              onClick={triggerFileInput}
-            >
+          <div
+            role="button"
+            tabIndex={0}
+            className={`border-2 border-dashed rounded-lg p-6 text-center ${
+              isUploading
+                ? 'cursor-not-allowed bg-muted/20'
+                : 'cursor-pointer hover:bg-muted/50'
+            } transition-colors`}
+            onClick={triggerFileInput}
+            onKeyDown={(e) => e.key === 'Enter' && triggerFileInput()}
+          >
               <input
                 type="file"
                 ref={fileInputRef}

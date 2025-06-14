@@ -38,7 +38,7 @@ vi.mock('lucide-react', async () => {
 describe('Sidebar', () => {
   beforeEach(() => {
     // Provide a mock implementation for the store
-    ;(useAuthStore as any).mockReturnValue({
+    ;(useAuthStore as unknown as vi.Mock).mockReturnValue({
       user: { name: 'Test User', email: 'test@example.com' },
     })
   })

@@ -29,7 +29,7 @@ describe('agentStore', () => {
     if (!global.crypto) {
       global.crypto = {
         randomUUID: () => Math.random().toString(36).substring(2, 15),
-      } as any
+      } as unknown as Crypto
     }
   })
 
@@ -79,7 +79,7 @@ describe('agentStore', () => {
     // Mock crypto.randomUUID for predictable ID if agent has no ID
     const mockUUID = 'mock-uuid-123'
     const originalRandomUUID = crypto.randomUUID
-    ;(global.crypto as any).randomUUID = vi.fn(() => mockUUID)
+    ;(global.crypto as unknown as { randomUUID: () => string }).randomUUID = vi.fn(() => mockUUID)
 
     addAgent(newAgentData as AnyAgentConfig)
 
@@ -105,7 +105,7 @@ describe('agentStore', () => {
       agentWithId,
     )
 
-    ;(global.crypto as any).randomUUID = originalRandomUUID // Restore
+    ;(global.crypto as unknown as { randomUUID: () => string }).randomUUID = originalRandomUUID // Restore
   })
 
   it('removeAgent should remove an agent by ID', () => {
@@ -137,9 +137,6 @@ describe('agentStore', () => {
   it('removeAgent should not affect activeAgent if a different agent is removed', () => {
     const { removeAgent, setActiveAgent } = useAgentStore.getState()
     if (mockInitialAgents.length < 2) {
-      console.warn(
-        'Skipping test: removeAgent needs at least 2 initial agents for this specific scenario.',
-      )
       return // Skip if not enough agents
     }
     const activeAgentToKeep = mockInitialAgents[0]

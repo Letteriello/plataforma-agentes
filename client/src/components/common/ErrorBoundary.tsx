@@ -13,10 +13,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Futuro: enviar log para serviço externo
-    if (process.env.NODE_ENV !== 'production') {
-       
-      console.error(error, info)
-    }
   }
   render() {
     if (this.state.hasError) {
