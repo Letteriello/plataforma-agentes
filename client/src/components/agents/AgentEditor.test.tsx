@@ -18,7 +18,7 @@ vi.mock('@/components/ui/use-toast', () => ({
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal()
   return {
-    // @ts-expect-error -- useNavigate's actual type isn't needed for this mock
+    // @ts-ignore
     ...actual, // import and retain default behavior
     useNavigate: () => vi.fn(),
     useParams: () => ({ id: undefined }), // Mock for 'create' mode

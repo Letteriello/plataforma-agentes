@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { HelpCircle, X } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -34,7 +35,12 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-// Tooltip components are not currently used
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { LLMAgent } from '@/types/agents';
 

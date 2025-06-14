@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import React, { useEffect } from 'react';
-import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler,useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 
@@ -145,7 +145,7 @@ export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialD
           if (param.paramType === 'NUMBER') adkDefaultValue = parseFloat(param.paramDefaultValue);
           else if (param.paramType === 'BOOLEAN') adkDefaultValue = param.paramDefaultValue.toLowerCase() === 'true';
           else if (param.paramType === 'OBJECT' || param.paramType === 'ARRAY') {
-            try { adkDefaultValue = JSON.parse(param.paramDefaultValue); } catch { /* keep as string if parse fails */ }
+            try { adkDefaultValue = JSON.parse(param.paramDefaultValue); } catch (e) { /* keep as string if parse fails */ }
           }
         }
 
@@ -155,7 +155,7 @@ export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialD
             if (param.paramType === 'NUMBER') return parseFloat(enumStr);
             if (param.paramType === 'BOOLEAN') return enumStr.toLowerCase() === 'true';
             if (param.paramType === 'OBJECT' || param.paramType === 'ARRAY') {
-              try { return JSON.parse(enumStr); } catch { return enumStr; }
+              try { return JSON.parse(enumStr); } catch (e) { return enumStr; }
             }
             return enumStr;
           });
@@ -189,7 +189,7 @@ export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialD
         <CardTitle>Configurar Ferramenta: {methods.watch('name') || initialData?.name || 'Nova Ferramenta'}</CardTitle>
         <CardDescription>
           Defina nome, descrição e parâmetros para esta ferramenta, seguindo as especificações do Google ADK.
-          A função &quot;execute&quot; será definida no backend.
+          A função 'execute' será definida no backend.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -345,7 +345,7 @@ export const ToolDefinitionForm: React.FC<ToolDefinitionFormProps> = ({ initialD
               </Button>
               {fields.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Nenhum parâmetro definido. Clique em &quot;Adicionar Parâmetro&quot; para começar.
+                  Nenhum parâmetro definido. Clique em "Adicionar Parâmetro" para começar.
                 </p>
               )}
             </div>

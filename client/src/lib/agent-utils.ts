@@ -71,24 +71,22 @@ export function validateAgent(agent: Agent): {
 
   // Type-specific validations
   switch (agent.type) {
-    case 'llm': {
+    case 'llm':
       const llmAgent = agent as LLMAgent
       if (!llmAgent.instruction?.trim()) {
         errors.push('Instructions are required for LLM agents')
       }
       break
-    }
 
     case 'sequential':
-    case 'parallel': {
+    case 'parallel':
       const workflowAgent = agent as SequentialAgent | ParallelAgent
       if (!workflowAgent.agents?.length) {
         errors.push('Workflow must contain at least one agent')
       }
       break
-    }
 
-    case 'a2a': {
+    case 'a2a':
       const a2aAgent = agent as A2AAgent
       try {
         new URL(a2aAgent.endpoint)
@@ -96,7 +94,6 @@ export function validateAgent(agent: Agent): {
         errors.push('A valid endpoint URL is required for A2A agents')
       }
       break
-    }
   }
 
   return {
@@ -108,10 +105,8 @@ export function validateAgent(agent: Agent): {
 /**
  * Get the default configuration for a tool based on its schema
  */
-export function getDefaultToolConfig(
-  parameters: Array<{ name: string; type: string; default?: unknown; required?: boolean }>
-): Record<string, unknown> {
-  const config: Record<string, unknown> = {}
+export function getDefaultToolConfig(parameters: any[]): Record<string, any> {
+  const config: Record<string, any> = {}
 
   parameters.forEach((param) => {
     if (param.default !== undefined) {
@@ -145,7 +140,7 @@ export function getDefaultToolConfig(
  * Format an agent's configuration for display
  */
 export function formatAgentConfig(agent: Agent): string {
-  const config: Record<string, unknown> = { ...agent }
+  const config: Record<string, any> = { ...agent }
 
   // Remove internal fields
   const internalFields = ['id', 'createdAt', 'updatedAt', 'version']

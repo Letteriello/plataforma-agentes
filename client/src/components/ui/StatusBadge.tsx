@@ -10,7 +10,7 @@ import {
   Rocket,
 } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
+import { Badge, type BadgeProps } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 import {

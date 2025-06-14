@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { Plus,X } from 'lucide-react'
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
@@ -97,7 +97,7 @@ export function TagInput({
     inputClassName,
   )
 
-  const tagClasses = () =>
+  const tagClasses = (index: number) =>
     cn(
       'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium',
       'bg-primary/10 text-primary',
@@ -110,23 +110,13 @@ export function TagInput({
     <div
       className={containerClasses}
       onClick={() => !disabled && inputRef.current?.focus()}
-      onKeyDown={(e) => {
-        if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
-          inputRef.current?.focus();
-        }
-      }}
-      role="button"
-      tabIndex={0}
       {...props}
     >
       {tags.map((tag, index) => (
         <div
           key={`${tag}-${index}`}
-          className={tagClasses()}
+          className={tagClasses(index)}
           onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
-          role="button"
-          tabIndex={0}
         >
           <span>{tag}</span>
           {!disabled && (

@@ -107,7 +107,3 @@ export const Multiple: Story = {
           <AccordionTrigger>{item.question}</AccordionTrigger>
           <AccordionContent>{item.answer}</AccordionContent>
         </AccordionItem>
-      ))}
-    </Accordion>
-  ),
-};

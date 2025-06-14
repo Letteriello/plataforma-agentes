@@ -33,7 +33,7 @@ const mockAgentNavigationItems = [
 
 describe('AgentSubNav', () => {
   const renderAgentSubNav = (currentPath: string) => {
-    (useLocation as vi.Mock).mockReturnValue({ pathname: currentPath });
+    (useLocation as any).mockReturnValue({ pathname: currentPath });
     return render(
       <MemoryRouter initialEntries={[currentPath]}>
         <AgentSubNav />

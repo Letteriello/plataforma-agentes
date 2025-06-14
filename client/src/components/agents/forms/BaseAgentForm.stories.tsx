@@ -13,6 +13,8 @@ const DemoSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
 });
 
+type DemoFormValues = z.infer<typeof DemoSchema>;
+
 const meta: Meta<typeof BaseAgentForm> = {
   title: 'Agents/Forms/BaseAgentForm',
   component: BaseAgentForm,

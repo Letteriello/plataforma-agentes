@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormProvider,useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-
+import { AnyAgentConfig as BaseAgent, LlmAgentConfigSchema as BaseAgentSchema } from '../../../types/agents'
 import { Button } from '../../ui/button'
 import { Form } from '../../ui/form'
 
@@ -29,7 +29,7 @@ export function BaseAgentForm<T extends z.ZodType>({
 }: BaseAgentFormProps<T>) {
   const form = useForm<z.infer<T>>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues as z.infer<T>,
+    defaultValues: defaultValues as any,
   })
 
   return (
