@@ -47,7 +47,7 @@ export function CofrePage() {
       const data = await listSecrets();
       setSecrets(data);
       setError(null);
-    } catch (err) {
+    } catch {
       const errorMessage = 'Falha ao carregar as credenciais.';
       setError(errorMessage);
       toast({ variant: 'destructive', title: 'Erro', description: errorMessage });
@@ -72,7 +72,7 @@ export function CofrePage() {
       setNewSecret({ name: '', value: '' });
       setIsDialogOpen(false);
       fetchSecrets(); // Refresh list
-    } catch (err) {
+    } catch {
       toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível salvar a credencial.' });
     }
   };
@@ -84,7 +84,7 @@ export function CofrePage() {
       await deleteSecret(secretName);
       toast({ title: 'Sucesso', description: `Credencial "${secretName}" excluída.` });
       fetchSecrets(); // Refresh list
-    } catch (err) {
+    } catch {
       toast({ variant: 'destructive', title: 'Erro', description: 'Não foi possível excluir a credencial.' });
     }
   };

@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Route,Routes } from 'react-router-dom';
 
-import { Sidebar } from '@/components/navigation/Sidebar'; // Actual Sidebar
-import { Topbar } from '@/components/navigation/Topbar'; // Actual Topbar for realistic rendering
-
 import MainLayout from './MainLayout';
 
 const meta: Meta<typeof MainLayout> = {

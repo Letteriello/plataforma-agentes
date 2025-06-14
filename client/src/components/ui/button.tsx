@@ -9,7 +9,6 @@ import { buttonVariants } from './button-variants'
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
   isLoading?: boolean
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
@@ -21,7 +20,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant,
       size,
-      asChild = false,
+      
       isLoading = false,
       disabled = false,
       children,

@@ -1,6 +1,5 @@
 import {
   Bell,
-  ChevronDown,
   HelpCircle,
   LogOut,
   Search,

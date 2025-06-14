@@ -24,7 +24,7 @@ const RoiDashboardPage: React.FC = () => {
         setTimeSeries(timeSeriesData);
       } catch (err) {
         setError('Falha ao carregar os dados do dashboard.');
-        console.error(err);
+        void console.error(err);
       } finally {
         setLoading(false);
       }

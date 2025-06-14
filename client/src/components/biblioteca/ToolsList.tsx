@@ -15,10 +15,10 @@ interface ToolsListProps {
 export const ToolsList: React.FC<ToolsListProps> = ({ onEditTool, refreshTrigger }) => {
   const [tools, setTools] = useState<ToolDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [limitPerPage, setLimitPerPage] = useState(10);
-  const [totalTools, setTotalTools] = useState(0);
+  const [limitPerPage] = useState(10);
+  const [, setTotalTools] = useState(0);
   const [toolToDelete, setToolToDelete] = useState<ToolDTO | null>(null);
 
   const fetchTools = useCallback(async (page = 0, limit = 10) => {

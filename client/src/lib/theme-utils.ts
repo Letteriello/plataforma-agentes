@@ -6,14 +6,14 @@ import { theme } from '@/theme'
  * @param defaultValue Fallback value if the path doesn't exist
  * @returns The theme value or the default value
  */
-export const getThemeValue = <T = any>(
+export const getThemeValue = <T = unknown>(
   path: string,
   defaultValue?: T,
 ): T | undefined => {
   // Split the path into parts and traverse the theme object
   const result = path.split('.').reduce((obj, key) => {
     return obj && obj[key as keyof typeof obj]
-  }, theme as any)
+  }, theme as Record<string, unknown>)
 
   return result !== undefined ? result : defaultValue
 }
@@ -34,10 +34,10 @@ export const themeVar = (path: string, prefix = '--nexus'): string => {
  * @param property CSS property to apply the values to
  * @returns Responsive style object
  */
-export const responsiveStyle = <T = any>(
+export const responsiveStyle = <T = unknown>(
   values: Record<string, T>,
   property: string,
-): Record<string, any> => {
+): Record<string, unknown> => {
   const breakpoints = {
     sm: '640px',
     md: '768px',
@@ -46,7 +46,7 @@ export const responsiveStyle = <T = any>(
     '2xl': '1536px',
   }
 
-  const result: Record<string, any> = {}
+  const result: Record<string, unknown> = {}
 
   // Add base styles (if 'base' is provided)
   if ('base' in values) {

@@ -25,7 +25,7 @@ const createTestQueryClient = () => new QueryClient({
   },
 });
 
-const renderWithClient = (client: QueryClient, hook: () => any) => {
+const renderWithClient = <T,>(client: QueryClient, hook: () => T) => {
   return renderHook(hook, {
     wrapper: ({ children }) => (
       <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -71,7 +71,7 @@ describe('useAgents hook', () => {
     // The hook itself returns the agents from the store, so we check what the store is set to provide
     mockAgentsSelector.mockReturnValueOnce(expectedAgents); // Simulate store updated after loadAgents
     // Re-rendering the hook to get updated state after store change
-    const { result: resultAfterLoad } = renderWithClient(testQueryClient, () => useAgents());
+  renderWithClient(testQueryClient, () => useAgents());
     // This re-render is a bit artificial for a hook test.
     // A better way is to test a component that USES useAgents.
     // For the hook, we've tested that loadAgents is called with the correct data.

@@ -78,7 +78,7 @@ export const DashboardSidebar = ({ isOpen, onToggle }: DashboardSidebarProps) =>
   const handleNavigation = (title: string, href: string) => {
     setActiveItem(title);
     // Here you would typically use a router to navigate
-    console.log(`Navigating to ${href}`);
+    // navigate to href
   };
 
   return (
@@ -197,7 +197,7 @@ export const DashboardSidebar = ({ isOpen, onToggle }: DashboardSidebarProps) =>
                 className="h-8 w-8"
                 onClick={() => {
                   // Handle user menu toggle
-                  console.log('Toggle user menu');
+                  // Toggle user menu
                 }}
               >
                 <ChevronDown className="h-4 w-4" />

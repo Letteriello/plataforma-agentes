@@ -21,10 +21,10 @@ vi.mock('@/components/ui/theme-toggle', () => ({
 // Mock useAuthStore
 vi.mock('@/store/authStore');
 const mockUser = { name: 'Storybook User', email: 'storybook@example.com' };
-const mockLogout = () => console.log('Logout action triggered in Storybook');
+const mockLogout = () => {};
 
 // Mock useNavigate
-const mockNavigateFn = () => console.log('Navigate action triggered');
+const mockNavigateFn = () => {};
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
@@ -53,7 +53,7 @@ type Story = StoryObj<typeof Topbar>;
 // Decorator to wrap stories with necessary providers
 const TopbarDecorator = (StoryComponent: React.ElementType) => {
   // Setup the mock return value before each story that needs it
-  (useAuthStore as any).mockReturnValue({
+  (useAuthStore as unknown as vi.Mock).mockReturnValue({
     user: mockUser,
     logout: mockLogout,
   });
@@ -86,7 +86,7 @@ export const WithAnonymousUser: Story = {
   },
   decorators: [
     (StoryComponent) => {
-      (useAuthStore as any).mockReturnValue({
+      (useAuthStore as unknown as vi.Mock).mockReturnValue({
         user: null, // Simulate anonymous user
         logout: mockLogout,
       });

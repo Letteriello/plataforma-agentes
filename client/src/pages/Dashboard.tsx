@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 // Icons
 import { Bot, Clock,MessageSquare, TrendingUp } from 'lucide-react'
 import React from 'react'
@@ -12,7 +11,11 @@ import { TokenUsageCard } from '@/features/dashboard/components/TokenUsageCard'
 import { useDashboard } from '@/hooks/useDashboard'
 import { useDashboardMetrics } from '@/hooks/useDashboardMetrics'
 // Types
+<<<<<<< HEAD
 import { DashboardStats } from '@/features/dashboard/types'
+=======
+import { DashboardStats } from '@/types/dashboard.types'
+>>>>>>> 16a3fd56be1a34e150431c0255ab52e709cef38b
 // Removido: mock data agora é fornecido pelos hooks personalizados
 // Utils
 import { formatTokenNumber } from '@/utils/dashboardUtils'
@@ -24,7 +27,11 @@ const Dashboard: React.FC = () => {
   const {
     stats: metricsStats,
     tokenMetrics,
+<<<<<<< HEAD
   } = useDashboardMetrics(agents, tokenUsage);
+=======
+  } = useDashboardMetrics(mockAgentsData, mockTokenUsageData)
+>>>>>>> 16a3fd56be1a34e150431c0255ab52e709cef38b
 
   // Combina os dados de stats vindos dos hooks
   const combinedStats: DashboardStats | null = React.useMemo(() => {
@@ -44,10 +51,13 @@ const Dashboard: React.FC = () => {
     refresh()
   }, [refresh])
 
+<<<<<<< HEAD
   
+=======
+  }, [])
+>>>>>>> 16a3fd56be1a34e150431c0255ab52e709cef38b
 
   // Os agentes agora são fornecidos pelos hooks (via useDashboardMetrics)
-  // Se necessário, pode-se filtrar agentMetrics.agents diretamente
 
   return (
     <>

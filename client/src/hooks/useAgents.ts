@@ -30,7 +30,7 @@ export const useAgents = (): UseAgentsReturn => {
       const fetchedAgents = await agentService.fetchAgents();
       setAgents(fetchedAgents);
     } catch (err) {
-      console.error("Failed to fetch agents:", err);
+      void console.error("Failed to fetch agents:", err);
       setError(err instanceof Error ? err : new Error('Failed to fetch agents'));
       setAgents([]); // Limpa agentes em caso de erro
     } finally {

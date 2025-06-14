@@ -8,9 +8,9 @@ import { Sidebar } from './Sidebar';
 
 // Mock the auth store for Storybook
 vi.mock('@/store/authStore');
-(useAuthStore as any).mockReturnValue({
+(useAuthStore as unknown as vi.Mock).mockReturnValue({
   user: { name: 'Storybook User', email: 'storybook@example.com' },
-  logout: () => console.log('Logout action triggered in Storybook'), // Add mock logout
+  logout: () => {}, // Mock logout
 });
 
 const meta: Meta<typeof Sidebar> = {
@@ -37,8 +37,8 @@ const SidebarDecorator = (StoryComponent: React.ElementType, initialRoute: strin
 export const Expanded: Story = {
   args: {
     isCollapsed: false,
-    onMouseEnter: () => console.log('Mouse enter'),
-    onMouseLeave: () => console.log('Mouse leave'),
+    onMouseEnter: () => {},
+    onMouseLeave: () => {},
   },
   decorators: [(Story) => SidebarDecorator(Story, '/dashboard')], // Show "Painel" as active
 };
@@ -53,8 +53,8 @@ export const ExpandedActiveAgents: Story = { // New story for a different active
 export const Collapsed: Story = {
   args: {
     isCollapsed: true,
-    onMouseEnter: () => console.log('Mouse enter'),
-    onMouseLeave: () => console.log('Mouse leave'),
+    onMouseEnter: () => {},
+    onMouseLeave: () => {},
   },
   decorators: [(Story) => SidebarDecorator(Story, '/chat')], // Show "Chat" as active (icon only)
 };

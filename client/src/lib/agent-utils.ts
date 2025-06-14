@@ -260,7 +260,7 @@ export const createNewAgentConfig = (
       // Adding a check to satisfy linters or type checkers that expect all paths to return a value,
       // even if logically unreachable due to AgentType enum constraints.
       // Or, if AgentType can be extended elsewhere, this provides a fallback.
-      console.error(`Unhandled agent type: ${type}`)
+      void console.error(`Unhandled agent type: ${type}`)
       throw new Error(`Unknown agent type: ${type}`)
   }
 }

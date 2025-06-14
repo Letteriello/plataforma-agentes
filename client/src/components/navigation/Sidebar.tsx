@@ -1,26 +1,13 @@
 // src/components/navigation/Sidebar.tsx - Componente da barra lateral de navegação.
 import {
   Archive, // Added for "Cofre"
-  BarChart, // Adicionado para Dashboard ROI
-  Beaker,
   Bot,
-  BrainCircuit,
-  Briefcase, // Added for "Operações do Agente"
   ChevronDownIcon,
-  ClipboardList,
-  FileText,
-  FlaskConical,
-  GitBranch,
-  History,
-  LayoutDashboard,
   Library, // Keep Library for "Biblioteca de Recursos"
   MessageCircle,
   Network, // Added for "Orquestração" (alternative to GitBranch if needed)
-  Rocket,
-  Scale,
   ScrollText, // Added for "Bases de Conhecimento (Memória)"
   Settings,
-  ShieldCheck,
   ShieldQuestion, // Added for "Governança" (alternative to Scale if needed)
   Users,
   Wrench,
@@ -229,12 +216,15 @@ export const Sidebar = ({
   return (
     <>
       {/* Mobile Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
+        {isMobileMenuOpen && (
+          <div
+            role="button"
+            tabIndex={0}
+            className="fixed inset-0 z-30 bg-black/50 md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+            onKeyDown={(e) => e.key === 'Escape' && setIsMobileMenuOpen(false)}
+          />
+        )}
 
       <aside
         className={cn(

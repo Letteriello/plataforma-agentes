@@ -50,7 +50,7 @@ describe('Topbar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Provide a mock implementation for the store
-    (useAuthStore as any).mockReturnValue({
+    (useAuthStore as unknown as vi.Mock).mockReturnValue({
       user: mockUser,
       logout: mockLogout,
     })
@@ -126,7 +126,7 @@ describe('Topbar', () => {
   })
 
   it('should render "U" as fallback if user is null', () => {
-    (useAuthStore as any).mockReturnValue({
+    (useAuthStore as unknown as vi.Mock).mockReturnValue({
       user: null,
       logout: mockLogout,
     });
