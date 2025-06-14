@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { deleteAgent, fetchAgents } from '@/api/agentService'
-import { AgentSummaryDTO } from '@/api/agentService'
+import { deleteAgent, fetchAgents, AgentSummaryDTO } from '@/features/agents/services/agentService'
 import type { AnyAgentConfig } from '@/types/agents'
 import { useAgentStore } from '@/store/agentStore'
 

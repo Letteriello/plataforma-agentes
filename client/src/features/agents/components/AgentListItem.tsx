@@ -1,7 +1,7 @@
 import { Loader2,Pencil, Play, Trash2 } from 'lucide-react';
 import React from 'react';
 
-import { AgentSummaryDTO } from '@/api/agentService'; // Mudar para AgentSummaryDTO
+import { AgentSummaryDTO } from '@/features/agents/services/agentService'; // Mudar para AgentSummaryDTO
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {

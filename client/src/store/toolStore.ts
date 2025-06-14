@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { fetchTools as apiFetchTools,ToolDTO } from '@/api/toolService'
+import { fetchTools as apiFetchTools, type ToolDTO } from '@/features/tools/services/toolService'
 
 interface ToolState {
   tools: ToolDTO[]

@@ -266,7 +266,7 @@ export const createNewAgentConfig = (
 }
 
 // Moved from AgentListItem.tsx
-import { AgentSummaryDTO } from '@/api/agentService'; // Importar AgentSummaryDTO
+import { AgentSummaryDTO } from '@/features/agents/services/agentService'; // Importar AgentSummaryDTO
 
 // Usar uma união de AgentType (do enum) e os tipos de string de AgentSummaryDTO.type
 export type DisplayAgentType = AgentType | AgentSummaryDTO['type'];

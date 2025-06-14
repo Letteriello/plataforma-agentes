@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate,useParams } from 'react-router-dom';
 
-import { createAgent, fetchAgentById, updateAgent } from '@/api/agentService';
+import { createAgent, fetchAgentById, updateAgent } from '@/features/agents/services/agentService';
 import { AgentEditor } from '@/features/agents/components/AgentEditor';
 import { LoadingSpinner } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';

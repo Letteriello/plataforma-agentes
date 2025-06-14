@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate,useParams } from 'react-router-dom';
 
-import { createTool, getToolById, Tool,updateTool } from '@/api/toolService';
+import { createTool, getToolById, type Tool, updateTool } from '@/features/tools/services/toolService';
 import { ToolForm, ToolFormValues } from '@/components/tools/ToolForm';
 import { LoadingSpinner } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';

@@ -9,7 +9,7 @@ interface StoryArgs {
   };
 }
 
-import { ToolDTO } from '@/api/toolService';
+import type { ToolDTO } from '@/features/tools/services/toolService';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 import AgentToolsTab from './AgentToolsTab';

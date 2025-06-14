@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import type { KnowledgeBaseDTO } from '../../../api/memoryService';
-import { memoryService } from '../../../api/memoryService';
+import type { KnowledgeBaseDTO } from '@/features/memoria/services/memoryService';
+import { memoryService } from '@/features/memoria/services/memoryService';
 import {
   Card,
   CardContent,

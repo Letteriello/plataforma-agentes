@@ -2,7 +2,7 @@ import { Loader2 } from 'lucide-react';
 import React, { useCallback,useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import toolService, { PaginatedToolsDTO,ToolDTO } from '@/api/toolService';
+import toolService, { type PaginatedToolsDTO, type ToolDTO } from '@/features/tools/services/toolService';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

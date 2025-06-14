@@ -1,46 +1,57 @@
 import { http, HttpResponse } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { AgentDetailDTO, AgentSummaryDTO, CreateAgentDTO, UpdateAgentDTO } from '@/api/agentService';
-import type { ToolDTO } from '@/api/toolService';
-import { AgentType } from '@/types/adk';
+import { AgentType, type AgentCreateDTO, type AgentDetailDTO, type AgentSummaryDTO, type AgentUpdateDTO } from '@/types/agents';
+import type { ToolDTO } from '@/types/tools';
 
 // Mock Database for Agents
-let mockAgents: AgentDetailDTO[] = [
+let mockAgents: AgentDetailDTO[] = [];
+
+const createInitialAgents = (): AgentDetailDTO[] => [
   {
     id: 'agent-1',
     name: 'Weather Forecaster',
     description: 'Provides weather forecasts.',
-    type: AgentType.LLM,
+    model: 'gpt-4',
     instruction: 'You are a weather forecaster. Provide the weather for the given location.',
+    temperature: 0.7,
+    max_output_tokens: 1024,
+    top_p: 1,
+    top_k: 40,
+    autonomy_level: 'auto',
+    is_public: true,
+    version: '1.0.0',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    user_id: 'user-1',
+    tools: [],
   },
   {
     id: 'agent-2',
     name: 'Email Assistant',
     description: 'Helps with writing and sending emails.',
-    type: AgentType.LLM,
+    model: 'claude-2',
     instruction: 'You are an email assistant. Help the user with their emails.',
+    temperature: 0.8,
+    max_output_tokens: 2048,
+    top_p: 1,
+    top_k: 40,
+    autonomy_level: 'ask',
+    is_public: false,
+    version: '1.1.0',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    user_id: 'user-1',
+    tools: [],
   },
 ];
 
 export const resetMockAgentsDB = () => {
-  mockAgents = [
-    {
-      id: 'agent-1',
-      name: 'Weather Forecaster',
-      description: 'Provides weather forecasts.',
-      type: AgentType.LLM,
-      instruction: 'You are a weather forecaster. Provide the weather for the given location.',
-    },
-    {
-      id: 'agent-2',
-      name: 'Email Assistant',
-      description: 'Helps with writing and sending emails.',
-      type: AgentType.LLM,
-      instruction: 'You are an email assistant. Help the user with their emails.',
-    },
-  ];
+  mockAgents = createInitialAgents();
 };
+
+// Initialize DB
+resetMockAgentsDB();
 
 const mockTools: ToolDTO[] = [
   {
@@ -79,38 +90,49 @@ export const handlers = [
 
   // Agents API - CRUD
   http.get('/api/agents', () => {
-    const summaryList: AgentSummaryDTO[] = mockAgents.map(({ id, name, description, type }) => ({ id, name, description, type: type as 'LLM' | 'Workflow' | 'Custom' }));
+    const summaryList: AgentSummaryDTO[] = mockAgents.map(
+      ({ id, name, description, is_public, version, created_at, updated_at }) => ({
+        id,
+        name,
+        description,
+        type: AgentType.LLM, // All mocks are currently LLM type
+        is_public,
+        version,
+        created_at,
+        updated_at,
+        avatar_url: null,
+      }),
+    );
     return HttpResponse.json(summaryList);
   }),
 
   http.get('/api/agents/:id', ({ params }) => {
     const agent = mockAgents.find(a => a.id === params.id);
-    if (agent) {
-      return HttpResponse.json(agent);
-    } else {
-      return new HttpResponse(null, { status: 404 });
-    }
+    return agent ? HttpResponse.json(agent) : new HttpResponse(null, { status: 404 });
   }),
 
   http.post('/api/agents', async ({ request }) => {
-    const newAgentData = await request.json() as CreateAgentDTO;
+    const newAgentData = (await request.json()) as AgentCreateDTO;
     const newAgent: AgentDetailDTO = {
       id: uuidv4(),
       ...newAgentData,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user_id: 'user-1', // Mocked user
+      tools: [], // Tools are associated separately
     };
     mockAgents.push(newAgent);
     return HttpResponse.json(newAgent, { status: 201 });
   }),
 
   http.put('/api/agents/:id', async ({ params, request }) => {
-    const updateData = await request.json() as UpdateAgentDTO;
+    const updateData = (await request.json()) as AgentUpdateDTO;
     const agentIndex = mockAgents.findIndex(a => a.id === params.id);
     if (agentIndex !== -1) {
       mockAgents[agentIndex] = { ...mockAgents[agentIndex], ...updateData };
       return HttpResponse.json(mockAgents[agentIndex]);
-    } else {
-      return new HttpResponse(null, { status: 404 });
     }
+    return new HttpResponse(null, { status: 404 });
   }),
 
   http.delete('/api/agents/:id', ({ params }) => {
@@ -118,8 +140,7 @@ export const handlers = [
     if (agentIndex !== -1) {
       mockAgents.splice(agentIndex, 1);
       return new HttpResponse(null, { status: 204 });
-    } else {
-      return new HttpResponse(null, { status: 404 });
     }
+    return new HttpResponse(null, { status: 404 });
   }),
 ];

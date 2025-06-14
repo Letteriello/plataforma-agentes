@@ -2,7 +2,7 @@ import { useEffect,useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import agentService from '../../api/agentService';
+import agentService from '@/features/agents/services/agentService';
 import type { LlmAgentConfig } from '../../types/agents';
 import { createDefaultAgent,LlmAgentConfigSchema } from '../../types/agents';
 import { Button } from '../ui/button';

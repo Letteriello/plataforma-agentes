@@ -3,7 +3,7 @@ import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 
-import { getTools } from '@/api/toolService';
+import { getTools } from '@/features/tools/services/toolService';
 import { Button } from '@/components/ui/button';
 import {
   Card,

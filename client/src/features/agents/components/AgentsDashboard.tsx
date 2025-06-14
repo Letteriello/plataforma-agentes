@@ -10,8 +10,7 @@ import {
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AgentSummaryDTO } from '@/api/agentService';
-import agentService from '@/api/agentService';
+import agentService, { AgentSummaryDTO } from '@/features/agents/services/agentService';
 import {
   AlertDialog,
   AlertDialogAction,

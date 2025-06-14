@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { ChatMessage, ChatMessageSenderType } from '@/types/chatTypes';
 import type { ChatHeaderProps } from './ChatHeader';
 
-import chatService from '@/api/chatService';
+import chatService from '@/features/chat/services/chatService';
 import {
   ResizableHandle,
   ResizablePanel,

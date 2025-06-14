@@ -1,7 +1,7 @@
 import { Database, FileText, Settings,Upload } from 'lucide-react'
 import React from 'react'
 
-import { KnowledgeBase, KnowledgeBaseType } from '@/api/memoryService'
+import { KnowledgeBase, KnowledgeBaseType } from '@/features/memoria/services/memoryService'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { memoryService } from '@/api/memoryService'
+import { memoryService } from '@/features/memoria/services/memoryService'
 import { useToast } from '@/components/ui/use-toast'
 import { type Document, type KnowledgeBase, KnowledgeBaseType } from '@/types/memory'
 

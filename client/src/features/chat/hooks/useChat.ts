@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import chatService from '@/api/chatService'
+import chatService from '@/features/chat/services/chatService'
 import { useSessionStore } from '@/store/sessionStore'
 import { ChatMessage,Session } from '@/types'
 
@@ -26,7 +26,7 @@ export const useChat = (): UseChatReturn => {
     if (!activeSession) return
     setIsLoading(true)
     try {
-      const msg = await chatService.sendMessage(activeSession.id, {
+            const msg = await chatService.addMessageToSession(activeSession.id, {
         text,
         sender: 'user',
         timestamp: new Date().toISOString(),

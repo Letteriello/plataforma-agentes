@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-import agentService from '@/api/agentService'
+import agentService from '@/features/agents/services/agentService'
 import apiClient from '@/api/apiClient'
 import { AgentType } from '@/types/agents';
 import type { LlmAgentConfig } from '@/types/agents';

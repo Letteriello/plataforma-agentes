@@ -3,14 +3,14 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom'; // Using MemoryRouter for isolated testing
 
-import { useDashboard } from '@/hooks/useDashboard';
-import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
+import { useDashboard } from '@/features/dashboard/hooks/useDashboard';
+import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics';
 
 import Dashboard from './Dashboard';
 
 // Mock the custom hooks
-jest.mock('@/hooks/useDashboard');
-jest.mock('@/hooks/useDashboardMetrics');
+jest.mock('@/features/dashboard/hooks/useDashboard');
+jest.mock('@/features/dashboard/hooks/useDashboardMetrics');
 
 // Mock react-chartjs-2
 jest.mock('react-chartjs-2', () => ({

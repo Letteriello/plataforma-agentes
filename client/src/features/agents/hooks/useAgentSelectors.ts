@@ -1,4 +1,4 @@
-import { AgentDTO } from '@/api/agentService'
+import { AgentDTO } from '@/features/agents/services/agentService'
 import { useAgentStore } from '@/store/agentStore'
 
 export const useAgentsList = (): AgentDTO[] =>

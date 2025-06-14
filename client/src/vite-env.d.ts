@@ -31,7 +31,7 @@ declare module '@/types/dashboard' {
   export type DashboardStats = Record<string, unknown>
 }
 
-declare module '@/api/agentService' {
+declare module '@/features/agents/services/agentService' {
   export interface AgentDetailDTO {
     id: string;
     created_at: string;
@@ -53,7 +53,7 @@ declare module '@/api/agentService' {
   export function deleteAgent(id: string): Promise<void>;
 }
 
-declare module '@/api/toolService' {
+declare module '@/features/tools/services/toolService' {
   export interface Tool {
     id: string;
     name: string;

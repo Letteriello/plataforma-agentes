@@ -8,8 +8,8 @@ import { StatsCard } from '@/features/dashboard/components/StatsCard'
 // import { DashboardLayout } from '@/components/dashboard/DashboardLayout'; // Removed
 import { TokenUsageCard } from '@/features/dashboard/components/TokenUsageCard'
 // Hooks
-import { useDashboard } from '@/hooks/useDashboard'
-import { useDashboardMetrics } from '@/hooks/useDashboardMetrics'
+import { useDashboard } from '@/features/dashboard/hooks/useDashboard'
+import { useDashboardMetrics } from '@/features/dashboard/hooks/useDashboardMetrics'
 // Types
 <<<<<<< HEAD
 import { DashboardStats } from '@/features/dashboard/types'

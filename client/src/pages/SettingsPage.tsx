@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { storeSecret } from '@/api/secretService'
+import { storeSecret } from '@/features/secrets-vault/services/secretService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from '@/components/ui/theme-toggle'

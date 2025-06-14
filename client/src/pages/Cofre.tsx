@@ -1,7 +1,7 @@
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { FormEvent,useEffect, useState } from 'react';
 
-import { createSecret, deleteSecret,listSecrets } from '@/api/secretService';
+import { createSecret, deleteSecret, listSecrets } from '@/features/secrets-vault/services/secretService';
 import { Button } from '@/components/ui/button';
 import {
   Card,

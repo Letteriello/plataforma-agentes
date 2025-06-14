@@ -12,7 +12,7 @@ import {
   getRecentAgents,
   getTokenUsageMetrics,
   type TokenUsage,
-} from '@/api/dashboardService'
+} from '@/features/dashboard/services/dashboardService'
 
 interface DashboardState {
   stats: DashboardStats

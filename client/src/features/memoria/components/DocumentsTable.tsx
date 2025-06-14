@@ -1,7 +1,7 @@
 import { FileCode, FileImage,FileText, Trash2 } from 'lucide-react'
 import React from 'react'
 
-import { Document, DocumentStatus } from '@/api/memoryService'
+import { Document, DocumentStatus } from '@/features/memoria/services/memoryService'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {

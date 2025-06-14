@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
-import { KnowledgeBaseType } from '@/api/memoryService'
+import { KnowledgeBaseType } from '@/features/memoria/services/memoryService'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { FormDialog } from '@/components/ui/FormDialog'
 import { Input } from '@/components/ui/input'

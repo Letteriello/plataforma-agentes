@@ -2,7 +2,7 @@ import { PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ToolDTO } from '@/api/toolService';
+import { ToolDTO } from '@/features/tools/services/toolService';
 import { MemoryManagement } from '@/features/biblioteca/components/MemoryManagement';
 import { ToolsList } from '@/features/biblioteca/components/ToolsList';
 import { CreateKnowledgeBaseDialog } from '@/features/memoria/components/CreateKnowledgeBaseDialog';
@@ -10,7 +10,7 @@ import { UploadDocumentDialog } from '@/features/memoria/components/UploadDocume
 import { CreateOrEditToolDialog } from '@/components/tools/CreateOrEditToolDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useMemoryModule } from '@/hooks/useMemoryModule';
+import { useMemoryModule } from '@/features/memoria/hooks/useMemoryModule';
 import { KnowledgeBaseType } from '@/types/memory';
 
 const BibliotecaPage = () => {
