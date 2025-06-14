@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { Agent, DashboardStats,TokenUsageData } from '@/types/dashboard'
 
 export const useDashboardMetrics = (
-  agents: Agent[],
-  tokenUsage: TokenUsageData[],
+  agents: Agent[] = [],
+  tokenUsage: TokenUsageData[] = [],
 ) => {
   // Calculate token metrics
   const tokenMetrics = useMemo(() => {
