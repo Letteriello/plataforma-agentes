@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from typing import List
 
-from ..controllers import audit_controller
 from ..models.audit import AuditLog
+from .. import database
 
 router = APIRouter(
     prefix="/audit-logs",
@@ -11,4 +11,4 @@ router = APIRouter(
 
 @router.get("/", response_model=List[AuditLog])
 def list_audit_logs():
-    return audit_controller.get_audit_logs()
+    return database._audit_logs
