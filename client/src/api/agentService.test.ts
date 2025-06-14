@@ -73,11 +73,18 @@ describe('agentService', () => {
     // We need to assert against the transformed payload (CreateAgentAPIPayload).
     // The service spreads newAgentData and replaces tools.
     const expectedApiPayload = {
-      ...newAgentData, // Spreads name, description, model, instruction, generateContentConfig, isPublic, version, knowledgeBaseIds
-      tools: [], // Service transforms UiToolDefinition[] to ToolDTO[] for the API call
-      // Ensure any fields OMITTED from LlmAgentConfig in newAgentData's type are not here if they are not part of the API payload for creation.
-      // Specifically, id, createdAt, updatedAt, userId are omitted from newAgentData's LlmAgentConfig base.
-      // The 'tools' in newAgentData (UiToolDefinition[]) is replaced by ToolDTO[] here.
+      name: newAgentData.name,
+      description: newAgentData.description,
+      model: newAgentData.model,
+      instruction: newAgentData.instruction,
+      temperature: newAgentData.generateContentConfig.temperature,
+      max_output_tokens: newAgentData.generateContentConfig.maxOutputTokens,
+      top_p: newAgentData.generateContentConfig.topP,
+      top_k: newAgentData.generateContentConfig.topK,
+      isPublic: newAgentData.isPublic,
+      version: newAgentData.version,
+      knowledge_base_ids: [],
+      tools: [],
     };
 
      
