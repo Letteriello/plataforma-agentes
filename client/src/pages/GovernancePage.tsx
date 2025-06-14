@@ -11,7 +11,7 @@ import {
 } from '@/api/governanceService'
 import { AuditLogTable } from '@/components/governance/AuditLogTable' // Import the new component
 import { useToast } from '@/components/ui/use-toast'
-import { ApprovalItem, AuditLog,HistoryItem } from '@/types/governance'
+import { ApprovalItem, AuditLog,HistoryItem } from '@/types/common'
 
 import { ApprovalHistoryModal } from '../components/governance/ApprovalHistoryModal'
 import { ApprovalInbox } from '../components/governance/ApprovalInbox'

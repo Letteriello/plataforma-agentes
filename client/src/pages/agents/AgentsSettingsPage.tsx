@@ -1,4 +1,4 @@
-import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
+import { AgentSubNav } from '@/features/agents/components/AgentSubNav'; // Added
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 

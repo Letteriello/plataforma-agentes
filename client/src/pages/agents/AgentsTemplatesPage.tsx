@@ -1,4 +1,4 @@
-import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
+import { AgentSubNav } from '@/features/agents/components/AgentSubNav'; // Added
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AgentTemplatesPage() {

@@ -1,6 +1,6 @@
-import { Agent } from '@/types/dashboard'
+import { DashboardAgent } from '@/features/dashboard/types'
 
-export const getAgentStatusBadgeVariant = (status: Agent['status']) => {
+export const getAgentStatusBadgeVariant = (status: DashboardAgent['status']) => {
   switch (status) {
     case 'online':
       return 'default'
@@ -51,10 +51,10 @@ export const formatResponseTime = (seconds: number): string => {
 
 export const formatTokenNumber = (num: number): string => {
   if (num >= 1000000) {
-    return `${(num / 1000000).toFixed(1)}M`
+    return `${(num / 1000000).toFixed(1)}M`;
   }
   if (num >= 1000) {
-    return `${(num / 1000).toFixed(1)}K`
+    return `${(num / 1000).toFixed(1)}K`;
   }
-  return num.toString()
-}
+  return num.toString();
+};

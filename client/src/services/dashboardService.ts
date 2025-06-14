@@ -1,4 +1,4 @@
-import { RoiMetricsResponse, RoiTimeSeriesResponse } from '@/types/dashboard';
+import { RoiMetricsResponse, RoiTimeSeriesResponse } from '@/types/common';
 
 import { apiClient } from './apiClient';
 

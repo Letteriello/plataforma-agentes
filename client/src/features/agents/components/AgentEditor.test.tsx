@@ -26,14 +26,14 @@ vi.mock('react-router-dom', async (importOriginal) => {
 })
 
 // Mock a sub-component that might be complex or not relevant to this snapshot
-vi.mock('@/components/agents/forms/LLMAgentForm', () => ({
+vi.mock('@/features/agents/components/forms/LLMAgentForm', () => ({
   LLMAgentForm: () => (
     <div data-testid="mock-llm-agent-form">LLMAgentForm Mock</div>
   ),
 }))
 
 // Mock another sub-component
-vi.mock('@/components/agents/AgentDeployTab', () => ({
+vi.mock('@/features/agents/components/AgentDeployTab', () => ({
   __esModule: true, // This is important for modules with default exports
   default: () => (
     <div data-testid="mock-agent-deploy-tab">AgentDeployTab Mock</div>

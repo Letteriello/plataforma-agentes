@@ -2,7 +2,7 @@ import React from 'react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer,Tooltip, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TimeSeriesDataPoint } from '@/types/dashboard';
+import { TimeSeriesDataPoint } from '@/types/common';
 
 interface RoiChartProps {
   title: string;

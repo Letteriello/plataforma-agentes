@@ -16,7 +16,7 @@ import {
   YAxis,
 } from 'recharts'
 
-import { RoiDataPoint } from '@/types/roi'
+import { RoiDataPoint } from '@/types/common'
 
 interface RoiChartProps {
   data: RoiDataPoint[]

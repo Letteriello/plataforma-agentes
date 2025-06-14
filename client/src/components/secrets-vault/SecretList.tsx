@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Secret } from '@/types/secret'
+import { Secret } from '@/types/common'
 
 interface SecretListProps {
   secrets: Secret[]

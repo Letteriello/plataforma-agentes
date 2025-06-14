@@ -1,5 +1,5 @@
 // src/api/auditLogService.ts
-import { AuditLog } from '@/types/governance' // Corrected path
+import { AuditLog } from '@/types/common'
 
 import apiClient from './apiClient'
 

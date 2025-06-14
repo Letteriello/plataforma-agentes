@@ -1,7 +1,7 @@
 import { Bell, HelpCircle, LogOut,Menu, PlusCircle, Search, Settings, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom'; // Added Link and useNavigate
 
-import { CreateAgentDialog } from '@/components/agents/CreateAgentDialog';
+import { CreateAgentDialog } from '@/features/agents/components/CreateAgentDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'; // Added Avatar components
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

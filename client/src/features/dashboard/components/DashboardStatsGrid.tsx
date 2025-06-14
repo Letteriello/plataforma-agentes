@@ -1,6 +1,6 @@
 import { Bot, Clock, MessageSquare, TrendingUp } from 'lucide-react'
 
-import { StatsCard } from '@/components/dashboard/StatsCard'
+import { StatsCard } from '@/features/dashboard/components/StatsCard'
 import type { DashboardStatsGridProps } from '@/types/dashboard/components/cards'
 
 /**

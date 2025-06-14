@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { Topbar } from './Topbar'
 
 // Mock child components and hooks
-vi.mock('@/components/agents/CreateAgentDialog', () => ({
+vi.mock('@/features/agents/components/CreateAgentDialog', () => ({
   CreateAgentDialog: ({ children }: { children: React.ReactNode }) => (
     // Simplified mock: just renders children, assumes button is part of children
     <div data-testid="create-agent-dialog-wrapper">{children}</div>

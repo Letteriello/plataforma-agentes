@@ -1,6 +1,6 @@
 import React, { useEffect,useState } from 'react'
 
-import { Secret } from '@/types/secret'
+import { Secret } from '@/types/common'
 
 interface SecretFormModalProps {
   isOpen: boolean

@@ -4,7 +4,7 @@ import React, { useEffect,useState } from 'react'
 import { listAuditLogs } from '@/api/auditLogService'
 import { AuditLogList } from '@/components/audit-logs/AuditLogList'
 import { useToast } from '@/components/ui/use-toast'
-import { AuditLog } from '@/types/auditLog'
+import { AuditLog } from '@/types/common'
 
 interface ApiErrorResponse {
   detail?: string

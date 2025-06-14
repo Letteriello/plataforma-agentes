@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 
-import { AgentEditor } from '@/components/agents/AgentEditor';
-import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
+import { AgentEditor } from '@/features/agents/components/AgentEditor';
+import { AgentSubNav } from '@/features/agents/components/AgentSubNav'; // Added
 
 export function EditAgentPage() {
   const { id } = useParams<{ id: string }>();

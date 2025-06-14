@@ -7,7 +7,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Build files
+tsconfig.tsbuildinfo
+
 dist
 dist-ssr
 *.local

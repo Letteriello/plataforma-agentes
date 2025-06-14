@@ -16,7 +16,7 @@ import {
   CardTitle,
   LoadingSpinner,
 } from '@/components/ui'
-import type { TokenUsageData as TokenUsage } from '@/services/dashboardService';
+import type { TokenUsageCardProps, TokenUsageData } from '@/features/dashboard/types';
 
 ChartJS.register(
   CategoryScale,
@@ -27,11 +27,7 @@ ChartJS.register(
   Legend,
 )
 
-interface TokenUsageCardProps {
-  data: TokenUsage[]
-  isLoading?: boolean
-  error?: string | null
-}
+
 
 export function TokenUsageCard({
   data,
@@ -39,11 +35,11 @@ export function TokenUsageCard({
   error,
 }: TokenUsageCardProps) {
   const chartData = {
-    labels: data.map((d) => new Date(d.day).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })),
+    labels: data.map((d: TokenUsageData) => new Date(d.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })),
     datasets: [
       {
         label: 'Tokens',
-        data: data.map((d) => d.total_tokens),
+        data: data.map((d: TokenUsageData) => d.tokens),
         borderColor: '#3b82f6',
         backgroundColor: 'rgba(59,130,246,0.3)',
         fill: true,

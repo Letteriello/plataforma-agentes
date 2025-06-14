@@ -3,8 +3,8 @@ import type {
   Activity,
   DashboardAgent,
   DashboardStats,
-  TokenUsage,
-} from '@/types/dashboard';
+  TokenUsageData,
+} from '@/features/dashboard/types';
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {
   const response = await apiClient.get<DashboardStats>('/dashboard/stats');
@@ -25,8 +25,8 @@ export const getRecentActivities = async (): Promise<Activity[]> => {
 
 export const getTokenUsageMetrics = async (
   period: string = '7d',
-): Promise<TokenUsage[]> => {
-  const response = await apiClient.get<TokenUsage[]>(
+): Promise<TokenUsageData[]> => {
+  const response = await apiClient.get<TokenUsageData[]>(
     `/dashboard/token-usage?period=${period}`,
   );
   return response.data;

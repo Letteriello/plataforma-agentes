@@ -31,7 +31,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
-import type { Secret, SecretCreate } from '@/types/secrets';
+import type { Secret, SecretCreate } from '@/types/common';
 
 export function CofrePage() {
   const [secrets, setSecrets] = useState<Secret[]>([]);

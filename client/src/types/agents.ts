@@ -153,4 +153,20 @@ export type AgentUpdateDTO = z.infer<typeof AgentUpdateDTOSchema>;
 /**
  * Interface para os dados resumidos de um agente a serem exibidos no AgentCard.
  */
-export type AgentCardData = AgentSummaryDTO
+export type AgentCardData = AgentSummaryDTO;
+
+// ----------------------------------------------------------------------
+// TIPOS DE STATUS (anteriormente em statusTypes.ts)
+// ----------------------------------------------------------------------
+
+/**
+ * Define os possíveis status de um agente.
+ */
+export type AgentStatus =
+  | 'active'
+  | 'pending'
+  | 'error'
+  | 'unknown'
+  | 'deploying'
+  | 'idle'
+  | 'default';

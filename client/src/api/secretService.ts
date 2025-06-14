@@ -1,5 +1,5 @@
 import apiClient from '@/api/apiClient';
-import type { Secret, SecretCreate } from '@/types/secrets';
+import type { Secret, SecretCreate } from '@/types/common';
 
 /**
  * Fetches the list of all secret names from the backend.

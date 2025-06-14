@@ -1,5 +1,5 @@
-import { AgentsDashboard } from '@/components/agents/AgentsDashboard';
-import { AgentSubNav } from '@/components/agents/AgentSubNav'; // Added
+import { AgentsDashboard } from '@/features/agents/components/AgentsDashboard';
+import { AgentSubNav } from '@/features/agents/components/AgentSubNav'; // Added
 
 export function AgentsPage() {
   return (

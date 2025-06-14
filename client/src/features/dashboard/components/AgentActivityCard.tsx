@@ -1,5 +1,6 @@
 import { RefreshCw } from 'lucide-react'
 
+import { AgentActivityCardProps } from '@/features/dashboard/types';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -9,21 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-interface AgentActivityData {
-  date: string
-  activeAgents: number
-  interactions: number
-}
-
-interface AgentActivityCardProps {
-  data: AgentActivityData[]
-  period: string
-  onPeriodChange: (period: string) => void
-  onRefresh: () => void
-  isLoading?: boolean
-  className?: string
-}
 
 export function AgentActivityCard({
   data,

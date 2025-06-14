@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { MarketplaceItem, MarketplaceItemType } from '@/types/marketplace'
+import { MarketplaceItem, MarketplaceItemType } from '@/types/common'
 
 const getTypeBadge = (type: MarketplaceItemType) => {
   const styles = {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate,useParams } from 'react-router-dom';
 
 import { createAgent, fetchAgentById, updateAgent } from '@/api/agentService';
-import { AgentEditor } from '@/components/agents/AgentEditor';
+import { AgentEditor } from '@/features/agents/components/AgentEditor';
 import { LoadingSpinner } from '@/components/ui';
 import { useToast } from '@/components/ui/use-toast';
 import { LlmAgentConfig, LlmAgentConfigSchema, AgentType } from '@/types/agents';

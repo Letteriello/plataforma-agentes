@@ -1,4 +1,4 @@
-import { AgentsDashboard } from '@/components/agents/AgentsDashboard';
+import { AgentsDashboard } from '@/features/agents/components/AgentsDashboard';
 
 const AgentsPage = () => {
   return <AgentsDashboard />;

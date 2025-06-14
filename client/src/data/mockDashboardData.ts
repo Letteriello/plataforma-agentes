@@ -1,11 +1,11 @@
 import {
   Activity,
-  Agent,
+  DashboardAgent,
   AgentActivityData,
   TokenUsageData,
-} from '@/types/dashboard'
+} from '@/features/dashboard/types'
 
-export const mockAgents: Agent[] = [
+export const mockAgents: DashboardAgent[] = [
   {
     id: '1',
     name: 'Assistente de Vendas',

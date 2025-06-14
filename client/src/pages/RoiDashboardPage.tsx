@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import KpiCard from '@/components/dashboard/KpiCard';
-import RoiChart from '@/components/dashboard/RoiChart';
+import KpiCard from '@/features/dashboard/components/KpiCard';
+import RoiChart from '@/features/dashboard/components/RoiChart';
 import { ComponentSkeleton } from '@/components/ui/ComponentSkeleton';
 import { dashboardService } from '@/services/dashboardService';
-import { RoiMetricsResponse, RoiTimeSeriesResponse } from '@/types/dashboard';
+import { RoiMetricsResponse, RoiTimeSeriesResponse } from '@/types/common';
 
 const RoiDashboardPage: React.FC = () => {
   const [metrics, setMetrics] = useState<RoiMetricsResponse | null>(null);

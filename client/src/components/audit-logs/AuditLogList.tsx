@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { AuditLog } from '@/types/auditLog'
+import { AuditLog } from '@/types/common'
 
 interface AuditLogListProps {
   logs: AuditLog[]

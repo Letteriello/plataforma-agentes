@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { AuditLog } from '@/types/governance'
+import { AuditLog } from '@/types/common'
 
 interface AuditLogTableProps {
   logs: AuditLog[]

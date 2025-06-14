@@ -3,7 +3,7 @@ import { useEffect,useState } from 'react'
 
 import { MarketplaceFilters } from '@/components/marketplace/MarketplaceFilters'
 import { MarketplaceItemCard } from '@/components/marketplace/MarketplaceItemCard'
-import { MarketplaceItem } from '@/types/marketplace'
+import { MarketplaceItem } from '@/types/common'
 
 export const MarketplacePage: React.FC = () => {
   const [items, setItems] = useState<MarketplaceItem[]>([])
