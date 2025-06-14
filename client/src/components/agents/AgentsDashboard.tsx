@@ -7,7 +7,7 @@ import {
   SearchIcon,
   Users,
 } from 'lucide-react';
-import React, { useCallback, useEffect,useRef, useState } from 'react'; 
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AgentSummaryDTO } from '@/api/agentService';
@@ -27,7 +27,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useAgents } from '@/hooks/useAgents';
-import { AgentType,AnyAgentConfig } from '@/types/agents'; 
 
 import { AgentListItem } from './AgentListItem';
 
@@ -40,7 +39,6 @@ export function AgentsDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleting, setIsDeleting] = useState<Record<string, boolean>>({});
   const [agentToDelete, setAgentToDelete] = useState<AgentSummaryDTO | null>(null);
-  const [filter, setFilter] = useState('all');
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 
@@ -54,9 +52,9 @@ export function AgentsDashboard() {
               agent.description
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase()))) &&
-          (filter === 'all' /*|| (agent as AnyAgentConfig).type === filter*/)
+          true
       ),
-    [fetchedAgentsData, searchQuery, filter]
+    [fetchedAgentsData, searchQuery]
   );
 
   const rowVirtualizer = useVirtualizer({
@@ -87,7 +85,6 @@ export function AgentsDashboard() {
         variant: 'success',
       });
     } catch (err) {
-      console.error('Failed to delete agent:', err);
       toast({
         title: 'Erro ao excluir Agente',
         description: (err as Error)?.message || 'Não foi possível excluir o agente.',
@@ -155,16 +152,16 @@ export function AgentsDashboard() {
              <div className="text-center py-10">
                <SearchIcon className="mx-auto h-12 w-12 text-gray-400" />
                <h3 className="text-center text-muted-foreground">
-                 { 
-                   (searchQuery || filter !== 'all') 
-                   ? 'Nenhum agente corresponde aos seus critérios.' 
-                   : 'Nenhum agente encontrado. Crie um para começar.' 
+                 {
+                   searchQuery
+                     ? 'Nenhum agente corresponde aos seus critérios.'
+                     : 'Nenhum agente encontrado. Crie um para começar.'
                  }
-               </h3>
-               {!(searchQuery || filter !== 'all') && fetchedAgentsData && fetchedAgentsData.length === 0 && (
-                 <Button
-                   className="mt-4"
-                   onClick={() => navigate('/agents/new')}
+              </h3>
+              {!searchQuery && fetchedAgentsData && fetchedAgentsData.length === 0 && (
+                <Button
+                  className="mt-4"
+                  onClick={() => navigate('/agents/new')}
                  >
                    <PlusIcon className="mr-2 h-4 w-4" />
                    Create Agent
@@ -219,7 +216,7 @@ export function AgentsDashboard() {
           <AlertDialogHeader>
             <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. Isso excluirá permanentemente o agente "<strong>{agentToDelete?.name}</strong>" e todos os seus dados associados.
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente o agente &quot;<strong>{agentToDelete?.name}</strong>&quot; e todos os seus dados associados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

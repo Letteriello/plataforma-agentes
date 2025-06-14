@@ -70,11 +70,9 @@ const initialState: SessionState = {
 
 // Definir o tipo para as ações que usam set e get
 type StoreSet = (fn: (state: SessionState) => Partial<SessionState>) => void
-type StoreGet = () => SessionState
-
 const useSessionStore = create<SessionStore>()(
   persist(
-    (set: StoreSet, get: StoreGet) => ({
+    (set: StoreSet) => ({
       ...initialState,
 
       createSession: async (name: string) => {
@@ -253,3 +251,5 @@ const useSessionStore = create<SessionStore>()(
     },
   ),
 )
+
+export default useSessionStore

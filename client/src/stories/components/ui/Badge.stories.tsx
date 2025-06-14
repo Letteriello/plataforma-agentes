@@ -161,7 +161,7 @@ export const Workflow: Story = {
 
 // With Icons
 export const WithIcon: Story = {
-  render: (args) => (
+  render: () => (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Badge variant="success">

@@ -112,8 +112,8 @@ const useAuthStore = create<AuthState & AuthActions>()(
                 isLoading: false,
               })
             }
-          } catch (error) {
-            console.error('Erro ao inicializar autenticação:', error)
+          } catch {
+            return
           }
         }
       },
@@ -121,7 +121,7 @@ const useAuthStore = create<AuthState & AuthActions>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state: any) => ({
+      partialize: (state: PersistedAuthState) => ({
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated,

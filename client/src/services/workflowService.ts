@@ -9,7 +9,7 @@ import apiClient from '@/api/apiClient';
 export interface WorkflowNodeData {
   id: string;
   type: string;
-  data: any;
+  data: unknown;
   children: WorkflowNodeData[];
 }
 
@@ -19,13 +19,8 @@ export interface WorkflowNodeData {
  * @returns A resposta da API.
  */
 export const saveWorkflow = async (workflowTree: WorkflowNodeData[]) => {
-  try {
-    const response = await apiClient.post('/workflows', { workflow: workflowTree });
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao salvar o workflow:', error);
-    throw error; // Re-lança o erro para ser tratado pelo chamador
-  }
+  const response = await apiClient.post('/workflows', { workflow: workflowTree });
+  return response.data;
 };
 
 /**
@@ -35,13 +30,8 @@ export const saveWorkflow = async (workflowTree: WorkflowNodeData[]) => {
  */
 export const executeWorkflow = async (
   workflowId: string,
-  initialData: Record<string, any> = {}
+  initialData: Record<string, unknown> = {}
 ) => {
-  try {
-    const response = await apiClient.post(`/workflows/${workflowId}/execute`, initialData);
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao executar o workflow:', error);
-    throw error;
-  }
+  const response = await apiClient.post(`/workflows/${workflowId}/execute`, initialData);
+  return response.data;
 };

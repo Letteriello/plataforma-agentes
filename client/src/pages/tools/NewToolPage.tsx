@@ -30,7 +30,6 @@ export const NewToolPage: React.FC = () => {
       });
       navigate('/tools');
     } catch (error) {
-      console.error('Failed to create tool:', error);
       toast({
         title: 'Erro',
         description: 'Não foi possível criar a ferramenta. Verifique os dados e tente novamente.',

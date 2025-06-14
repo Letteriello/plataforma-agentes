@@ -29,7 +29,6 @@ export const EditToolPage: React.FC = () => {
         const tool = await getToolById(toolId);
         setInitialData(tool);
       } catch (err) {
-        console.error('Failed to fetch tool:', err);
         setError('Não foi possível carregar a ferramenta para edição.');
         toast({
           title: 'Erro',
@@ -63,7 +62,6 @@ export const EditToolPage: React.FC = () => {
       });
       navigate('/tools');
     } catch (error) {
-      console.error('Failed to update tool:', error);
       toast({
         title: 'Erro',
         description: 'Não foi possível atualizar a ferramenta. Verifique os dados e tente novamente.',

@@ -6,7 +6,6 @@ import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
-  Form,
   FormField,
   FormItem,
   FormLabel,
@@ -53,7 +52,6 @@ const FormFieldPatternDemo = () => {
         </pre>
       ),
     });
-    console.log(data);
   }
 
   return (
@@ -85,7 +83,7 @@ const FormFieldPatternDemo = () => {
                 <Input type="email" placeholder="user@example.com" {...field} />
               </FormControl>
               <FormDescription>
-                We'll use this to contact you.
+                We&apos;ll use this to contact you.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -176,7 +174,7 @@ const FormFieldWithErrorDemo = () => {
                 <Input type="email" placeholder="user@example.com" {...field} />
               </FormControl>
               <FormDescription>
-                We'll use this to contact you.
+                We&apos;ll use this to contact you.
               </FormDescription>
               <FormMessage />
             </FormItem>

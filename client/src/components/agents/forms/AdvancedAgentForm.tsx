@@ -22,7 +22,7 @@ import { Textarea } from '../../ui/textarea';
 const isJSON = (str: string) => {
   try {
     JSON.parse(str);
-  } catch (e) {
+  } catch {
     return false;
   }
   return true;
@@ -55,7 +55,7 @@ export function AdvancedAgentForm() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                'Automático' permite que o agente execute ações sem confirmação. 'Perguntar Sempre' exige aprovação para cada ação.
+                &apos;Automático&apos; permite que o agente execute ações sem confirmação. &apos;Perguntar Sempre&apos; exige aprovação para cada ação.
               </FormDescription>
               <FormMessage />
             </FormItem>

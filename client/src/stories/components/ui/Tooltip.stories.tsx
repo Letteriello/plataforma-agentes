@@ -37,7 +37,7 @@ type Story = StoryObj<typeof meta>
 
 // Default tooltip
 const Template: Story = {
-  render: (args) => (
+  render: () => (
     <Tooltip>
       <TooltipTrigger asChild>
         <Button variant="outline">Hover me</Button>

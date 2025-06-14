@@ -22,7 +22,7 @@ import {
 } from '../../ui/form';
 
 const AgentMemoryTab: React.FC = () => {
-  const { control, getValues, setValue } = useFormContext();
+  const { control, getValues } = useFormContext();
   const [availableKbs, setAvailableKbs] = useState<KnowledgeBaseDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,9 +34,8 @@ const AgentMemoryTab: React.FC = () => {
       try {
         const paginatedResult = await memoryService.getKnowledgeBases({}); // Assumindo que a função aceita filtros
         setAvailableKbs(paginatedResult.items); // Assumindo que a resposta é paginada com um array 'items'
-      } catch (err) {
+      } catch {
         setError('Falha ao carregar as bases de conhecimento.');
-        console.error(err);
       } finally {
         setIsLoading(false);
       }

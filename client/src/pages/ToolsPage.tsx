@@ -53,7 +53,6 @@ export const ToolsPage: React.FC = () => {
         description: 'Não foi possível buscar suas ferramentas customizadas.',
         variant: 'destructive',
       });
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +79,6 @@ export const ToolsPage: React.FC = () => {
         description: `Não foi possível deletar a ferramenta "${toolToDelete.name}".`,
         variant: 'destructive',
       });
-      console.error(err);
     }
   };
 

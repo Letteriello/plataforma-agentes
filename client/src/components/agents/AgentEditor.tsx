@@ -16,7 +16,6 @@ import {
 import { ComponentSkeleton } from '../ui/component-skeleton';
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -44,9 +43,7 @@ export function AgentEditor({
   const { toast } = useToast();
   const formMethods = useFormContext<LlmAgentConfig>();
 
-  const [agentData, setAgentData] = useState<LlmAgentConfig>(createDefaultAgent());
   const [isLoading, setIsLoading] = useState(true);
-  const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [activeTab, setActiveTab] = useState('identidade');
 
   const WIZARD_STEPS = [
@@ -57,25 +54,14 @@ export function AgentEditor({
     'avancado',
     'memoria',
   ];
-  const STEP_LABELS: { [key: string]: string } = {
-    identidade: 'Identidade',
-    instrucoes: 'Instruções',
-    modelo_geracao: 'Modelo & Geração',
-    ferramentas: 'Ferramentas',
-    avancado: 'Avançado',
-    memoria: 'Memória',
-  };
-
   const currentStepIndex = WIZARD_STEPS.indexOf(activeTab);
 
   useEffect(() => {
     if (id) {
-      setMode('edit');
       agentService
         .getAgentById(id)
         .then((data) => {
           const parsedData = LlmAgentConfigSchema.parse(data);
-          setAgentData(parsedData);
           formMethods.reset(parsedData);
         })
         .catch(() =>
@@ -83,7 +69,6 @@ export function AgentEditor({
         )
         .finally(() => setIsLoading(false));
     } else {
-      setMode('create');
       formMethods.reset(createDefaultAgent());
       setIsLoading(false);
     }

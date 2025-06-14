@@ -119,7 +119,7 @@ export const memoryService = {
   async uploadDocument(
     knowledgeBaseId: string,
     file: File,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<Document> {
     const formData = new FormData()
     formData.append('file', file)
