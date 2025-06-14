@@ -8,7 +8,7 @@ import {
   getPendingApprovals,
   rejectAction,
   setAutonomyLevel as apiSetAutonomyLevel,
-} from '@/api/governanceService'
+} from '@/features/governance/services/governanceService'
 import { AuditLogTable } from '@/features/governance/components/AuditLogTable' // Import the new component
 import { useToast } from '@/components/ui/use-toast'
 import { ApprovalItem, AuditLog,HistoryItem } from '@/types/common'

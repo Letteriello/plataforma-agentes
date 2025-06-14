@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { registerUser } from '@/api/authService'; // Importa a função real
+import { registerUser } from '@/features/auth/services/authService'; // Importa a função real
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
