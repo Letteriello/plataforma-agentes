@@ -46,7 +46,7 @@ export interface SecurityScheme {
   in: 'header' | 'query' | 'cookie'
   scheme?: string
   bearerFormat?: string
-  flows?: any // OAuth2 flows
+  flows?: unknown // OAuth2 flows
 }
 
 /**
@@ -114,8 +114,8 @@ export interface LlmAgentConfig extends AgentConfig {
   includeContents?: 'default' | 'none' // How to include context
 
   // Advanced
-  planner?: any // Planner configuration
-  codeExecutor?: any // Code executor configuration
+  planner?: unknown // Planner configuration
+  codeExecutor?: unknown // Code executor configuration
 }
 
 /**

@@ -18,7 +18,7 @@ export enum TestCaseStatus {
 export interface TestCase {
   id: string
   description: string
-  input: Record<string, any> // Entrada fornecida ao agente
+  input: Record<string, unknown> // Entrada fornecida ao agente
   expectedOutput: string // Saída esperada
   actualOutput: string // Saída real do agente
   status: TestCaseStatus

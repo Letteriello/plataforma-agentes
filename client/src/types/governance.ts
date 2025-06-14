@@ -36,7 +36,7 @@ export interface AuditLog {
   timestamp: string
   actor: AuditLogActor
   action: string
-  details: Record<string, any>
+  details: Record<string, unknown>
   ipAddress?: string
 }
 

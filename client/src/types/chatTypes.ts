@@ -10,7 +10,7 @@ export enum ChatMessageSenderType {
 export interface ChatMessageCreatePayload {
   content: string;
   sender_type: ChatMessageSenderType; // Should be 'USER' when client sends via postMessageToAgent
-  content_metadata?: Record<string, any> | null;
+  content_metadata?: Record<string, unknown> | null;
   parent_message_id?: string | null; // UUID
 }
 
@@ -20,7 +20,7 @@ export interface ChatMessage {
   session_id: string; // UUID
   sender_type: ChatMessageSenderType;
   content: string;
-  content_metadata?: Record<string, any> | null;
+  content_metadata?: Record<string, unknown> | null;
   parent_message_id?: string | null; // UUID
   created_at: string; // ISO datetime string
   updated_at: string; // ISO datetime string
@@ -31,13 +31,13 @@ export interface ChatMessage {
 export interface ChatSessionCreatePayload {
   agent_id: string; // UUID
   session_title?: string | null;
-  session_metadata?: Record<string, any> | null;
+  session_metadata?: Record<string, unknown> | null;
 }
 
 // Corresponds to ChatSessionUpdate in Pydantic
 export interface ChatSessionUpdatePayload {
   session_title?: string | null;
-  session_metadata?: Record<string, any> | null;
+  session_metadata?: Record<string, unknown> | null;
   // archived?: boolean | null; // If we add this field later
 }
 
@@ -47,7 +47,7 @@ export interface ChatSession {
   user_id: string; // UUID
   agent_id: string; // UUID
   session_title?: string | null;
-  session_metadata?: Record<string, any> | null;
+  session_metadata?: Record<string, unknown> | null;
   created_at: string; // ISO datetime string
   updated_at: string; // ISO datetime string
   // archived?: boolean; // If we add this field later
@@ -62,6 +62,6 @@ export interface ChatSessionDetail extends ChatSession {
 // if it's slightly different (e.g., sender_type is fixed to USER)
 export interface UserAgentMessagePayload {
     content: string;
-    content_metadata?: Record<string, any> | null;
+  content_metadata?: Record<string, unknown> | null;
     // sender_type is implicitly 'USER'
 }
