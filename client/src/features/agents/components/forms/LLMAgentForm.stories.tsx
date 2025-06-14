@@ -1,21 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { StoryObj } from '@storybook/react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
-import { createDefaultAgent } from '@/lib/agent-utils'
-import { LLMAgentSchema, type LLMAgent } from '@/types/agents'
+import { AgentType, createDefaultAgentConfig as createDefaultAgent } from '@/types/core/agent'
+import { LlmAgentConfigSchema, type LlmAgentConfig } from '@/types/agents'
 
 import { LLMAgentForm } from './LLMAgentForm'
 
-interface StoryArgs {
-  defaultValues?: LLMAgent
-}
-
-const meta: Meta<typeof LLMAgentForm> = {
+const meta = {
   title: 'Agents/Forms/LLMAgentForm',
   component: LLMAgentForm,
   tags: ['autodocs'],
+  args: {
+    disabled: false,
+    isWizardMode: false,
+    defaultValues: undefined as LlmAgentConfig | undefined, // For story setup, not a direct prop
+  },
+  argTypes: {
+    defaultValues: { control: { type: null } }, // Hide from Storybook controls
+    className: { control: { type: null } }, // Assuming className is not a primary story control
+    isWizardMode: { control: { type: 'boolean' } },
+    disabled: { control: { type: 'boolean' } },
+  },
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -26,34 +33,32 @@ const meta: Meta<typeof LLMAgentForm> = {
     }
   },
   decorators: [
-    (Story, { args }) => {
-      const formMethods = useForm<LLMAgent>({
-        resolver: zodResolver(LLMAgentSchema),
-        defaultValues: (args as StoryArgs).defaultValues || createDefaultAgent('llm') as LLMAgent
-      })
-
-      const onSubmit = (data: LLMAgent) => {
-        console.log('Form Submitted', data)
-        alert('Dados do formulário logados no console. Veja a aba "Actions".')
-      }
-
-      return (
-        <FormProvider {...formMethods}>
-          <form onSubmit={formMethods.handleSubmit(onSubmit)} className="p-8 max-w-4xl mx-auto">
-            <Story />
-            <div className="mt-8 flex justify-end">
-              <Button type="submit">Salvar Agente</Button>
-            </div>
-          </form>
-        </FormProvider>
-      )
-    }
-  ]
+  (Story: React.FC<any>, context: { args: { defaultValues?: LlmAgentConfig; disabled?: boolean; isWizardMode?: boolean } }) => {
+    const { defaultValues, ...formArgs } = context.args;
+    const formMethods = useForm<LlmAgentConfig>({
+      resolver: zodResolver(LlmAgentConfigSchema),
+defaultValues: defaultValues || (createDefaultAgent(AgentType.LLM) as unknown as LlmAgentConfig),
+    });
+    const onSubmit = () => {
+      alert('Dados do formulário logados no console. Veja a aba "Actions".');
+    };
+    return (
+      <FormProvider {...formMethods}>
+        <form onSubmit={formMethods.handleSubmit(onSubmit)} className="p-8 max-w-4xl mx-auto">
+          <Story {...formArgs} />
+          <div className="mt-8 flex justify-end">
+            <Button type="submit">Salvar Agente</Button>
+          </div>
+        </form>
+      </FormProvider>
+    );
+  }
+]
 }
 
 export default meta
 
-type Story = StoryObj<typeof meta & { defaultValues?: LLMAgent }>
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
@@ -70,8 +75,9 @@ export const Disabled: Story = {
 export const Editing: Story = {
   args: {
     disabled: false,
+    // defaultValues deve ser apenas usado no decorator, não passado como prop para o componente
     defaultValues: {
-      ...createDefaultAgent('llm') as LLMAgent,
+      ...(createDefaultAgent(AgentType.LLM) as unknown as LlmAgentConfig),
       id: 'agent-123',
       name: 'Agente de Análise de Sentimento',
       description: 'Este agente analisa o sentimento de textos em português.',

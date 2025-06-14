@@ -3,13 +3,21 @@
   "version": "1.0.0",
   "description": "Este reposit\\u00f3rio cont\\u00e9m a implementa\\u00e7\\u00e3o da interface web da plataforma de agentes. A arquitetura completa est\\u00e1 documentada em [ARCHITECTURE.md](ARCHITECTURE.md) e nos arquivos em `docs/docs/ai`.",
   "main": "index.js",
+  "packageManager": "npm@9.2.0",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "npm run lint --prefix client"
+    "lint": "turbo run lint",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "turbo": "turbo"
   },
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Letteriello/plataforma-agentes.git"
@@ -26,7 +34,9 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.15.30",
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "turbo": "^2.0.0",
+    "husky": "^9.0.0"
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.7",
